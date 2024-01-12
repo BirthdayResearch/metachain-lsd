@@ -3,7 +3,7 @@ import { expect } from 'chai';
 
 import { deployContracts, StakingLsdDeploymentResult } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
-import { StakingLsdV1, TestToken } from '../generated';
+import { StakingLsdV1 } from '../generated';
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
 
