@@ -11,7 +11,6 @@ describe('StakingLsdProxy', () => {
   let proxyStakingLsd: StakingLsdV1;
   let defaultAdminSigner: SignerWithAddress;
   let walletSigner: SignerWithAddress;
-  let receiptToken: TestToken;
   let accounts: SignerWithAddress[] = [];
 
   before(async () => {
@@ -19,7 +18,6 @@ describe('StakingLsdProxy', () => {
     proxyStakingLsd = fixture.proxyStakingLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
     walletSigner = fixture.walletSigner;
-    receiptToken = fixture.receiptToken;
     accounts = await ethers.getSigners();
   })
 
@@ -51,6 +49,8 @@ describe('StakingLsdProxy', () => {
     await expect(proxyStakingLsd.connect(signer).stake({ value: amount }))
     .to.emit(proxyStakingLsd, 'STAKE')
     .withArgs(signer.address, amount, expectedTimestamp);
+    const initialSupply = await proxyStakingLsd.totalSupply()
+    expect(initialSupply).to.equal(amount);
   });
 
   it('Should be able to withdraw DFI and emit WITHDRAW event on successful withdraw', async () => {
@@ -61,5 +61,39 @@ describe('StakingLsdProxy', () => {
     await expect(proxyStakingLsd.connect(signer).withdraw(amount))
     .to.emit(proxyStakingLsd, 'WITHDRAW')
     .withArgs(signer.address, amount, expectedTimestamp);
+    const initialSupply = await proxyStakingLsd.totalSupply()
+    expect(initialSupply).to.equal('0');
+  });
+  
+  describe('Wallet address change tests', () => {
+    it('Unable to change if new address is 0x0', async () => {
+      // Test will fail with the error if input address is a dead address "0x0"
+      expect(await proxyStakingLsd.walletAddress()).to.equal(walletSigner.address);
+      await expect(
+        proxyStakingLsd.connect(defaultAdminSigner).changeWalletAddress('0x0000000000000000000000000000000000000000'),
+      ).to.be.revertedWithCustomError(proxyStakingLsd, 'ZERO_ADDRESS');
+    });
+
+    it('Unable to change wallet address if not DEFAULT_ADMIN_ROLE', async () => {
+      expect(await proxyStakingLsd.walletAddress()).to.equal(walletSigner.address);
+      // Test will fail if the signer is neither admin or operational admin
+      const newSigner = accounts[10]
+      await expect(
+        proxyStakingLsd.connect(newSigner).changeWalletAddress(newSigner.address),
+      ).to.be.revertedWith(
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${'0'.repeat(64)}`,
+      );
+      expect(await proxyStakingLsd.walletAddress()).to.equal(walletSigner.address);
+    });
+
+    it('Successfully change the wallet address By Admin account', async () => {
+      expect(await proxyStakingLsd.walletAddress()).to.equal(walletSigner.address);
+      // Change wallet address by Admin and Operational addresses
+      const newSigner = accounts[10]
+      await expect(proxyStakingLsd.connect(defaultAdminSigner).changeWalletAddress(newSigner.address))
+        .to.emit(proxyStakingLsd, 'WALLET_ADDRESS_CHANGED')
+        .withArgs(walletSigner.address, newSigner.address);;
+      expect(await proxyStakingLsd.walletAddress()).to.equal(newSigner.address);
+    });
   });
 });

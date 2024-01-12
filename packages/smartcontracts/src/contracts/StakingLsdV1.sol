@@ -68,7 +68,7 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
    * @param oldAddress The old address to be wallet address
    * @param newAddress The new address to be wallet address
    */
-  event CHANGE_WALLET_ADDRESS(address indexed oldAddress, address indexed newAddress);
+  event WALLET_ADDRESS_CHANGED(address indexed oldAddress, address indexed newAddress);
 
   /**
    * constructor to disable initalization of implementation contract
@@ -90,6 +90,7 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
       address _walletAddress,
       address _receiptToken
   ) external initializer {
+      // TODO (Create ERC20 SC here)
       __EIP712_init(NAME, '1');
       _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
       walletAddress = _walletAddress;
@@ -103,6 +104,7 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
     // TODO (Uncomment if we want to transfer staked amount to walletAddress directly)
     // (bool sent, ) = walletAddress.call{ value: msg.value }('');
     // if (!sent) revert WALLET_TRANSFER_FAILED();
+    // TODO (Allocate xDFI token)
     emit STAKE(msg.sender, msg.value, block.timestamp);
   }
 
@@ -126,7 +128,7 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = walletAddress;
     walletAddress = _newAddress;
-    emit CHANGE_WALLET_ADDRESS(_oldAddress, _newAddress);
+    emit WALLET_ADDRESS_CHANGED(_oldAddress, _newAddress);
   }
 
   /**
