@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: metachain-testing-ops
+          - name: metachain-lsd
             environment: AWS ECR
             acc: 553774129222
     environment: ${{ matrix.environment }}
@@ -63,7 +63,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ matrix.acc }}.dkr.ecr.ap-southeast-1.amazonaws.com
-          IMAGE_TAG: metachain-testing-ops:${{ steps.ecr-tags.outputs.result }}
+          IMAGE_TAG: metachain-lsd:${{ steps.ecr-tags.outputs.result }}
         run: |
           docker build --file apps/server/Dockerfile -t $ECR_REGISTRY/$IMAGE_TAG .
           docker push $ECR_REGISTRY/$IMAGE_TAG
