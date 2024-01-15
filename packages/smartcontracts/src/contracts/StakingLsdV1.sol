@@ -11,6 +11,11 @@ import './ReceiptToken.sol';
 error WALLET_TRANSFER_FAILED();
 
 /** @notice @dev
+/* This error occurs when withdrawal of Staked DeFi failed
+ */
+error WITHDRAWAL_FAILED();
+
+/** @notice @dev
 /* This error occurs when `_amount` is zero
 */
 error AMOUNT_IS_ZERO();
@@ -106,13 +111,13 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
 
   function withdraw(uint _amount) external {
     if (_amount == 0) revert AMOUNT_IS_ZERO();
-    // check if staked amount is less/equal to withdraw amount
+    // check if balance of receipt token is less/equal to withdraw amount
     if (_amount > ReceiptToken(receiptToken).balanceOf(msg.sender)) revert INSUFFICIENT_AMOUNT();
     ReceiptToken(receiptToken).burn(msg.sender, _amount);
     totalSupply -= _amount;
-    // Make the external call
-    (bool success, ) = msg.sender.call{value: _amount}('');
-    require(success, "Withdrawal failed");
+    // transfer amount to the sneder address
+    (bool sent, ) = msg.sender.call{ value: _amount }('');
+    if (!sent) revert WITHDRAWAL_FAILED();
     emit WITHDRAW(msg.sender, _amount, block.timestamp);
   }
 
