@@ -9,7 +9,9 @@ describe('Disable the initialization for StakingLsdV1', () => {
     await expect(
       stakingLsdImplementation.initialize(
         defaultAdminSigner.address,
-        walletSigner.address
+        walletSigner.address,
+        'DFI STAKING RECEIPT TOKEN',
+        'xDFI'
       ),
     ).to.be.revertedWith('Initializable: contract is already initialized');
   });

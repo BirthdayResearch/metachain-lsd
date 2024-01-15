@@ -15,6 +15,10 @@ export async function deployStakingLsdProxy({
     adminAddress,
     // withdraw address
     walletAddress,
+    // receipt token name
+    'DFI STAKING RECEIPT TOKEN',
+    // receipt token symbol
+    'xDFI'
   ]);
   const stakingLsdProxy = await contract.deploy(stakingLsdV1Address, encodedData);
   await stakingLsdProxy.waitForDeployment();
