@@ -44,9 +44,9 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
    * @param stakedAt Staking time
    */
   event STAKE(
-      address indexed from,
-      uint indexed amount,
-      uint indexed stakedAt
+    address indexed from,
+    uint indexed amount,
+    uint indexed stakedAt
   );
 
   /**
@@ -83,14 +83,14 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
    * @param _walletAddress Wallet address who will have the all staked token transferred
    */
   function initialize(
-      address _adminAddress,
-      address _walletAddress
+    address _adminAddress,
+    address _walletAddress
   ) external initializer {
-      // TODO (Create ERC20 SC here)
-      __EIP712_init(NAME, '1');
-      _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
-      walletAddress = _walletAddress;
-      receiptToken = new ReceiptToken("xDFI", "xDFI");
+    // TODO (Create ERC20 SC here)
+    __EIP712_init(NAME, '1');
+    _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
+    walletAddress = _walletAddress;
+    receiptToken = new ReceiptToken("xDFI", "xDFI");
   }
 
   function stake() external payable {
