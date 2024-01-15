@@ -1,7 +1,7 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
 
-import { StakingLsdV1, StakingLsdV1__factory, TestToken } from '../../generated';
+import { StakingLsdV1, StakingLsdV1__factory } from '../../generated';
 
 export async function deployContracts(): Promise<StakingLsdDeploymentResult> {
   const accounts = await ethers.getSigners();
@@ -12,18 +12,12 @@ export async function deployContracts(): Promise<StakingLsdDeploymentResult> {
   await stakingLsdUpgradeable.waitForDeployment();
   const stakingLsdUpgradeableAddress = await stakingLsdUpgradeable.getAddress()
   const StakingLsdProxy = await ethers.getContractFactory('StakingLsdProxy');
-  const ERC20 = await ethers.getContractFactory('TestToken');
-  const receiptToken = await ERC20.deploy('Test', 'T');
-  await receiptToken.waitForDeployment();
-  const receiptTokenAddress = await receiptToken.getAddress()
   // deployment arguments for the Proxy contract
   const encodedData = StakingLsdV1__factory.createInterface().encodeFunctionData('initialize', [
     // default admin address
     accounts[0].address,
     // default wallet address
     accounts[1].address,
-    // receipt token address
-    receiptTokenAddress
   ]);
 
   const stakingLsdProxy = await StakingLsdProxy.deploy(stakingLsdUpgradeableAddress, encodedData);
@@ -36,7 +30,6 @@ export async function deployContracts(): Promise<StakingLsdDeploymentResult> {
     stakingLsdImplementation: stakingLsdUpgradeable,
     defaultAdminSigner,
     walletSigner,
-    receiptToken
   };
 }
 
@@ -45,5 +38,4 @@ export interface StakingLsdDeploymentResult {
   stakingLsdImplementation: StakingLsdV1;
   defaultAdminSigner: SignerWithAddress;
   walletSigner: SignerWithAddress;
-  receiptToken: TestToken;
 }

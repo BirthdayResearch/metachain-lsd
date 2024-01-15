@@ -1,5 +1,6 @@
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
+
 import { deployContracts } from './testUtils/deployment';
 
 describe('StakingLsdV1 deployment test', () => {

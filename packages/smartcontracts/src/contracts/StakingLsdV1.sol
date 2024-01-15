@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
+import './ReceiptToken.sol';
 
 /** @notice @dev
 /* This error occurs when transfer of Staked DeFi failed
@@ -26,9 +26,7 @@ error INSUFFICIENT_AMOUNT();
 error ZERO_ADDRESS();
 
 contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
-  using SafeERC20Upgradeable for IERC20Upgradeable;
-
-  IERC20Upgradeable public rewardsToken;
+  ReceiptToken public receiptToken;
   
   string public constant NAME = 'STAKING_LSD';
 
@@ -83,35 +81,34 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
    * @notice To initialize this contract (No constructor as part of the proxy pattery )
    * @param _adminAddress Admin address who will have the DEFAULT_ADMIN_ROLE
    * @param _walletAddress Wallet address who will have the all staked token transferred
-   * @param _receiptToken Reward token contract address
    */
   function initialize(
       address _adminAddress,
-      address _walletAddress,
-      address _receiptToken
+      address _walletAddress
   ) external initializer {
       // TODO (Create ERC20 SC here)
       __EIP712_init(NAME, '1');
       _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
       walletAddress = _walletAddress;
-      rewardsToken = IERC20Upgradeable(_receiptToken);
+      receiptToken = new ReceiptToken("xDFI", "xDFI");
   }
 
   function stake() external payable {
-    if(msg.value == 0) revert AMOUNT_IS_ZERO();
+    if (msg.value == 0) revert AMOUNT_IS_ZERO();
     balanceOf[msg.sender] += msg.value;
     totalSupply += msg.value;
     // TODO (Uncomment if we want to transfer staked amount to walletAddress directly)
     // (bool sent, ) = walletAddress.call{ value: msg.value }('');
     // if (!sent) revert WALLET_TRANSFER_FAILED();
-    // TODO (Allocate xDFI token)
+    ReceiptToken(receiptToken).mint(msg.sender, msg.value);
     emit STAKE(msg.sender, msg.value, block.timestamp);
   }
 
   function withdraw(uint _amount) external {
-    if(_amount == 0) revert AMOUNT_IS_ZERO();
+    if (_amount == 0) revert AMOUNT_IS_ZERO();
     // check if staked amount is less/equal to withdraw amount
-    if(_amount > balanceOf[msg.sender]) revert INSUFFICIENT_AMOUNT();
+    if (_amount > balanceOf[msg.sender]) revert INSUFFICIENT_AMOUNT();
+    ReceiptToken(receiptToken).burn(msg.sender, _amount);
     balanceOf[msg.sender] -= _amount;
     totalSupply -= _amount;
     // Make the external call
@@ -135,6 +132,6 @@ contract StakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrad
    * @notice To get the current version of the contract
    */
   function version() external view returns (string memory) {
-      return StringsUpgradeable.toString(_getInitializedVersion());
+    return StringsUpgradeable.toString(_getInitializedVersion());
   }
 }

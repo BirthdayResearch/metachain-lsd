@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat';
+
 import { StakingLsdProxy, StakingLsdV1__factory } from '../generated';
 import { verify } from './utils/verify';
 
@@ -6,7 +7,6 @@ import { verify } from './utils/verify';
 export async function deployStakingLsdProxy({
   adminAddress,
   walletAddress,
-  receiptTokenAddress,
   stakingLsdV1Address
 }: InputsForInitialization): Promise<StakingLsdProxy> {
   const contract = await ethers.getContractFactory('StakingLsdProxy');
@@ -15,8 +15,6 @@ export async function deployStakingLsdProxy({
     adminAddress,
     // withdraw address
     walletAddress,
-    // receipt token address
-    receiptTokenAddress
   ]);
   const stakingLsdProxy = await contract.deploy(stakingLsdV1Address, encodedData);
   await stakingLsdProxy.waitForDeployment();
@@ -31,6 +29,5 @@ export async function deployStakingLsdProxy({
 interface InputsForInitialization {
   adminAddress: string;
   walletAddress: string;
-  receiptTokenAddress: string;
   stakingLsdV1Address: string;
 }

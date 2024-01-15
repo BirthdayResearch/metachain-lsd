@@ -1,6 +1,7 @@
-import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import '@nomicfoundation/hardhat-chai-matchers';
+
+import { HardhatUserConfig } from "hardhat/config";
 
 import { TX_AUTOMINE_ENV_VAR, TX_AUTOMINE_INTERVAL_ENV_VAR } from "./envvar";
 
