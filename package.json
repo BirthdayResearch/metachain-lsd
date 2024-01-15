@@ -27,6 +27,7 @@
   },
   "packageManager": "pnpm@8.6.12",
   "dependencies": {
+    "@stickyjs/prettier": "^1.3.10",
     "turbo": "^1.11.3"
   }
 }
