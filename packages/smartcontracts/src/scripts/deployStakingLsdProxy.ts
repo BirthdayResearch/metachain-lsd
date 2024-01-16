@@ -3,7 +3,7 @@ import { ethers } from 'hardhat';
 import { StakingLsdProxy, StakingLsdV1__factory } from '../generated';
 import { verify } from './utils/verify';
 
-// npx hardhat run --network sepolia ./scripts/deployStakingLsdV1.ts
+// npx hardhat run --network sepolia ./scripts/deployStakingLsdProxy.ts
 export async function deployStakingLsdProxy({
   adminAddress,
   walletAddress,
@@ -23,10 +23,11 @@ export async function deployStakingLsdProxy({
   const stakingLsdProxy = await contract.deploy(stakingLsdV1Address, encodedData);
   await stakingLsdProxy.waitForDeployment();
   const stakingLsdProxyAddress = await stakingLsdProxy.getAddress()
- 
+  const txn = await stakingLsdProxy.deploymentTransaction()
+  await txn?.wait(10);
   console.log('Proxy Address: ', stakingLsdProxyAddress);
   console.log('Verifying...');
-  await verify({ contractAddress: stakingLsdProxyAddress, args: [stakingLsdV1Address, encodedData] });
+  await verify({ contractAddress: stakingLsdProxyAddress, args: [stakingLsdV1Address, encodedData], contract: "./src/contracts/StakingLsdProxy.sol:StakingLsdProxy" });
   return stakingLsdProxy;
 }
 
