@@ -23,7 +23,7 @@ export async function deployStakingLsdProxy({
   ]);
   const stakingLsdProxy = await contract.deploy(stakingLsdV1Address, encodedData);
   await stakingLsdProxy.waitForDeployment();
-  const stakingLsdProxyAddress = "0xCce7B4FE99F7fa97DE6e031886D77B43447E81Ae" //await stakingLsdProxy.getAddress()
+  const stakingLsdProxyAddress = await stakingLsdProxy.getAddress()
   const txn = await stakingLsdProxy.deploymentTransaction()
   await txn?.wait(10);
   console.log('Proxy Address: ', stakingLsdProxyAddress);
