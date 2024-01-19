@@ -3,7 +3,7 @@ import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { StakingLsdV1, ReceiptToken } from '../generated';
+import { ReceiptToken,StakingLsdV1 } from '../generated';
 import { deployContracts, StakingLsdDeploymentResult } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
 
