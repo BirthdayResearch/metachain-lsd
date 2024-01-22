@@ -1,0 +1,91 @@
+import clsx from "clsx";
+import { useNetwork } from "wagmi";
+import { ConnectKitButton } from "connectkit";
+import MetaMaskIcon from "./icons/MetaMaskIcon";
+import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
+import truncateTextFromMiddle from "@/app/lib/textHelper";
+
+function PreConnectedButton({
+  onClick,
+}: {
+  onClick: (() => void) | undefined;
+}): JSX.Element {
+  const btnLabel = "Connect Wallet";
+  return (
+    <button
+      data-testid="connect-button"
+      type="button"
+      className={clsx(
+        `relative z-[1] bg-dark-00 flex items-center justify-center
+            rounded-[10px] px-4 py-2 md:py-2.5 lg:py-3
+            before:absolute before:-z-[1]
+            before:transition-all before:duration-300 before:opacity-0 before:-inset-[1.5px]`,
+      )}
+      onClick={onClick}
+    >
+      <span className="text-sm text-light-00">{btnLabel}</span>
+    </button>
+  );
+}
+
+function ConnectedButton({
+  address,
+  chain,
+  onClick,
+}: {
+  address: string;
+  chain: string;
+  onClick: (() => void) | undefined;
+}): JSX.Element {
+  // const { isLg } = useResponsive();
+  const isLg = true;
+  const walletText = truncateTextFromMiddle(address, isLg ? 5 : 4);
+  return (
+    <button
+      data-testid="wallet-button"
+      type="button"
+      onClick={onClick}
+      className={clsx(
+        `flex h-8 items-center rounded-[10px] border-[1.5px]
+          border-dark-card-stroke pl-4 pr-3 py-3 md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`,
+      )}
+    >
+      <div className="hidden md:flex items-center">
+        <MetaMaskIcon />
+        <div className="ml-2 text-left">
+          <span className="block text-sm text-light-1000">{walletText}</span>
+          <div className="flex items-center">
+            <span className="text-xs text-dark-700">{chain}</span>
+            <div className="ml-1 h-2 w-2 rounded-full bg-valid" />
+          </div>
+        </div>
+      </div>
+      <div className="flex md:hidden">
+        <div className="mr-2 h-3 w-3 rounded-full bg-valid" />
+        <span className="text-xs text-light-1000">{walletText}</span>
+      </div>
+    </button>
+  );
+}
+
+export default function ConnectButton() {
+  const { chain } = useNetwork();
+  const displayedChainName =
+    chain?.id === ETHEREUM_MAINNET_ID ? "Ethereum MainNet" : chain?.name;
+
+  return (
+    <ConnectKitButton.Custom>
+      {({ isConnected, address, show }) =>
+        isConnected ? (
+          <ConnectedButton
+            address={address as string}
+            chain={displayedChainName as string}
+            onClick={show}
+          />
+        ) : (
+          <PreConnectedButton onClick={show} />
+        )
+      }
+    </ConnectKitButton.Custom>
+  );
+}
