@@ -3,11 +3,11 @@ import { expect } from 'chai';
 
 import { deployContracts } from './testUtils/deployment';
 
-describe('Disable the initialization for StakingLsdV1', () => {
+describe('Disable the initialization for MarbleLsdV1', () => {
   it('Should disable the initialization of the implementation contract after creating it', async () => {
-    const { stakingLsdImplementation, defaultAdminSigner, walletSigner } = await loadFixture(deployContracts);
+    const { marbleLsdImplementation, defaultAdminSigner, walletSigner } = await loadFixture(deployContracts);
     await expect(
-      stakingLsdImplementation.initialize(
+      marbleLsdImplementation.initialize(
         defaultAdminSigner.address,
         walletSigner.address,
         'DFI STAKING RECEIPT TOKEN',

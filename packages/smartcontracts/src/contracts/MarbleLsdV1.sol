@@ -7,6 +7,7 @@ import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
 import './ShareToken.sol';
+import './Pausable.sol';
 
 /** @notice @dev
  * This error occurs when transfer of Staked DeFi failed
@@ -48,12 +49,12 @@ error ExceededMaxWithdraw(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
-contract MarbleStakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable {
+contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable, Pausable {
   using Math for uint256;
 
   ShareToken public shareToken;
   
-  string public constant NAME ='MARBLE_STAKING_LSD';
+  string public constant NAME ='MARBLE_LSD';
 
   address public walletAddress;
 
@@ -319,8 +320,11 @@ contract MarbleStakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControl
    * 
    * - MUST emit the Deposit event.
    */
-  function deposit(address _receiver) payable public virtual returns (uint256) {
+  function deposit(address _receiver) payable public virtual whenDepoisitNotPaused returns (uint256) {
+    // check zero amount
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
+    // check zero address
+    if (_receiver == address(0)) revert ZERO_ADDRESS();
     uint256 maxAssets = maxDeposit(_receiver);
 
     if (msg.value > maxAssets) {
@@ -339,12 +343,15 @@ contract MarbleStakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControl
    * - MUST revert if all of assets cannot be withdrawn (due to withdrawal limit being reached, slippage, the owner
    *   not having enough shares, etc).
    */
-  function withdraw(uint256 _assets, address _receiver) public virtual returns (uint256) {
-    // check zero address
+  function withdraw(uint256 _assets, address _receiver) public virtual whenWithdrawNotPaused returns (uint256) {
+    // check zero amount
     if (_assets == 0) revert AMOUNT_IS_ZERO();
+    // check zero address
+    if (_receiver == address(0)) revert ZERO_ADDRESS();
+
     // check if balance of asset is less/equal to withdraw amount
     uint256 maxAssets = maxWithdraw(_msgSender());
-    if (_assets > maxAssets) revert ExceededMaxWithdraw(_msgSender(), _assets, maxAssets);
+    if (_assets > maxAssets) revert ExceededMaxWithdraw(_receiver, _assets, maxAssets);
     
     uint256 shares = previewWithdraw(_assets);
     _withdraw(_msgSender(), _receiver, _assets, shares);
@@ -359,9 +366,12 @@ contract MarbleStakingLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControl
    * - MUST revert if all of shares cannot be redeemed (due to withdrawal limit being reached, slippage, the owner
    *   not having enough shares, etc).
    */
-  function redeem(uint256 _shares, address _receiver) public virtual returns (uint256) {
-    // check zero address
+  function redeem(uint256 _shares, address _receiver) public virtual whenWithdrawNotPaused returns (uint256) {
+    // check zero amount
     if (_shares == 0) revert AMOUNT_IS_ZERO();
+    // check zero address
+    if (_receiver == address(0)) revert ZERO_ADDRESS();
+
     uint256 maxShares = maxRedeem(_msgSender());
     // check if balance of shares token is less/equal to withdraw amount
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);

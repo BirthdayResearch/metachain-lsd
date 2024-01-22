@@ -1,0 +1,188 @@
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
+import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
+import { expect } from 'chai';
+import { ethers } from 'hardhat';
+
+import { MarbleLsdV1, ShareToken } from '../generated';
+import { deployContracts, MarbleLsdDeploymentResult } from './testUtils/deployment';
+import { toWei } from './testUtils/mathUtils';
+
+describe('MarbleLsdProxy', () => {
+  let proxyMarbleLsd: MarbleLsdV1;
+  let defaultAdminSigner: SignerWithAddress;
+  let walletSigner: SignerWithAddress;
+  let accounts: SignerWithAddress[] = [];
+  let shareToken: ShareToken;
+
+  before(async () => {
+    const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
+    proxyMarbleLsd = fixture.proxyMarbleLsd;
+    defaultAdminSigner = fixture.defaultAdminSigner;
+    walletSigner = fixture.walletSigner;
+    shareToken = fixture.shareToken;
+    accounts = await ethers.getSigners();
+  })
+
+  it('Should have total supply=0 before depositing any DFI', async () => {
+    const initialSupply = await proxyMarbleLsd.totalSupply()
+    expect(initialSupply).to.equal('0');
+  });
+
+  it('Should have recept token deployed', async () => {
+    const address = await proxyMarbleLsd.shareToken()
+    expect(address).to.not.equal(null);
+    expect(address.length).to.equal(42);
+  });
+
+  it('Should get receipt token name', async () => {
+    const name = await shareToken.name()
+    expect(name).to.equal('DFI STAKING RECEIPT TOKEN');
+  });
+
+  it('Should get receipt token symbol', async () => {
+    const symbol = await shareToken.symbol()
+    expect(symbol).to.equal('xDFI');
+  });
+
+  it('Should get receipt decimal', async () => {
+    const decimal = await shareToken.decimals()
+    expect(decimal).to.equal('18');
+  });
+
+  it('Should ensure that the owner of the ShareToken contract is set to the Staking contract.', async () => {
+    const owner = await shareToken.owner()
+    expect(owner).to.equal(await proxyMarbleLsd.getAddress());
+  });
+
+  it('Should fail when deposit zero DFI', async () => {
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: 0 }))
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO");
+  });
+
+  it('Should fail when deposit with zero receiver address', async () => {
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).deposit(ethers.ZeroAddress, { value: 10 }))
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
+  });
+
+  it('Should fail when withdraw zero amount', async () => {
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.withdraw(0, signer.address))
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO");
+  });
+
+  it('Should fail when withdraw with zero receiver address', async () => {
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).withdraw(10, ethers.ZeroAddress))
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
+  });
+
+  it('Should fail when withdraw before staking', async () => {
+    const signer = accounts[4]
+    const amount = 10
+    await expect(proxyMarbleLsd.withdraw(amount, signer.address))
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "ExceededMaxWithdraw")
+    .withArgs(signer.address, amount, 0);
+  });
+
+  it('Should deposit DFI and emit Deposit event on successful staking', async () => {
+    // Need to add to the timestamp of the previous block to match the next block the tx is mined in
+    const amount = toWei('10');
+    const shares = amount // considering 1:1 ratio
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
+    .to.emit(proxyMarbleLsd, 'Deposit')
+    .withArgs(signer.address, signer.address, amount, shares);
+    const initialSupply = await proxyMarbleLsd.totalSupply()
+    expect(initialSupply).to.equal(amount);
+    // Check receipt token balance
+    const balance = await shareToken.balanceOf(signer.address)
+    expect(balance).to.equal(shares);
+  });
+
+  it('Should be able to withdraw DFI and emit Withdraw event on successful withdraw', async () => {
+    // Need to add to the timestamp of the previous block to match the next block the tx is mined in
+    const amount = toWei('10');
+    const shares = amount;
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).withdraw(amount, signer.address))
+    .to.emit(proxyMarbleLsd, 'Withdraw')
+    .withArgs(signer.address, signer.address, amount, shares);
+    const initialSupply = await proxyMarbleLsd.totalSupply()
+    expect(initialSupply).to.equal('0');
+    // Check receipt token balance
+    const balance = await shareToken.balanceOf(signer.address)
+    expect(balance).to.equal('0');
+  });
+  
+  describe('Wallet address change tests', () => {
+    it('Unable to change if new address is 0x0', async () => {
+      // Test will fail with the error if input address is a dead address "0x0"
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+      await expect(
+        proxyMarbleLsd.connect(defaultAdminSigner).changeWalletAddress('0x0000000000000000000000000000000000000000'),
+      ).to.be.revertedWithCustomError(proxyMarbleLsd, 'ZERO_ADDRESS');
+    });
+
+    it('Unable to change wallet address if not DEFAULT_ADMIN_ROLE', async () => {
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+      // Test will fail if the signer is neither admin or operational admin
+      const newSigner = accounts[10]
+      await expect(
+        proxyMarbleLsd.connect(newSigner).changeWalletAddress(newSigner.address),
+      ).to.be.revertedWith(
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${'0'.repeat(64)}`,
+      );
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+    });
+
+    it('Successfully change the wallet address By Admin account', async () => {
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+      // Change wallet address by Admin and Operational addresses
+      const newSigner = accounts[10]
+      await expect(proxyMarbleLsd.connect(defaultAdminSigner).changeWalletAddress(newSigner.address))
+        .to.emit(proxyMarbleLsd, 'WALLET_ADDRESS_CHANGED')
+        .withArgs(walletSigner.address, newSigner.address);
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(newSigner.address);
+    });
+  });
+
+  describe('Pause Unpause deposit and withdraw', () => {
+    before(async () => {
+      // pause deposit
+      await expect(proxyMarbleLsd.setDepositPaused(true))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
+      .withArgs(true, defaultAdminSigner.address);
+      // pause withdraw
+      await expect(proxyMarbleLsd.setWithdrawPaused(true))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
+      .withArgs(true, defaultAdminSigner.address);
+    })
+
+    after(async () => {
+      // unpause deposit
+      await expect(proxyMarbleLsd.setDepositPaused(false))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
+      .withArgs(false, defaultAdminSigner.address);
+      // unpause withdraw
+      await expect(proxyMarbleLsd.setWithdrawPaused(false))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
+      .withArgs(false, defaultAdminSigner.address);
+    })
+
+    it('Should fail deposit when deposit is paused', async () => {
+      const amount = toWei('10');
+      const signer = accounts[4]
+      await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "DEPOSIT_PAUSED")
+    });
+
+    it('Should fail withdraw when withdraw is paused', async () => {
+      const amount = toWei('10');
+      const signer = accounts[4]
+      await expect(proxyMarbleLsd.connect(signer).withdraw(amount, signer.address))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "WITHDRAWAL_PAUSED")
+    });
+  });
+});
