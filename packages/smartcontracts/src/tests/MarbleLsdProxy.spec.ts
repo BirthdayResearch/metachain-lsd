@@ -2,6 +2,7 @@ import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
+import BigNumber from 'bignumber.js';
 
 import { MarbleLsdV1, ShareToken } from '../generated';
 import { deployContracts, MarbleLsdDeploymentResult } from './testUtils/deployment';
@@ -26,6 +27,23 @@ describe('MarbleLsdProxy', () => {
   it('Should have total supply=0 before depositing any DFI', async () => {
     const initialSupply = await proxyMarbleLsd.totalSupply()
     expect(initialSupply).to.equal('0');
+  });
+
+  it('Should have total rewards assets=0 before depositing any DFI rewards', async () => {
+    const initialSupply = await proxyMarbleLsd.totalRewardAssets()
+    expect(initialSupply).to.equal('0');
+  });
+
+  it('Should have convert to shares ratio to 1:1 before staking any coin', async () => {
+    const amount = toWei('10');
+    const shares = await proxyMarbleLsd.convertToShares(amount)
+    expect(shares).to.equal(amount);
+  });
+
+  it('Should have convert to assets ratio to 1:1 before staking any coin', async () => {
+    const shares = toWei('10');
+    const assets = await proxyMarbleLsd.convertToAssets(shares)
+    expect(assets).to.equal(shares);
   });
 
   it('Should have recept token deployed', async () => {
@@ -102,18 +120,39 @@ describe('MarbleLsdProxy', () => {
   });
 
   it('Should be able to withdraw DFI and emit Withdraw event on successful withdraw', async () => {
-    // Need to add to the timestamp of the previous block to match the next block the tx is mined in
-    const amount = toWei('10');
-    const shares = amount;
+    const amount = toWei('5');
+    const initialAssets = await proxyMarbleLsd.totalAssets();
+    const initialShares = await proxyMarbleLsd.totalSupply();
+    const shares = await proxyMarbleLsd.convertToShares(amount);
     const signer = accounts[4]
     await expect(proxyMarbleLsd.connect(signer).withdraw(amount, signer.address))
     .to.emit(proxyMarbleLsd, 'Withdraw')
     .withArgs(signer.address, signer.address, amount, shares);
-    const initialSupply = await proxyMarbleLsd.totalSupply()
-    expect(initialSupply).to.equal('0');
+    const updatedAssets = await proxyMarbleLsd.totalAssets()
+    expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
+    const updatedShares = await proxyMarbleLsd.totalSupply()
+    expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address)
-    expect(balance).to.equal('0');
+    expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
+  });
+
+  it('Should be able to redeem DFI and emit Withdraw event on successful redeem', async () => {
+    const shares = toWei('5');
+    const initialAssets = await proxyMarbleLsd.totalAssets();
+    const initialShares = await proxyMarbleLsd.totalSupply();
+    const amount = await proxyMarbleLsd.convertToAssets(shares);
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).redeem(shares, signer.address))
+    .to.emit(proxyMarbleLsd, 'Withdraw')
+    .withArgs(signer.address, signer.address, amount, shares);
+    const updatedAssets = await proxyMarbleLsd.totalAssets()
+    expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
+    const updatedShares = await proxyMarbleLsd.totalSupply()
+    expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
+    // Check receipt token balance
+    const balance = await shareToken.balanceOf(signer.address)
+    expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
   });
   
   describe('Wallet address change tests', () => {
@@ -183,6 +222,50 @@ describe('MarbleLsdProxy', () => {
       const signer = accounts[4]
       await expect(proxyMarbleLsd.connect(signer).withdraw(amount, signer.address))
       .to.be.revertedWithCustomError(proxyMarbleLsd, "WITHDRAWAL_PAUSED")
+    });
+  });
+
+  describe('Manage rewards', () => {
+    it('Should change DFI-xDFI ratio when rewards are distributed', async () => {
+      // Need to add to the timestamp of the previous block to match the next block the tx is mined in
+      const amount = toWei('10');
+      const signer = accounts[4]
+      const shares = await proxyMarbleLsd.convertToShares(amount);
+      await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
+      .to.emit(proxyMarbleLsd, 'Deposit')
+      .withArgs(signer.address, signer.address, amount, shares);
+      const initialSupply = await proxyMarbleLsd.totalSupply()
+      expect(initialSupply).to.equal(amount);
+      const initialAssets = await proxyMarbleLsd.totalAssets()
+      expect(initialAssets).to.equal(amount);
+      // Check receipt token balance
+      const balance = await shareToken.balanceOf(signer.address)
+      expect(balance).to.equal(shares);
+
+      // send rewards
+      await expect(defaultAdminSigner.sendTransaction({
+        to: await proxyMarbleLsd.getAddress(),
+        data: "0x",
+        value: amount
+      }))
+      .to.emit(proxyMarbleLsd, 'Rewards')
+      .withArgs(defaultAdminSigner.address, amount);
+      const rewards = await proxyMarbleLsd.totalRewardAssets()
+      expect(rewards).to.equal(amount);
+
+      const updateSupply = await proxyMarbleLsd.totalSupply()
+      expect(updateSupply).to.equal(initialSupply);
+      const updatedAssets = await proxyMarbleLsd.totalAssets()
+      expect(updatedAssets).to.equal(new BigNumber(amount.toString()).plus(amount.toString()));
+
+      // share = 10 (xDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
+      const resultingShares = new BigNumber(amount.toString()).multipliedBy(0.5)
+      const updatedShare = await proxyMarbleLsd.convertToShares(amount);
+      expect(updatedShare).to.equal(resultingShares);
+
+      await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
+      .to.emit(proxyMarbleLsd, 'Deposit')
+      .withArgs(signer.address, signer.address, amount, resultingShares);
     });
   });
 });

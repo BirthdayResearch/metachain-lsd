@@ -50,6 +50,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.10.8
     version: 20.10.8
+  bignumber.js:
+    specifier: ^9.1.2
+    version: 9.1.2
   chai:
     specifier: ^4.2.0
     version: 4.4.0
@@ -2546,6 +2549,10 @@ packages:
   /bigint-crypto-utils@3.3.0:
     resolution: {integrity: sha512-jOTSb+drvEDxEq6OuUybOAv/xxoh3cuYRUIPyu8sSHQNKM303UQ2R1DAo45o1AkcIXw6fzbaFI1+xGGdaXs2lg==}
     engines: {node: '>=14.0.0'}
+    dev: true
+
+  /bignumber.js@9.1.2:
+    resolution: {integrity: sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==}
     dev: true
 
   /binary-extensions@2.2.0:

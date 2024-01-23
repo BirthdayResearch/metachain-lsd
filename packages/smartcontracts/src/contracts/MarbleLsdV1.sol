@@ -60,6 +60,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
 
   // TODO update Total staked while transferring assets for creating MN
   uint256 public totalStakedAssets;
+  uint256 public totalRewardAssets;
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
@@ -140,7 +141,9 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @dev To allocate rewards send fund to wallet address
    */
-  receive() external payable {
+  receive() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (msg.value == 0) revert AMOUNT_IS_ZERO();
+    totalRewardAssets += msg.value;
     emit Rewards(_msgSender(), msg.value);
   }
 
@@ -185,7 +188,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @dev Returns the amount of all assets, i.e. sum of staked, rewards, and balance
    */
   function totalAssets() public view virtual returns (uint256) {
-    return totalStakedAssets + address(this).balance;
+    return totalStakedAssets + totalRewardAssets;
   }
 
   /**
@@ -422,6 +425,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    */
   function _deposit(address _caller, address _receiver, uint256 _assets, uint256 _shares) internal virtual {
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
+    // update staked asset
+    totalStakedAssets += _assets;
     // mint shares token for receiver
     shareToken.mint(_receiver, _shares);
 
@@ -445,6 +450,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     if (!sent) revert WITHDRAWAL_FAILED();
     // burn shares token
     shareToken.burn(_msgSender(), _shares);
+    // update staked asset
+    totalStakedAssets -= _assets;
 
     emit Withdraw(_caller, _receiver, _assets, _shares);
   }
