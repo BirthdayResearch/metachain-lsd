@@ -60,10 +60,6 @@ function ConnectedButton({
           </div>
         </div>
       </div>
-      {/*<div className="flex md:hidden">*/}
-      {/*  <div className="mr-2 h-3 w-3 rounded-full bg-valid" />*/}
-      {/*  <span className="text-xs text-light-1000">{walletText}</span>*/}
-      {/*</div>*/}
     </button>
   );
 }
