@@ -4,6 +4,7 @@ import { ConnectKitButton } from "connectkit";
 import MetaMaskIcon from "./icons/MetaMaskIcon";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import truncateTextFromMiddle from "@/app/lib/textHelper";
+import useResponsive from "@/app/lib/hooks/useResponsive";
 
 function PreConnectedButton({
   onClick,
@@ -37,8 +38,7 @@ function ConnectedButton({
   chain: string;
   onClick: (() => void) | undefined;
 }): JSX.Element {
-  // const { isLg } = useResponsive();
-  const isLg = true;
+  const { isLg } = useResponsive();
   const walletText = truncateTextFromMiddle(address, isLg ? 5 : 4);
   return (
     <button

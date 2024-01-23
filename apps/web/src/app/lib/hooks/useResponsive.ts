@@ -1,9 +1,8 @@
 import { useMediaQuery } from "react-responsive";
-// @ts-ignore
-import { theme } from "../../../../tailwind.config";
+import config from "../../../../tailwind.config";
 
 const useResponsive = () => {
-  const { screens } = theme;
+  const { screens } = config.theme as { screens: Record<string, string> };
 
   const isMobile = useMediaQuery({ maxWidth: `calc(${screens.md} - 1px)` });
 
@@ -21,7 +20,7 @@ const useResponsive = () => {
 
   const is3xl = useMediaQuery({ minWidth: screens["3xl"] });
 
-  // type Key = `is${Capitalize<keyof typeof screens>}`;
+  type Key = `is${Capitalize<keyof typeof screens>}`;
   return {
     isMobile,
     isXs,
@@ -31,7 +30,7 @@ const useResponsive = () => {
     isXl,
     is2xl,
     is3xl,
-  } as Record<"isMobile", boolean>;
+  } as Record<Key | "isMobile", boolean>;
 };
 
 export default useResponsive;

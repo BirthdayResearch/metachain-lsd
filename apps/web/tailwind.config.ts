@@ -10,6 +10,15 @@ const config: Config = {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],
     },
+    screens: {
+      xs: "390px", // Mobile - Large
+      sm: "640px",
+      md: "768px", // Tablet
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px", // Web - Extra large
+    },
     extend: {
       colors: {
         transparent: "rgba(0, 0, 0 ,0)",
