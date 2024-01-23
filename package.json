@@ -7,14 +7,11 @@
     "write": "turbo run write",
     "clean": "turbo run clean",
     "build": "turbo run build",
-    "playground:start": "turbo run playground:start",
-    "build:docker": "turbo run build:docker",
     "test": "turbo run test",
     "test:hardhat": "turbo run test:hardhat",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint -- --fix",
-    "format": "prettier --write .",
-    "migration:deploy": "turbo run migration:deploy"
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@stickyjs/turbo": "^1.3.4",
