@@ -25,7 +25,7 @@ describe('MarbleLsdProxy', () => {
   })
 
   it('Should have total supply=0 before depositing any DFI', async () => {
-    const initialSupply = await proxyMarbleLsd.totalSupply()
+    const initialSupply = await proxyMarbleLsd.totalShares()
     expect(initialSupply).to.equal('0');
   });
 
@@ -112,7 +112,7 @@ describe('MarbleLsdProxy', () => {
     await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
     .to.emit(proxyMarbleLsd, 'Deposit')
     .withArgs(signer.address, signer.address, amount, shares);
-    const initialSupply = await proxyMarbleLsd.totalSupply()
+    const initialSupply = await proxyMarbleLsd.totalShares()
     expect(initialSupply).to.equal(amount);
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address)
@@ -122,7 +122,7 @@ describe('MarbleLsdProxy', () => {
   it('Should be able to withdraw DFI and emit Withdraw event on successful withdraw', async () => {
     const amount = toWei('5');
     const initialAssets = await proxyMarbleLsd.totalAssets();
-    const initialShares = await proxyMarbleLsd.totalSupply();
+    const initialShares = await proxyMarbleLsd.totalShares();
     const shares = await proxyMarbleLsd.convertToShares(amount);
     const signer = accounts[4]
     await expect(proxyMarbleLsd.connect(signer).withdraw(amount, signer.address))
@@ -130,7 +130,7 @@ describe('MarbleLsdProxy', () => {
     .withArgs(signer.address, signer.address, amount, shares);
     const updatedAssets = await proxyMarbleLsd.totalAssets()
     expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
-    const updatedShares = await proxyMarbleLsd.totalSupply()
+    const updatedShares = await proxyMarbleLsd.totalShares()
     expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address)
@@ -140,7 +140,7 @@ describe('MarbleLsdProxy', () => {
   it('Should be able to redeem DFI and emit Withdraw event on successful redeem', async () => {
     const shares = toWei('5');
     const initialAssets = await proxyMarbleLsd.totalAssets();
-    const initialShares = await proxyMarbleLsd.totalSupply();
+    const initialShares = await proxyMarbleLsd.totalShares();
     const amount = await proxyMarbleLsd.convertToAssets(shares);
     const signer = accounts[4]
     await expect(proxyMarbleLsd.connect(signer).redeem(shares, signer.address))
@@ -148,7 +148,7 @@ describe('MarbleLsdProxy', () => {
     .withArgs(signer.address, signer.address, amount, shares);
     const updatedAssets = await proxyMarbleLsd.totalAssets()
     expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
-    const updatedShares = await proxyMarbleLsd.totalSupply()
+    const updatedShares = await proxyMarbleLsd.totalShares()
     expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address)
@@ -234,7 +234,7 @@ describe('MarbleLsdProxy', () => {
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
       .to.emit(proxyMarbleLsd, 'Deposit')
       .withArgs(signer.address, signer.address, amount, shares);
-      const initialSupply = await proxyMarbleLsd.totalSupply()
+      const initialSupply = await proxyMarbleLsd.totalShares()
       expect(initialSupply).to.equal(amount);
       const initialAssets = await proxyMarbleLsd.totalAssets()
       expect(initialAssets).to.equal(amount);
@@ -253,7 +253,7 @@ describe('MarbleLsdProxy', () => {
       const rewards = await proxyMarbleLsd.totalRewardAssets()
       expect(rewards).to.equal(amount);
 
-      const updateSupply = await proxyMarbleLsd.totalSupply()
+      const updateSupply = await proxyMarbleLsd.totalShares()
       expect(updateSupply).to.equal(initialSupply);
       const updatedAssets = await proxyMarbleLsd.totalAssets()
       expect(updatedAssets).to.equal(new BigNumber(amount.toString()).plus(amount.toString()));

@@ -148,40 +148,10 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Returns the name of the shares token.
-   */
-  function name() public view virtual returns (string memory) {
-    return shareToken.name();
-  }
-
-  /**
-   * @dev Returns the symbol of the shares token, usually a shorter version of the
-   * name.
-   */
-  function symbol() public view virtual returns (string memory) {
-    return shareToken.symbol();
-  }
-
-  /**
-   * @dev Returns the decimals of the shares token
-   * name.
-   */
-  function decimals() public view virtual returns (uint8) {
-    return shareToken.decimals();
-  }
-
-  /**
    * @dev Returns the amount of shares tokens in existence.
    */
-  function totalSupply() public view virtual returns (uint256) {
+  function totalShares() public view virtual returns (uint256) {
     return shareToken.totalSupply();
-  }
-
-  /**
-   * @dev Returns the amount of tokens owned by `account`.
-   */
-  function balanceOf(address _account) public view virtual returns (uint256) {
-    return shareToken.balanceOf(_account);
   }
 
   /**
@@ -245,7 +215,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * - MUST NOT revert.
    */
   function maxWithdraw(address _owner) public view virtual returns (uint256) {
-    return _convertToAssets(balanceOf(_owner), Math.Rounding.Down);
+    return _convertToAssets(_shareBalanceOf(_owner), Math.Rounding.Down);
   }
   
   /**
@@ -292,11 +262,11 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * through a redeem call.
    *
    * - MUST return a limited value if owner is subject to some withdrawal limit or timelock.
-   * - MUST return balanceOf(owner) if owner is not subject to any withdrawal limit or timelock.
+   * - MUST return _shareBalanceOf(owner) if owner is not subject to any withdrawal limit or timelock.
    * - MUST NOT revert.
    */
   function maxRedeem(address _owner) public view virtual returns (uint256) {
-    return balanceOf(_owner);
+    return _shareBalanceOf(_owner);
   }
 
   /**
@@ -405,10 +375,17 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
+   * @dev Internal balance function, returns the amount of tokens owned by `account`.
+   */
+  function _shareBalanceOf(address _account) public view virtual returns (uint256) {
+    return shareToken.balanceOf(_account);
+  }
+
+  /**
    * @dev Internal conversion function (from assets to shares) with support for rounding direction.
    */
   function _convertToShares(uint256 _assets, Math.Rounding _rounding) internal view virtual returns (uint256) {
-    uint256 supply = totalSupply(); // Saves an extra SLOAD if totalSupply is non-zero.
+    uint256 supply = totalShares(); // Saves an extra SLOAD if totalShares is non-zero.
     return supply == 0 ? _assets : _assets.mulDiv(supply, totalAssets(), _rounding);
   }
 
@@ -416,7 +393,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @dev Internal conversion function (from shares to assets) with support for rounding direction.
    */
   function _convertToAssets(uint256 _shares, Math.Rounding _rounding) internal view virtual returns (uint256) {
-    uint256 supply = totalSupply(); // Saves an extra SLOAD if totalSupply is non-zero.
+    uint256 supply = totalShares(); // Saves an extra SLOAD if totalShares is non-zero.
     return supply == 0 ? _shares : _shares.mulDiv(totalAssets(), supply, _rounding);
   }
 
