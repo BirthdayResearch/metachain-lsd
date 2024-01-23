@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ContainerLayout from "@/app/ui/components/ContainerLayout";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -17,10 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${inter.className}`}>
         <ContainerLayout>
           <main
-            className={`${inter.className} max-w-5xl w-full flex flex-row items-center justify-between`}
+            className={`max-w-5xl w-full flex flex-row items-center justify-between`}
           >
             {children}
           </main>

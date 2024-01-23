@@ -6,6 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],
@@ -47,19 +48,6 @@ const config: Config = {
         brand: {
           100: "#FF00AF",
           200: "#1530CC",
-        },
-        primary: {
-          50: "#E8DEFF",
-          100: "#D9C7FF",
-          200: "#B999FF",
-          250: "#AD87FF",
-          300: "#9A6BFF",
-          400: "#7A3DFF",
-          500: "#5B10FF",
-          600: "#4A00EB",
-          700: "#3E00C7",
-          800: "#3400A3",
-          900: "#28007F",
         },
         gray: {
           50: "#FAFAFA",

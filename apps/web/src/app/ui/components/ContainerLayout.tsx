@@ -54,7 +54,7 @@ export default function ContainerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-blue-950">
       <body>
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>

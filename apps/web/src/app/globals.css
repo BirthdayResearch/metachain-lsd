@@ -3,7 +3,27 @@
 @tailwind utilities;
 
 :root {
+    --stroke: #FFF;
+    --btn-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    background-color: black;
 }
 
 body {
+}
+
+.navigation-outline {
+    border-radius: 40px;
+    border: 1px solid var(--stroke, #FFF);
+    background: var(--btn-fill, linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 100%));
+    backdrop-filter: blur(10px);
+}
+
+.cta-button-outline {
+    border-radius: 59px;
+    border: 1px solid var(--stroke, #FFF);
+    background: var(--btn-fill, linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 100%));
+    backdrop-filter: blur(19.299999237060547px);
 }

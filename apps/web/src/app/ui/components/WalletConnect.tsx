@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useNetwork } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import MetaMaskIcon from "./icons/MetaMaskIcon";
+import MetaMaskIcon from "@/app/ui/icons/MetaMaskIcon";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import truncateTextFromMiddle from "@/app/lib/textHelper";
 import useResponsive from "@/app/lib/hooks/useResponsive";
@@ -53,7 +53,7 @@ function ConnectedButton({
       <div className="flex items-center">
         <MetaMaskIcon />
         <div className="ml-2 text-left">
-          <span className="block text-sm text-light-1000">{walletText}</span>
+          <span className="block text-sm text-dark-1000">{walletText}</span>
           <div className="flex items-center">
             <span className="text-xs text-dark-700">{chain}</span>
             <div className="ml-1 h-2 w-2 rounded-full bg-valid" />
