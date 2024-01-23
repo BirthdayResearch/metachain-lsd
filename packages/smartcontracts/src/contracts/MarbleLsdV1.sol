@@ -159,7 +159,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * name.
    */
   function symbol() public view virtual returns (string memory) {
-    return shareToken.name();
+    return shareToken.symbol();
   }
 
   /**
