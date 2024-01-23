@@ -50,7 +50,7 @@ function ConnectedButton({
           border-dark-card-stroke pl-4 pr-3 py-3 md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`,
       )}
     >
-      <div className="hidden md:flex items-center">
+      <div className="flex items-center">
         <MetaMaskIcon />
         <div className="ml-2 text-left">
           <span className="block text-sm text-light-1000">{walletText}</span>
@@ -60,10 +60,10 @@ function ConnectedButton({
           </div>
         </div>
       </div>
-      <div className="flex md:hidden">
-        <div className="mr-2 h-3 w-3 rounded-full bg-valid" />
-        <span className="text-xs text-light-1000">{walletText}</span>
-      </div>
+      {/*<div className="flex md:hidden">*/}
+      {/*  <div className="mr-2 h-3 w-3 rounded-full bg-valid" />*/}
+      {/*  <span className="text-xs text-light-1000">{walletText}</span>*/}
+      {/*</div>*/}
     </button>
   );
 }
