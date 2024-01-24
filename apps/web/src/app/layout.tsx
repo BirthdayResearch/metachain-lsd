@@ -1,9 +1,14 @@
-"use client"
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Test from "@/app/Test";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "MarbleFI",
+  description: "LSD protocol",
+};
 
 export default function RootLayout({
   children,
