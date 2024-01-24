@@ -377,7 +377,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @dev Internal balance function, returns the amount of tokens owned by `account`.
    */
-  function _shareBalanceOf(address _account) public view virtual returns (uint256) {
+  function _shareBalanceOf(address _account) internal view virtual returns (uint256) {
     return shareToken.balanceOf(_account);
   }
 
