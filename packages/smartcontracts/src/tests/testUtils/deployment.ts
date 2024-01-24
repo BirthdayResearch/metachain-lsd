@@ -10,7 +10,7 @@ export async function deployContracts(): Promise<StakingLsdDeploymentResult> {
   const StakingLsdUpgradeable = await ethers.getContractFactory('StakingLsdV1');
   const stakingLsdUpgradeable = await StakingLsdUpgradeable.deploy();
   await stakingLsdUpgradeable.waitForDeployment();
-  const stakingLsdUpgradeableAddress = await stakingLsdUpgradeable.getAddress()
+  const stakingLsdUpgradeableAddress = await stakingLsdUpgradeable.getAddress();
   const StakingLsdProxy = await ethers.getContractFactory('StakingLsdProxy');
   // deployment arguments for the Proxy contract
   const encodedData = StakingLsdV1__factory.createInterface().encodeFunctionData('initialize', [
@@ -21,24 +21,24 @@ export async function deployContracts(): Promise<StakingLsdDeploymentResult> {
     // receipt token name
     'DFI STAKING RECEIPT TOKEN',
     // receipt token symbol
-    'xDFI'
+    'xDFI',
   ]);
 
   const stakingLsdProxy = await StakingLsdProxy.deploy(stakingLsdUpgradeableAddress, encodedData);
   await stakingLsdProxy.waitForDeployment();
-  const stakingLsdProxyAddress = await stakingLsdProxy.getAddress()
+  const stakingLsdProxyAddress = await stakingLsdProxy.getAddress();
   const proxyStakingLsd = StakingLsdUpgradeable.attach(stakingLsdProxyAddress) as StakingLsdV1;
-  
-  const receiptTokenAddress = await proxyStakingLsd.receiptToken()
+
+  const receiptTokenAddress = await proxyStakingLsd.receiptToken();
   const ReceiptTokenFactory = await ethers.getContractFactory('ReceiptToken');
-  const receiptToken = ReceiptTokenFactory.attach(receiptTokenAddress) as ReceiptToken
-  
+  const receiptToken = ReceiptTokenFactory.attach(receiptTokenAddress) as ReceiptToken;
+
   return {
     proxyStakingLsd,
     stakingLsdImplementation: stakingLsdUpgradeable,
     defaultAdminSigner,
     walletSigner,
-    receiptToken
+    receiptToken,
   };
 }
 
