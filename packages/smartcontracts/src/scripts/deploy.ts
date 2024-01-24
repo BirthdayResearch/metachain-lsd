@@ -2,8 +2,8 @@ import { deployMarbleLsdProxy } from "./deployMarbleLsdProxy";
 import { deployMarbleLsdV1 } from "./deployMarbleLsdV1";
 
 // when deploying, replace the following values with the correct ones
-const ADMIN_ADDRESS = '0x6aA59C49B27D9a3cBd9f976f7e6179F84be53C05'; // Multi sig wallet
-const WALLET_ADDRESS = '0x6aA59C49B27D9a3cBd9f976f7e6179F84be53C05'; // Multi sig wallet
+const ADMIN_ADDRESS = ''; // Multi sig wallet
+const WALLET_ADDRESS = ''; // Multi sig wallet
 
 // Run this script to deploy all contracts on mainnet.
 // npx hardhat run --network mainnet ./scripts/deploy.ts
