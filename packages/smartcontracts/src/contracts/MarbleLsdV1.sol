@@ -52,6 +52,8 @@ error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable, Pausable {
   using Math for uint256;
 
+  bytes32 public constant REWARDS_DISTRIBUTER_ROLE = keccak256('REWARDS_DISTRIBUTER_ROLE');
+
   ShareToken public shareToken;
   
   string public constant NAME ='MARBLE_LSD';
@@ -141,7 +143,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @dev To allocate rewards send fund to wallet address
    */
-  receive() external payable onlyRole(DEFAULT_ADMIN_ROLE) {
+  receive() external payable onlyRole(REWARDS_DISTRIBUTER_ROLE) {
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
     totalRewardAssets += msg.value;
     emit Rewards(_msgSender(), msg.value);

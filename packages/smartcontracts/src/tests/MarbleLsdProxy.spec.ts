@@ -11,6 +11,7 @@ import { toWei } from './testUtils/mathUtils';
 describe('MarbleLsdProxy', () => {
   let proxyMarbleLsd: MarbleLsdV1;
   let defaultAdminSigner: SignerWithAddress;
+  let rewardDistributerSigner: SignerWithAddress;
   let walletSigner: SignerWithAddress;
   let accounts: SignerWithAddress[] = [];
   let shareToken: ShareToken;
@@ -19,6 +20,7 @@ describe('MarbleLsdProxy', () => {
     const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
+    rewardDistributerSigner= fixture.rewardDistributerSigner;
     walletSigner = fixture.walletSigner;
     shareToken = fixture.shareToken;
     accounts = await ethers.getSigners();
@@ -226,6 +228,20 @@ describe('MarbleLsdProxy', () => {
   });
 
   describe('Manage rewards', () => {
+    it('Should fail if distributed rewards with non REWARDS_DISTRIBUTER_ROLE', async () => {
+      const amount = toWei('10');
+      const hash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE()
+      // send rewards
+      const newSigner = accounts[10]
+      await expect(newSigner.sendTransaction({
+        to: await proxyMarbleLsd.getAddress(),
+        data: "0x",
+        value: amount
+      })).to.be.revertedWith(
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role ${hash}`,
+      );
+    })
+
     it('Should change DFI-xDFI ratio when rewards are distributed', async () => {
       // Need to add to the timestamp of the previous block to match the next block the tx is mined in
       const amount = toWei('10');
@@ -243,13 +259,13 @@ describe('MarbleLsdProxy', () => {
       expect(balance).to.equal(shares);
 
       // send rewards
-      await expect(defaultAdminSigner.sendTransaction({
+      await expect(rewardDistributerSigner.sendTransaction({
         to: await proxyMarbleLsd.getAddress(),
         data: "0x",
         value: amount
       }))
       .to.emit(proxyMarbleLsd, 'Rewards')
-      .withArgs(defaultAdminSigner.address, amount);
+      .withArgs(rewardDistributerSigner.address, amount);
       const rewards = await proxyMarbleLsd.totalRewardAssets()
       expect(rewards).to.equal(amount);
 
