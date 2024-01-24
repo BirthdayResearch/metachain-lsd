@@ -1,29 +1,57 @@
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
+import { ethers } from 'hardhat';
 
+import { StakingLsdV1, ReceiptToken } from '../generated';
 import { deployContracts, StakingLsdDeploymentResult } from './testUtils/deployment';
 import { toWei } from './testUtils/mathUtils';
-import { StakingLsdV1 } from '../generated';
-import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
-import { ethers } from 'hardhat';
 
 describe('StakingLsdProxy', () => {
   let proxyStakingLsd: StakingLsdV1;
   let defaultAdminSigner: SignerWithAddress;
   let walletSigner: SignerWithAddress;
   let accounts: SignerWithAddress[] = [];
+  let receiptToken: ReceiptToken;
 
   before(async () => {
     const fixture: StakingLsdDeploymentResult = await loadFixture(deployContracts);
     proxyStakingLsd = fixture.proxyStakingLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
     walletSigner = fixture.walletSigner;
+    receiptToken = fixture.receiptToken;
     accounts = await ethers.getSigners();
   })
 
   it('Should have total supply=0 before staking any DFI', async () => {
     const initialSupply = await proxyStakingLsd.totalSupply()
     expect(initialSupply).to.equal('0');
+  });
+
+  it('Should have recept token deployed', async () => {
+    const address = await proxyStakingLsd.receiptToken()
+    expect(address).to.not.equal(null);
+    expect(address.length).to.equal(42);
+  });
+
+  it('Should get receipt token name', async () => {
+    const name = await receiptToken.name()
+    expect(name).to.equal('DFI STAKING RECEIPT TOKEN');
+  });
+
+  it('Should get receipt token symbol', async () => {
+    const symbol = await receiptToken.symbol()
+    expect(symbol).to.equal('xDFI');
+  });
+
+  it('Should get receipt decimal', async () => {
+    const decimal = await receiptToken.decimals()
+    expect(decimal).to.equal('18');
+  });
+
+  it('Should ensure that the owner of the ReceiptToken contract is set to the Staking contract.', async () => {
+    const owner = await receiptToken.owner()
+    expect(owner).to.equal(await proxyStakingLsd.getAddress());
   });
 
   it('Should fail when stake zero DFI', async () => {
@@ -51,6 +79,9 @@ describe('StakingLsdProxy', () => {
     .withArgs(signer.address, amount, expectedTimestamp);
     const initialSupply = await proxyStakingLsd.totalSupply()
     expect(initialSupply).to.equal(amount);
+    // Check receipt token balance
+    const balance = await receiptToken.balanceOf(signer.address)
+    expect(balance).to.equal(amount);
   });
 
   it('Should be able to withdraw DFI and emit WITHDRAW event on successful withdraw', async () => {
@@ -63,6 +94,9 @@ describe('StakingLsdProxy', () => {
     .withArgs(signer.address, amount, expectedTimestamp);
     const initialSupply = await proxyStakingLsd.totalSupply()
     expect(initialSupply).to.equal('0');
+    // Check receipt token balance
+    const balance = await receiptToken.balanceOf(signer.address)
+    expect(balance).to.equal('0');
   });
   
   describe('Wallet address change tests', () => {
