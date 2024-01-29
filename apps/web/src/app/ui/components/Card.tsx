@@ -14,7 +14,7 @@ export function Card({
   testID: string;
 }) {
   return (
-    <div className="flex flex-col gap-6 items-center text-center rounded-[20px] border p-10 card-border card-gradient-background text-light-1000">
+    <div className="flex flex-col gap-6 items-center text-center rounded-[20px] border p-10 card-border card-gradient-background">
       <div>
         <Tag text={label} testID={testID} />
       </div>

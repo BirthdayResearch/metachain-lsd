@@ -28,15 +28,15 @@ const HowItWorksItems = [
 
 export default function HowItWorksSection() {
   return (
-    <div className="w-full flex flex-col items-center justify-center text-light-00 gap-16">
-      <div className="">
+    <div className="w-full my-[120px] flex flex-col items-center justify-center gap-12">
+      <div className="flex flex-col gap-2">
         <CardTitle text="How it works" testID="how-it-works" customStyle="" />
         <CardDesc
           text="Marble makes it easy for anyone to yield rewards."
           testID="how-it-works-desc"
         />
       </div>
-      <div className="flex items-center gap-6">
+      <div className="grid grid-cols-3 gap-6">
         {HowItWorksItems.map((item) => (
           <Card
             Icon={item.icon}

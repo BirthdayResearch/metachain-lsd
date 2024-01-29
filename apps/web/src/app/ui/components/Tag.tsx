@@ -4,7 +4,7 @@ export function Tag({
   text,
   testID,
   customStyle,
-  customTextStyle = "text-light-1000",
+  customTextStyle,
 }: {
   text: string;
   customStyle?: string;
