@@ -9,14 +9,14 @@ export function CardTitle({
   testID: string;
 }) {
   return (
-    <h3
+    <div
       data-testid={`card-title-${testID}`}
       className={clsx(
-        "text-5xl leading-[56px] text-center font-normal -tracking-[0.02em]",
+        "text-[40px] leading-[56px] text-center font-semibold",
         customStyle ?? "w-fit",
       )}
     >
       {text}
-    </h3>
+    </div>
   );
 }

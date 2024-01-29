@@ -29,8 +29,12 @@ const HowItWorksItems = [
 export default function HowItWorksSection() {
   return (
     <div className="w-full my-[120px] flex flex-col items-center justify-center gap-12">
-      <div className="flex flex-col gap-2">
-        <CardTitle text="How it works" testID="how-it-works" customStyle="" />
+      <div className="flex flex-col text-center gap-2">
+        <CardTitle
+          text="How it works"
+          testID="how-it-works"
+          customStyle="w-full"
+        />
         <CardDesc
           text="Marble makes it easy for anyone to yield rewards."
           testID="how-it-works-desc"

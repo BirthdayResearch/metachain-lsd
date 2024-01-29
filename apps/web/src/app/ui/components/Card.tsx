@@ -21,7 +21,7 @@ export function Card({
       <div>
         <Icon size={32} />
       </div>
-      <div className="font-mono text-sm leading-[21px]">{desc}</div>
+      <div className="text-sm leading-[21px]">{desc}</div>
     </div>
   );
 }

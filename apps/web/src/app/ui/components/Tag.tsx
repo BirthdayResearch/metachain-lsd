@@ -16,7 +16,7 @@ export function Tag({
       data-testid={`tag-${testID}`}
       className={clsx(
         "bg-light-00 rounded-[20px] py-2 px-4",
-        "font-mono text-[10px] leading-3 font-bold tracking-wider",
+        "text-[10px] leading-3 font-bold tracking-wider",
         customTextStyle,
         customStyle ?? "w-fit",
       )}
