@@ -15,7 +15,7 @@ export function CTAButton({
     <button
       data-testid={`cta-button-${testID}`}
       className={clsx(
-        "primary-btn px-9 py-4",
+        "primary-btn-ui px-9 py-5 md:py-4",
         "hover:bg-opacity-60",
         customTextStyle,
         customStyle ?? "w-fit",

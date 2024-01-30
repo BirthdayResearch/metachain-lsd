@@ -1,6 +1,12 @@
 "use client";
 
-import Base from "@/app/Base";
+import UnlockPower from "@/app/ui/sections/UnlockPower";
+import HowItWorksSection from "@/app/ui/sections/HowItWorksSection";
 export default function Page() {
-  return <Base />;
+  return (
+    <div className="flex justify-center items-center w-full my-12 md:my-24">
+      <UnlockPower />
+      <HowItWorksSection />
+    </div>
+  );
 }

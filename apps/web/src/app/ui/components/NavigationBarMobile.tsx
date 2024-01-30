@@ -8,7 +8,8 @@ export default function NavigationBarMobile({
   return (
     <button
       onClick={onClick}
-      className="lg:hidden flex text-light-1000 py-1.5 px-5 justify-center items-center"
+      className="md:hidden flex text-light-1000 py-1.5 375
+      justify-center items-center"
     >
       <MdMenu size={28} />
     </button>

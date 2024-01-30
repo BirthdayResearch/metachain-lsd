@@ -11,26 +11,26 @@ import HeaderLogo from "@/app/ui/components/HeaderTitle";
 export default function Header() {
   const [isMenuActive, setisMenuActive] = useState(false);
   return (
-    <div className="max-w-5xl min-w-fit w-full flex lg:items-center justify-between font-mono text-sm md:mb-8">
+    <div className="max-w-5xl min-w-fit w-full flex lg:items-center justify-between font-mono text-sm md:mb-16">
       <HeaderLogo />
 
       {/*  Web */}
       <NavigationBar />
-      <div className="items-end justify-center lg:flex hidden">
+      <div className="items-end justify-center md:flex hidden">
         <ConnectButton />
       </div>
       {/*  Web  */}
 
       {/* Mobile */}
       {isMenuActive ? (
+        //     Open Menu
+        <div />
+      ) : (
         <NavigationBarMobile
           onClick={() => {
             setisMenuActive(true);
           }}
         />
-      ) : (
-        //     Open Menu
-        <div />
       )}
       {/* Mobile */}
     </div>

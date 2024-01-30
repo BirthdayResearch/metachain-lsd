@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import ContainerLayout from "@/app/ui/components/ContainerLayout";
-
-const inter = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -16,18 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
-      >
-        <ContainerLayout>
-          <main
-            className={`max-w-5xl w-full flex flex-row items-center justify-between`}
-          >
-            {children}
-          </main>
-        </ContainerLayout>
-      </body>
-    </html>
+    <ContainerLayout>
+      <main className="md:max-w-5xl flex flex-row">{children}</main>
+    </ContainerLayout>
   );
 }

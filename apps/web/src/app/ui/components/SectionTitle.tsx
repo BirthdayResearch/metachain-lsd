@@ -9,14 +9,14 @@ export function SectionTitle({
   testID: string;
 }) {
   return (
-    <h3
+    <h1
       data-testid={`section-title-${testID}`}
       className={clsx(
-        "text-8xl text-center leading-[104px] font-semibold -tracking-[1.92] text-light-1000",
+        "text-4xl text-center text-light-1000 md:leading-[104px] font-semibold md:-tracking-[1.92] md:text-8xl",
         customStyle ?? "w-fit",
       )}
     >
       {text}
-    </h3>
+    </h1>
   );
 }
