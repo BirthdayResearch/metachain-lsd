@@ -12,6 +12,8 @@ import { publicProvider } from "wagmi/providers/public";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { Space_Grotesk } from "next/font/google";
+import { Next13ProgressBar } from "next13-progressbar";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -63,9 +65,15 @@ export default function ContainerLayout({
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12">
+            <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000">
               <Header />
               {children}
+              <Next13ProgressBar
+                height="4px"
+                color="#69FF23"
+                options={{ showSpinner: true }}
+                showOnShallow
+              />
             </div>
           </ConnectKitProvider>
         </WagmiConfig>
