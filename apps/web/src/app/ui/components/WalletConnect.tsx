@@ -17,14 +17,12 @@ function PreConnectedButton({
       data-testid="connect-button"
       type="button"
       className={clsx(
-        `relative z-[1] bg-dark-00 flex items-center justify-center
-            rounded-[10px] px-4 py-2 md:py-2.5 lg:py-3
-            before:absolute before:-z-[1]
-            before:transition-all before:duration-300 before:opacity-0 before:-inset-[1.5px]`,
+        `primary-btn relative flex items-center justify-center
+         px-9 py-4`,
       )}
       onClick={onClick}
     >
-      <span className="text-sm text-light-00">{btnLabel}</span>
+      <span className="text-sm font-bold text-light-1000">{btnLabel}</span>
     </button>
   );
 }
