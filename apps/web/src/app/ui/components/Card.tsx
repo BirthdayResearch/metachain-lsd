@@ -5,7 +5,6 @@ export function Card({
   label,
   desc,
   Icon,
-
   testID,
 }: {
   label: string;
