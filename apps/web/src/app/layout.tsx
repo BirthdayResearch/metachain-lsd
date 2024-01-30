@@ -17,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>
+      <body
+        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
+      >
         <ContainerLayout>
           <main
             className={`max-w-5xl w-full flex flex-row items-center justify-between`}

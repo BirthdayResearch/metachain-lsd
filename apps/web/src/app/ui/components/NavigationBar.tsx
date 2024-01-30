@@ -8,15 +8,20 @@ const navigationTabs = [
 
 export default function NavigationBar() {
   return (
-    <div className="navigation-outline flex py-1.5 px-5 justify-center items-center gap-1">
+    <div
+      data-testid="header-navigation-bar-web"
+      className="navigation-header-ui py-1.5 px-5 justify-center items-center gap-x-1 hidden lg:flex"
+    >
       {navigationTabs.map((link) => {
         return (
           <a
             key={link.label}
             href={link.href}
-            className="flex h-[48px] grow items-center justify-center text-sm hover:bg-sky-100 text-light-00 hover:text-blue-600 p-2.5 px-4"
+            className="flex h-[48px] grow items-center justify-center text-sm text-light-00 p-2.5 px-4"
           >
-            <p className="text-sm">{link.label}</p>
+            <p className="text-sm text-light-1000 font-bold	active:text-opacity-10">
+              {link.label}
+            </p>
           </a>
         );
       })}
