@@ -46,8 +46,7 @@ const config: Config = {
           1000: "#000000",
         },
         brand: {
-          100: "#FF00AF",
-          200: "#1530CC",
+          100: "#69FF23",
         },
         gray: {
           50: "#FAFAFA",
