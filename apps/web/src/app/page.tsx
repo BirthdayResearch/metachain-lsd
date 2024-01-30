@@ -5,7 +5,7 @@ import HowItWorksSection from "@/app/ui/sections/HowItWorksSection";
 import MarbleOpportunitiesSection from "@/app/ui/sections/MarbleOpportunitiesSection";
 export default function Page() {
   return (
-    <div className="flex flex-col justify-center items-center w-full my-12 md:my-24">
+    <div className="flex flex-col justify-center items-center w-full my-12 md:my-24 gap-[240px]">
       <UnlockPower />
       <MarbleOpportunitiesSection />
       <HowItWorksSection />

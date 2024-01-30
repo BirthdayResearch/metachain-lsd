@@ -37,7 +37,7 @@ const OpportunitiesItems = [
 
 export default function MarbleOpportunitiesSection() {
   return (
-    <div className="w-full my-[120px] flex flex-col items-center justify-center gap-12">
+    <div className="w-full flex flex-col items-center justify-center gap-12">
       <div className="flex flex-col text-center gap-2">
         <CardTitle
           text="Take advantage of Marble"
@@ -80,7 +80,7 @@ function Item({
       className="flex flex-col p-10"
     >
       <div className="mb-[20px]">
-        <Icon size={32} />
+        <Icon size={28} />
       </div>
       <div className="flex flex-col gap-2">
         <div className="font-medium text-[20px] leading-[24px]">{label}</div>

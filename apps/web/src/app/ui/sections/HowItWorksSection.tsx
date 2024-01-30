@@ -28,7 +28,7 @@ const HowItWorksItems = [
 
 export default function HowItWorksSection() {
   return (
-    <div className="w-full my-[120px] flex flex-col items-center justify-center gap-12">
+    <div className="w-full flex flex-col items-center justify-center gap-12">
       <div className="flex flex-col text-center gap-2">
         <CardTitle
           text="How it works"
