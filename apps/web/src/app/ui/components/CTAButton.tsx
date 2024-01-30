@@ -21,8 +21,9 @@ export function CTAButton({
         customStyle ?? "w-fit",
       )}
     >
-      <span className="active:text-opacity-60 text-sm font-bold text-light-1000">{text}</span>
-
+      <span className="active:text-opacity-60 text-sm font-bold text-light-1000">
+        {text}
+      </span>
     </button>
   );
 }
