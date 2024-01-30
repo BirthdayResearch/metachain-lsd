@@ -17,7 +17,7 @@ function PreConnectedButton({
       data-testid="connect-button"
       type="button"
       className={clsx(
-        `primary-btn relative flex items-center justify-center
+        `primary-btn-ui relative flex items-center justify-center
          px-9 py-4`,
       )}
       onClick={onClick}

@@ -11,6 +11,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
+import { Space_Grotesk } from "next/font/google";
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -48,17 +49,21 @@ const config = createConfig(
   }),
 );
 
+const inter = Space_Grotesk({ subsets: ["latin"] });
+
 export default function ContainerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-blue-950">
-      <body>
+    <html lang="en">
+      <body
+        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
+      >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <div className="flex min-h-screen flex-col items-center w-full p-10">
+            <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12">
               <Header />
               {children}
             </div>

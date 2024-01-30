@@ -6,6 +6,8 @@
     --UI-Component-Stroke-1: #FFF;
     --UI-Component-Stroke: #FFF;
     --UI-Button-Stroke: #FFF;
+    --Mono-0: #FFF;
+
     --Accent-1: linear-gradient(90deg, rgba(105, 255, 35, 0.90) 0.03%, rgba(0, 255, 255, 0.90) 96.46%);
 
     --UI-Button-Fill: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.06) 100%);
@@ -13,6 +15,7 @@
 
     --UI-Gradient-2: #5444FE;
     --UI-Component-BG-1: linear-gradient(180deg, rgba(203, 203, 203, 0.25) 0%, rgba(255, 255, 255, 0.13) 100%);
+    --UI-Component-BG-2:  rgba(255, 255, 255, 0.10);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,17 +25,23 @@
 body {
 }
 
-.primary-btn {
+.primary-btn-ui {
     border-radius: 30px;
     background: var(--Accent-1);
     backdrop-filter: blur(27.899999618530273px);
 }
 
-.navigation-header-ui {
-    border-radius: 40px;
-    border: 1px solid var(--UI-Component-Stroke-1);
-    background: var(--UI-Component-BG-1);
+/*.navigation-header-ui {*/
+/*    border-radius: 40px;*/
+/*    border: 1px solid var(--UI-Component-Stroke-1);*/
+/*    background: var(--UI-Component-BG-1);*/
 
-    /* Blur/Header Navigation */
-    backdrop-filter: blur(50px);
+/*    !* Blur/Header Navigation *!*/
+/*    backdrop-filter: blur(50px);*/
+/*}*/
+
+.tag-ui {
+    border-radius: 20px;
+    background: var(--Mono-0, #FFF);
+    backdrop-filter: blur(27.899999618530273px);
 }

@@ -10,7 +10,7 @@ export default function NavigationBar() {
   return (
     <div
       data-testid="header-navigation-bar-web"
-      className="navigation-header-ui py-1.5 px-5 justify-center items-center gap-x-1 hidden lg:flex"
+      className="border border-light-00/10 backdrop-opacity-50 bg-light-00/10 hover:backdrop-opacity-30 rounded-[40px] py-1.5 px-5 justify-center items-center gap-x-1 hidden lg:flex"
     >
       {navigationTabs.map((link) => {
         return (
