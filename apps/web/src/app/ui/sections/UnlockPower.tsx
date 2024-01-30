@@ -3,7 +3,7 @@ import { SectionDescription } from "@/app/ui/components/SectionDescription";
 import { CTAButton } from "@/app/ui/components/CTAButton";
 import { SecondaryButton } from "@/app/ui/components/SecondaryButton";
 
-export default function MaximizeSection() {
+export default function UnlockPower() {
   return (
     <div className="w-full flex flex-col items-center justify-center text-light-00 gap-16">
       <div className="grid gap-6">
