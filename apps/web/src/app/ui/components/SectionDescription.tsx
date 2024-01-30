@@ -10,9 +10,9 @@ export function SectionDescription({
 }) {
   return (
     <h1
-      data-testid={`section-title-${testID}`}
+      data-testid={`section-description-${testID}`}
       className={clsx(
-        "text-[28px] text-center leading-[44px] -tracking-[1.92] font-light",
+        "text-[28px] text-center leading-[44px] -tracking-[1.92] font-light text-light-1000",
         customStyle ?? "w-fit",
       )}
     >

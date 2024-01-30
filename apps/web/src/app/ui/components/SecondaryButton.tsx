@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export function CTAButton({
+export function SecondaryButton({
   text,
   testID,
   customStyle,
@@ -10,19 +10,20 @@ export function CTAButton({
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
+  isOutline?: boolean;
 }) {
   return (
     <button
-      data-testid={`cta-button-${testID}`}
+      data-testid={`secondary-button-${testID}`}
       className={clsx(
-        "primary-btn px-9 py-4",
-        "hover:bg-opacity-60",
+        "border border-light-1000 rounded-[30px] px-9 py-4",
+        "border-light-1000 hover:border-brand-100 active:text-opacity-60",
+        "text-sm font-bold text-light-1000",
         customTextStyle,
         customStyle ?? "w-fit",
       )}
     >
-      <span className="active:text-opacity-60 text-sm font-bold text-light-1000">{text}</span>
-
+      {text}
     </button>
   );
 }
