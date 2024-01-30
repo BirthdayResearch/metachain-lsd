@@ -1,7 +1,12 @@
-export default function HeaderTitle() {
+import Image from "next/image";
+export default function HeaderLogo() {
   return (
-    <p className="flex justify-center pb-6 pt-8">
-      <span className="text-light-00 font-bold">marblefi</span>
-    </p>
+    <Image
+      data-testid="header-marblefi-logo"
+      src="/header-logo.svg"
+      alt="MarbleFi Logo"
+      width={170}
+      height={40}
+    />
   );
 }
