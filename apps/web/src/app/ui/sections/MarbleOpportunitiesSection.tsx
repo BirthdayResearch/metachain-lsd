@@ -77,7 +77,7 @@ function Item({
   return (
     <div
       data-testid={`marble-opp-item-${testID}`}
-      className="flex flex-col p-10"
+      className="flex flex-col p-6 md:p-10"
     >
       <div className="mb-[20px]">
         <Icon size={28} />
