@@ -40,7 +40,7 @@ export default function HowItWorksSection() {
           testID="how-it-works-desc"
         />
       </div>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {HowItWorksItems.map((item) => (
           <Card
             Icon={item.icon}

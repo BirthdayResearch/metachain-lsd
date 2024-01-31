@@ -22,7 +22,9 @@ function PreConnectedButton({
       )}
       onClick={onClick}
     >
-      <span className="text-sm font-bold text-light-1000">{btnLabel}</span>
+      <span className="text-sm font-bold text-light-1000 active:text-opacity-60">
+        {btnLabel}
+      </span>
     </button>
   );
 }
