@@ -38,7 +38,7 @@ const OpportunitiesItems = [
 export default function MarbleOpportunitiesSection() {
   return (
     <div className="w-full flex flex-col items-center justify-center gap-12">
-      <div className="flex flex-col text-center gap-2">
+      <div className="flex flex-col text-center gap-3 md:gap-2">
         <CardTitle
           text="Take advantage of Marble"
           testID="marble-opp-title"
@@ -49,7 +49,7 @@ export default function MarbleOpportunitiesSection() {
           testID="marble-opp-desc"
         />
       </div>
-      <div className="grid grid-cols-4 divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
+      <div className="grid md:grid-cols-4 divide-y-[0.5px] md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
         {OpportunitiesItems.map((item) => (
           <Item
             Icon={item.icon}
