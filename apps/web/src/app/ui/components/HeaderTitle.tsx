@@ -9,6 +9,7 @@ export default function HeaderLogo() {
         alt="MarbleFi Logo"
         width={170}
         height={40}
+        className="w-[132px] h-[30px] md:w-[170px] md:h-[40px]"
       />
     </Link>
   );

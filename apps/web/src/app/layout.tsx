@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <ContainerLayout>
-      <main className="md:max-w-5xl flex flex-row">{children}</main>
+      <main className="md:max-w-5xl">{children}</main>
     </ContainerLayout>
   );
 }
