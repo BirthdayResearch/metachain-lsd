@@ -49,7 +49,7 @@ export default function MarbleOpportunitiesSection() {
           testID="marble-opp-desc"
         />
       </div>
-      <div className="flex marble-opp-gradient-bg marble-opp-border rounded-[20px]">
+      <div className="grid grid-cols-4 divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
         {OpportunitiesItems.map((item) => (
           <Item
             Icon={item.icon}
