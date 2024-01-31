@@ -6,7 +6,7 @@ import MarbleOpportunitiesSection from "@/app/ui/sections/MarbleOpportunitiesSec
 import JoinTheCommunitySection from "@/app/ui/sections/JoinTheCommunitySection";
 export default function Page() {
   return (
-    <div className="flex flex-col justify-center items-center w-full my-12 md:my-24 gap-[240px]">
+    <div className="flex flex-col justify-center items-center w-full my-12 md:my-24 gap-[96px] md:gap-[240px]">
       <UnlockPower />
       <MarbleOpportunitiesSection />
       <HowItWorksSection />
