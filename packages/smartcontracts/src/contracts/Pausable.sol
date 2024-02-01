@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
 /** @notice @dev
- * This error occurs when depoisit of DeFi failed
+ * This error occurs when deposit of DeFi failed
  */
 error DEPOSIT_PAUSED();
 
@@ -20,7 +20,7 @@ error WITHDRAWAL_PAUSED();
 contract Pausable is AccessControlUpgradeable {
 
   /**
-   * @notice Emitted when pause/unpause of depoisit happens
+   * @notice Emitted when pause/unpause of deposit happens
    * @param status Status of pause/unpause
    * @param owner Owner address
    */
@@ -43,9 +43,9 @@ contract Pausable is AccessControlUpgradeable {
   bool public isWithdrawPaused = false;
 
   /**
-   * @dev Modifier to make a function callable only when the depoisit is not paused.  
+   * @dev Modifier to make a function callable only when the deposit is not paused.  
    */
-  modifier whenDepoisitNotPaused() {
+  modifier whenDepositNotPaused() {
     if (isDepositPaused) revert DEPOSIT_PAUSED();
     _;
   }

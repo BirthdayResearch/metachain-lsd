@@ -24,6 +24,11 @@ error WITHDRAWAL_FAILED();
 error AMOUNT_IS_ZERO();
 
 /** @notice @dev
+ * This error occurs when `_amount` is less than minimum deposit amount
+ */
+error LESS_THAN_MIN_DEPOSIT();
+
+/** @notice @dev
  * This error occurs when withdraw `assets` is more than contract balance
  */
 error INSUFFICIENT_WITHDRAW_AMOUNT();
@@ -59,9 +64,9 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
 
   address public walletAddress;
 
-  // TODO update Total staked while transferring assets for creating MN
   uint256 public totalStakedAssets;
   uint256 public totalRewardAssets;
+  uint256 public minDeposit = 1e18; // 1 DFI 
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
@@ -106,9 +111,19 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @param oldAddress The old address to be wallet address
    * @param newAddress The new address to be wallet address
    */
-  event WALLET_ADDRESS_CHANGED(
+  event WALLET_ADDRESS_UPDATED(
     address indexed oldAddress,
     address indexed newAddress
+  );
+
+  /**
+   * @notice Emitted when the min wallet address is changed
+   * @param oldAmount The old min deposit amount
+   * @param newAmount The new min deposit amount
+   */
+  event MIN_DEPOSIT_UPDATED(
+    uint256 indexed oldAmount,
+    uint256 indexed newAmount
   );
 
   /**
@@ -294,9 +309,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * 
    * - MUST emit the Deposit event.
    */
-  function deposit(address _receiver) payable public virtual whenDepoisitNotPaused returns (uint256) {
-    // check zero amount
-    if (msg.value == 0) revert AMOUNT_IS_ZERO();
+  function deposit(address _receiver) payable public virtual whenDepositNotPaused returns (uint256) {
+    if (msg.value <= minDeposit) revert LESS_THAN_MIN_DEPOSIT();
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
     uint256 maxAssets = maxDeposit(_receiver);
@@ -360,12 +374,25 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @notice Used by addresses with Admin and Operational roles to set the new flush receive address
    * @param _newAddress new address to be flushed to
    */
-  function changeWalletAddress(address _newAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateWalletAddress(address _newAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = walletAddress;
     walletAddress = _newAddress;
 
-    emit WALLET_ADDRESS_CHANGED(_oldAddress, _newAddress);
+    emit WALLET_ADDRESS_UPDATED(_oldAddress, _newAddress);
+  }
+
+  /**
+   * @notice Used by addresses with Admin and Operational roles to set the new min deposit amount
+   * @param _amount new amount to be set as min deposit
+   */
+  function updateMinDeposit(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // check zero amount
+    if (_amount == 0) revert AMOUNT_IS_ZERO();
+    uint256 _oldDeposit = minDeposit;
+    minDeposit = _amount;
+
+    emit MIN_DEPOSIT_UPDATED(_oldDeposit, _amount);
   }
 
   /**
