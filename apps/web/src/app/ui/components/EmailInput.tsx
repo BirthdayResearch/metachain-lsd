@@ -37,7 +37,7 @@ export default function EmailInput({
           className="absolute right-7 rounded-full bg-dark-00 bg-opacity-10 active:opacity-70 text-dark-00"
           onClick={() => setValue("")}
         >
-          <IoIosClose size={14} />
+          <IoIosClose size={20} />
         </button>
       )}
     </form>
