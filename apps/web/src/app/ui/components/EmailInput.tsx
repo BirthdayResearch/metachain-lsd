@@ -16,7 +16,7 @@ export default function EmailInput({
   return (
     <form
       className={clsx(
-        "w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px] border border-light-1000/10",
+        "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px] border border-light-1000/10",
         customStyle,
       )}
     >
@@ -34,10 +34,10 @@ export default function EmailInput({
       {value !== "" && (
         <button
           type="button"
-          className="rounded-full bg-dark-00 bg-opacity-10 active:opacity-70 text-dark-00"
+          className="absolute right-7 rounded-full bg-dark-00 bg-opacity-10 active:opacity-70 text-dark-00"
           onClick={() => setValue("")}
         >
-          <IoIosClose size={20} />
+          <IoIosClose size={14} />
         </button>
       )}
     </form>
