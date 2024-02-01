@@ -16,7 +16,7 @@ export default function EmailInput({
   return (
     <form
       className={clsx(
-        "w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px] border border-light-1000/10",
+        "w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px] border border-light-1000/10",
         customStyle,
       )}
     >
