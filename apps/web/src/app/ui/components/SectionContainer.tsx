@@ -5,14 +5,14 @@ export default function SectionContainer({
   customContainerStyle,
   children,
 }: {
-  customContainerStyle: string;
+  customContainerStyle?: string;
   children: ReactElement;
 }) {
   return (
     <div
       className={clsx(
         customContainerStyle,
-        "w-full flex items-center justify-between py-12 md:py-[120px] md:gap-y-16",
+        "w-full flex items-center justify-between py-12 md:py-[120px] md:gap-y-16 max-w-xs md:max-w-4xl",
       )}
     >
       {children}
