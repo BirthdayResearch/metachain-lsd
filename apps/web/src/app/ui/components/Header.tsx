@@ -11,7 +11,7 @@ import HeaderLogo from "@/app/ui/components/HeaderTitle";
 export default function Header() {
   const [isMenuActive, setisMenuActive] = useState(false);
   return (
-    <div className="max-w-5xl min-w-fit w-full flex lg:items-center justify-between font-mono text-sm md:mb-16">
+    <div className="max-w-5xl min-w-fit w-full flex items-center justify-between font-mono text-sm mb-8 md:mb-16">
       <HeaderLogo />
 
       {/*  Web */}
