@@ -11,7 +11,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
-import { Space_Grotesk } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
 import React from "react";
 
@@ -51,7 +51,7 @@ const config = createConfig(
   }),
 );
 
-const inter = Space_Grotesk({ subsets: ["latin"] });
+const inter = Montserrat({ subsets: ["latin"] });
 
 export default function ContainerLayout({
   children,
