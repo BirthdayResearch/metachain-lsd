@@ -7,7 +7,7 @@ import SectionContainer from "@/app/ui/components/SectionContainer";
 
 export default function UnlockPower() {
   return (
-    <SectionContainer customContainerStyle="flex-col py-0">
+    <SectionContainer customContainerStyle="flex-col gap-y-16 max-w-xs md:max-w-4xl">
       <>
         <div className="gap-y-5 md:gap-6 flex flex-col items-center justify-center">
           <Tag />
