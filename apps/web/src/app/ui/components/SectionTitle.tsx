@@ -13,7 +13,7 @@ export function SectionTitle({
     <h1
       data-testid={`section-title-${testID}`}
       className={clsx(
-        "text-4xl text-center text-light-1000 md:leading-[104px] font-semibold md:-tracking-[1.92] md:text-8xl",
+        "text-4xl text-center text-light-1000 leading-[44px] md:leading-[88px] font-semibold md:text-7xl",
         customStyle ?? "w-fit",
       )}
     >
