@@ -65,7 +65,7 @@ export default function ContainerLayout({
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000">
+            <div className="flex min-h-screen overflow-hidden flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000">
               <Header />
               {children}
               <Next13ProgressBar
