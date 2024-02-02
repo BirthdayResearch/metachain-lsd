@@ -1,9 +1,27 @@
-export default function Tag() {
+import clsx from "clsx";
+
+export function Tag({
+  text,
+  testID,
+  customStyle,
+  customTextStyle,
+}: {
+  text: string;
+  customStyle?: string;
+  customTextStyle?: string;
+  testID: string;
+}) {
   return (
-    <div className="border rounded-5 bg-light-00 w-fit py-1 px-4 rounded-[20px]">
-      <span className="text-[10px] text-light-1000 font-bold leading-3 tracking-[.5px] uppercase">
-        Beta release
-      </span>
+    <div
+      data-testid={`label-${testID}`}
+      className={clsx(
+        "bg-light-00 rounded-[20px] py-2 px-4",
+        "text-[10px] leading-3 font-bold tracking-wider",
+        customTextStyle,
+        customStyle ?? "w-fit",
+      )}
+    >
+      {text}
     </div>
   );
 }
