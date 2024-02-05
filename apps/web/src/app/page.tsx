@@ -1,4 +1,7 @@
-export default function Home() {
-  // TODO landing page
-  return <main>metachain-LSD</main>;
+"use client";
+
+import Base from "@/app/Base";
+
+export default function Page() {
+  return <Base />;
 }
