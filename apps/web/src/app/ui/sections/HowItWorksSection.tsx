@@ -4,6 +4,7 @@ import { CardDesc } from "@/app/ui/components/CardDesc";
 import StakeAmountIcon from "@/app/ui/icons/StakeAmountIcon";
 import YieldValueIcon from "@/app/ui/icons/YieldValueIcon";
 import MaximizeTokenIcon from "@/app/ui/icons/MaximizeTokenIcon";
+import SectionContainer from "../components/SectionContainer";
 
 const HowItWorksItems = [
   {
@@ -28,28 +29,30 @@ const HowItWorksItems = [
 
 export default function HowItWorksSection() {
   return (
-    <div className="w-full flex flex-col items-center justify-center gap-12">
-      <div className="flex flex-col text-center gap-2">
-        <CardTitle
-          text="How it works"
-          testID="how-it-works"
-          customStyle="w-full"
-        />
-        <CardDesc
-          text="Marble makes it easy for anyone to yield rewards."
-          testID="how-it-works-desc"
-        />
-      </div>
-      <div className="grid md:grid-cols-3 gap-6">
-        {HowItWorksItems.map((item) => (
-          <Card
-            Icon={item.icon}
-            testID={item.testId}
-            label={item.label}
-            desc={item.desc}
+    <SectionContainer customContainerStyle="flex-col gap-12">
+      <>
+        <div className="flex flex-col text-center gap-2">
+          <CardTitle
+            text="How it works"
+            testID="how-it-works"
+            customStyle="w-full"
           />
-        ))}
-      </div>
-    </div>
+          <CardDesc
+            text="Marble makes it easy for anyone to yield rewards."
+            testID="how-it-works-desc"
+          />
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {HowItWorksItems.map((item) => (
+            <Card
+              Icon={item.icon}
+              testID={item.testId}
+              label={item.label}
+              desc={item.desc}
+            />
+          ))}
+        </div>
+      </>
+    </SectionContainer>
   );
 }

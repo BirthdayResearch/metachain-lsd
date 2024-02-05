@@ -44,7 +44,7 @@ const config = createConfig(
   getDefaultConfig({
     autoConnect: true,
     chains,
-    appName: "metachain-lsd",
+    appName: "marblefi",
     connectors: [metamask],
     walletConnectProjectId:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
