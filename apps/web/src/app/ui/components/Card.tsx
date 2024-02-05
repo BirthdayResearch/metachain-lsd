@@ -1,5 +1,5 @@
 import { IconType } from "react-icons";
-import { Label } from "@/app/ui/components/Label";
+import { Tag } from "@/app/ui/components/Tag";
 
 export function Card({
   label,
@@ -15,7 +15,7 @@ export function Card({
   return (
     <div className="flex flex-col gap-6 items-center text-center rounded-[20px] border p-10 card-border card-gradient-background">
       <div>
-        <Label text={label} testID={testID} />
+        <Tag text={label} testID={testID} />
       </div>
       <div>
         <Icon size={32} />
