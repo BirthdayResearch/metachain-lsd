@@ -7,7 +7,7 @@ import SectionContainer from "@/app/ui/components/SectionContainer";
 
 export default function UnlockPower() {
   return (
-    <SectionContainer customContainerStyle="flex-col max-w-xs md:max-w-4xl py-0">
+    <SectionContainer customContainerStyle="flex-col gap-y-16 md:max-w-3xl">
       <>
         <div className="gap-y-5 md:gap-6 flex flex-col items-center justify-center">
           <Tag />
@@ -20,7 +20,7 @@ export default function UnlockPower() {
             testID="maximize"
           />
         </div>
-        <div className="flex flex-col pt-12 md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
+        <div className="flex flex-col md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
           <CTAButton
             text="Launch app"
             testID="launch-app"
