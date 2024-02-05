@@ -7,7 +7,7 @@ import { Tag } from "@/app/ui/components/Tag";
 
 export default function UnlockPower() {
   return (
-    <SectionContainer customContainerStyle="flex-col max-w-xs md:max-w-4xl gap-y-16">
+    <SectionContainer customContainerStyle="flex-col gap-y-16 md:max-w-3xl">
       <>
         <div className="gap-y-5 md:gap-6 flex flex-col items-center justify-center">
           <Tag text="BETA RELEASE" testID="beta-release" />

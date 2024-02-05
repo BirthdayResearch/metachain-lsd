@@ -7,6 +7,7 @@ import {
   HiOutlineShieldCheck,
 } from "react-icons/hi2";
 import { IconType } from "react-icons";
+import SectionContainer from "@/app/ui/components/SectionContainer";
 
 const OpportunitiesItems = [
   {
@@ -37,29 +38,31 @@ const OpportunitiesItems = [
 
 export default function MarbleOpportunitiesSection() {
   return (
-    <div className="w-full flex flex-col items-center justify-center gap-12">
-      <div className="flex flex-col text-center gap-3 md:gap-2">
-        <CardTitle
-          text="Take advantage of Marble"
-          testID="marble-opp-title"
-          customStyle="w-full"
-        />
-        <CardDesc
-          text="Marble gives you the most exciting opportunities for your DFI."
-          testID="marble-opp-desc"
-        />
-      </div>
-      <div className="grid md:grid-cols-4 divide-y-[0.5px] md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
-        {OpportunitiesItems.map((item) => (
-          <Item
-            Icon={item.icon}
-            testID={item.testId}
-            label={item.label}
-            desc={item.desc}
+    <SectionContainer customContainerStyle="flex-col gap-12">
+      <>
+        <div className="flex flex-col text-center gap-3 md:gap-2">
+          <CardTitle
+            text="Take advantage of Marble"
+            testID="marble-opp-title"
+            customStyle="w-full"
           />
-        ))}
-      </div>
-    </div>
+          <CardDesc
+            text="Marble gives you the most exciting opportunities for your DFI."
+            testID="marble-opp-desc"
+          />
+        </div>
+        <div className="grid md:grid-cols-4 divide-y-[0.5px] md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
+          {OpportunitiesItems.map((item) => (
+            <Item
+              Icon={item.icon}
+              testID={item.testId}
+              label={item.label}
+              desc={item.desc}
+            />
+          ))}
+        </div>
+      </>
+    </SectionContainer>
   );
 }
 

@@ -13,7 +13,7 @@ export function Tag({
 }) {
   return (
     <div
-      data-testid={`label-${testID}`}
+      data-testid={`tag-${testID}`}
       className={clsx(
         "bg-light-00 rounded-[20px] py-2 px-4",
         "text-[10px] leading-3 font-bold tracking-wider",

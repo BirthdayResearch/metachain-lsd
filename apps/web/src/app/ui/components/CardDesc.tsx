@@ -10,7 +10,7 @@ export function CardDesc({
 }) {
   return (
     <h1
-      data-testid={`section-title-${testID}`}
+      data-testid={`card-desc-${testID}`}
       className={clsx("text-xl text-center font-light", customStyle ?? "w-fit")}
     >
       {text}
