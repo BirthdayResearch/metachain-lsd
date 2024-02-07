@@ -1,12 +1,14 @@
 import { CTAButton } from "@/app/ui/components/CTAButton";
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import Image from "next/image";
+import useResponsive from "@/app/lib/hooks/useResponsive";
 
 export default function DFIOpportunities() {
+  const { isLg} = useResponsive();
   return (
     <SectionContainer>
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center">
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           <h2 className="h2-text text-light-1000 mb-4">
             Take advantage of mDFI for new opportunities
           </h2>
@@ -17,13 +19,13 @@ export default function DFIOpportunities() {
           </p>
           <CTAButton text="Launch app" testID="launch-app" customStyle="w-full md:w-fit" />
         </div>
-        <div className="flex-1 flex flex-col md:flex-row gap-y-8 md:w-full md:gap-x-6 w-full">
+        <div className="flex-1 flex flex-col md:flex-row gap-y-8 md:gap-x-6 w-full">
           <Image
             data-testid="mdfi-logo"
             src="/mDFI.svg"
             alt="mDFI Logo"
-            width={224}
-            height={224}
+            width={isLg ? 224 : 168}
+            height={isLg ? 224 : 168}
           />
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
