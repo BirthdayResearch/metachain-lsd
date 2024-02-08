@@ -7,6 +7,7 @@ import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable
 import '@openzeppelin/contracts/utils/math/Math.sol';
 import './ShareToken.sol';
 import './Pausable.sol';
+import './MarbleQueue.sol';
 
 /** @notice @dev
  * This error occurs when transfer of Staked DeFi failed
@@ -53,10 +54,11 @@ error ExceededMaxWithdraw(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
-contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable, Pausable {
+contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable, Pausable, MarbleQueue {
   using Math for uint256;
 
   bytes32 public constant REWARDS_DISTRIBUTER_ROLE = keccak256('REWARDS_DISTRIBUTER_ROLE');
+  bytes32 public constant FINALIZE_ROLE = keccak256('FINALIZE_ROLE');
 
   ShareToken public shareToken;
   
@@ -70,27 +72,13 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
-   * @param sender Address initiating deposit/mint
-   * @param owner Address reciving shares
+   * @param owner Address initiating deposit/mint
+   * @param receiver Address reciving shares
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
    */
   event Deposit(
-    address indexed sender,
     address indexed owner,
-    uint256 assets,
-    uint256 shares
-  );
-
-  /**
-   * @notice Emitted when withdraw/redeem happen on smart contract
-   * @param sender Address initiating withdraw
-   * @param receiver Address reciving assets
-   * @param assets Amount of asset that being withdraw
-   * @param shares Amount of shares that being burned
-   */
-  event Withdraw(
-    address indexed sender,
     address indexed receiver,
     uint256 assets,
     uint256 shares
@@ -327,11 +315,10 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @dev Burns shares from owner and sends exactly assets to receiver.
    *
-   * - MUST emit the Withdraw event.
    * - MUST revert if all of assets cannot be withdrawn (due to withdrawal limit being reached, slippage, the owner
    *   not having enough shares, etc).
    */
-  function withdraw(uint256 _assets, address _receiver) public virtual whenWithdrawNotPaused returns (uint256) {
+  function requestWithdrawal(uint256 _assets, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
     // check zero amount
     if (_assets == 0) revert AMOUNT_IS_ZERO();
     // check zero address
@@ -342,19 +329,16 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     if (_assets > maxAssets) revert ExceededMaxWithdraw(_receiver, _assets, maxAssets);
     
     uint256 shares = previewWithdraw(_assets);
-    _withdraw(_msgSender(), _receiver, _assets, shares);
-
-    return shares;
+    requestId = _requestWithdrawal(_msgSender(), _receiver, _assets, shares);
   }
 
   /**
    * @dev Burns exactly shares from owner and sends assets of underlying tokens to receiver.
    *
-   * - MUST emit the Withdraw event.
    * - MUST revert if all of shares cannot be redeemed (due to withdrawal limit being reached, slippage, the owner
    *   not having enough shares, etc).
    */
-  function redeem(uint256 _shares, address _receiver) public virtual whenWithdrawNotPaused returns (uint256) {
+  function requestRedeem(uint256 _shares, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
     // check zero amount
     if (_shares == 0) revert AMOUNT_IS_ZERO();
     // check zero address
@@ -365,9 +349,40 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
-    _withdraw(_msgSender(), _receiver, assets, _shares);
+    requestId = _requestWithdrawal(_msgSender(), _receiver, assets, _shares);
+  }
 
-    return assets;
+  /**
+   * @dev ether to finalize all the requests should be calculated using `prefinalize()` and sent along
+   * @param _lastRequestIdToBeFinalized finalize requests from last finalized one up to
+   */
+  function finalize(uint256 _lastRequestIdToBeFinalized) external payable onlyRole(FINALIZE_ROLE) {
+    if (msg.value == 0) revert AMOUNT_IS_ZERO();
+    _finalize(_lastRequestIdToBeFinalized, msg.value);
+  }
+
+  /**
+   * @dev Claim a batch of withdrawal requests if they are finalized sending locked assets to the owner
+   * @param _requestIds array of request ids to claim
+   * - Reverts if any request is not finalized or already claimed
+   * - Reverts if msg sender is not an owner of the requests
+   */
+  function claimWithdrawals(uint256[] calldata _requestIds) external {
+    for (uint256 i = 0; i < _requestIds.length; ++i) {
+      claimWithdrawal(_requestIds[i]);       
+    }
+  }
+
+  /**
+   * @dev Claim one`_requestId` request once finalized sending locked ether to the owner
+   * @param _requestId request id to claim
+   * - Reverts if any request is not finalized or already claimed
+   * - Reverts if msg sender is not an owner of the requests
+   */
+  function claimWithdrawal(uint256 _requestId) public {
+    (uint256 assetsToTransfer, uint256 sharesToBurn) = _claim(_requestId, _msgSender());
+    totalStakedAssets -= assetsToTransfer;
+    shareToken.burn(address(this), sharesToBurn);
   }
 
   /**
@@ -428,36 +443,28 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @dev Internal deposit function with common workflow.
    */
-  function _deposit(address _caller, address _receiver, uint256 _assets, uint256 _shares) internal virtual {
+  function _deposit(address _owner, address _receiver, uint256 _assets, uint256 _shares) internal virtual {
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
     // update staked asset
     totalStakedAssets += _assets;
     // mint shares token for receiver
     shareToken.mint(_receiver, _shares);
 
-    emit Deposit(_caller, _receiver, _assets, _shares);
+    emit Deposit(_owner, _receiver, _assets, _shares);
   }
 
   /**
    * @dev Internal withdraw function with common workflow.
    */
-  function _withdraw(
-      address _caller,
+  function _requestWithdrawal(
+      address _owner,
       address _receiver,
       uint256 _assets,
       uint256 _shares
-  ) internal virtual {
-    // check if contract have enoufgh fund to transfer
-    if (_assets > address(this).balance) revert INSUFFICIENT_WITHDRAW_AMOUNT();
-    // we need to do the transfer before the burn so that any reentrancy would happen before the
-    // shares are burned and after the _assets are transferred, which is a valid state.
-    (bool sent, ) = _msgSender().call{ value: _assets }('');
-    if (!sent) revert WITHDRAWAL_FAILED();
-    // burn shares token
-    shareToken.burn(_msgSender(), _shares);
-    // update staked asset
-    totalStakedAssets -= _assets;
-
-    emit Withdraw(_caller, _receiver, _assets, _shares);
+  ) internal returns (uint256 requestId) {
+    // Transfer shares 
+    shareToken.transferFrom(_owner, address(this), _shares);
+    // Create entry in queue for withdrawal request
+    requestId = _enqueue(_owner, _receiver, _assets, _shares);
   }
 }
