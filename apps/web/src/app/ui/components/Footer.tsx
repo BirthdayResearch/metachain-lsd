@@ -14,7 +14,7 @@ export default function Footer() {
         data-testid="footer"
         className="flex items-center justify-center flex-col gap-y-6"
       >
-        <HeaderLogo />
+        <HeaderLogo isHeader={false} />
         <NavigationBar isHeader={false} />
         <div className="flex gap-x-1 text-xs">
           <span className="text-xs">Terms of service</span>

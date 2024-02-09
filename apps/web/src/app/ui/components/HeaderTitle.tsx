@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-export default function HeaderLogo() {
+export default function HeaderLogo({ isHeader = true }: { isHeader: boolean }) {
   return (
     <Link href="/">
       <Image
@@ -9,7 +9,9 @@ export default function HeaderLogo() {
         alt="MarbleFi Logo"
         width={170}
         height={40}
-        className="w-[132px] h-[30px] md:w-[170px] md:h-[40px]"
+        className={
+          isHeader ? "w-[132px] h-[30px] md:w-[170px] md:h-[40px]" : ""
+        }
       />
     </Link>
   );
