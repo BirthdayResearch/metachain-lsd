@@ -137,6 +137,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     string memory _shareTokenSymbol
   ) external initializer {
     __EIP712_init(NAME, '1');
+    _initializeQueue();
     _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
     walletAddress = _walletAddress;
     shareToken = new ShareToken(_shareTokenName, _shareTokenSymbol);

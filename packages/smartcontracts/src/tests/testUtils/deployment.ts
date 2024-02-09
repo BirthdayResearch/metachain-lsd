@@ -33,16 +33,18 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const shareTokenFactory = await ethers.getContractFactory('ShareToken');
   const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken
 
-  const rewardDistributerSigner = accounts[3]
+  const rewardDistributerAndFinalizeSigner = accounts[3]
   // set REWARDS_DISTRIBUTER_ROLE      
-  const hash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
-  await proxyMarbleLsd.grantRole(hash, rewardDistributerSigner.address);
+  const rewardsDistributionHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
+  await proxyMarbleLsd.grantRole(rewardsDistributionHash, rewardDistributerAndFinalizeSigner.address);
+  const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
+  await proxyMarbleLsd.grantRole(finalizeRoleHash, rewardDistributerAndFinalizeSigner.address);
   
   return {
     proxyMarbleLsd,
     marbleLsdImplementation: marbleLsdUpgradeable,
     defaultAdminSigner,
-    rewardDistributerSigner,
+    rewardDistributerAndFinalizeSigner,
     walletSigner,
     shareToken
   };
@@ -52,7 +54,7 @@ export interface MarbleLsdDeploymentResult {
   proxyMarbleLsd: MarbleLsdV1;
   marbleLsdImplementation: MarbleLsdV1;
   defaultAdminSigner: SignerWithAddress;
-  rewardDistributerSigner: SignerWithAddress;
+  rewardDistributerAndFinalizeSigner: SignerWithAddress;
   walletSigner: SignerWithAddress;
   shareToken: ShareToken;
 }

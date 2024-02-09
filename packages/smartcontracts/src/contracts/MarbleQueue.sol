@@ -169,6 +169,14 @@ contract MarbleQueue {
   }
 
   /** @notice
+   *  Returns all withdrawal requests that belongs to the `_owner` address
+   *  @param _owner owner address
+   */
+  function getWithdrawalRequests(address _owner) external view returns (uint256[] memory requestsIds) {
+    return _getRequestsByOwner()[_owner].values();
+  }
+
+  /** @notice
    *  Checks finalization batches, calculates required Assets and amount of shares to burn
    *  @param _batches sorted array of request Ids for finalization batches
    */
@@ -226,6 +234,7 @@ contract MarbleQueue {
     WithdrawalRequest memory requestToFinalize = _getQueue()[_lastRequestIdToBeFinalized];
 
     uint256 assetsToFinalize = requestToFinalize.cumulativeAssets - lastFinalizedRequest.cumulativeAssets;
+    uint256 sharesToBurn = requestToFinalize.cumulativeShares - lastFinalizedRequest.cumulativeShares;
     if (_amountOfAssets != assetsToFinalize) revert InvalidAssetsToFinalize(_amountOfAssets, assetsToFinalize);
 
     uint256 firstRequestIdToFinalize = lastFinalizedRequestId + 1;
@@ -237,7 +246,7 @@ contract MarbleQueue {
         firstRequestIdToFinalize,
         _lastRequestIdToBeFinalized,
         _amountOfAssets,
-        requestToFinalize.cumulativeShares - lastFinalizedRequest.cumulativeShares,
+        sharesToBurn,
         block.timestamp
     );
   }
