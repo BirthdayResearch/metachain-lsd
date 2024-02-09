@@ -15,7 +15,7 @@ export default function Header() {
       <HeaderLogo />
 
       {/*  Web */}
-      <NavigationBar />
+      <NavigationBar isHeader={true} />
       <div className="items-end justify-center md:flex hidden">
         <ConnectButton />
       </div>

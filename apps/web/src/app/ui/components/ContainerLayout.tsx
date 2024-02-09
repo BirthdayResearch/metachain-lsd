@@ -14,6 +14,7 @@ import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
 import React from "react";
+import Footer from "@/app/ui/components/Footer";
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -74,6 +75,7 @@ export default function ContainerLayout({
                 options={{ showSpinner: true }}
                 showOnShallow
               />
+              <Footer />
             </div>
           </ConnectKitProvider>
         </WagmiConfig>

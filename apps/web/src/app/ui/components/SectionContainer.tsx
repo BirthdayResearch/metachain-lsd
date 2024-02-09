@@ -5,7 +5,7 @@ export default function SectionContainer({
   customContainerStyle,
   children,
 }: {
-  customContainerStyle: string;
+  customContainerStyle?: string;
   children: ReactElement;
 }) {
   return (

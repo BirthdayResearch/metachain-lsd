@@ -1,30 +1,45 @@
+import clsx from "clsx";
+
 const navigationTabs = [
-  { label: "How it works", href: "/how-it-works" },
   { label: "Benefits", href: "/benefits" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "About mDFI", href: "/about" },
   { label: "Community", href: "/community" },
   { label: "FAQs", href: "/faqs" },
 ];
 
-export default function NavigationBar() {
+export default function NavigationBar({
+  isHeader = true,
+}: {
+  isHeader: boolean;
+}) {
+  const headerStyle =
+    "border border-light-00/10 backdrop-opacity-50 bg-light-00/10 rounded-[40px] hidden lg:flex";
+  const hoverStyle = isHeader ? "hover:bg-light-00/10" : "";
+
   return (
-    <div
+    <nav
       data-testid="header-navigation-bar-web"
-      className="border border-light-00/10 backdrop-opacity-50 bg-light-00/10 rounded-[40px] py-1.5 px-5 justify-center items-center gap-x-1 hidden lg:flex"
+      className={clsx(
+        isHeader && headerStyle,
+        !isHeader && "md:flex",
+        "py-1.5 px-5 justify-center items-center gap-x-1",
+      )}
     >
-      {navigationTabs.map((link) => {
-        return (
-          <a
-            key={link.label}
-            href={link.href}
-            className="flex h-[48px] grow items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px] hover:bg-light-00/10"
-          >
-            <p className="text-sm text-light-1000 font-bold	active:text-opacity-10">
-              {link.label}
-            </p>
-          </a>
-        );
-      })}
-    </div>
+      {navigationTabs.map((link) => (
+        <a
+          key={link.label}
+          href={link.href}
+          className={clsx(
+            "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px]",
+            hoverStyle,
+          )}
+        >
+          <p className="text-sm text-light-1000 font-bold active:text-opacity-10">
+            {link.label}
+          </p>
+        </a>
+      ))}
+    </nav>
   );
 }
