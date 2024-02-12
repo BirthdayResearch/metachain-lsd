@@ -1,0 +1,28 @@
+# Define individuals that are responsible for code in a repository.
+# More details are here: https://help.github.com/articles/about-codeowners/
+
+/.husky/                                        @chloezxyy @fullstackninja864 @nattadex @pierregee
+/.github/                                       @chloezxyy @fullstackninja864 @nattadex @pierregee
+
+public                                          @chloezxyy @fullstackninja864 @nattadex @pierregee
+apps/web                                        @chloezxyy @fullstackninja864 @nattadex @pierregee
+apps/server                                     @chloezxyy @fullstackninja864 @nattadex @pierregee
+
+.codeclimate.yml                                @chloezxyy @fullstackninja864 @nattadex @pierregee
+.editorconfig                                   @chloezxyy @fullstackninja864 @nattadex @pierregee
+.eslintignore                                   @chloezxyy @fullstackninja864 @nattadex @pierregee
+.eslintrc                                       @chloezxyy @fullstackninja864 @nattadex @pierregee
+.gitignore                                      @chloezxyy @fullstackninja864 @nattadex @pierregee
+.imgbotconfig                                   @chloezxyy @fullstackninja864 @nattadex @pierregee
+.lintstagedrc.js                                @chloezxyy @fullstackninja864 @nattadex @pierregee
+.nvmrc                                          @chloezxyy @fullstackninja864 @nattadex @pierregee
+
+codecov.yml                                     @chloezxyy @fullstackninja864 @nattadex @pierregee
+docker-compose.yml                              @chloezxyy @fullstackninja864 @nattadex @pierregee
+LICENSE                                         @chloezxyy @fullstackninja864 @nattadex @pierregee
+package.json                                    @chloezxyy @fullstackninja864 @nattadex @pierregee
+pnpm-lock.yaml                                  @chloezxyy @fullstackninja864 @nattadex @pierregee
+postcss.config.js                               @chloezxyy @fullstackninja864 @nattadex @pierregee
+README.md                                       @chloezxyy @fullstackninja864 @nattadex @pierregee
+tailwind.config.js                              @chloezxyy @fullstackninja864 @nattadex @pierregee
+tsconfig.json                                   @chloezxyy @fullstackninja864 @nattadex @pierregee
