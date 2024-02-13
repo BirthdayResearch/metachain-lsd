@@ -4,69 +4,82 @@ pragma solidity 0.8.20;
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 
-/** @notice
+/** @notice @dev
  * This error occurs when `_requestId` is invalid or zero
  */
 error InvalidRequestId(uint256 _requestId);
 
-/** @notice
+/** @notice @dev
  * This error occurs when provided empty batch
  */
 error EmptyBatches();
 
-/** @notice
+/** @notice @dev
  * This error occurs when provided batch array is not sorted
  */
 error BatchesAreNotSorted();
 
-/** @notice
+/** @notice @dev
  * This error occurs when provided too much assets to finalize
  */
 error InvalidAssetsToFinalize(uint256 sent, uint256 maxExpected);
 
-/** @notice
+/** @notice @dev
  * This error occurs when requested fund is not finalized
  */
 error RequestNotFoundOrNotFinalized(uint256 _requestId);
 
-/** @notice
+/** @notice @dev
  * This error occurs when request is already claimed
  */
 error RequestAlreadyClaimed(uint256 _requestId);
 
-error NotEnoughEther();
+/** @notice @dev
+ * This error occurs when there is not enough assets
+ */
+error NotEnoughAssets();
+
+/** @notice @dev
+ * This error occurs when recipient refuse to receive assets
+ */
 error CantSendValueRecipientMayHaveReverted();
+
+/** @notice @dev
+ * This error occurs when sender is not a owner
+ */
 error NotOwner(address _sender, address _owner);
 
 contract MarbleQueue {
   using EnumerableSet for EnumerableSet.UintSet;
 
-  /** @dev
-   *  queue for withdrawal requests, indexes (requestId) start from 1
+  /** 
+   * @dev Queue for withdrawal requests, indexes (requestId) start from 1
    */
   bytes32 internal constant QUEUE_POSITION = keccak256("WithdrawalQueue.queue");
 
-  /** @dev
-   *  withdrawal requests mapped to the owners
+  /** 
+   * @dev Withdrawal requests mapped to the owners
    */
   bytes32 internal constant REQUEST_BY_OWNER_POSITION = keccak256("WithdrawalQueue.requestsByOwner");
 
-  /** @dev
-   *  last index in request queue
+  /** 
+   * @dev Last index in request queue
    */
   uint256 public lastRequestId;
-  /** @dev
-   *  last index of finalized request in the queue
+
+  /** 
+   * @dev Last index of finalized request in the queue
    */
   uint256 public lastFinalizedRequestId;
-  /** @dev
-   *  last index of finalized request in the queue
+
+  /** 
+   * @dev Last index of finalized request in the queue
    */
   uint256 public lockedAssets;
 
- /**
+  /**
    * @notice Emitted when withdrawal requested happen on smart contract
-   * @param requestId withdraw requestId
+   * @param requestId Withdraw requestId
    * @param owner Owner address
    * @param receiver Reciving assets
    * @param assets Amount of asset that being staked
@@ -80,12 +93,13 @@ contract MarbleQueue {
       uint256 shares
   );
 
-  /** @notice Emitted when withdrawal requested is finalized
-   *  @param from request id from where finalisation started
-   *  @param to request id from where finalisation ended
-   *  @param amountOfAssetsLocked amount of assets gets locked
-   *  @param sharesToBurn amount of shares gets burned
-   *  @param timestamp block time when finalisation occured
+  /** 
+   * @notice Emitted when withdrawal requested is finalized
+   * @param from Request id from where finalisation started
+   * @param to Request id from where finalisation ended
+   * @param amountOfAssetsLocked Amount of assets gets locked
+   * @param sharesToBurn Amount of shares gets burned
+   * @param timestamp Block time when finalisation occured
    */
   event WithdrawalsFinalized(
     uint256 indexed from,
@@ -95,12 +109,13 @@ contract MarbleQueue {
     uint256 timestamp
   );
 
-  /** @notice Emitted when withdrawal is claimed
-   *  @param requestId request id for which claimed
-   *  @param owner reciving assets
-   *  @param receiver amount of assets gets locked
-   *  @param amountOfAssets Assets to transfer
-   *  @param sharesToBurn shares buned
+  /** 
+   * @notice Emitted when withdrawal is claimed
+   * @param requestId Request id for which claimed
+   * @param owner Reciving assets
+   * @param receiver Amount of assets gets locked
+   * @param amountOfAssets Assets to transfer
+   * @param sharesToBurn Shares buned
    */
 
   event WithdrawalClaimed(
@@ -111,37 +126,37 @@ contract MarbleQueue {
     uint256 sharesToBurn
   );
 
-  /** @notice
-   *  structure representing a request for withdrawal
+  /** 
+   * @notice Structure representing a request for withdrawal
    */
   struct WithdrawalRequest {
-    /// @notice sum of the all assets submitted for withdrawals including this request
+    /// @notice Sum of the all assets submitted for withdrawals including this request
     uint256 cumulativeAssets;
-    /// @notice sum of the all shares locked for withdrawal including this request
+    /// @notice Sum of the all shares locked for withdrawal including this request
     uint256 cumulativeShares;
-    /// @notice address that can claim
+    /// @notice Address that can claim
     address owner;
-    /// @notice address that can claim or transfer the request
+    /// @notice Address that can claim or transfer the request
     address receiver;
     /// @notice block.timestamp when the request was created
     uint40 timestamp;
-    /// @notice flag if the request was claimed
+    /// @notice Flag if the request was claimed
     bool claimed;
   }
 
-  /** @notice
-   *  output format struct for `_getWithdrawalStatus()` method
+  /** 
+   * @notice Output format struct for `_getWithdrawalStatus()` method
    */
   struct WithdrawalRequestStatus {
-    /// @notice stETH token amount that was locked on withdrawal queue for this request
-    uint256 amountOfStETH;
-    /// @notice amount of stETH shares locked on withdrawal queue for this request
+    /// @notice Asset amount requested for withdrawal
+    uint256 amountOfAssets;
+    /// @notice Amount of shares token locked on withdrawal queue for this request
     uint256 amountOfShares;
-    /// @notice owner address that can claim this request
+    /// @notice Owner address that can claim this request
     address owner;
-    /// @notice address that can receive DFI in this request
+    /// @notice Address that can receive DFI in this request
     address receiver;
-    /// @notice timestamp of when the request was created, in seconds
+    /// @notice Timestamp of when the request was created, in seconds
     uint256 timestamp;
     /// @notice true, if request is finalized
     bool isFinalized;
@@ -149,8 +164,8 @@ contract MarbleQueue {
     bool isClaimed;
   }
 
-  /** @notice
-   *  Queue constructor
+  /** 
+   * @dev Queue constructor
    */
   function _initializeQueue() internal {
     // setting dummy zero structs in checkpoints and queue beginning
@@ -159,9 +174,9 @@ contract MarbleQueue {
     _getQueue()[0] = WithdrawalRequest(0, 0, address(0), address(0), uint40(block.timestamp), true);
   }
 
-  /** @notice
-   *  Returns status for requests with provided ids
-   *  @param _requestIds array of withdrawal request ids
+  /** 
+   * @notice Returns status for requests with provided ids
+   * @param _requestIds array of withdrawal request ids
    */
   function getWithdrawalStatus(uint256[] calldata _requestIds) external view returns (WithdrawalRequestStatus[] memory statuses) {
     statuses = new WithdrawalRequestStatus[](_requestIds.length);
@@ -170,17 +185,17 @@ contract MarbleQueue {
     }
   }
 
-  /** @notice
-   *  Returns all withdrawal requests that belongs to the `_owner` address
-   *  @param _owner owner address
+  /** 
+   * @notice Returns all withdrawal requests that belongs to the `_owner` address
+   * @param _owner Owner address
    */
   function getWithdrawalRequests(address _owner) external view returns (uint256[] memory requestsIds) {
     return _getRequestsByOwner()[_owner].values();
   }
 
-  /** @notice
-   *  Checks finalization batches, calculates required Assets and amount of shares to burn
-   *  @param _batches sorted array of request Ids for finalization batches
+  /** 
+   * @notice Checks finalization batches, calculates required Assets and amount of shares to burn
+   * @param _batches Sorted array of request Ids for finalization batches
    */
   function prefinalize(uint256[] calldata _batches) external view returns (uint256 assetsToLock, uint256 sharesToBurn) {
     if (_batches.length == 0) revert EmptyBatches();
@@ -209,24 +224,24 @@ contract MarbleQueue {
     }
   }
 
-  /**
-   * @notice return the number of unfinalized requests in the queue
+  /** 
+   * @notice Return the number of unfinalized requests in the queue
    */
   function unfinalizedRequestNumber() external view returns (uint256) {
     return lastRequestId - lastFinalizedRequestId;
   }
 
-  /**
-   * @notice Returns the amount of stETH in the queue yet to be finalized
+  /** 
+   * @notice Returns the amount of assets in the queue yet to be finalized
    */
   function unfinalizedAssets() external view returns (uint256) {
     return _getQueue()[lastRequestId].cumulativeAssets - _getQueue()[lastFinalizedRequestId].cumulativeAssets;
   }
 
-  /**
+  /** 
    * @dev Finalize requests in the queue
-   * MUST emit the WithdrawalsFinalized event.
-   * @param _lastRequestIdToBeFinalized finalize requests from last finalized one up to
+   * - MUST emit the WithdrawalsFinalized event.
+   * @param _lastRequestIdToBeFinalized Finalize requests from last finalized one up to
    */
   function _finalize(uint256 _lastRequestIdToBeFinalized, uint256 _amountOfAssets) internal {
     if (_lastRequestIdToBeFinalized > lastRequestId) revert InvalidRequestId(_lastRequestIdToBeFinalized);
@@ -253,10 +268,10 @@ contract MarbleQueue {
     );
   }
 
-  /**
+  /** 
    * @dev Claim the request and transfer locked assets to `_recipient`.
    * MUST emit the WithdrawalClaimed event.
-   * @param _requestId id of the request to claim
+   * @param _requestId Id of the request to claim
    */
   function _claim(uint256 _requestId, address _owner) internal returns (uint256 assetsToTransfer, uint256 sharesToBurn) {
     if (_requestId == 0) revert InvalidRequestId(_requestId);
@@ -277,19 +292,19 @@ contract MarbleQueue {
     emit WithdrawalClaimed(_requestId, _owner, request.receiver, assetsToTransfer, sharesToBurn);
   }
 
-  /** @dev send values to _recipient address
-   *  @param _recipient recipient address
-   *  @param _amount amount to send
+  /** 
+   * @dev Send values to _recipient address
+   * @param _recipient Recipient address
+   * @param _amount Amount to send
    */
   function _sendValue(address _recipient, uint256 _amount) internal {
-    if (address(this).balance < _amount) revert NotEnoughEther();
+    if (address(this).balance < _amount) revert NotEnoughAssets();
     (bool success,) = _recipient.call{ value: _amount }("");
     if (!success) revert CantSendValueRecipientMayHaveReverted();
   }
 
-
-  /** @dev
-   *  creates a new `WithdrawalRequest` in the queue
+  /** 
+   * @dev Creates a new `WithdrawalRequest` in the queue
    */
   function _enqueue(
     address _owner,
@@ -318,8 +333,9 @@ contract MarbleQueue {
     emit WithdrawalRequested(requestId, _owner, _receiver, _assets, _shares);
   }
 
-  /** @dev Returns the status of the withdrawal
-   *  @param _requestId request id
+  /** 
+   * @dev Returns the status of the withdrawal
+   * @param _requestId Request id
    */
   function _getStatus(uint256 _requestId) internal view returns (WithdrawalRequestStatus memory status) {
     if (_requestId == 0 || _requestId > lastRequestId) revert InvalidRequestId(_requestId);
@@ -338,6 +354,9 @@ contract MarbleQueue {
     );
   }
 
+  /** 
+   * @dev Returns queue storage slot assignment
+   */
   function _getQueue() internal pure returns (mapping(uint256 => WithdrawalRequest) storage queue) {
     bytes32 position = QUEUE_POSITION;
     assembly {
@@ -345,6 +364,9 @@ contract MarbleQueue {
     }
   }
 
+  /** 
+   * @dev Returns request by owner storage slot assignment
+   */
   function _getRequestsByOwner() internal pure returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner) {
     bytes32 position = REQUEST_BY_OWNER_POSITION;
     assembly {

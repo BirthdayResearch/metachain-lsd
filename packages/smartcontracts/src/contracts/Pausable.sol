@@ -3,12 +3,14 @@ pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
-/** @notice @dev
+/** 
+ * @notice @dev
  * This error occurs when deposit of DeFi failed
  */
 error DEPOSIT_PAUSED();
 
-/** @notice @dev
+/** 
+ * @notice @dev
  * This error occurs when withdrawal of staked DeFi failed
  */
 error WITHDRAWAL_PAUSED();
