@@ -30,6 +30,11 @@ error AMOUNT_IS_ZERO();
 error LESS_THAN_MIN_DEPOSIT();
 
 /** @notice @dev
+ * This error occurs when `_amount` is less than minimum withdrawal amount
+ */
+error LESS_THAN_MIN_WITHDRAWAL();
+
+/** @notice @dev
  * This error occurs when withdraw `assets` is more than contract balance
  */
 error INSUFFICIENT_WITHDRAW_AMOUNT();
@@ -69,6 +74,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   uint256 public totalStakedAssets;
   uint256 public totalRewardAssets;
   uint256 public minDeposit = 1e18; // 1 DFI 
+  uint256 public minWithdrawal = 1e18; // 1 DFI 
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
@@ -105,7 +111,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   );
 
   /**
-   * @notice Emitted when the min wallet address is changed
+   * @notice Emitted when the min depoisit value is changed
    * @param oldAmount The old min deposit amount
    * @param newAmount The new min deposit amount
    */
@@ -113,6 +119,23 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     uint256 indexed oldAmount,
     uint256 indexed newAmount
   );
+
+  /**
+   * @notice Emitted when the min withdrwal value is changed
+   * @param oldAmount The old min withdrwal amount
+   * @param newAmount The new min withdrwal amount
+   */
+  event MIN_WITHDRAWAL_UPDATED(
+    uint256 indexed oldAmount,
+    uint256 indexed newAmount
+  );
+
+  /**
+   * @notice Emitted when fund is flushed
+   * @param walletAddress wallet address where funds will get flushed
+   * @param amount amount of assets will get flushed
+   */
+  event FLUSH_FUND(address indexed walletAddress, uint256 amount);
 
   /**
    * constructor to disable initalization of implementation contract
@@ -160,17 +183,17 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Returns the amount of all assets, i.e. sum of staked, rewards, and balance
+   * @dev Returns the amount of all assets, i.e. sum of staked and rewards
    */
   function totalAssets() public view virtual returns (uint256) {
     return totalStakedAssets + totalRewardAssets;
   }
 
   /**
-   * @dev Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal
+   * @dev Returns the amount of shares that the contract would exchange for the amount of assets provided, in an ideal
    * scenario where all the conditions are met.
    *
-   * - MUST NOT be inclusive of any fees that are charged against assets in the Vault.
+   * - MUST NOT be inclusive of any fees that are charged against assets in the contract.
    * - MUST NOT show any variations depending on the caller.
    * - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.
    * - MUST NOT revert.
@@ -184,10 +207,10 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal
+   * @dev Returns the amount of assets that the contract would exchange for the amount of shares provided, in an ideal
    * scenario where all the conditions are met.
    *
-   * - MUST NOT be inclusive of any fees that are charged against assets in the Vault.
+   * - MUST NOT be inclusive of any fees that are charged against assets in the contract.
    * - MUST NOT show any variations depending on the caller.
    * - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.
    * - MUST NOT revert.
@@ -201,7 +224,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Returns the maximum amount of the underlying asset that can be deposited into the Vault for the receiver,
+   * @dev Returns the maximum amount of the underlying asset that can be deposited into the contract for the receiver,
    * through a deposit call.
    *
    * - MUST return a limited value if receiver is subject to some deposit limit.
@@ -214,7 +237,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
 
   /**
    * @dev Returns the maximum amount of the underlying asset that can be withdrawn from the owner balance in the
-   * Vault, through a withdraw call.
+   * contract, through a withdraw call.
    *
    * - MUST return a limited value if owner is subject to some withdrawal limit or timelock.
    * - MUST NOT revert.
@@ -227,7 +250,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @dev Allows an on-chain or off-chain user to simulate the effects of their deposit at the current block, given
    * current on-chain conditions.
    *
-   * - MUST return as close to and no more than the exact amount of Vault shares that would be minted in a deposit
+   * - MUST return as close to and no more than the exact amount of shares that would be minted in a deposit
    *   call in the same transaction. I.e. deposit should return the same or more shares as previewDeposit if called
    *   in the same transaction.
    * - MUST NOT account for deposit limits like those returned from maxDeposit and should always act as though the
@@ -246,8 +269,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @dev Allows an on-chain or off-chain user to simulate the effects of their withdrawal at the current block,
    * given current on-chain conditions.
    *
-   * - MUST return as close to and no fewer than the exact amount of Vault shares that would be burned in a withdraw
-   *   call in the same transaction. I.e. withdraw should return the same or fewer shares as previewWithdraw if
+   * - MUST return as close to and no fewer than the exact amount of shares that would be burned in a withdraw
+   *   call in the same transaction. I.e. withdraw should return the same or fewer shares as previewWithdrawal if
    *   called
    *   in the same transaction.
    * - MUST NOT account for withdrawal limits like those returned from maxWithdraw and should always act as though
@@ -255,10 +278,10 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * - MUST be inclusive of withdrawal fees. Integrators should be aware of the existence of withdrawal fees.
    * - MUST NOT revert.
    *
-   * @notice Any unfavorable discrepancy between convertToShares and previewWithdraw SHOULD be considered slippage in
+   * @notice Any unfavorable discrepancy between convertToShares and previewWithdrawal SHOULD be considered slippage in
    * share price or some other type of condition, meaning the depositor will lose assets by depositing.
    */
-  function previewWithdraw(uint256 _assets) public view virtual returns (uint256) {
+  function previewWithdrawal(uint256 _assets) public view virtual returns (uint256) {
     return _convertToShares(_assets, Math.Rounding.Up);
   }
 
@@ -294,9 +317,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Mints shares Vault shares to receiver by depositing exactly amount of underlying tokens.
+   * @dev Mints shares to receiver by depositing exact amount of underlying asset.
    * 
-   * - MUST emit the Deposit event.
    */
   function deposit(address _receiver) payable public virtual whenDepositNotPaused returns (uint256) {
     if (msg.value <= minDeposit) revert LESS_THAN_MIN_DEPOSIT();
@@ -314,14 +336,14 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Burns shares from owner and sends exactly assets to receiver.
-   *
-   * - MUST revert if all of assets cannot be withdrawn (due to withdrawal limit being reached, slippage, the owner
-   *   not having enough shares, etc).
+   * @dev Initiate withdrawal by adding request in withdrawal queue and returns requestId
+   * @param _assets number of assets to withdrawal
+   * @param _receiver receiver address
+   * @return requestId request id of submitted request to track status
    */
   function requestWithdrawal(uint256 _assets, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
-    // check zero amount
-    if (_assets == 0) revert AMOUNT_IS_ZERO();
+    // check min withdrawal
+    if (_assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
 
@@ -329,15 +351,15 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     uint256 maxAssets = maxWithdraw(_msgSender());
     if (_assets > maxAssets) revert ExceededMaxWithdraw(_receiver, _assets, maxAssets);
     
-    uint256 shares = previewWithdraw(_assets);
+    uint256 shares = previewWithdrawal(_assets);
     requestId = _requestWithdrawal(_msgSender(), _receiver, _assets, shares);
   }
 
   /**
-   * @dev Burns exactly shares from owner and sends assets of underlying tokens to receiver.
-   *
-   * - MUST revert if all of shares cannot be redeemed (due to withdrawal limit being reached, slippage, the owner
-   *   not having enough shares, etc).
+   * @dev Initiate withdrawal by adding request in withdrawal queue and returns requestId
+   * @param _shares number of shares to withdrawal
+   * @param _receiver receiver address
+   * @return requestId request id of submitted request to track status
    */
   function requestRedeem(uint256 _shares, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
     // check zero amount
@@ -350,11 +372,22 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
+    if (assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     requestId = _requestWithdrawal(_msgSender(), _receiver, assets, _shares);
   }
 
   /**
-   * @dev ether to finalize all the requests should be calculated using `prefinalize()` and sent along
+   * @dev Function to flush the excess funds to a hardcoded address
+   * anyone can call this function
+   */
+  function flushFunds() external {
+    uint256 amountToFlush = address(this).balance - lockedAssets;
+    _sendValue(walletAddress, amountToFlush);
+    emit FLUSH_FUND(walletAddress, amountToFlush);
+  }
+
+  /**
+   * @dev assets to finalize all the requests should be calculated using `prefinalize()` and sent along
    * @param _lastRequestIdToBeFinalized finalize requests from last finalized one up to
    */
   function finalize(uint256 _lastRequestIdToBeFinalized) external payable onlyRole(FINALIZE_ROLE) {
@@ -375,7 +408,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   }
 
   /**
-   * @dev Claim one`_requestId` request once finalized sending locked ether to the owner
+   * @dev Claim one`_requestId` request once finalized sending locked assets to the owner
    * @param _requestId request id to claim
    * - Reverts if any request is not finalized or already claimed
    * - Reverts if msg sender is not an owner of the requests
@@ -409,6 +442,19 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     minDeposit = _amount;
 
     emit MIN_DEPOSIT_UPDATED(_oldDeposit, _amount);
+  }
+
+  /**
+   * @notice Used by addresses with Admin and Operational roles to set the new min Withdrawal amount
+   * @param _amount new amount to be set as min deposit
+   */
+  function updateMinWithdrawal(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // check zero amount
+    if (_amount == 0) revert AMOUNT_IS_ZERO();
+    uint256 _oldWithdrawal = minWithdrawal;
+    minWithdrawal = _amount;
+
+    emit MIN_WITHDRAWAL_UPDATED(_oldWithdrawal, _amount);
   }
 
   /**

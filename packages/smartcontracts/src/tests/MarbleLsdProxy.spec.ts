@@ -86,10 +86,10 @@ describe('MarbleLsdProxy', () => {
     .to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
   });
 
-  it('Should fail when request withdrawal zero amount', async () => {
+  it('Should fail when request withdrawal with less than min withdrawal', async () => {
     const signer = accounts[4]
     await expect(proxyMarbleLsd.requestWithdrawal(0, signer.address))
-    .to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO");
+    .to.be.revertedWithCustomError(proxyMarbleLsd, "LESS_THAN_MIN_WITHDRAWAL");
   });
 
   it('Should fail when request withdrawal with zero receiver address', async () => {
@@ -144,6 +144,7 @@ describe('MarbleLsdProxy', () => {
     expect(withdrawArr[0]).to.eql([
       BigInt(amount),
       BigInt(amount),
+      signer.address,
       signer.address,
       BigInt(await time.latest()),
       false,

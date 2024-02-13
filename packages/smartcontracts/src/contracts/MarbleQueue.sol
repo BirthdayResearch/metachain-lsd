@@ -137,7 +137,9 @@ contract MarbleQueue {
     uint256 amountOfStETH;
     /// @notice amount of stETH shares locked on withdrawal queue for this request
     uint256 amountOfShares;
-    /// @notice address that can claim or transfer this request
+    /// @notice owner address that can claim this request
+    address owner;
+    /// @notice address that can receive DFI in this request
     address receiver;
     /// @notice timestamp of when the request was created, in seconds
     uint256 timestamp;
@@ -252,7 +254,7 @@ contract MarbleQueue {
   }
 
   /**
-   * @dev Claim the request and transfer locked ether to `_recipient`.
+   * @dev Claim the request and transfer locked assets to `_recipient`.
    * MUST emit the WithdrawalClaimed event.
    * @param _requestId id of the request to claim
    */
@@ -275,7 +277,10 @@ contract MarbleQueue {
     emit WithdrawalClaimed(_requestId, _owner, request.receiver, assetsToTransfer, sharesToBurn);
   }
 
-
+  /** @dev send values to _recipient address
+   *  @param _recipient recipient address
+   *  @param _amount amount to send
+   */
   function _sendValue(address _recipient, uint256 _amount) internal {
     if (address(this).balance < _amount) revert NotEnoughEther();
     (bool success,) = _recipient.call{ value: _amount }("");
@@ -313,8 +318,8 @@ contract MarbleQueue {
     emit WithdrawalRequested(requestId, _owner, _receiver, _assets, _shares);
   }
 
-  /** @dev
-   *  Returns the status of the withdrawal request with `_requestId` id
+  /** @dev Returns the status of the withdrawal
+   *  @param _requestId request id
    */
   function _getStatus(uint256 _requestId) internal view returns (WithdrawalRequestStatus memory status) {
     if (_requestId == 0 || _requestId > lastRequestId) revert InvalidRequestId(_requestId);
@@ -325,6 +330,7 @@ contract MarbleQueue {
     status = WithdrawalRequestStatus(
       request.cumulativeAssets - previousRequest.cumulativeAssets,
       request.cumulativeShares - previousRequest.cumulativeShares,
+      request.owner,
       request.receiver,
       request.timestamp,
       _requestId <= lastFinalizedRequestId,

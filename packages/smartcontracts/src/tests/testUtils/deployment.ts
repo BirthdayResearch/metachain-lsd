@@ -37,6 +37,7 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   // set REWARDS_DISTRIBUTER_ROLE      
   const rewardsDistributionHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
   await proxyMarbleLsd.grantRole(rewardsDistributionHash, rewardDistributerAndFinalizeSigner.address);
+  // set FINALIZE_ROLE      
   const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
   await proxyMarbleLsd.grantRole(finalizeRoleHash, rewardDistributerAndFinalizeSigner.address);
   
