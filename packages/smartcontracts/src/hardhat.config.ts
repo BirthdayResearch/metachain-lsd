@@ -1,6 +1,7 @@
 import '@nomicfoundation/hardhat-chai-matchers';
 import "@nomicfoundation/hardhat-toolbox";
 import '@nomicfoundation/hardhat-verify';
+import 'solidity-coverage';
 
 import  { HardhatUserConfig, task, types }  from "hardhat/config";
 

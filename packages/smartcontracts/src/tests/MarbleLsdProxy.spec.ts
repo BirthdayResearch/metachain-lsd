@@ -54,6 +54,14 @@ describe('MarbleLsdProxy', () => {
     expect(address.length).to.equal(42);
   });
 
+  it('Should not flush fund if contract have zero amount to withdrawal ', async () => {
+    const availableFundsToFlush = await proxyMarbleLsd.getAvailableFundsToFlush();
+    expect(availableFundsToFlush).to.equal(new BigNumber(0));
+    await expect(
+      proxyMarbleLsd.connect(defaultAdminSigner).flushFunds(),
+    ).to.be.revertedWithCustomError(proxyMarbleLsd, 'AMOUNT_IS_ZERO');
+  });
+
   it('Should get receipt token name', async () => {
     const name = await shareToken.name()
     expect(name).to.equal('DFI STAKING RECEIPT TOKEN');
@@ -211,6 +219,15 @@ describe('MarbleLsdProxy', () => {
       .withArgs(amount, preFinalize.assetsToLock);
   });
 
+  it('Should have correct unfinalized assets count and request number', async () => {
+    const unfinalizedAssets = await proxyMarbleLsd.unfinalizedAssets();
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    const unfinalizedRequestNumber = await proxyMarbleLsd.unfinalizedRequestNumber();
+    expect(unfinalizedRequestNumber).to.equal(lastRequestId)
+    const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
+    expect(preFinalize.assetsToLock).to.equal(unfinalizedAssets)
+  })
+
   it('Should be able to finalizing withdraw with correct finalizing amount', async () => {
     const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
     const lastRequestId = await proxyMarbleLsd.lastRequestId();
@@ -238,7 +255,7 @@ describe('MarbleLsdProxy', () => {
     const shares = await proxyMarbleLsd.convertToShares(amount);
     const signer = accounts[4]
     const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
-    await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawals([withdrawalRequests[0]]))
       .to.emit(proxyMarbleLsd, 'WithdrawalClaimed')
       .withArgs(withdrawalRequests[0], signer.address, signer.address, amount, shares);
     const updatedAssets = await proxyMarbleLsd.totalAssets()
@@ -259,7 +276,6 @@ describe('MarbleLsdProxy', () => {
       .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestAlreadyClaimed")
       .withArgs(lastFinalizedRequestId);
   });
-
 
   it('Should be able to request redeem DFI and claim rewards with WithdrawalClaimed event', async () => {
     const shares = toWei('5');
@@ -297,7 +313,7 @@ describe('MarbleLsdProxy', () => {
   });
 
   describe('Minimum deposit update tests', () => {
-    it('Unable to update minimum deposit if new amount is 0', async () => {
+    it('Should not update minimum deposit if new amount is 0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
       await expect(
@@ -305,7 +321,7 @@ describe('MarbleLsdProxy', () => {
       ).to.be.revertedWithCustomError(proxyMarbleLsd, 'AMOUNT_IS_ZERO');
     });
 
-    it('Unable to update minimum deposit if not DEFAULT_ADMIN_ROLE', async () => {
+    it('Should not update minimum deposit if not DEFAULT_ADMIN_ROLE', async () => {
       const initialMinDeposit = await proxyMarbleLsd.minDeposit()
       // Test will fail if the signer is neither admin or operational admin
       const newSigner = accounts[10]
@@ -317,7 +333,7 @@ describe('MarbleLsdProxy', () => {
       expect(await proxyMarbleLsd.minDeposit()).to.equal(initialMinDeposit);
     });
 
-    it('Successfully update minimum deposit By Admin account', async () => {
+    it('Should update minimum deposit By Admin account', async () => {
       const initialMinDeposit = await proxyMarbleLsd.minDeposit()
       const newAmount = toWei('2')
       await expect(proxyMarbleLsd.connect(defaultAdminSigner).updateMinDeposit(toWei('2')))
@@ -326,9 +342,55 @@ describe('MarbleLsdProxy', () => {
       expect(await proxyMarbleLsd.minDeposit()).to.equal(newAmount);
     });
   });
+
+  describe('Minimum withdrawal update tests', () => {
+    it('Should not update minimum withdrawal if new amount is 0', async () => {
+      // Test will fail with the error if input address is a dead address "0x0"
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+      await expect(
+        proxyMarbleLsd.connect(defaultAdminSigner).updateMinWithdrawal(0),
+      ).to.be.revertedWithCustomError(proxyMarbleLsd, 'AMOUNT_IS_ZERO');
+    });
+
+    it('Should not update minimum deposit if not DEFAULT_ADMIN_ROLE', async () => {
+      const initialMinWithdrawal = await proxyMarbleLsd.minWithdrawal()
+      // Test will fail if the signer is neither admin or operational admin
+      const newSigner = accounts[10]
+      await expect(
+        proxyMarbleLsd.connect(newSigner).updateMinWithdrawal(toWei('1')),
+      ).to.be.revertedWith(
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${'0'.repeat(64)}`,
+      );
+      expect(await proxyMarbleLsd.minWithdrawal()).to.equal(initialMinWithdrawal);
+    });
+
+    it('Should update minimum deposit By Admin account', async () => {
+      const initialMinWithdrawal = await proxyMarbleLsd.minWithdrawal()
+      const newAmount = toWei('2')
+      await expect(proxyMarbleLsd.connect(defaultAdminSigner).updateMinWithdrawal(toWei('2')))
+        .to.emit(proxyMarbleLsd, 'MIN_WITHDRAWAL_UPDATED')
+        .withArgs(initialMinWithdrawal, newAmount);
+      expect(await proxyMarbleLsd.minWithdrawal()).to.equal(newAmount);
+    });
+  });
+
+  describe('Flush funds', () => {
+    it('Should flush fund if contract have more than zero amount to withdrawal ', async () => {
+      const availableFundsToFlush = await proxyMarbleLsd.getAvailableFundsToFlush();
+      const walletAddress = await proxyMarbleLsd.walletAddress();
+      const initialBalance = await ethers.provider.getBalance(walletAddress)
+      expect(availableFundsToFlush).to.greaterThan(new BigNumber(0));
+      await proxyMarbleLsd.connect(defaultAdminSigner).flushFunds();
+      const updatedBalance = await ethers.provider.getBalance(walletAddress)
+      const updatedBalanceBigInt = new BigNumber(updatedBalance.toString());
+      const initialBalanceBigInt = new BigNumber(initialBalance.toString());
+      const availableFundsToFlushBigInt = new BigNumber(availableFundsToFlush.toString());
+      expect(updatedBalanceBigInt.toFixed()).to.equal(initialBalanceBigInt.plus(availableFundsToFlushBigInt).toFixed());
+    });
+  });
   
   describe('Wallet address update tests', () => {
-    it('Unable to update if new address is 0x0', async () => {
+    it('Should not update if new address is 0x0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
       await expect(
@@ -336,7 +398,7 @@ describe('MarbleLsdProxy', () => {
       ).to.be.revertedWithCustomError(proxyMarbleLsd, 'ZERO_ADDRESS');
     });
 
-    it('Unable to update wallet address if not DEFAULT_ADMIN_ROLE', async () => {
+    it('Should not update wallet address if not DEFAULT_ADMIN_ROLE', async () => {
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
       // Test will fail if the signer is neither admin or operational admin
       const newSigner = accounts[10]
@@ -348,7 +410,7 @@ describe('MarbleLsdProxy', () => {
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
     });
 
-    it('Successfully update the wallet address By Admin account', async () => {
+    it('Should update the wallet address By Admin account', async () => {
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
       // Change wallet address by Admin and Operational addresses
       const newSigner = accounts[10]

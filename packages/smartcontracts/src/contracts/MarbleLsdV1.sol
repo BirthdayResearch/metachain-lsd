@@ -389,9 +389,19 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * anyone can call this function
    */
   function flushFunds() external {
-    uint256 amountToFlush = address(this).balance - lockedAssets;
+    uint256 amountToFlush = getAvailableFundsToFlush();
+    if (amountToFlush == 0) revert AMOUNT_IS_ZERO();
     _sendValue(walletAddress, amountToFlush);
     emit FLUSH_FUND(walletAddress, amountToFlush);
+  }
+
+  /**
+   * @dev Function to calculate the available funds that can be flushed
+   * @return The amount of funds available for flushing
+   */
+  function getAvailableFundsToFlush() public view returns (uint256) {
+    uint256 availableBalance = address(this).balance - lockedAssets;
+    return availableBalance;
   }
 
   /**
