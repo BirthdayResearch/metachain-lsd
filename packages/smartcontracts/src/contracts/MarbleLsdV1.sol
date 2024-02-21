@@ -136,7 +136,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
   /**
-   * @notice To initialize this contract (No constructor as part of the proxy pattery)
+   * @notice To initialize this contract (No constructor as part of the proxy pattern)
    * @param _adminAddress Admin address who will have the DEFAULT_ADMIN_ROLE
    * @param _walletAddress Wallet address who will have the all staked token transferred
    * @param _shareTokenName Share token name
