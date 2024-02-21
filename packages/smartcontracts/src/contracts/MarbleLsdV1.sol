@@ -84,7 +84,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
 
   /**
    * @notice Emitted when withdraw/redeem happen on smart contract
-   * @param sender Address initiating withdraw
+   * @param sender Address initiating exchange of shares, owned by owner, for assets
    * @param receiver Address receiving assets
    * @param assets Amount of asset that being withdraw
    * @param shares Amount of shares that being burned
