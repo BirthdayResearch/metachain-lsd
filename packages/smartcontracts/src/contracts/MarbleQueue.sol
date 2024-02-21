@@ -81,7 +81,7 @@ contract MarbleQueue {
    * @notice Emitted when withdrawal requested happen on smart contract
    * @param requestId Withdraw requestId
    * @param owner Owner address
-   * @param receiver Reciving assets
+   * @param receiver Recieving assets
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
    */
@@ -112,7 +112,7 @@ contract MarbleQueue {
   /** 
    * @notice Emitted when withdrawal is claimed
    * @param requestId Request id for which claimed
-   * @param owner Reciving assets
+   * @param owner Recieving assets
    * @param receiver Amount of assets gets locked
    * @param amountOfAssets Assets to transfer
    * @param sharesToBurn Shares buned
