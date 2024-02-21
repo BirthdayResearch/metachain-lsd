@@ -71,7 +71,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @notice Emitted when deposit/mint happen on smart contract
    * @param sender Address initiating deposit/mint
-   * @param owner Address reciving shares
+   * @param owner Address receiving shares
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
    */
