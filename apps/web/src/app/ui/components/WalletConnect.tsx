@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useNetwork } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import MetaMaskIcon from "./icons/MetaMaskIcon";
+import MetaMaskIcon from "@/app/ui/icons/MetaMaskIcon";
 import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import truncateTextFromMiddle from "@/app/lib/textHelper";
 import useResponsive from "@/app/lib/hooks/useResponsive";
@@ -17,12 +17,14 @@ function PreConnectedButton({
       data-testid="connect-button"
       type="button"
       className={clsx(
-        `primary-btn relative flex items-center justify-center
+        `primary-btn-ui relative flex items-center justify-center
          px-9 py-4`,
       )}
       onClick={onClick}
     >
-      <span className="text-sm font-bold text-light-1000">{btnLabel}</span>
+      <span className="text-sm font-bold text-light-1000 active:text-opacity-60">
+        {btnLabel}
+      </span>
     </button>
   );
 }
@@ -51,7 +53,7 @@ function ConnectedButton({
       <div className="flex items-center">
         <MetaMaskIcon />
         <div className="ml-2 text-left">
-          <span className="block text-sm text-light-1000">{walletText}</span>
+          <span className="block text-sm text-dark-1000">{walletText}</span>
           <div className="flex items-center">
             <span className="text-xs text-dark-700">{chain}</span>
             <div className="ml-1 h-2 w-2 rounded-full bg-valid" />

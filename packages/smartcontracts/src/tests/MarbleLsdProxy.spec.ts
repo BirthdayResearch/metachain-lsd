@@ -36,13 +36,13 @@ describe('MarbleLsdProxy', () => {
     expect(initialSupply).to.equal('0');
   });
 
-  it('Should have convert to shares ratio to 1:1 before staking any coin', async () => {
+  it('Should have convert to shares ratio to 1:1 before staking any assets', async () => {
     const amount = toWei('10');
     const shares = await proxyMarbleLsd.convertToShares(amount)
     expect(shares).to.equal(amount);
   });
 
-  it('Should have convert to assets ratio to 1:1 before staking any coin', async () => {
+  it('Should have convert to assets ratio to 1:1 before staking any assets', async () => {
     const shares = toWei('10');
     const assets = await proxyMarbleLsd.convertToAssets(shares)
     expect(assets).to.equal(shares);
