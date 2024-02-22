@@ -17,13 +17,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ContainerLayout>
-        <main
-          className={`${inter.className} max-w-5xl w-full flex flex-row items-center justify-between`}
-        >
-          {children}
-        </main>
-      </ContainerLayout>
+      <body>
+        <ContainerLayout>
+          <div
+            className={`${inter.className} max-w-5xl w-full flex flex-row items-center justify-between`}
+          >
+            {children}
+          </div>
+        </ContainerLayout>
+      </body>
     </html>
   );
 }

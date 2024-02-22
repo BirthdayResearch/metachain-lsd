@@ -54,7 +54,6 @@ export default function ContainerLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <html lang="en">
     <WagmiConfig config={config}>
       <ConnectKitProvider options={{ initialChainId: 0 }}>
         <div className="flex min-h-screen flex-col items-center w-full p-10">
@@ -63,6 +62,5 @@ export default function ContainerLayout({
         </div>
       </ConnectKitProvider>
     </WagmiConfig>
-    // </html>
   );
 }

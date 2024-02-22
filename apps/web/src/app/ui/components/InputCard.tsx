@@ -15,9 +15,11 @@ export function PercentageButton({ percentage }: { percentage: string }) {
 
 export function InputCard({
   amt,
+  value,
   setAmt,
 }: {
   amt: string;
+  value: string;
   setAmt: (amt: string) => void;
 }) {
   return (
@@ -35,7 +37,7 @@ export function InputCard({
             setAmt(e.target.value);
           }}
         />
-        value
+        {value}
       </div>
       <div className="gap-x-1 flex">
         {Object.values(AmountButton).map((type) => (

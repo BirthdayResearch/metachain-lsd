@@ -6,15 +6,18 @@ export function CTAButton({
   customStyle,
   customTextStyle = "text-light-00",
   onClick,
+  disabled,
 }: {
   text: string;
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
   onClick?: () => void;
+  disabled: boolean;
 }) {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       data-testid={`cta-button-${testID}`}
       className={clsx(
