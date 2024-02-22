@@ -428,7 +428,7 @@ describe('MarbleLsdProxy', () => {
       .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
       .withArgs(true, defaultAdminSigner.address);
       // pause withdraw
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(true))
+      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawalPaused(true))
       .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
       .withArgs(true, defaultAdminSigner.address);
     })
@@ -439,7 +439,7 @@ describe('MarbleLsdProxy', () => {
       .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
       .withArgs(false, defaultAdminSigner.address);
       // unpause withdraw
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(false))
+      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawalPaused(false))
       .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
       .withArgs(false, defaultAdminSigner.address);
     })

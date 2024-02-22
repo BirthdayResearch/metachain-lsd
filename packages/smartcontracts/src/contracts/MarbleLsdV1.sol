@@ -349,7 +349,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @param _receiver Receiver address
    * @return requestId Request id of submitted request to track status
    */
-  function requestWithdrawal(uint256 _assets, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
+  function requestWithdrawal(uint256 _assets, address _receiver) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
     // check min withdrawal
     if (_assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     // check zero address
@@ -369,7 +369,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
    * @param _receiver Receiver address
    * @return requestId Request id of submitted request to track status
    */
-  function requestRedeem(uint256 _shares, address _receiver) public virtual whenWithdrawNotPaused returns (uint256 requestId) {
+  function requestRedeem(uint256 _shares, address _receiver) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
     // check zero amount
     if (_shares == 0) revert AMOUNT_IS_ZERO();
     // check zero address

@@ -42,7 +42,7 @@ contract Pausable is AccessControlUpgradeable {
   );
 
   bool public isDepositPaused = false;
-  bool public isWithdrawPaused = false;
+  bool public isWithdrawalPaused = false;
 
   /**
    * @dev Modifier to make a function callable only when the deposit is not paused.  
@@ -55,8 +55,8 @@ contract Pausable is AccessControlUpgradeable {
   /**
    * @dev Modifier to make a function callable only when the withdraw is not paused.  
    */
-  modifier whenWithdrawNotPaused() {
-    if(isWithdrawPaused) revert WITHDRAWAL_PAUSED();
+  modifier whenWithdrawalNotPaused() {
+    if(isWithdrawalPaused) revert WITHDRAWAL_PAUSED();
     _;
   }
 
@@ -71,8 +71,8 @@ contract Pausable is AccessControlUpgradeable {
   /**
    * @dev called by the owner to pause/unpause withdraw
    */
-  function setWithdrawPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    isWithdrawPaused = _paused;
+  function setWithdrawalPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    isWithdrawalPaused = _paused;
     emit PauseUnpauseWithdraw(_paused, _msgSender());
   }
 }
