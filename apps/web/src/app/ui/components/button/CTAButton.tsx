@@ -1,19 +1,19 @@
 import clsx from "clsx";
 
 export function CTAButton({
-  text,
+  label,
   testID,
   customStyle,
   customTextStyle = "text-light-00",
   onClick,
   disabled,
 }: {
-  text: string;
+  label: string;
+  testID: string;
+  disabled?: boolean;
+  onClick?: () => void;
   customStyle?: string;
   customTextStyle?: string;
-  testID: string;
-  onClick?: () => void;
-  disabled: boolean;
 }) {
   return (
     <button
@@ -28,7 +28,7 @@ export function CTAButton({
       )}
     >
       <span className="active:text-opacity-60 text-sm font-bold text-light-1000">
-        {text}
+        {label}
       </span>
     </button>
   );

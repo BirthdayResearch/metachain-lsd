@@ -3,14 +3,12 @@
 import MarbleLsdV1 from "../config/ABIs/MarbleLsdV1.json";
 
 import {
-  erc20ABI,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
   useBalance,
   useAccount,
-  useContractReads,
 } from "wagmi";
 import { InputCard } from "@/app/ui/components/InputCard";
 import { useEffect, useState } from "react";
@@ -89,7 +87,18 @@ export default function Base() {
     }
   }
 
-  async function checkIfDepositIsPaused() {}
+  function getActionBtnLabel() {
+    switch (true) {
+      case isSuccess:
+        return "Return to Main Page";
+
+      case isConnected:
+        return "Stake DFI";
+
+      default:
+        return "Connect wallet";
+    }
+  }
 
   useEffect(() => {
     // set wallet balance
@@ -101,31 +110,36 @@ export default function Base() {
       <h3>Stake DFI</h3>
       <div className="flex w-full justify-between">
         <span>Enter amount to stake</span>
-        <div>Available: {walletBalanceAmount}</div>
+        {isConnected ? (
+          <div>Available: {walletBalanceAmount}</div>
+        ) : (
+          "Connect wallet to get started"
+        )}
       </div>
       <InputCard
         amt={stakeAmount}
         setAmt={setStakeAmount}
         value={previewDepositFormatted}
       />
-      <CTAButton
-        text="Stake"
-        testID="stake"
-        onClick={submitStake}
-        disabled={!writeDepositTxn}
-      />
+      {/*<CTAButton*/}
+      {/*  label="Stake"*/}
+      {/*  testID="stake"*/}
+      {/*  onClick={submitStake}*/}
+      {/*  disabled={!writeDepositTxn}*/}
+      {/*/>*/}
       <ConnectKitButton.Custom>
         {({ show }) => (
-          <ActionButton
-            testId="instant-transfer-btn"
+          <CTAButton
+            testID="instant-transfer-btn"
             label={getActionBtnLabel()}
-            isLoading={hasPendingTxn || isVerifyingTransaction}
-            disabled={
-              (isConnected && !isFormValid) ||
-              hasPendingTxn ||
-              !isBalanceSufficient
-            }
-            onClick={!isConnected ? show : () => onTransferTokens()}
+            // isLoading={hasPendingTxn || isVerifyingTransaction}
+            // disabled={
+            //   (isConnected && !isFormValid) ||
+            //   hasPendingTxn ||
+            //   !isBalanceSufficient
+            // }
+            disabled={!writeDepositTxn}
+            onClick={!isConnected ? show : () => submitStake()}
           />
         )}
       </ConnectKitButton.Custom>
