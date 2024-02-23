@@ -1,26 +1,34 @@
+import { ethers } from 'hardhat';
+
 import { deployMarbleLsdProxy } from "./deployMarbleLsdProxy";
 import { deployMarbleLsdV1 } from "./deployMarbleLsdV1";
+import { deployTimelockController } from "./deployTimelockController";
 
 // when deploying, replace the following values with the correct ones
-const ADMIN_ADDRESS = ''; // Multi sig wallet
+const minDelay = 259200; // 3 days
 const WALLET_ADDRESS = ''; // Multi sig wallet
-
+const TIMELOCK_ADMIN_ADDRESS = ''; // Multi sig wallet
 // Run this script to deploy all contracts on mainnet.
 // npx hardhat run --network mainnet ./scripts/deploy.ts
 
 // Run this script to deploy all contracts on Sepolia testnet.
 // npx hardhat run --network sepolia ./scripts/deploy.ts
 
-
 async function main() {
   const marbleLsdV1 = await deployMarbleLsdV1();
   const marbleLsdV1Address = await marbleLsdV1.getAddress()
+  const timelockController = await deployTimelockController({
+    minDelay,
+    proposers: [TIMELOCK_ADMIN_ADDRESS],
+    executors: [TIMELOCK_ADMIN_ADDRESS],
+    admin: ethers.ZeroAddress,
+  });
+  const timelockControllerAddress =  await timelockController.getAddress()
   await deployMarbleLsdProxy({
-    adminAddress: ADMIN_ADDRESS,
+    adminAddress: timelockControllerAddress,
     walletAddress: WALLET_ADDRESS,
     marbleLsdV1Address
   });
-  
 }
 
 // We recommend this pattern to be able to use async/await everywhere
