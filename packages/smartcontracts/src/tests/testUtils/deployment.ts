@@ -21,7 +21,7 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     // receipt token name
     'DFI STAKING RECEIPT TOKEN',
     // receipt token symbol
-    'xDFI'
+    'mDFI'
   ]);
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(marbleLsdUpgradeableAddress, encodedData);

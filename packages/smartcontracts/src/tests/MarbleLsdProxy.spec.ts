@@ -69,7 +69,7 @@ describe('MarbleLsdProxy', () => {
 
   it('Should get receipt token symbol', async () => {
     const symbol = await shareToken.symbol()
-    expect(symbol).to.equal('xDFI');
+    expect(symbol).to.equal('mDFI');
   });
 
   it('Should get receipt decimal', async () => {
@@ -481,7 +481,7 @@ describe('MarbleLsdProxy', () => {
       );
     })
 
-    it('Should update DFI-xDFI ratio when rewards are distributed', async () => {
+    it('Should update DFI-mDFI ratio when rewards are distributed', async () => {
       // Need to add to the timestamp of the previous block to match the next block the tx is mined in
       const amount = toWei('10');
       const signer = accounts[4]
@@ -513,7 +513,7 @@ describe('MarbleLsdProxy', () => {
       const updatedAssets = await proxyMarbleLsd.totalAssets()
       expect(updatedAssets).to.equal(new BigNumber(amount.toString()).plus(amount.toString()));
 
-      // share = 10 (xDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
+      // share = 10 (mDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
       const resultingShares = new BigNumber(amount.toString()).multipliedBy(0.5)
       const updatedShare = await proxyMarbleLsd.convertToShares(amount);
       expect(updatedShare).to.equal(resultingShares);

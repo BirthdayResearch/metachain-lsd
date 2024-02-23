@@ -10,7 +10,7 @@ export async function deployMarbleLsdProxy({
 }: InputsForInitialization): Promise<MarbleLsdProxy> {
   const contract = await ethers.getContractFactory('MarbleLsdProxy');
   const receiptTokenName = 'DFI STAKING SHARE TOKEN'
-  const receiptTokenSymbol = 'xDFI'
+  const receiptTokenSymbol = 'mDFI'
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData('initialize', [
     // admin address, or timelock contract address
     adminAddress,
