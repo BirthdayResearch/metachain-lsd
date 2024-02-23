@@ -1,6 +1,6 @@
 const navigationTabs = [
-  { label: "How it works", href: "/how-it-works" },
   { label: "Benefits", href: "/benefits" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "About mDFI", href: "/about" },
   { label: "Community", href: "/community" },
   { label: "FAQs", href: "/faqs" },
