@@ -36,13 +36,14 @@ contract Pausable is AccessControlUpgradeable {
    * @param status Status of pause/unpause
    * @param owner Owner address
    */
-  event PauseUnpauseWithdraw(
+  event PauseUnpauseWithdrawal(
     bool status,
     address owner
   );
 
   bool public isDepositPaused = false;
   bool public isWithdrawalPaused = false;
+  bytes32 public constant ADMINISTRATOR_ROLE = keccak256('ADMINISTRATOR_ROLE');
 
   /**
    * @dev Modifier to make a function callable only when the deposit is not paused.  
@@ -63,7 +64,7 @@ contract Pausable is AccessControlUpgradeable {
   /**
    * @dev called by the owner to pause/unpause deposit
    */
-  function setDepositPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE){
+  function setDepositPaused(bool _paused) external onlyRole(ADMINISTRATOR_ROLE){
     isDepositPaused = _paused;
     emit PauseUnpauseDeposit(_paused, _msgSender());
   }
@@ -71,8 +72,8 @@ contract Pausable is AccessControlUpgradeable {
   /**
    * @dev called by the owner to pause/unpause withdraw
    */
-  function setWithdrawalPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setWithdrawalPaused(bool _paused) external onlyRole(ADMINISTRATOR_ROLE) {
     isWithdrawalPaused = _paused;
-    emit PauseUnpauseWithdraw(_paused, _msgSender());
+    emit PauseUnpauseWithdrawal(_paused, _msgSender());
   }
 }

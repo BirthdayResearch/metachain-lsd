@@ -2,13 +2,47 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { MarbleLsdV1, MarbleLsdV2__factory } from '../generated';
-import { deployContracts } from './testUtils/deployment';
+import { MarbleLsdV1, MarbleLsdV2__factory, ShareToken } from '../generated';
+import { MarbleLsdDeploymentResult, deployContracts } from './testUtils/deployment';
+import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 
 
 describe('Proxy behavior', () => {
-  it("Upgrade and test contract's functionality and storage slots", async () => {
-    const { proxyMarbleLsd, defaultAdminSigner, rewardDistributerAndFinalizeSigner } = await loadFixture(deployContracts);
+  let proxyMarbleLsd: MarbleLsdV1;
+  let defaultAdminSigner: SignerWithAddress;
+  let rewardDistributerAndFinalizeSigner: SignerWithAddress;
+  let accounts: SignerWithAddress[] = [];
+
+  before(async () => {
+    const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
+    proxyMarbleLsd = fixture.proxyMarbleLsd;
+    defaultAdminSigner = fixture.defaultAdminSigner;
+    rewardDistributerAndFinalizeSigner = fixture.rewardDistributerAndFinalizeSigner;
+    accounts = await ethers.getSigners()
+  })
+
+  it('Should not upgrade contract from non admin address', async () => {
+    // Encoded MarbleLsdV2 data
+    const MarbleLsdV2Upgradeable = await ethers.getContractFactory('MarbleLsdV2');
+    const marbleLsdV2Upgradeable = await MarbleLsdV2Upgradeable.deploy();
+    await marbleLsdV2Upgradeable.waitForDeployment();
+    const encodedData = MarbleLsdV2__factory.createInterface().encodeFunctionData('initialize', [
+      // Contract version
+      2,
+    ]);
+
+    // Upgrading the Proxy contract
+    const marbleLsdV2UpgradeableAddress = await marbleLsdV2Upgradeable.getAddress()
+    const signer = accounts[5]
+    const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
+
+    await expect(proxyMarbleLsd.connect(accounts[5]).upgradeToAndCall(marbleLsdV2UpgradeableAddress, encodedData))
+      .to.be.revertedWith(
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${adminRoleHash}`,
+    );;
+  })
+
+  it("Should upgrade and test contract's functionality and storage slots", async () => {
     // MarbleV1 should have version 1
     expect(await proxyMarbleLsd.version()).to.equal('1');
     expect(await proxyMarbleLsd.NAME()).to.equal('MARBLE_LSD');

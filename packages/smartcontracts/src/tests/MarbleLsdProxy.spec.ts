@@ -12,6 +12,7 @@ describe('MarbleLsdProxy', () => {
   let proxyMarbleLsd: MarbleLsdV1;
   let defaultAdminSigner: SignerWithAddress;
   let rewardDistributerAndFinalizeSigner: SignerWithAddress;
+  let administratorSigner: SignerWithAddress;
   let walletSigner: SignerWithAddress;
   let accounts: SignerWithAddress[] = [];
   let shareToken: ShareToken;
@@ -20,6 +21,7 @@ describe('MarbleLsdProxy', () => {
     const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
+    administratorSigner = fixture.administratorSigner;
     rewardDistributerAndFinalizeSigner= fixture.rewardDistributerAndFinalizeSigner;
     walletSigner = fixture.walletSigner;
     shareToken = fixture.shareToken;
@@ -38,7 +40,7 @@ describe('MarbleLsdProxy', () => {
 
   it('Should have convert to shares ratio to 1:1 before staking any assets', async () => {
     const amount = toWei('10');
-    const shares = await proxyMarbleLsd.convertToShares(amount)
+    const shares = await proxyMarbleLsd.previewDeposit(amount)
     expect(shares).to.equal(amount);
   });
 
@@ -64,7 +66,7 @@ describe('MarbleLsdProxy', () => {
 
   it('Should get receipt token name', async () => {
     const name = await shareToken.name()
-    expect(name).to.equal('DFI STAKING RECEIPT TOKEN');
+    expect(name).to.equal('DFI STAKING SHARE TOKEN');
   });
 
   it('Should get receipt token symbol', async () => {
@@ -117,6 +119,7 @@ describe('MarbleLsdProxy', () => {
   it('Should deposit DFI and emit Deposit event on successful staking', async () => {
     // Need to add to the timestamp of the previous block to match the next block the tx is mined in
     const amount = toWei('10');
+    const initialStaked = await proxyMarbleLsd.totalStakedAssets()
     const shares = amount // considering 1:1 ratio
     const signer = accounts[4]
     await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
@@ -124,6 +127,8 @@ describe('MarbleLsdProxy', () => {
       .withArgs(signer.address, signer.address, amount, shares);
     const initialSupply = await proxyMarbleLsd.totalShares()
     expect(initialSupply).to.equal(amount);
+    const updatedStaked = await proxyMarbleLsd.totalStakedAssets()
+    expect(new BigNumber(updatedStaked.toString()).minus(initialStaked.toString())).to.equal(amount);
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address)
     expect(balance).to.equal(shares);
@@ -138,7 +143,7 @@ describe('MarbleLsdProxy', () => {
 
   it('Should be able to request withdrawal DFI and emit WithdrawalRequested event on successful withdraw', async () => {
     const amount = toWei('5');
-    const shares = await proxyMarbleLsd.convertToShares(amount);
+    const shares = await proxyMarbleLsd.previewWithdrawal(amount);
     const signer = accounts[4]
     const lastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
     // approve transfer of share token
@@ -249,10 +254,11 @@ describe('MarbleLsdProxy', () => {
 
   it('Should be able to claim withdrawal with WithdrawalClaimed event', async () => {
     const amount = toWei('5');
+    const initialStaked = await proxyMarbleLsd.totalStakedAssets()
     const initialTotalSupply = await shareToken.totalSupply();
     const initialAssets = await proxyMarbleLsd.totalAssets();
     const initialShares = await proxyMarbleLsd.totalShares();
-    const shares = await proxyMarbleLsd.convertToShares(amount);
+    const shares = await proxyMarbleLsd.previewWithdrawal(amount);
     const signer = accounts[4]
     const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
     await expect(proxyMarbleLsd.connect(signer).claimWithdrawals([withdrawalRequests[0]]))
@@ -267,6 +273,8 @@ describe('MarbleLsdProxy', () => {
     expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
     const totalSupply = await shareToken.totalSupply()
     expect(totalSupply).to.equal(new BigNumber(initialTotalSupply.toString()).minus(amount.toString()));
+    const updatedStaked = await proxyMarbleLsd.totalStakedAssets()
+    expect(new BigNumber(initialStaked.toString()).minus(updatedStaked.toString())).to.equal(amount);
   });
 
   it('Should not able to re-claim withdrawal', async () => {
@@ -422,33 +430,56 @@ describe('MarbleLsdProxy', () => {
   });
 
   describe('Pause Unpause deposit and withdraw', () => {
-    before(async () => {
-      // pause deposit
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(true))
-      .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
-      .withArgs(true, defaultAdminSigner.address);
-      // pause withdraw
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawalPaused(true))
-      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
-      .withArgs(true, defaultAdminSigner.address);
-    })
+    it('Should not pause deposit when not called from administrator', async () => {
+      const signer = accounts[4]
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      await expect(proxyMarbleLsd.connect(signer).setDepositPaused(true))
+      .to.be.revertedWith(
+        `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      );
+    });
 
-    after(async () => {
-      // unpause deposit
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(false))
+    it('Should pause deposit when called from administrator', async () => {
+      await expect(proxyMarbleLsd.connect(administratorSigner).setDepositPaused(true))
       .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
-      .withArgs(false, defaultAdminSigner.address);
-      // unpause withdraw
-      await expect(proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawalPaused(false))
-      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdraw')
-      .withArgs(false, defaultAdminSigner.address);
-    })
+      .withArgs(true, administratorSigner.address);
+    });
 
     it('Should fail deposit when deposit is paused', async () => {
       const amount = toWei('10');
       const signer = accounts[4]
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
       .to.be.revertedWithCustomError(proxyMarbleLsd, "DEPOSIT_PAUSED")
+    });
+
+    it('Should not unpause deposit when not called from administrator', async () => {
+      const signer = accounts[4]
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      await expect(proxyMarbleLsd.connect(signer).setDepositPaused(false))
+      .to.be.revertedWith(
+        `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      );
+    });
+
+    it('Should unpause deposit when called from administrator', async () => {
+      await expect(proxyMarbleLsd.connect(administratorSigner).setDepositPaused(false))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseDeposit')
+      .withArgs(false, administratorSigner.address);
+    });
+
+    it('Should not pause withdrawal when not called from administrator', async () => {
+      const signer = accounts[4]
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      await expect(proxyMarbleLsd.connect(signer).setWithdrawalPaused(true))
+      .to.be.revertedWith(
+        `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      );
+    });
+
+    it('Should pause withdrawal when called from administrator', async () => {
+      await expect(proxyMarbleLsd.connect(administratorSigner).setWithdrawalPaused(true))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdrawal')
+      .withArgs(true, administratorSigner.address);
     });
 
     it('Should fail withdraw when withdraw is paused', async () => {
@@ -458,12 +489,66 @@ describe('MarbleLsdProxy', () => {
       .to.be.revertedWithCustomError(proxyMarbleLsd, "WITHDRAWAL_PAUSED")
     });
 
-    it('Should fail redeem when withdraw is paused', async () => {
+    it('Should fail redeem when withdrawal is paused', async () => {
       const amount = toWei('10');
       const signer = accounts[4]
       await expect(proxyMarbleLsd.connect(signer).requestRedeem(amount, signer.address))
       .to.be.revertedWithCustomError(proxyMarbleLsd, "WITHDRAWAL_PAUSED")
     });
+
+    it('Should not unpause withdrawal when not called from administrator', async () => {
+      const signer = accounts[4]
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      await expect(proxyMarbleLsd.connect(signer).setWithdrawalPaused(false))
+      .to.be.revertedWith(
+        `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      );
+    });
+
+    it('Should unpause withdrawal when called from administrator', async () => {
+      await expect(proxyMarbleLsd.connect(administratorSigner).setWithdrawalPaused(false))
+      .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdrawal')
+      .withArgs(false, administratorSigner.address);
+    });
+
+  });
+
+  describe('Roles', () => {
+    it('Should have admin role to defaultAdminSigner address', async () => {
+      const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
+      expect(adminRoleHash).to.equal('0x0000000000000000000000000000000000000000000000000000000000000000')
+      expect(await proxyMarbleLsd.hasRole(adminRoleHash, defaultAdminSigner.address))
+        .to.equal(true);
+    });
+  
+    it('Should have administrator role to administratorSigner address', async () => {
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      expect(await proxyMarbleLsd.hasRole(administratorRoleHash, administratorSigner.address))
+        .to.equal(true);
+    });
+
+    it('Should have reward distributer role to rewardDistributerAndFinalizeSigner address', async () => {
+      const rewardDistributerRoleHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
+      expect(await proxyMarbleLsd.hasRole(rewardDistributerRoleHash, rewardDistributerAndFinalizeSigner.address))
+        .to.equal(true);
+    });
+
+    it('Should have finalizer role to rewardDistributerAndFinalizeSigner address', async () => {
+      const finalizerRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
+      expect(await proxyMarbleLsd.hasRole(finalizerRoleHash, rewardDistributerAndFinalizeSigner.address))
+        .to.equal(true);
+    });
+
+    it('Should have DEFAULT_ADMIN_ROLE as role admin', async()=>{
+      const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
+      expect(await proxyMarbleLsd.getRoleAdmin(adminRoleHash)).to.equal(adminRoleHash)
+      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
+      expect(await proxyMarbleLsd.getRoleAdmin(administratorRoleHash)).to.equal(adminRoleHash)
+      const rewardDistributerRoleHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
+      expect(await proxyMarbleLsd.getRoleAdmin(rewardDistributerRoleHash)).to.equal(adminRoleHash)
+      const finalizerRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
+      expect(await proxyMarbleLsd.getRoleAdmin(finalizerRoleHash)).to.equal(adminRoleHash)
+    })
   });
 
   describe('Manage rewards', () => {
@@ -485,7 +570,7 @@ describe('MarbleLsdProxy', () => {
       // Need to add to the timestamp of the previous block to match the next block the tx is mined in
       const amount = toWei('10');
       const signer = accounts[4]
-      const shares = await proxyMarbleLsd.convertToShares(amount);
+      const shares = await proxyMarbleLsd.previewDeposit(amount);
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
       .to.emit(proxyMarbleLsd, 'Deposit')
       .withArgs(signer.address, signer.address, amount, shares);
@@ -515,7 +600,7 @@ describe('MarbleLsdProxy', () => {
 
       // share = 10 (mDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
       const resultingShares = new BigNumber(amount.toString()).multipliedBy(0.5)
-      const updatedShare = await proxyMarbleLsd.convertToShares(amount);
+      const updatedShare = await proxyMarbleLsd.previewDeposit(amount);
       expect(updatedShare).to.equal(resultingShares);
 
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))

@@ -7,6 +7,9 @@ import { deployTimelockController } from "./deployTimelockController";
 // when deploying, replace the following values with the correct ones
 const minDelay = 259200; // 3 days
 const WALLET_ADDRESS = ''; // Multi sig wallet
+const ADMINISTRATOR_ADDRESS = ''; // Multi sig wallet
+const REWARD_DISTRIBUTER_ADDRESS = ''; // Multi sig wallet
+const FINALIZER_ADDRESS = ''; // Multi sig wallet
 const TIMELOCK_ADMIN_ADDRESS = ''; // Multi sig wallet
 // Run this script to deploy all contracts on mainnet.
 // npx hardhat run --network mainnet ./scripts/deploy.ts
@@ -26,7 +29,10 @@ async function main() {
   const timelockControllerAddress =  await timelockController.getAddress()
   await deployMarbleLsdProxy({
     adminAddress: timelockControllerAddress,
+    administratorAddress: ADMINISTRATOR_ADDRESS,
     walletAddress: WALLET_ADDRESS,
+    rewardDistributerAddress: REWARD_DISTRIBUTER_ADDRESS,
+    finalizerAddress: FINALIZER_ADDRESS,
     marbleLsdV1Address
   });
 }

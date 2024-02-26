@@ -159,21 +159,25 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
   /**
    * @notice To initialize this contract (No constructor as part of the proxy pattern)
    * @param _adminAddress Admin address who will have the DEFAULT_ADMIN_ROLE
+   * @param _rewardDistributerAddress Reward distributer address who will have the REWARDS_DISTRIBUTER_ROLE
+   * @param _finalizerAddress Finalizer address who will have the FINALIZE_ROLE
    * @param _walletAddress Wallet address who will have the all staked token transferred
-   * @param _shareTokenName Share token name
-   * @param _shareTokenSymbol Share token symbol
    */
   function initialize(
     address _adminAddress,
-    address _walletAddress,
-    string memory _shareTokenName,
-    string memory _shareTokenSymbol
+    address _administratorAddress,
+    address _rewardDistributerAddress,
+    address _finalizerAddress,
+    address _walletAddress
   ) external initializer {
     __EIP712_init(NAME, '1');
     _initializeQueue();
     _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
+    _grantRole(ADMINISTRATOR_ROLE, _administratorAddress);
+    _grantRole(REWARDS_DISTRIBUTER_ROLE, _rewardDistributerAddress);
+    _grantRole(FINALIZE_ROLE, _finalizerAddress);
     walletAddress = _walletAddress;
-    shareToken = new ShareToken(_shareTokenName, _shareTokenSymbol);
+    shareToken = new ShareToken('DFI STAKING SHARE TOKEN', 'mDFI');
   }
 
   /**
