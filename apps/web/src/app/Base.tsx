@@ -1,6 +1,7 @@
 "use client";
 
-import MarbleLsdV1 from "../config/ABIs/MarbleLsdV1.json";
+import MarbleLsdV1ABI from "../config/ABIs/MarbleLsdV1.json";
+// import { MarbleLsdV1__factory } from "smartcontracts";
 
 import {
   useContractRead,
@@ -16,6 +17,7 @@ import { parseEther } from "viem";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
 import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
+import WalletStatus from "@/app/ui/components/WalletStatus";
 
 export default function Base() {
   const { address, isConnected } = useAccount();
@@ -26,6 +28,7 @@ export default function Base() {
 
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
+  const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
 
   /*
   on user inpput change, call the deposit function to retrieve the amount of staked tokens
@@ -33,30 +36,43 @@ export default function Base() {
     if paused: display message to user that deposit is paused
     if not paused: call the deposit function, return the transaction hash and display a success message to the user
   */
+  // const {
+  //   config: writeDepositTxnConfig,
+  //   error: writeDepositTxnError,
+  //   isError: depositeWriteTxnError,
+  // } = usePrepareContractWrite({
+  //   abi: MarbleLsdV1ABI,
+  //   address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
+  //   functionName: "deposit",
+  //   args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
+  //   value: parseEther(stakeAmount), // stake DFI
+  // });
+
   const {
-    config: writeDepositTxnConfig,
-    error: writeDepositTxnError,
-    isError: depositeWriteTxnError,
-  } = usePrepareContractWrite({
-    abi: MarbleLsdV1,
+    data: depositFundData,
+    error: depositFuncTxnError,
+    write: writeDepositTxn,
+  } = useContractWrite({
+    abi: MarbleLsdV1ABI,
     address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
     functionName: "deposit",
     args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
     value: parseEther(stakeAmount), // stake DFI
   });
 
-  const {
-    data: depositFundData,
-    error: depositFuncTxnError,
-    write: writeDepositTxn,
-  } = useContractWrite(writeDepositTxnConfig);
-
   const { data: previewDepositData, error: previewDepositTxnError } =
     useContractRead({
-      abi: MarbleLsdV1,
+      abi: MarbleLsdV1ABI,
       address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
       functionName: "previewDeposit",
       args: [parseEther(stakeAmount)],
+    });
+
+  const { data: isDepositPaused, error: isDepositPausedError } =
+    useContractRead({
+      abi: MarbleLsdV1ABI,
+      address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
+      functionName: "isDepositPaused",
     });
 
   const previewDepositFormatted = new BigNumber(
@@ -75,8 +91,18 @@ export default function Base() {
     // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
     // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
 
+    if (isDepositPaused) {
+      console.log("Deposit is paused");
+      // display message to user that deposit is paused
+      return;
+    }
     console.log("call stake");
     try {
+      if (isDepositPaused) {
+        console.log("Deposit is paused");
+        // display message to user that deposit is paused
+        return;
+      }
       console.log("write");
       writeDepositTxn?.(); // only call write function if deposit is not paused
       // console.log("Deposit successful! Shares:", shares);
@@ -103,14 +129,15 @@ export default function Base() {
   useEffect(() => {
     // set wallet balance
     setWalletBalanceAmount(walletBalance?.formatted ?? "NA");
-  }, [address, isConnected]); // add network
+    setIsWalletConnected(isConnected);
+  }, [address, isConnected]); // add env network
 
   return (
     <div className="w-full flex flex-col">
       <h3>Stake DFI</h3>
       <div className="flex w-full justify-between">
         <span>Enter amount to stake</span>
-        {isConnected ? (
+        {isWalletConnected ? (
           <div>Available: {walletBalanceAmount}</div>
         ) : (
           "Connect wallet to get started"
@@ -121,12 +148,6 @@ export default function Base() {
         setAmt={setStakeAmount}
         value={previewDepositFormatted}
       />
-      {/*<CTAButton*/}
-      {/*  label="Stake"*/}
-      {/*  testID="stake"*/}
-      {/*  onClick={submitStake}*/}
-      {/*  disabled={!writeDepositTxn}*/}
-      {/*/>*/}
       <ConnectKitButton.Custom>
         {({ show }) => (
           <CTAButton
