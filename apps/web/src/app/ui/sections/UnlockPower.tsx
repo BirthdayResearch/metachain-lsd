@@ -1,9 +1,9 @@
 import { SectionTitle } from "@/app/ui/components/SectionTitle";
 import { SectionDescription } from "@/app/ui/components/SectionDescription";
-import { CTAButton } from "@/app/ui/components/CTAButton";
 import { SecondaryButton } from "@/app/ui/components/SecondaryButton";
 import Tag from "@/app/ui/components/Tag";
 import SectionContainer from "@/app/ui/components/SectionContainer";
+import { CTAButton } from "@/app/ui/components/button/CTAButton";
 
 export default function UnlockPower() {
   return (
@@ -22,7 +22,7 @@ export default function UnlockPower() {
         </div>
         <div className="flex flex-col md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
           <CTAButton
-            text="Launch app"
+            label="Launch app"
             testID="launch-app"
             customStyle="md:w-fit w-full"
           />

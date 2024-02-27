@@ -48,9 +48,8 @@ const config: Config = {
         brand: {
           100: "#69FF23",
         },
-
         error: "#E54545",
-        warning: "#D97B01",
+        warning: "#FF9D42",
         valid: "#0CC72C",
       },
     },
