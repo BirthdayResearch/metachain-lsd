@@ -150,11 +150,17 @@ export default function Stake() {
       </div>
       <div className="gap-y-6 grid">
         <InputCard
-          amt={stakeAmount}
-          setAmt={setStakeAmount}
+          amount={stakeAmount}
+          onChange={setStakeAmount}
+          maxAmount={new BigNumber(walletBalanceAmount)}
           value={previewDepositFormatted}
+          displayPercentageBtn={isWalletConnected}
         />
-
+        <section>
+          <TransactionRow label="You will receive" value="0.00 mDFI" />
+          <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
+          <TransactionRow label="Estimated transaction cost" value="$0.00" />
+        </section>
         <ConnectKitButton.Custom>
           {({ show }) => (
             <CTAButton
@@ -172,11 +178,6 @@ export default function Stake() {
             />
           )}
         </ConnectKitButton.Custom>
-        <section>
-          <TransactionRow label="You will receive" value="0.00 mDFI" />
-          <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-          <TransactionRow label="Estimated transaction cost" value="$0.00" />
-        </section>
       </div>
     </div>
   );

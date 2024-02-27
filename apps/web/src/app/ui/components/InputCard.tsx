@@ -1,8 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import { useState } from "react";
 import clsx from "clsx";
+import BigNumber from "bignumber.js";
 
 enum AmountButton {
   TwentyFive = "25%",
@@ -11,26 +10,70 @@ enum AmountButton {
   Max = "Max",
 }
 
-export function PercentageButton({ percentage }: { percentage: string }) {
+export function PercentageButton({
+  amount,
+  percentage,
+  onClick,
+}: {
+  percentage: AmountButton;
+  amount: BigNumber;
+  onClick: (amount: string) => void;
+}) {
+  const decimalPlace = 5;
+  let value = amount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+
+  switch (percentage) {
+    case AmountButton.TwentyFive:
+      value = amount
+        .multipliedBy(0.25)
+        .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+      break;
+    case AmountButton.Half:
+      value = amount
+        .multipliedBy(0.5)
+        .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+      break;
+    case AmountButton.SeventyFive:
+      value = amount
+        .multipliedBy(0.75)
+        .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+      break;
+    case AmountButton.Max:
+    default:
+      value = amount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+      break;
+  }
+
   return (
-    <button className="px-2">
+    <button
+      data-testid={`percentage-button-${percentage}`}
+      className="px-2"
+      onClick={(): void => {
+        onClick(value);
+      }}
+    >
       <span className="font-medium text-xs">{percentage}</span>
     </button>
   );
 }
 
 export function InputCard({
-  amt,
+  amount,
   value,
-  setAmt,
+  onChange,
+  displayPercentageBtn,
+  maxAmount,
 }: {
-  amt: string;
+  amount: string;
   value: string;
-  setAmt: (amt: string) => void;
+  onChange: (amt: string) => void;
+  displayPercentageBtn: boolean;
+  maxAmount: BigNumber;
 }) {
   const [focus, setFocus] = useState(false);
   return (
     <div
+      data-testid="input-card"
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       className={clsx(
@@ -52,22 +95,28 @@ export function InputCard({
         </div>
         <div className="flex flex-col w-full">
           <input
-            value={amt}
+            value={amount}
             type="text"
             className="w-full rounded text-base outline-0"
             placeholder="0.00"
             onChange={(e) => {
-              setAmt(e.target.value);
+              onChange(e.target.value);
             }}
           />
           <span className="text-xs font-light">${value}</span>
         </div>
-        {/*  Display only when wallet is connected*/}
-        <div className="gap-x-1 flex">
-          {Object.values(AmountButton).map((type) => (
-            <PercentageButton key={type} percentage={type} />
-          ))}
-        </div>
+        {displayPercentageBtn ? (
+          <div className="gap-x-1 flex">
+            {Object.values(AmountButton).map((percentage) => (
+              <PercentageButton
+                key={percentage}
+                percentage={percentage}
+                amount={maxAmount}
+                onClick={onChange}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );
