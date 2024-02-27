@@ -5,7 +5,6 @@ import MarbleLsdV1ABI from "../../config/ABIs/MarbleLsdV1.json";
 import {
   useContractRead,
   useContractWrite,
-  usePrepareContractWrite,
   useWaitForTransaction,
   useBalance,
   useAccount,
@@ -16,8 +15,11 @@ import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
 import { InputCard } from "@/app/ui/components/InputCard";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
+import { useRouter } from "next/navigation";
 
 export default function Stake() {
+  const { push } = useRouter();
+
   const { address, isConnected } = useAccount();
 
   const { data: walletBalance } = useBalance({
@@ -28,28 +30,11 @@ export default function Stake() {
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
 
-  /*
-    on user inpput change, call the deposit function to retrieve the amount of staked tokens
-    check if deposit is paused when onload, and before you submit stake
-      if paused: display message to user that deposit is paused
-      if not paused: call the deposit function, return the transaction hash and display a success message to the user
-    */
-  // const {
-  //   config: writeDepositTxnConfig,
-  //   error: writeDepositTxnError,
-  //   isError: depositeWriteTxnError,
-  // } = usePrepareContractWrite({
-  //   abi: MarbleLsdV1ABI,
-  //   address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
-  //   functionName: "deposit",
-  //   args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
-  //   value: parseEther(stakeAmount), // stake DFI
-  // });
-
   const {
     data: depositFundData,
     error: depositFuncTxnError,
     write: writeDepositTxn,
+    isLoading: isDepositInProgress,
   } = useContractWrite({
     abi: MarbleLsdV1ABI,
     address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
@@ -79,17 +64,23 @@ export default function Stake() {
 
   const {
     error: depositTxnError,
-    isLoading: isDepositInProgress,
-    isSuccess,
+    isLoading: isDepositTxnInProgress,
+    isSuccess: isDepositTxnSuccess,
   } = useWaitForTransaction({
     hash: depositFundData?.hash,
   });
 
   async function submitStake() {
+    if (isDepositTxnSuccess) {
+      // redirect to main page
+      push("/");
+      return;
+    }
     // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
     // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
 
     if (isDepositPaused) {
+      // TODO display popup
       console.log("Deposit is paused");
       // display message to user that deposit is paused
       return;
@@ -97,23 +88,24 @@ export default function Stake() {
     console.log("call stake");
     try {
       if (isDepositPaused) {
+        // TODO display popups
         console.log("Deposit is paused");
         // display message to user that deposit is paused
         return;
       }
-      console.log("write");
-      writeDepositTxn?.(); // only call write function if deposit is not paused
-      // console.log("Deposit successful! Shares:", shares);
-      // Handle successful deposit (e.g., display success message, update UI)
+      writeDepositTxn?.();
     } catch (error) {
       console.error("Deposit failed:", error);
       // Handle error (e.g., display error message to user)
     }
   }
 
+  // TODO clear form
+  function clearForm() {}
+
   function getActionBtnLabel() {
     switch (true) {
-      case isSuccess:
+      case isDepositTxnSuccess:
         return "Return to Main Page";
 
       case isConnected:
@@ -167,13 +159,8 @@ export default function Stake() {
               testID="instant-transfer-btn"
               label={getActionBtnLabel()}
               customStyle="w-full md:py-5 !rounded-[10px]"
-              // isLoading={hasPendingTxn || isVerifyingTransaction}
-              // disabled={
-              //   (isConnected && !isFormValid) ||
-              //   hasPendingTxn ||
-              //   !isBalanceSufficient
-              // }
-              disabled={!writeDepositTxn}
+              isLoading={isDepositInProgress || isDepositTxnInProgress}
+              disabled={isDepositInProgress || isDepositTxnInProgress}
               onClick={!isConnected ? show : () => submitStake()}
             />
           )}
