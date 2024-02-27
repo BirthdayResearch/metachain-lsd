@@ -10,10 +10,8 @@ const securityHeaders = [
       `img-src 'self' data:;` +
       `media-src 'self';` +
       `object-src 'none';` +
-      `script-src 'self' app.netlify.com netlify-cdp-loader.netlify.app ${
-        process.env.NODE_ENV === "development"
-          ? " 'unsafe-eval' 'unsafe-inline'"
-          : ""
+      `script-src 'self' app.netlify.com netlify-cdp-loader.netlify.app 'unsafe-inline' ${
+        process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
       };` +
       `style-src 'self' fonts.googleapis.com 'unsafe-inline';` +
       `font-src 'self' fonts.gstatic.com;` +
