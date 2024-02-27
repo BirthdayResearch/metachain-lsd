@@ -12,10 +12,10 @@ const REWARD_DISTRIBUTER_ADDRESS = ''; // Multi sig wallet
 const FINALIZER_ADDRESS = ''; // Multi sig wallet
 const TIMELOCK_ADMIN_ADDRESS = ''; // Multi sig wallet
 // Run this script to deploy all contracts on mainnet.
-// npx hardhat run --network mainnet ./scripts/deploy.ts
+// npx hardhat run --network mainnet ./src/scripts/deploy.ts  --config ./src/hardhat.config.ts
 
 // Run this script to deploy all contracts on Sepolia testnet.
-// npx hardhat run --network sepolia ./scripts/deploy.ts
+// npx hardhat run --network sepolia ./src/scripts/deploy.ts
 
 async function main() {
   const marbleLsdV1 = await deployMarbleLsdV1();
