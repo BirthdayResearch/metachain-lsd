@@ -11,7 +11,7 @@ export default function JoinTheCommunitySection() {
     >
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <div className="text-2xl md:text-[28px] md:leading-[40px] font-semibold">
+          <div className="text-2xl md:text-[28px] md:leading-10 font-semibold">
             Join the growing community
           </div>
           <CardDesc

@@ -31,14 +31,14 @@ const FaqItems = [
 export default function FaqSection() {
   return (
     <SectionContainer>
-      <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-10">
+      <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-16">
         <div className="flex flex-col gap-y-3 w-full md:gap-y-6 md:w-1/2 text-left">
           <Tag text="ECOSYSTEM" testID="faq-ecosystem" />
           <div className="flex flex-col gap-y-5">
             <CardTitle 
               text="Frequently asked questions" 
               testID="faq-title" 
-              customStyle="text-start text-2xl"
+              customStyle="text-start text-2xl !leading-7 md:!leading-10"
             />
             <CardDesc
               customStyle="!text-left !font-normal"

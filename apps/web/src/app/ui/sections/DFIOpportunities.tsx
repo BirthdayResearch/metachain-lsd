@@ -9,7 +9,7 @@ export default function DFIOpportunities() {
     <SectionContainer>
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center">
         <div className="max-w-[520px]">
-          <h1 className="text-[28px] leading-[40px] md:leading-[56px] md:text-[40px] text-light-1000 font-semibold mb-4">
+          <h1 className="text-[28px] leading-10 md:leading-[56px] md:text-[40px] text-light-1000 font-semibold mb-4">
             Take advantage of mDFI for new opportunities
           </h1>
           <p className="body-1-regular-text text-light-1000 mb-6">
