@@ -2,11 +2,11 @@
 
 import "../../globals.css";
 
-import ConnectButton from "@/app/ui/components/WalletConnect";
 import NavigationBar from "@/app/ui/components/NavigationBar";
 // import { useState } from "react";
 // import NavigationBarMobile from "@/app/ui/components/NavigationBarMobile";
 import HeaderLogo from "@/app/ui/components/HeaderTitle";
+import { CTAButton } from "@/app/ui/components/CTAButton";
 
 export default function Header() {
   // const [isMenuActive, setisMenuActive] = useState(false);
@@ -17,7 +17,11 @@ export default function Header() {
       {/*  Web */}
       <NavigationBar />
       <div className="items-end justify-center md:flex hidden">
-        <ConnectButton />
+        <CTAButton
+          text="Launch app"
+          testID="launch-app"
+          customStyle="w-full md:w-fit"
+        />
       </div>
       {/*  Web  */}
 
