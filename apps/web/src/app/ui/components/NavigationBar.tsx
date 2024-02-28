@@ -1,11 +1,11 @@
 import clsx from "clsx";
 
 const navigationTabs = [
-  { label: "Benefits", href: "/benefits" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "About mDFI", href: "/about" },
-  { label: "Community", href: "/community" },
-  { label: "FAQs", href: "/faqs" },
+  { label: "Benefits", href: "#benefits-section" },
+  { label: "How it works", href: "#how-it-works-section" },
+  { label: "About mDFI", href: "#about-section" },
+  { label: "Community", href: "#community-section" },
+  { label: "FAQs", href: "#faqs-section" },
 ];
 
 export default function NavigationBar({

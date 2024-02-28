@@ -6,7 +6,7 @@ import useResponsive from "@/app/lib/hooks/useResponsive";
 export default function DFIOpportunities() {
   const { isLg } = useResponsive();
   return (
-    <SectionContainer>
+    <SectionContainer id="about-section">
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center">
         <div className="max-w-[520px]">
           <h1 className="text-[28px] leading-[40px] md:leading-[56px] md:text-[40px] text-light-1000 font-semibold mb-4">
