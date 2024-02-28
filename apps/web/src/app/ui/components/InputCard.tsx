@@ -47,7 +47,7 @@ export function PercentageButton({
   return (
     <button
       data-testid={`percentage-button-${percentage}`}
-      className="px-2"
+      className="py-2 gap-x-1 grid w-[49px]"
       onClick={(): void => {
         onClick(value);
       }}
@@ -106,7 +106,7 @@ export function InputCard({
           <span className="text-xs font-light">${value}</span>
         </div>
         {displayPercentageBtn ? (
-          <div className="gap-x-1 flex">
+          <div className="gap-x-1 flex bg-zinc-50 p-1 rounded-[20px]">
             {Object.values(AmountButton).map((percentage) => (
               <PercentageButton
                 key={percentage}
