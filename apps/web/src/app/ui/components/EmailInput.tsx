@@ -1,4 +1,4 @@
-import { IoIosClose } from "react-icons/io";
+import { IoIosCloseCircle } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import clsx from "clsx";
 
@@ -13,33 +13,46 @@ export default function EmailInput({
   placeholder?: string;
   customStyle?: string;
 }) {
+  const isValidEmail = (email: string) => {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   return (
-    <form
-      className={clsx(
-        "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px] border border-light-1000/10",
-        customStyle,
-      )}
-    >
-      <HiOutlineMail className="mr-3" size={20} />
-      <input
-        className={clsx(
-          "w-full bg-light-00",
-          "placeholder:text-light-1000 focus:outline-none",
+    <div
+      className={
+        clsx(
+          "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
+          value && !isValidEmail(value) ? "bg-red" : "input-gradient-1"
         )}
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      {value !== "" && (
-        <button
-          type="button"
-          className="absolute right-7 rounded-full bg-dark-00 bg-opacity-10 active:opacity-70 text-dark-00"
-          onClick={() => setValue("")}
-        >
-          <IoIosClose size={20} />
-        </button>
-      )}
-    </form>
+    >
+      <form
+        className={clsx(
+          "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px]",
+          customStyle,
+        )}
+      >
+        <HiOutlineMail className="mr-3" size={20} />
+        <input
+          className={clsx(
+            "w-full bg-light-00 caret-brand-100",
+            "placeholder:text-light-1000 focus:outline-none",
+          )}
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        {value !== "" && (
+          <button
+            type="button"
+            className="absolute right-7 rounded-full"
+            onClick={() => setValue("")}
+          >
+            <IoIosCloseCircle size={16}  className="opacity-70 text-dark-00"/>
+          </button>
+        )}
+      </form>
+    </div>
   );
 }
