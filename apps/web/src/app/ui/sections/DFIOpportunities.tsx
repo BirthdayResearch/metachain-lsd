@@ -37,8 +37,8 @@ export default function DFIOpportunities() {
               <h4 className="h4-text flex-1 text-end">$1.32M</h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
-              <span className="body-2-regular-text">Price</span>
-              <h4 className="h4-text">1.023 DFI</h4>
+              <span className="body-2-regular-text flex-1">Price</span>
+              <h4 className="h4-text flex-1 text-end">1.023 DFI</h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">
