@@ -38,7 +38,7 @@ export default function DFIOpportunities() {
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Price</span>
-              <h4 className="h4-text flex-1 text-end">X.XX DFI</h4>
+              <h4 className="h4-text w-full text-end">X.XX DFI</h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">
