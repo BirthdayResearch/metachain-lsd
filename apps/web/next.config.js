@@ -10,11 +10,11 @@ const securityHeaders = [
       `img-src 'self' data:;` +
       `media-src 'self';` +
       `object-src 'none';` +
-      `script-src 'self' app.netlify.com netlify-cdp-loader.netlify.app ${
+      `script-src 'self' app.netlify.com netlify-cdp-loader.netlify.app 'unsafe-inline' ${
         process.env.NODE_ENV === "development" ? `'unsafe-eval'` : ""
       };` +
       `style-src 'self' fonts.googleapis.com 'unsafe-inline';` +
-      `font-src fonts.gstatic.com;` +
+      `font-src 'self' fonts.gstatic.com;` +
       `connect-src 'self' ${
         process.env.NODE_ENV === "development"
           ? `localhost:* 127.0.0.1:* ws://localhost:3000/_next/webpack-hmr`
