@@ -6,10 +6,10 @@
 
 <!--
 (Optional) Automatically closes linked issue when PR is merged.
-Usage: `Fixes ORD-<issue number>`, or `Fixes (paste link of issue)`.
+Usage: `Fixes MarbleFi-<issue number>`, or `Fixes (paste link of issue)`.
 -->
 
-Fixes ORD-
+Fixes MarbleFi-
 
 #### Additional comments?:
 
