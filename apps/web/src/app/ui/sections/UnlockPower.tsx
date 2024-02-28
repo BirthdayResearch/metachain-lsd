@@ -20,7 +20,7 @@ export default function UnlockPower() {
             testID="maximize"
           />
         </div>
-        <div className="flex flex-col md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
+        <div className="flex flex-col pt-12 md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
           <CTAButton
             text="Launch app"
             testID="launch-app"
