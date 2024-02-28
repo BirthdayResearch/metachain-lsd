@@ -30,7 +30,7 @@ const HowItWorksItems = [
 export default function HowItWorksSection() {
   return (
     <SectionContainer
-      customContainerStyle="flex-col gap-12"
+      customContainerStyle="flex-col gap-12 scroll-mt-40"
       id="how-it-works-section"
     >
       <>
