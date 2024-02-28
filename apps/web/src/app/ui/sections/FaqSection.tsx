@@ -1,7 +1,7 @@
 import { CardDesc } from "@/app/ui/components/CardDesc";
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import { CardTitle } from "@/app/ui/components/CardTitle";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
 import { Tag } from "@/app/ui/components/Tag";
 
@@ -31,38 +31,49 @@ const FaqItems = [
 export default function FaqSection() {
   return (
     <SectionContainer>
-      <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 ">
-        <div className="flex flex-col gap-y-6 max-w-[528px] text-left">
+      <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-10">
+        <div className="flex flex-col gap-y-3 w-full md:gap-y-6 md:w-1/2 text-left">
           <Tag text="ECOSYSTEM" testID="faq-ecosystem" />
           <div className="flex flex-col gap-y-5">
-            <CardTitle text="Frequently asked questions" testID="faq-title" />
+            <CardTitle 
+              text="Frequently asked questions" 
+              testID="faq-title" 
+              customStyle="text-start text-2xl"
+            />
             <CardDesc
-              customStyle="!text-left"
+              customStyle="!text-left !font-normal"
               text="Learn more about the protocol with these frequently asked questions. Get to know what would be its value and how it can help you grow your investments."
               testID="faq-desc"
             />
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full flex flex-col md:w-1/2 w-full gap-y-4">
           {FaqItems.map((item) => (
             <Disclosure key={item.testId}>
               {({ open }) => (
-                <div className="px-7 py-[18px]" data-testid={item.testId}>
+                <div className="px-7 py-[18px] bg-light-00/30 rounded-md" data-testid={item.testId}>
                   <Disclosure.Button className="flex w-full justify-between rounded-lg text-left text-sm">
                     <span
-                      className={`${open ? "font-semibold" : "font-normal"}`}
+                      className={`mr-6 flex-1 self-center ${open ? "font-semibold" : "font-normal"}`}
                     >
                       {item.title}
                     </span>
                     <FiChevronDown
-                      className={`${
+                      className={`transition duration-300 ease-in ${
                         open ? "rotate-180 transform" : ""
-                      } h-5 w-5`}
+                      } h-7 w-7`}
                     />
                   </Disclosure.Button>
-                  <Disclosure.Panel className="mt-3 mr-20">
-                    {item.desc}
-                  </Disclosure.Panel>
+                  <Transition
+                    as="div"
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Disclosure.Panel className="mt-3 mr-[52px] text-sm">
+                      {item.desc}
+                    </Disclosure.Panel>
+                  </Transition>
                 </div>
               )}
             </Disclosure>
