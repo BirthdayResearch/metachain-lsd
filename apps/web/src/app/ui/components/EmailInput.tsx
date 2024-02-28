@@ -35,7 +35,7 @@ export default function EmailInput({
         <HiOutlineMail className="mr-3" size={20} />
         <input
           className={clsx(
-            "w-full bg-light-00 caret-brand-100",
+            "mr-6 w-full bg-light-00 caret-brand-100",
             "placeholder:text-light-1000 focus:outline-none",
           )}
           type="text"
