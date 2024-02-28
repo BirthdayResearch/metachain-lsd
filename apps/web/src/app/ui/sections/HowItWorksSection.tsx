@@ -45,6 +45,7 @@ export default function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-6">
           {HowItWorksItems.map((item) => (
             <Card
+              key={item.testId}
               Icon={item.icon}
               testID={item.testId}
               label={item.label}

@@ -52,8 +52,9 @@ export default function MarbleOpportunitiesSection() {
           />
         </div>
         <div className="grid md:grid-cols-4 divide-y-[0.5px] md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
-          {OpportunitiesItems.map((item) => (
+          {OpportunitiesItems.map((item, index) => (
             <Item
+              key={index}
               Icon={item.icon}
               testID={item.testId}
               label={item.label}
