@@ -8,7 +8,7 @@ export function CTAButton({
   customTextStyle = "text-light-00",
   onClick,
   disabled,
-  isLoading,
+  isLoading = false,
 }: {
   label: string;
   testID: string;
@@ -16,7 +16,7 @@ export function CTAButton({
   onClick?: () => void;
   customStyle?: string;
   customTextStyle?: string;
-  isLoading: boolean;
+  isLoading?: boolean;
 }) {
   return (
     <button

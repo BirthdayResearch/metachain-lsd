@@ -26,6 +26,8 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@netlify/plugin-lighthouse": "^6.0.0",
+    "@netlify/plugin-nextjs": "^4.41.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

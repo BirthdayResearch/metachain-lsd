@@ -10,6 +10,7 @@ const config: Config = {
   theme: {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],
+      mono: ['"Montserrat"', "sans-serif"],
     },
     screens: {
       xs: "390px", // Mobile - Large
