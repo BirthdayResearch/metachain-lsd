@@ -13,6 +13,7 @@ export default function Page() {
       <HowItWorksSection />
         <DFIOpportunities />
       <JoinTheCommunitySection />
+      <DFIOpportunities />
     </div>
   );
 }
