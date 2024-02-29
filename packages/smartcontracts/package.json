@@ -2,8 +2,9 @@
   "name": "smartcontracts",
   "version": "0.0.0",
   "description": "A package which contains the EVM smart contracts for the LSD.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "files": [
     "dist"
   ],

@@ -1,6 +1,7 @@
 "use client";
 
-import MarbleLsdV1ABI from "../../config/ABIs/MarbleLsdV1.json";
+import { MarbleLsdV1__factory } from "smartcontracts";
+import { formatEther } from "viem";
 
 import {
   useContractRead,
@@ -36,7 +37,7 @@ export default function Stake() {
     write: writeDepositTxn,
     isLoading: isDepositInProgress,
   } = useContractWrite({
-    abi: MarbleLsdV1ABI,
+    abi: MarbleLsdV1__factory.abi,
     address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
     functionName: "deposit",
     args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
@@ -45,7 +46,7 @@ export default function Stake() {
 
   const { data: previewDepositData, error: previewDepositTxnError } =
     useContractRead({
-      abi: MarbleLsdV1ABI,
+      abi: MarbleLsdV1__factory.abi,
       address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
       functionName: "previewDeposit",
       args: [parseEther(stakeAmount)],
@@ -53,14 +54,20 @@ export default function Stake() {
 
   const { data: isDepositPaused, error: isDepositPausedError } =
     useContractRead({
-      abi: MarbleLsdV1ABI,
+      abi: MarbleLsdV1__factory.abi,
       address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
       functionName: "isDepositPaused",
     });
 
-  const previewDepositFormatted = new BigNumber(
-    (previewDepositData as string) || 0,
-  ).toFormat(2);
+  // const previewDepositFormatted = new BigNumber(
+  //   (previewDepositData as bigint) || 0,
+  // ).toFormat(2);
+
+  const previewDepositFormatted = previewDepositData
+    ? formatEther(previewDepositData)
+    : "0";
+
+  console.log({ previewDepositData });
 
   const {
     error: depositTxnError,
@@ -145,11 +152,14 @@ export default function Stake() {
           amount={stakeAmount}
           onChange={setStakeAmount}
           maxAmount={new BigNumber(walletBalanceAmount)}
-          value={previewDepositFormatted}
+          value={"111"} // call whale api to get price
           displayPercentageBtn={isWalletConnected}
         />
         <section>
-          <TransactionRow label="You will receive" value="0.00 mDFI" />
+          <TransactionRow
+            label="You will receive"
+            value={`${previewDepositFormatted} mDFI`}
+          />
           <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
           <TransactionRow label="Estimated transaction cost" value="$0.00" />
         </section>
