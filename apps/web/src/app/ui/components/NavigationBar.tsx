@@ -36,9 +36,8 @@ export default function NavigationBar({
       )}
     >
       {navigationTabs.map((link) => (
-        <a
+        <div
           key={link.label}
-          href={link.href}
           className={clsx(
             "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px]",
             hoverStyle,
@@ -49,6 +48,7 @@ export default function NavigationBar({
               if (targetElement) {
                 targetElement.scrollIntoView({
                   behavior: "smooth",
+                  block: "center",
                 });
               }
             }
@@ -57,7 +57,7 @@ export default function NavigationBar({
           <p className="text-sm text-light-1000 font-bold active:text-opacity-10">
             {link.label}
           </p>
-        </a>
+        </div>
       ))}
     </nav>
   );

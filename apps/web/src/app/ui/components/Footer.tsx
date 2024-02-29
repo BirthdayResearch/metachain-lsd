@@ -1,9 +1,14 @@
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import HeaderLogo from "@/app/ui/components/HeaderTitle";
 import NavigationBar from "@/app/ui/components/NavigationBar";
+import { RefObject } from "react";
 // import Image from "next/image";
 
-export default function Footer() {
+export default function Footer({
+  parentReference,
+}: {
+  parentReference: RefObject<HTMLDivElement>;
+}) {
   return (
     <SectionContainer customContainerStyle="flex-col pt-[120px] pb-[68px]">
       <footer
@@ -11,7 +16,7 @@ export default function Footer() {
         className="flex items-center justify-center flex-col gap-y-6"
       >
         <HeaderLogo isHeader={false} />
-        <NavigationBar isHeader={false} />
+        <NavigationBar isHeader={false} parentReference={parentReference} />
         {/*<div className="flex gap-x-1 text-xs">*/}
         {/*  <span className="text-xs">Terms of service</span>*/}
         {/*  <span className={`${inter.className} text-light-1000/30`}>|</span>*/}

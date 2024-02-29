@@ -80,7 +80,7 @@ export default function ContainerLayout({
                 options={{ showSpinner: true }}
                 showOnShallow
               />
-              <Footer />
+              <Footer parentReference={contentRef} />
             </div>
           </ConnectKitProvider>
         </WagmiConfig>
