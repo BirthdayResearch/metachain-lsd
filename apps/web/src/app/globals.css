@@ -147,10 +147,7 @@ body {
   );
 }
 .header-bg {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.03) 90.35%
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.03) 90.35%);
   background-blend-mode: overlay;
+  backdrop-filter: blur(15px);
 }
