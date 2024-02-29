@@ -70,7 +70,7 @@ export default function ContainerLayout({
           <ConnectKitProvider options={{ initialChainId: 0 }}>
             <div
               ref={contentRef}
-              className="flex min-h-screen max-h-screen overflow-y-auto flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
+              className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
             >
               <Header parentReference={contentRef} />
               {children}
