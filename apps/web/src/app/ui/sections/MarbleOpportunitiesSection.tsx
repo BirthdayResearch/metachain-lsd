@@ -51,7 +51,7 @@ export default function MarbleOpportunitiesSection() {
             testID="marble-opp-desc"
           />
         </div>
-        <div className="grid md:grid-cols-4 divide-y-[0.5px] md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
+        <div className="grid md:grid-cols-4 px-6 md:py-10 md:px-4 divide-y-[0.5px] md:divide-y-0 md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
           {OpportunitiesItems.map((item, index) => (
             <Item
               key={index}
@@ -81,7 +81,7 @@ function Item({
   return (
     <div
       data-testid={`marble-opp-item-${testID}`}
-      className="flex flex-col p-6 md:p-10"
+      className="flex-col py-6 md:py-0 md:px-6"
     >
       <div className="mb-[20px]">
         <Icon size={28} />

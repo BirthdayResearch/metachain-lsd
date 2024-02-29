@@ -135,7 +135,6 @@ body {
     );
 }
 .marble-opp-border {
-  border-left: 1px solid;
   border-image-source: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.1) 0%,
