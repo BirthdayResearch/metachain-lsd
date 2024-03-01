@@ -15,17 +15,17 @@ const FaqItems = [
   {
     testId: "how-much-earn-stake",
     title: "How much can I earn if I stake?",
-    desc: "This is a just a sample content. The content and copy within this is to be discussed.",
+    desc: "It varies on the prevailing Masternode Rewards Yield.",
   },
   {
     testId: "how-to-use-marble",
     title: "How do I use Marble?",
-    desc: "This is a just a sample content. The content and copy within this is to be discussed.",
+    desc: "Simply stake your DFI (MetaChain DST-20) with us and we'll do all the work for you - no need to start, operate or manage your own Masternode Validator (s).",
   },
   {
     testId: "how-long-to-wait",
     title: "How long do I have to wait to withdraw any of my staked tokens?",
-    desc: "This is a just a sample content. The content and copy within this is to be discussed.",
+    desc: "As MarbleFi is a platform that perpetually stakes DFI into the ecosystem, withdrawal is only possible if there is a Masternode Liquidation event or an excess fund available for withdrawal. Otherwise your staked DFI (mDFI) remains tradable/useable in the MetaChain ecosystem.",
   },
 ];
 
