@@ -5,7 +5,6 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
 import { Tag } from "@/app/ui/components/Tag";
 
-// TODO (Harsh) update content
 const FaqItems = [
   {
     testId: "what-is-liquid-staking",
