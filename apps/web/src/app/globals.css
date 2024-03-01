@@ -22,9 +22,13 @@
     rgba(97, 38, 221, 0.06) 100%
   );
 
-    --UI-Gradient-2: #5444FE;
-    --UI-Component-BG-1: linear-gradient(180deg, rgba(203, 203, 203, 0.25) 0%, rgba(255, 255, 255, 0.13) 100%);
-    --UI-Component-BG-2:  rgba(255, 255, 255, 0.10);
+  --UI-Gradient-2: #5444fe;
+  --UI-Component-BG-1: linear-gradient(
+    180deg,
+    rgba(203, 203, 203, 0.25) 0%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
+  --UI-Component-BG-2: rgba(255, 255, 255, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,6 +54,47 @@ body {
   background: var(--Mono-0);
   backdrop-filter: blur(27.899999618530273px);
 }
+.card-border {
+  border: 1px solid;
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+.card-gradient-background {
+  background: linear-gradient(
+      180deg,
+      rgba(203, 203, 203, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-gradient-bg {
+  background: linear-gradient(
+      180deg,
+      rgba(229, 229, 229, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-border {
+  border-left: 1px solid;
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+
 
 
 .h1-text {
@@ -129,7 +174,6 @@ body {
     );
 }
 .marble-opp-border {
-  border-left: 1px solid;
   border-image-source: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.1) 0%,
