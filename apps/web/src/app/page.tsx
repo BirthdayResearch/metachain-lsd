@@ -3,6 +3,7 @@
 import UnlockPower from "@/app/ui/sections/UnlockPower";
 import HowItWorksSection from "@/app/ui/sections/HowItWorksSection";
 import MarbleOpportunitiesSection from "@/app/ui/sections/MarbleOpportunitiesSection";
+import JoinTheCommunitySection from "@/app/ui/sections/JoinTheCommunitySection";
 import DFIOpportunities from "@/app/ui/sections/DFIOpportunities";
 export default function Page() {
   return (
@@ -10,6 +11,8 @@ export default function Page() {
       <UnlockPower />
       <MarbleOpportunitiesSection />
       <HowItWorksSection />
+        <DFIOpportunities />
+      <JoinTheCommunitySection />
       <DFIOpportunities />
     </div>
   );

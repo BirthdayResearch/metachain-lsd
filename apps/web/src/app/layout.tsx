@@ -8,6 +8,9 @@ const inter = Montserrat({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "MarbleFI",
   description: "LSD protocol",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
