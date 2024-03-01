@@ -16,7 +16,6 @@ export default function Page() {
       <DFIOpportunities />
       <JoinTheCommunitySection />
       <FaqSection />
-      <DFIOpportunities />
     </div>
   );
 }
