@@ -2,6 +2,7 @@ import { CTAButton } from "@/app/ui/components/CTAButton";
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import Image from "next/image";
 import useResponsive from "@/app/lib/hooks/useResponsive";
+import clsx from "clsx";
 
 export default function DFIOpportunities() {
   const { isLg } = useResponsive();
@@ -23,13 +24,14 @@ export default function DFIOpportunities() {
             customStyle="w-full md:w-fit"
           />
         </div>
-        <div className="flex-1 flex flex-col md:flex-row gap-y-8 md:gap-x-6 w-full">
+        <div className="flex flex-col lg:flex-row gap-y-8 md:gap-x-6 w-full">
           <Image
             data-testid="mdfi-logo"
             src="/mDFI.svg"
             alt="mDFI Logo"
-            width={isLg ? 224 : 168}
-            height={isLg ? 224 : 168}
+            width={224}
+            height={224}
+            className={clsx("w-fit", isLg ? "h-[224px]" : "h-[168px]")}
           />
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">

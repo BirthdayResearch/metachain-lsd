@@ -64,7 +64,7 @@ export default function ContainerLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
+        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-no-repeat bg-clip-border bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
