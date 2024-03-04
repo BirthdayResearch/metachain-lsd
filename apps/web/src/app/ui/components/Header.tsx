@@ -16,8 +16,6 @@ export default function Header({
   parentReference: RefObject<HTMLDivElement>;
 }) {
   const [isMenuActive, setisMenuActive] = useState(false);
-export default function Header() {
-  // const [isMenuActive, setisMenuActive] = useState(false);
   return (
     <div className="sticky z-50 top-8 md:top-0 header-bg md:py-10 w-full flex items-center justify-center font-mono text-sm mb-8 md:mb-16">
       <header className="flex w-full items-center min-w-fit max-w-5xl justify-between">
@@ -26,11 +24,11 @@ export default function Header() {
         {/*  Web */}
         <NavigationBar isHeader parentReference={parentReference} />
         <div className="items-end justify-center md:flex hidden">
-            <CTAButton
-                text="Launch app"
-                testID="launch-app"
-                customStyle="w-full md:w-fit"
-            />
+          <CTAButton
+            text="Launch app"
+            testID="launch-app"
+            customStyle="w-full md:w-fit"
+          />
         </div>
         {/*  Web  */}
 

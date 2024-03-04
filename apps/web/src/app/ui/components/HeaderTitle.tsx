@@ -9,6 +9,8 @@ export default function HeaderLogo({ isHeader = true }: { isHeader: boolean }) {
         alt="MarbleFi Logo"
         width={170}
         height={40}
+        priority={true}
+        style={{ width: "100%", height: "auto" }}
         className={
           isHeader ? "w-[132px] h-[30px] md:w-[170px] md:h-[40px]" : ""
         }

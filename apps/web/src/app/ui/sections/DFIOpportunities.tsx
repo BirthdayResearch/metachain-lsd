@@ -6,6 +6,7 @@ import clsx from "clsx";
 
 export default function DFIOpportunities() {
   const { isLg } = useResponsive();
+
   return (
     <SectionContainer id="about-section">
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center scroll-mt-40">
@@ -31,7 +32,7 @@ export default function DFIOpportunities() {
             alt="mDFI Logo"
             width={224}
             height={224}
-            className={clsx("w-fit", isLg ? "h-[224px]" : "h-[168px]")}
+            className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
           />
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
