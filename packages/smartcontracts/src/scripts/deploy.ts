@@ -10,6 +10,7 @@ const WALLET_ADDRESS = ''; // Multi sig wallet
 const ADMINISTRATOR_ADDRESS = ''; // Multi sig wallet
 const REWARD_DISTRIBUTER_ADDRESS = ''; // Multi sig wallet
 const FINALIZER_ADDRESS = ''; // Multi sig wallet
+const FEES_RECIPIENT_ADDRESS = ''; // Multi sig wallet
 const TIMELOCK_ADMIN_ADDRESS = ''; // Multi sig wallet
 // Run this script to deploy all contracts on mainnet.
 // npx hardhat run --network mainnet ./src/scripts/deploy.ts  --config ./src/hardhat.config.ts
@@ -31,6 +32,7 @@ async function main() {
     adminAddress: timelockControllerAddress,
     administratorAddress: ADMINISTRATOR_ADDRESS,
     walletAddress: WALLET_ADDRESS,
+    feesRecipientAddress: FEES_RECIPIENT_ADDRESS,
     rewardDistributerAddress: REWARD_DISTRIBUTER_ADDRESS,
     finalizerAddress: FINALIZER_ADDRESS,
     marbleLsdV1Address
