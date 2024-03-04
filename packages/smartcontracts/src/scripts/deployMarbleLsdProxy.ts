@@ -6,11 +6,11 @@ import { verify } from './utils/verify';
 export async function deployMarbleLsdProxy({
   adminAddress,
   walletAddress,
-  marbleLsdV1Address
+  marbleLsdV1Address,
 }: InputsForInitialization): Promise<MarbleLsdProxy> {
   const contract = await ethers.getContractFactory('MarbleLsdProxy');
-  const receiptTokenName = 'DFI STAKING SHARE TOKEN'
-  const receiptTokenSymbol = 'xDFI'
+  const receiptTokenName = 'DFI STAKING SHARE TOKEN';
+  const receiptTokenSymbol = 'xDFI';
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData('initialize', [
     // admin address, or timelock contract address
     adminAddress,
@@ -19,30 +19,30 @@ export async function deployMarbleLsdProxy({
     // receipt token name
     receiptTokenName,
     // receipt token symbol
-    receiptTokenSymbol
+    receiptTokenSymbol,
   ]);
   const marbleLsdProxy = await contract.deploy(marbleLsdV1Address, encodedData);
   await marbleLsdProxy.waitForDeployment();
-  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress()
-  const txn = await marbleLsdProxy.deploymentTransaction()
+  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
+  const txn = await marbleLsdProxy.deploymentTransaction();
   await txn?.wait(10);
   console.log('Proxy Address: ', marbleLsdProxyAddress);
   console.log('Verifying...');
   await verify({
-    contractAddress: marbleLsdProxyAddress, 
-    args: [marbleLsdV1Address, encodedData], 
-    contract: "contracts/MarbleLsdProxy.sol:MarbleLsdProxy" 
+    contractAddress: marbleLsdProxyAddress,
+    args: [marbleLsdV1Address, encodedData],
+    contract: 'contracts/MarbleLsdProxy.sol:MarbleLsdProxy',
   });
-  // verify receipt token 
+  // verify receipt token
   const MarbleLsdUpgradeable = await ethers.getContractFactory('MarbleLsdV1');
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(marbleLsdProxyAddress) as MarbleLsdV1;
 
-  const receiptToken = await proxyMarbleLsd.shareToken()
+  const receiptToken = await proxyMarbleLsd.shareToken();
   console.log('Share Token Address: ', receiptToken);
   console.log('Verifying...');
-  await verify({ 
-    contractAddress: receiptToken, 
-    args: [receiptTokenName, receiptTokenSymbol], 
+  await verify({
+    contractAddress: receiptToken,
+    args: [receiptTokenName, receiptTokenSymbol],
   });
   return marbleLsdProxy;
 }

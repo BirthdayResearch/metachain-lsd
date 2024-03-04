@@ -11,7 +11,7 @@ export default function Page() {
       <UnlockPower />
       <MarbleOpportunitiesSection />
       <HowItWorksSection />
-        <DFIOpportunities />
+      <DFIOpportunities />
       <JoinTheCommunitySection />
       <DFIOpportunities />
     </div>
