@@ -9,7 +9,7 @@ const FaqItems = [
   {
     testId: "what-is-liquid-staking",
     title: "What is liquid staking?",
-    desc: "Native coins of a PoS chain are deposited with a staking service provider (In our case it is the Masternode Validator) MarbleFi then issues a 'receipt' in the form of a liquid synthetic token which is inherently interest-bearing.",
+    desc: "Native coins of a PoS chain are deposited with a staking service provider (In our case, it is the Masternode Validator) MarbleFi then issues a 'receipt' in the form of a liquid synthetic token which is inherently interest-bearing.",
   },
   {
     testId: "how-much-earn-stake",
