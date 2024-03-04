@@ -7,6 +7,7 @@ export async function deployMarbleLsdProxy({
   adminAddress,
   administratorAddress,
   walletAddress,
+  feesRecipientAddress,
   rewardDistributerAddress,
   finalizerAddress,
   marbleLsdV1Address
@@ -24,6 +25,8 @@ export async function deployMarbleLsdProxy({
     finalizerAddress,
     // withdraw address
     walletAddress,
+    // fees recipient address
+    feesRecipientAddress,
   ]);
   const marbleLsdProxy = await contract.deploy(marbleLsdV1Address, encodedData);
   await marbleLsdProxy.waitForDeployment();
@@ -55,6 +58,7 @@ interface InputsForInitialization {
   adminAddress: string;
   administratorAddress: string;
   walletAddress: string;
+  feesRecipientAddress: string;
   marbleLsdV1Address: string;
   rewardDistributerAddress: string;
   finalizerAddress: string;

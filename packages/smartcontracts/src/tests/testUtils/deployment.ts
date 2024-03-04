@@ -26,6 +26,8 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     rewardDistributerAndFinalizeSigner.address,
     // default wallet address
     accounts[1].address,
+    // default fees recipient address
+    accounts[1].address
   ]);
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(marbleLsdUpgradeableAddress, encodedData);
@@ -36,13 +38,6 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const shareTokenAddress = await proxyMarbleLsd.shareToken()
   const shareTokenFactory = await ethers.getContractFactory('ShareToken');
   const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken
-
-  // // set REWARDS_DISTRIBUTER_ROLE      
-  // const rewardsDistributionHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
-  // await proxyMarbleLsd.grantRole(rewardsDistributionHash, rewardDistributerAndFinalizeSigner.address);
-  // // set FINALIZE_ROLE      
-  // const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
-  // await proxyMarbleLsd.grantRole(finalizeRoleHash, rewardDistributerAndFinalizeSigner.address);
   
   return {
     proxyMarbleLsd,

@@ -3,7 +3,6 @@ pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
-
 /** @notice @dev
  * This error occurs when `_requestId` is invalid or zero
  */
@@ -49,7 +48,7 @@ error CantSendValueRecipientMayHaveReverted();
  */
 error NotOwner(address _sender, address _owner);
 
-contract MarbleQueue {
+contract MarbleLsdQueue {
   using EnumerableSet for EnumerableSet.UintSet;
 
   /** 
@@ -84,13 +83,15 @@ contract MarbleQueue {
    * @param receiver Recieving assets
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
+   * @param fees Amount of fees that being charged
    */
   event WithdrawalRequested(
       uint256 indexed requestId,
       address indexed owner,
       address indexed receiver,
       uint256 assets,
-      uint256 shares
+      uint256 shares,
+      uint256 fees
   );
 
   /** 
@@ -116,6 +117,7 @@ contract MarbleQueue {
    * @param receiver Amount of assets gets locked
    * @param amountOfAssets Assets to transfer
    * @param sharesToBurn Shares buned
+   * @param sharesToBurn Fees collected
    */
 
   event WithdrawalClaimed(
@@ -123,7 +125,8 @@ contract MarbleQueue {
     address indexed owner,
     address indexed receiver,
     uint256 amountOfAssets,
-    uint256 sharesToBurn
+    uint256 sharesToBurn,
+    uint256 fees
   );
 
   /** 
@@ -134,6 +137,8 @@ contract MarbleQueue {
     uint256 cumulativeAssets;
     /// @notice Sum of the all shares locked for withdrawal including this request
     uint256 cumulativeShares;
+    /// @notice Sum of the all fees for withdrawal including this request
+    uint256 cumulativeFees;
     /// @notice Address that can claim
     address owner;
     /// @notice Address that can claim or transfer the request
@@ -152,6 +157,8 @@ contract MarbleQueue {
     uint256 amountOfAssets;
     /// @notice Amount of shares token locked on withdrawal queue for this request
     uint256 amountOfShares;
+    /// @notice Amount of fees charged for withdrowal
+    uint256 amountOfFees;
     /// @notice Owner address that can claim this request
     address owner;
     /// @notice Address that can receive DFI in this request
@@ -171,7 +178,7 @@ contract MarbleQueue {
     // setting dummy zero structs in checkpoints and queue beginning
     // to avoid uint underflows and related if-branches
     // 0-index is reserved as 'not_found' response in the interface everywhere
-    _getQueue()[0] = WithdrawalRequest(0, 0, address(0), address(0), uint40(block.timestamp), true);
+    _getQueue()[0] = WithdrawalRequest(0, 0, 0, address(0), address(0), uint40(block.timestamp), true);
   }
 
   /** 
@@ -214,8 +221,9 @@ contract MarbleQueue {
 
       uint256 assetsDiff = batchEnd.cumulativeAssets - prevBatchEnd.cumulativeAssets;
       uint256 sharesDiff = batchEnd.cumulativeShares - prevBatchEnd.cumulativeShares;
-      // add assets and shares
-      assetsToLock += assetsDiff;
+      uint256 feesDiff = batchEnd.cumulativeFees - prevBatchEnd.cumulativeFees;
+      // add assets and shares and fees
+      assetsToLock = assetsToLock + assetsDiff + feesDiff;
       sharesToBurn += sharesDiff;
       // increment
       prevBatchEndRequestId = batchEndRequestId;
@@ -251,8 +259,10 @@ contract MarbleQueue {
     WithdrawalRequest memory requestToFinalize = _getQueue()[_lastRequestIdToBeFinalized];
 
     uint256 assetsToFinalize = requestToFinalize.cumulativeAssets - lastFinalizedRequest.cumulativeAssets;
+    uint256 feesToFinalize = requestToFinalize.cumulativeFees - lastFinalizedRequest.cumulativeFees;
+    uint256 totalAssets = assetsToFinalize + feesToFinalize;
     uint256 sharesToBurn = requestToFinalize.cumulativeShares - lastFinalizedRequest.cumulativeShares;
-    if (_amountOfAssets != assetsToFinalize) revert InvalidAssetsToFinalize(_amountOfAssets, assetsToFinalize);
+    if (_amountOfAssets != totalAssets) revert InvalidAssetsToFinalize(_amountOfAssets, totalAssets);
 
     uint256 firstRequestIdToFinalize = lastFinalizedRequestId + 1;
     // update Locked assets
@@ -273,7 +283,7 @@ contract MarbleQueue {
    * MUST emit the WithdrawalClaimed event.
    * @param _requestId Id of the request to claim
    */
-  function _claim(uint256 _requestId, address _owner) internal returns (uint256 assetsToTransfer, uint256 sharesToBurn) {
+  function _claim(uint256 _requestId, address _owner) internal returns (address receiver, uint256 assetsToTransfer, uint256 sharesToBurn, uint256 feesToTransfer ) {
     if (_requestId == 0) revert InvalidRequestId(_requestId);
     if (_requestId > lastFinalizedRequestId) revert RequestNotFoundOrNotFinalized(_requestId);
 
@@ -285,11 +295,11 @@ contract MarbleQueue {
     request.claimed = true;
     assert(_getRequestsByOwner()[request.owner].remove(_requestId));
     WithdrawalRequest memory prevRequest = _getQueue()[_requestId - 1];
+    receiver = request.receiver;
     assetsToTransfer = request.cumulativeAssets - prevRequest.cumulativeAssets;
     sharesToBurn = request.cumulativeShares - prevRequest.cumulativeShares;
-    lockedAssets -= assetsToTransfer;
-    _sendValue(request.receiver, assetsToTransfer);
-    emit WithdrawalClaimed(_requestId, _owner, request.receiver, assetsToTransfer, sharesToBurn);
+    feesToTransfer = request.cumulativeFees - prevRequest.cumulativeShares;
+    lockedAssets = lockedAssets - assetsToTransfer - feesToTransfer;
   }
 
   /** 
@@ -310,17 +320,20 @@ contract MarbleQueue {
     address _owner,
     address _receiver,
     uint256 _assets,
-    uint256 _shares
+    uint256 _shares,
+    uint256 _fees
   ) internal returns (uint256 requestId) {
     WithdrawalRequest memory lastRequest = _getQueue()[lastRequestId];
 
     uint256 cumulativeAssets = lastRequest.cumulativeAssets + _assets;
     uint256 cumulativeShares = lastRequest.cumulativeShares + _shares;
+    uint256 cumulativeFees = lastRequest.cumulativeFees + _fees;
 
     requestId = lastRequestId + 1;
     WithdrawalRequest memory newRequest =  WithdrawalRequest(
         cumulativeAssets,
         cumulativeShares,
+        cumulativeFees,
         _owner,
         _receiver,
         uint40(block.timestamp),
@@ -330,7 +343,7 @@ contract MarbleQueue {
     assert(_getRequestsByOwner()[_owner].add(requestId));
     // update last request Id
     lastRequestId = requestId;
-    emit WithdrawalRequested(requestId, _owner, _receiver, _assets, _shares);
+    emit WithdrawalRequested(requestId, _owner, _receiver, _assets, _shares, _fees);
   }
 
   /** 
@@ -346,6 +359,7 @@ contract MarbleQueue {
     status = WithdrawalRequestStatus(
       request.cumulativeAssets - previousRequest.cumulativeAssets,
       request.cumulativeShares - previousRequest.cumulativeShares,
+      request.cumulativeFees - previousRequest.cumulativeFees,
       request.owner,
       request.receiver,
       request.timestamp,
