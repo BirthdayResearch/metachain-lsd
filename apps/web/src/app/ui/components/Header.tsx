@@ -16,7 +16,7 @@ export default function Header({
   const [isMenuActive, setisMenuActive] = useState(false);
   return (
     <div className="sticky z-50 top-8 md:top-0 header-bg md:py-10 w-full flex items-center justify-center font-mono text-sm mb-8 md:mb-16">
-      <div className="flex w-full min-w-fit max-w-5xl justify-between">
+      <header className="flex w-full items-center min-w-fit max-w-5xl justify-between">
         <HeaderLogo isHeader />
 
         {/*  Web */}
@@ -38,7 +38,7 @@ export default function Header({
           />
         )}
         {/* Mobile */}
-      </div>
+      </header>
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function NavigationBar({
       )}
     >
       {navigationTabs.map((link) => (
-        <div
+        <ul
           key={link.label}
           className={clsx(
             "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px]",
@@ -54,10 +54,10 @@ export default function NavigationBar({
             }
           }}
         >
-          <p className="text-sm text-light-1000 font-bold active:text-opacity-10">
+          <li className="text-sm text-light-1000 font-bold active:text-opacity-10">
             {link.label}
-          </p>
-        </div>
+          </li>
+        </ul>
       ))}
     </nav>
   );
