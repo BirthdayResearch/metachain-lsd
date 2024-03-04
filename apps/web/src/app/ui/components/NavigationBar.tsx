@@ -39,7 +39,7 @@ export default function NavigationBar({
         <ul
           key={link.label}
           className={clsx(
-            "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px]",
+            "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px] cursor-pointer",
             hoverStyle,
           )}
           onClick={() => {
