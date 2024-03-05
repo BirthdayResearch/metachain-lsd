@@ -12,7 +12,7 @@ export default function SectionContainer({
     <div
       className={clsx(
         customContainerStyle,
-        "w-full flex items-center justify-between",
+        "w-full flex items-center justify-between"
       )}
     >
       {children}

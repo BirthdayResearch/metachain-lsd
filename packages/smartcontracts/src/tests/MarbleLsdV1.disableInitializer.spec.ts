@@ -11,7 +11,7 @@ describe('Disable the initialization for MarbleLsdV1', () => {
         defaultAdminSigner.address,
         walletSigner.address,
         'DFI STAKING RECEIPT TOKEN',
-        'xDFI'
+        'xDFI',
       ),
     ).to.be.revertedWith('Initializable: contract is already initialized');
   });
