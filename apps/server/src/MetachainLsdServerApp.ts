@@ -13,9 +13,9 @@ export class MetachainLsdServerApp<
 > {
   protected app?: App;
 
-  constructor(protected readonly module: any) {}
+  constructor(protected readonly module: any) { }
 
-  async createNestApp(): Promise<App> {
+  async createNestApp (): Promise<App> {
     const app = await NestFactory.create(AppModule);
     await this.configureApp(app);
     // Register the middleware to log the origin
@@ -23,7 +23,7 @@ export class MetachainLsdServerApp<
     return app as App;
   }
 
-  async configureApp(app: INestApplication): Promise<void> {
+  async configureApp (app: INestApplication): Promise<void> {
     app.enableCors({
       origin: "*",
       allowedHeaders: "*",
@@ -33,7 +33,7 @@ export class MetachainLsdServerApp<
   }
 
   // Middleware to log the origin
-  private registerLoggerMiddleware(app: INestApplication): void {
+  private registerLoggerMiddleware (app: INestApplication): void {
     app.use((req: Request, res: Response, next: NextFunction) => {
       const origin = req.get("Origin");
       console.log(`Request Origin: ${origin}`);
@@ -42,15 +42,15 @@ export class MetachainLsdServerApp<
   }
 
   /**
-   * Run any additional initialisation steps before starting the server2.
+   * Run any additional initialisation steps before starting the server.
    * If there are additional steps, can be overriden by any extending classes
    */
-  async init() {
+  async init () {
     this.app = await this.createNestApp();
     return this.app.init();
   }
 
-  async start(): Promise<App> {
+  async start (): Promise<App> {
     const app = await this.init();
 
     const PORT = process.env.PORT || 3001;
@@ -64,7 +64,7 @@ export class MetachainLsdServerApp<
   /**
    * Stop NestJs and un-assign this.app
    */
-  async stop(): Promise<void> {
+  async stop (): Promise<void> {
     await this.app?.close();
     this.app = undefined;
   }
