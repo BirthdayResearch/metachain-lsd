@@ -9,5 +9,5 @@
     "declaration": true,
     "declarationMap": true,
     "resolveJsonModule": true
-  },
+  }
 }

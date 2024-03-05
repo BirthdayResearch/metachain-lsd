@@ -1,6 +1,5 @@
 "use client";
 
-import { MarbleLsdV1__factory } from "smartcontracts";
 import { formatEther } from "viem";
 
 import {
@@ -10,26 +9,38 @@ import {
   useBalance,
   useAccount,
 } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { parseEther } from "viem";
 import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
 import { InputCard } from "@/app/ui/components/InputCard";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
 import { useRouter } from "next/navigation";
+import { useDfiPrice } from "@/app/lib/hooks/useDfiPrice";
+import { useContractContext } from "@/app/lib/context/ContractContext";
+import { useNetworkContext } from "@waveshq/walletkit-ui";
 
 export default function Stake() {
   const { push } = useRouter();
 
-  const { address, isConnected } = useAccount();
-
+  const { address, isConnected, status } = useAccount();
   const { data: walletBalance } = useBalance({
     address,
   });
 
+  const { MarbleLsdV1 } = useContractContext();
+  const { network } = useNetworkContext();
+  const dfiPrice = useDfiPrice();
+
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+
+  // To display stake amount in USD
+  const stakedValue = useMemo(() => {
+    const calculatedStake = new BigNumber(stakeAmount).multipliedBy(dfiPrice);
+    return calculatedStake.isNaN() ? "0.00" : calculatedStake.toString();
+  }, [stakeAmount, dfiPrice]);
 
   const {
     data: depositFundData,
@@ -37,37 +48,31 @@ export default function Stake() {
     write: writeDepositTxn,
     isLoading: isDepositInProgress,
   } = useContractWrite({
-    abi: MarbleLsdV1__factory.abi,
-    address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
+    abi: MarbleLsdV1.abi,
+    address: MarbleLsdV1.address,
     functionName: "deposit",
     args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
-    value: parseEther(stakeAmount), // stake DFI
+    value: parseEther(stakeAmount),
   });
 
   const { data: previewDepositData, error: previewDepositTxnError } =
     useContractRead({
-      abi: MarbleLsdV1__factory.abi,
-      address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
+      abi: MarbleLsdV1.abi,
+      address: MarbleLsdV1.address,
       functionName: "previewDeposit",
       args: [parseEther(stakeAmount)],
     });
 
   const { data: isDepositPaused, error: isDepositPausedError } =
     useContractRead({
-      abi: MarbleLsdV1__factory.abi,
-      address: "0x9FA70916182c75F401bF038EC775266941C46909", // proxy contract address
+      abi: MarbleLsdV1.abi,
+      address: MarbleLsdV1.address,
       functionName: "isDepositPaused",
     });
 
-  // const previewDepositFormatted = new BigNumber(
-  //   (previewDepositData as bigint) || 0,
-  // ).toFormat(2);
-
   const previewDepositFormatted = previewDepositData
-    ? formatEther(previewDepositData)
+    ? formatEther(previewDepositData as unknown as bigint)
     : "0";
-
-  console.log({ previewDepositData });
 
   const {
     error: depositTxnError,
@@ -107,9 +112,6 @@ export default function Stake() {
     }
   }
 
-  // TODO clear form
-  function clearForm() {}
-
   function getActionBtnLabel() {
     switch (true) {
       case isDepositTxnSuccess:
@@ -124,10 +126,9 @@ export default function Stake() {
   }
 
   useEffect(() => {
-    // set wallet balance
-    setWalletBalanceAmount(walletBalance?.formatted ?? "NA");
+    setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
     setIsWalletConnected(isConnected);
-  }, [address, isConnected]); // add env network
+  }, [address, status, network]);
 
   return (
     <div className="w-full flex flex-col">
@@ -152,8 +153,9 @@ export default function Stake() {
           amount={stakeAmount}
           onChange={setStakeAmount}
           maxAmount={new BigNumber(walletBalanceAmount)}
-          value={"111"} // call whale api to get price
+          value={stakedValue}
           displayPercentageBtn={isWalletConnected}
+          disabled={isDepositInProgress || isDepositTxnInProgress}
         />
         <section>
           <TransactionRow
@@ -168,7 +170,7 @@ export default function Stake() {
             <CTAButton
               testID="instant-transfer-btn"
               label={getActionBtnLabel()}
-              customStyle="w-full md:py-5 !rounded-[10px]"
+              customStyle="w-full md:py-5"
               isLoading={isDepositInProgress || isDepositTxnInProgress}
               disabled={isDepositInProgress || isDepositTxnInProgress}
               onClick={!isConnected ? show : () => submitStake()}
