@@ -49,9 +49,16 @@ const config: Config = {
         brand: {
           100: "#69FF23",
         },
+        red: "#FF4F4F",
         error: "#E54545",
         warning: "#FF9D42",
         valid: "#0CC72C",
+      },
+      borderRadius: {
+        DEFAULT: "5px",
+        md: "10px",
+        lg: "15px",
+        xl: "20px"
       },
     },
   },

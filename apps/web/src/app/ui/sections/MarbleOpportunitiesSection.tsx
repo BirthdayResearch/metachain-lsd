@@ -38,7 +38,10 @@ const OpportunitiesItems = [
 
 export default function MarbleOpportunitiesSection() {
   return (
-    <SectionContainer customContainerStyle="flex-col gap-12">
+    <SectionContainer
+      id="benefits-section"
+      customContainerStyle="flex-col gap-12 scroll-mt-40"
+    >
       <>
         <div className="flex flex-col text-center gap-3 md:gap-2">
           <CardTitle

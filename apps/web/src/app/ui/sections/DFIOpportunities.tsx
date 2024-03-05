@@ -1,15 +1,16 @@
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import Image from "next/image";
-import useResponsive from "@/app/lib/hooks/useResponsive";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
+import clsx from "clsx";
+
 
 export default function DFIOpportunities() {
-  const { isLg } = useResponsive();
+
   return (
-    <SectionContainer>
-      <div className="flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center w-full">
+    <SectionContainer id="about-section">
+      <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center scroll-mt-40">
         <div className="max-w-[520px]">
-          <h1 className="text-[28px] leading-[40px] md:leading-[56px] md:text-[40px] text-light-1000 font-semibold mb-4">
+          <h1 className="text-[28px] leading-10 md:leading-[56px] md:text-[40px] text-light-1000 font-semibold mb-4">
             Take advantage of mDFI for new opportunities
           </h1>
           <p className="body-1-regular-text text-light-1000 mb-6">
@@ -28,8 +29,9 @@ export default function DFIOpportunities() {
             data-testid="mdfi-logo"
             src="/mDFI.svg"
             alt="mDFI Logo"
-            width={isLg ? 224 : 168}
-            height={isLg ? 224 : 168}
+            width={224}
+            height={224}
+            className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
           />
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
