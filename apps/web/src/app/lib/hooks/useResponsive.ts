@@ -4,7 +4,8 @@ import config from "../../../../tailwind.config";
 const useResponsive = () => {
   const { screens } = config.theme as { screens: Record<string, string> };
 
-  const isMobile = useMediaQuery({ maxWidth: `calc(${screens.md} - 1px)` });
+  const maxWidth = `calc(${parseInt(screens.md, 10) - 1}px)`;
+  const isMobile = useMediaQuery({ maxWidth });
 
   const isXs = useMediaQuery({ minWidth: screens.xs });
 

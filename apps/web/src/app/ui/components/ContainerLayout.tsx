@@ -13,7 +13,8 @@ import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
-import React from "react";
+import React, { useRef } from "react";
+import Footer from "@/app/ui/components/Footer";
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -58,15 +59,20 @@ export default function ContainerLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const contentRef = useRef<HTMLDivElement>(null);
+
   return (
     <html lang="en">
       <body
-        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
+        className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-no-repeat bg-clip-border bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000">
-              <Header />
+            <div
+              ref={contentRef}
+              className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-0 text-light-1000"
+            >
+              <Header parentReference={contentRef} />
               {children}
               <Next13ProgressBar
                 height="4px"
@@ -74,6 +80,7 @@ export default function ContainerLayout({
                 options={{ showSpinner: true }}
                 showOnShallow
               />
+              <Footer parentReference={contentRef} />
             </div>
           </ConnectKitProvider>
         </WagmiConfig>
