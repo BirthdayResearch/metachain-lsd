@@ -1,7 +1,7 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
 
-import { MarbleLsdV1, MarbleLsdV1__factory,ShareToken } from '../../generated';
+import { MarbleLsdV1, MarbleLsdV1__factory, ShareToken } from '../../generated';
 
 export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const accounts = await ethers.getSigners();

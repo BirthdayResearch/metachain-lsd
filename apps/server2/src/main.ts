@@ -1,5 +1,5 @@
 import { AppModule } from "./AppModule";
-import {MetachainLsdServerApp} from "./MetachainLsdServerApp";
+import { MetachainLsdServerApp } from "./MetachainLsdServerApp";
 
 async function bootstrap() {
   const app = new MetachainLsdServerApp(AppModule);
