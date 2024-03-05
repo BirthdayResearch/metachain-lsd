@@ -118,7 +118,7 @@ describe('MarbleLsdProxy', () => {
 
   it('Should deposit DFI and emit Deposit event on successful staking', async () => {
     // Need to add to the timestamp of the previous block to match the next block the tx is mined in
-    const amount = toWei('1.005');
+    const amount = toWei('10.05');
     const mintingFees = await proxyMarbleLsd.mintingFees()
     const fees = feesOnTotal(amount.toString(), mintingFees.toString());
     const amountBeforeFees = new BigNumber(amount.toString()).minus(fees)
@@ -144,190 +144,214 @@ describe('MarbleLsdProxy', () => {
     const amount = toWei('5');
     const signer = accounts[4]
     await expect(proxyMarbleLsd.connect(signer).requestWithdrawal(amount, signer.address))
-      .to.be.revertedWithCustomError(proxyMarbleLsd, "ExceededMaxWithdrawal")
+      .to.be.revertedWith("ERC20: insufficient allowance")
   })
 
-  // it('Should be able to request withdrawal DFI and emit WithdrawalRequested event on successful withdraw', async () => {
-  //   const amount = toWei('5');
-  //   const shares = await proxyMarbleLsd.previewWithdrawal(amount);
-  //   const fees = new BigNumber(amount.toString()).multipliedBy('0.0075');
-  //   const signer = accounts[4]
-  //   const lastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
-  //   // approve transfer of share token
-  //   await shareToken.connect(signer).approve(await proxyMarbleLsd.getAddress(), amount)
-  //   await expect(proxyMarbleLsd.connect(signer).requestWithdrawal(amount, signer.address))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalRequested')
-  //     .withArgs(lastRequestId + 1, signer.address, signer.address, amount, shares, fees);
-  //   const updatedLastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
-  //   expect(updatedLastRequestId).to.equal(lastRequestId + 1);
-  //   const withdrawArr = await proxyMarbleLsd.getWithdrawalStatus([updatedLastRequestId]);
-  //   expect(withdrawArr[0]).to.eql([
-  //     BigInt(amount),
-  //     BigInt(amount),
-  //     signer.address,
-  //     signer.address,
-  //     BigInt(await time.latest()),
-  //     false,
-  //     false
-  //   ])
-  //   const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
-  //   expect(withdrawalRequests.length).to.equal(1);
-  //   expect(withdrawalRequests).to.eql([1n]);
-  // });
+  it('Should be able to request withdrawal DFI and emit WithdrawalRequested event on successful withdraw', async () => {
+    const amount = toWei('4.962779156327543424'); // to withdrawal 5 mDFI 
+    const shares = await proxyMarbleLsd.previewWithdrawal(amount); // 5 mDFI
+    const redemptionFees = await proxyMarbleLsd.redemptionFees()
+    const fees = feesOnRaw(amount.toString(), redemptionFees.toString());
+    const amountAfterFees = new BigNumber(amount.toString()).plus(fees)
+    const previewWithdrawal =  await proxyMarbleLsd.previewWithdrawal(amount);
+    const convertToShares =  await proxyMarbleLsd.convertToShares(amount);
+    expect(fees).to.equal(new BigNumber(previewWithdrawal.toString()).minus(convertToShares.toString()))
+    const signer = accounts[4]
+    const lastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
+    // approve transfer of share token
+    await shareToken.connect(signer).approve(await proxyMarbleLsd.getAddress(), shares)
+    await expect(proxyMarbleLsd.connect(signer).requestWithdrawal(amount, signer.address))
+      .to.emit(proxyMarbleLsd, 'WithdrawalRequested')
+      .withArgs(lastRequestId + 1, signer.address, signer.address, amount, shares, fees);
+    const updatedLastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
+    expect(updatedLastRequestId).to.equal(lastRequestId + 1);
+    const withdrawArr = await proxyMarbleLsd.getWithdrawalStatus([updatedLastRequestId]);
+    expect(withdrawArr[0]).to.eql([
+      BigInt(amount),
+      BigInt(amountAfterFees.toString()),
+      BigInt(fees.toString()),
+      signer.address,
+      signer.address,
+      BigInt(await time.latest()),
+      false,
+      false
+    ])
+    const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
+    expect(withdrawalRequests.length).to.equal(1);
+    expect(withdrawalRequests).to.eql([1n]);
+  });
 
-  // it('Should fail claim when request claim withdrawals before finalizing withdraw', async () => {
-  //   const signer = accounts[4]
-  //   const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestNotFoundOrNotFinalized")
-  //     .withArgs(withdrawalRequests[0]);
-  // });
+  it('Should fail claim when request claim withdrawals before finalizing withdraw', async () => {
+    const signer = accounts[4]
+    const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestNotFoundOrNotFinalized")
+      .withArgs(withdrawalRequests[0]);
+  });
 
-  // it('Should fail claim when request claim withdrawals with zero request Id', async () => {
-  //   const signer = accounts[4]
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(0))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
-  //     .withArgs(0);
-  // });
+  it('Should fail claim when request claim withdrawals with zero request Id', async () => {
+    const signer = accounts[4]
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(0))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
+      .withArgs(0);
+  });
 
-  // it('Should fail when finalizing withdraw with non FINALIZE_ROLE address ', async () => {
-  //   const signer = accounts[4]
-  //   const lastRequestId = await proxyMarbleLsd.lastRequestId();
-  //   const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
+  it('Should fail when finalizing withdraw with non FINALIZE_ROLE address ', async () => {
+    const signer = accounts[4]
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
 
-  //   await expect(proxyMarbleLsd.connect(signer).finalize(lastRequestId))
-  //     .to.be.revertedWith(
-  //       `AccessControl: account ${signer.address.toLowerCase()} is missing role ${finalizeRoleHash}`,
-  //     );
-  // });
+    await expect(proxyMarbleLsd.connect(signer).finalize(lastRequestId))
+      .to.be.revertedWith(
+        `AccessControl: account ${signer.address.toLowerCase()} is missing role ${finalizeRoleHash}`,
+      );
+  });
 
-  // it('Should fail when finalizing withdraw with zero amount', async () => {
-  //   const lastRequestId = await proxyMarbleLsd.lastRequestId();
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO")
-  // });
+  it('Should fail when finalizing withdraw with zero amount', async () => {
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO")
+  });
 
-  // it('Should fail when finalizing withdraw with invalid requestId', async () => {
-  //   const amount = toWei('10');
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(10, { value: amount }))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
-  //     .withArgs(10);
-  // });
+  it('Should fail when finalizing withdraw with invalid requestId', async () => {
+    const amount = toWei('10');
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(10, { value: amount }))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
+      .withArgs(10);
+  });
 
-  // it('Should fail when finalizing withdraw with finalized requestId', async () => {
-  //   const amount = toWei('10');
-  //   const lastFinalizedRequestId = await proxyMarbleLsd.lastFinalizedRequestId();
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastFinalizedRequestId, { value: amount }))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
-  //     .withArgs(lastFinalizedRequestId);
-  // });
+  it('Should fail when finalizing withdraw with finalized requestId', async () => {
+    const amount = toWei('10');
+    const lastFinalizedRequestId = await proxyMarbleLsd.lastFinalizedRequestId();
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastFinalizedRequestId, { value: amount }))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
+      .withArgs(lastFinalizedRequestId);
+  });
 
-  // it('Should fail when finalizing withdraw with wrong finalizing amount', async () => {
-  //   const amount = toWei('10');
-  //   const lastRequestId = await proxyMarbleLsd.lastRequestId();
-  //   const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId, { value: amount }))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidAssetsToFinalize")
-  //     .withArgs(amount, preFinalize.assetsToLock);
-  // });
+  it('Should fail when finalizing withdraw with wrong finalizing amount', async () => {
+    const amount = toWei('10');
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId, { value: amount }))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidAssetsToFinalize")
+      .withArgs(amount, preFinalize.assetsToLock);
+  });
 
-  // it('Should have correct unfinalized assets count and request number', async () => {
-  //   const unfinalizedAssets = await proxyMarbleLsd.unfinalizedAssets();
-  //   const lastRequestId = await proxyMarbleLsd.lastRequestId();
-  //   const unfinalizedRequestNumber = await proxyMarbleLsd.unfinalizedRequestNumber();
-  //   expect(unfinalizedRequestNumber).to.equal(lastRequestId)
-  //   const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
-  //   expect(preFinalize.assetsToLock).to.equal(unfinalizedAssets)
-  // })
+  it('Should have correct unfinalized assets count and request number', async () => {
+    const unfinalizedAssets = await proxyMarbleLsd.unfinalizedAssets();
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    const unfinalizedRequestNumber = await proxyMarbleLsd.unfinalizedRequestNumber();
+    expect(unfinalizedRequestNumber).to.equal(lastRequestId)
+    const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
+    expect(preFinalize.assetsToLock).to.equal(new BigNumber(unfinalizedAssets?.assets?.toString()).plus(unfinalizedAssets?.fees?.toString()))
+  })
 
-  // it('Should be able to finalizing withdraw with correct finalizing amount', async () => {
-  //   const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
-  //   const lastRequestId = await proxyMarbleLsd.lastRequestId();
-  //   const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
-  //   const blockTime = await time.latest()
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId, { value: preFinalize.assetsToLock }))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalsFinalized')
-  //     .withArgs(lastFinalizedRequestId + 1, lastRequestId, preFinalize.assetsToLock, preFinalize.sharesToBurn, blockTime + 1);
-  // });
+  it('Should be able to finalizing withdraw with correct finalizing amount', async () => {
+    const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
+    const lastRequestId = await proxyMarbleLsd.lastRequestId();
+    const preFinalize = await proxyMarbleLsd.prefinalize([lastRequestId]);
+    const blockTime = await time.latest()
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastRequestId, { value: preFinalize.assetsToLock }))
+      .to.emit(proxyMarbleLsd, 'WithdrawalsFinalized')
+      .withArgs(lastFinalizedRequestId + 1, lastRequestId, preFinalize.assetsToLock, preFinalize.sharesToBurn, blockTime + 1);
+  });
 
-  // it('Should not able to claim withdrawal with non owner account', async () => {
-  //   const owner = accounts[4]
-  //   const signer = accounts[5]
-  //   const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(owner.address);
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "NotOwner")
-  //     .withArgs(signer.address, owner.address);
-  // });
+  it('Should not able to claim withdrawal with non owner account', async () => {
+    const owner = accounts[4]
+    const signer = accounts[5]
+    const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(owner.address);
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "NotOwner")
+      .withArgs(signer.address, owner.address);
+  });
 
-  // it('Should be able to claim withdrawal with WithdrawalClaimed event', async () => {
-  //   const amount = toWei('5');
-  //   const initialStaked = await proxyMarbleLsd.totalStakedAssets()
-  //   const initialTotalSupply = await shareToken.totalSupply();
-  //   const initialAssets = await proxyMarbleLsd.totalAssets();
-  //   const initialShares = await proxyMarbleLsd.totalShares();
-  //   const shares = await proxyMarbleLsd.previewWithdrawal(amount);
-  //   const signer = accounts[4]
-  //   const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawals([withdrawalRequests[0]]))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalClaimed')
-  //     .withArgs(withdrawalRequests[0], signer.address, signer.address, amount, shares);
-  //   const updatedAssets = await proxyMarbleLsd.totalAssets()
-  //   expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
-  //   const updatedShares = await proxyMarbleLsd.totalShares()
-  //   expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
-  //   // Check receipt token balance
-  //   const balance = await shareToken.balanceOf(signer.address)
-  //   expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
-  //   const totalSupply = await shareToken.totalSupply()
-  //   expect(totalSupply).to.equal(new BigNumber(initialTotalSupply.toString()).minus(amount.toString()));
-  //   const updatedStaked = await proxyMarbleLsd.totalStakedAssets()
-  //   expect(new BigNumber(initialStaked.toString()).minus(updatedStaked.toString())).to.equal(amount);
-  // });
+  it('Should be able to claim withdrawal with WithdrawalClaimed event', async () => {
+    const signer = accounts[4]
+    const requests = (await proxyMarbleLsd.getWithdrawalRequests(signer.address)).map((i=> i.toString()))
+    const withdrawalStatus = await proxyMarbleLsd.getWithdrawalStatus(requests)
+    const initialStaked = await proxyMarbleLsd.totalStakedAssets()
+    const initialTotalSupply = await shareToken.totalSupply();
+    const initialAssets = await proxyMarbleLsd.totalAssets();
+    const initialShares = await proxyMarbleLsd.totalShares();
+    let allAssets = new BigNumber(0);
+    let allShares = new BigNumber(0);
+    let allFees = new BigNumber(0);
+    for (let i = 0; i< requests.length; i++) {
+      const [assets, shares, fees] = withdrawalStatus[i];
+      const requestId = requests[i];
+      await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(requestId))
+        .to.emit(proxyMarbleLsd, 'WithdrawalClaimed')
+        .withArgs(requestId, signer.address, signer.address, assets, shares, fees);
+        allAssets = allAssets.plus(assets.toString())
+        allShares = allShares.plus(shares.toString())
+        allFees = allFees.plus(fees.toString())
+    }
+    const updatedAssets = await proxyMarbleLsd.totalAssets()
+    expect(updatedAssets).to.equal(
+      new BigNumber(initialAssets.toString()).minus(allAssets.toString()).minus(allFees.toString()))
+    ;
+    const updatedShares = await proxyMarbleLsd.totalShares()
+    expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(allShares.toString()));
+    // Check receipt token balance
+    const balance = await shareToken.balanceOf(signer.address)
+    expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(allShares.toString()));
+    const totalSupply = await shareToken.totalSupply()
+    expect(totalSupply).to.equal(new BigNumber(initialTotalSupply.toString()).minus(allShares.toString()));
+    const updatedStaked = await proxyMarbleLsd.totalStakedAssets()
+    expect(new BigNumber(initialStaked.toString()).minus(updatedStaked.toString())).to.equal(
+      new BigNumber(allAssets).plus(allFees.toString())
+    );
+  });
 
-  // it('Should not able to re-claim withdrawal', async () => {
-  //   const signer = accounts[4]
-  //   const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(lastFinalizedRequestId))
-  //     .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestAlreadyClaimed")
-  //     .withArgs(lastFinalizedRequestId);
-  // });
+  it('Should not able to re-claim withdrawal', async () => {
+    const signer = accounts[4]
+    const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(lastFinalizedRequestId))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestAlreadyClaimed")
+      .withArgs(lastFinalizedRequestId);
+  });
 
-  // it('Should be able to request redeem DFI and claim rewards with WithdrawalClaimed event', async () => {
-  //   const shares = toWei('5');
-  //   const initialTotalSupply = await shareToken.totalSupply();
-  //   const initialAssets = await proxyMarbleLsd.totalAssets();
-  //   const initialShares = await proxyMarbleLsd.totalShares();
-  //   const amount = await proxyMarbleLsd.convertToAssets(shares);
-  //   const signer = accounts[4]
-  //   const lastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
-  //   const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
-  //   // approve transfer of share token
-  //   await shareToken.connect(signer).approve(await proxyMarbleLsd.getAddress(), amount)
-  //   await expect(proxyMarbleLsd.connect(signer).requestRedeem(shares, signer.address))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalRequested')
-  //     .withArgs(lastRequestId + 1, signer.address, signer.address, amount, shares);
-  //   const preFinalize = await proxyMarbleLsd.prefinalize([lastFinalizedRequestId + 1]);
-  //   const blockTime = await time.latest()
-  //   await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastFinalizedRequestId + 1, { value: preFinalize.assetsToLock }))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalsFinalized')
-  //     .withArgs(lastFinalizedRequestId + 1, lastFinalizedRequestId + 1, preFinalize.assetsToLock, preFinalize.sharesToBurn, blockTime + 1);
-  //   const withdrawalRequests = await proxyMarbleLsd.getWithdrawalRequests(signer.address);
-  //   await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(withdrawalRequests[0]))
-  //     .to.emit(proxyMarbleLsd, 'WithdrawalClaimed')
-  //     .withArgs(withdrawalRequests[0], signer.address, signer.address, amount, shares);
+  it('Should be able to request redeem DFI and claim rewards with WithdrawalClaimed event', async () => {
+    const signer = accounts[4]
+    const shares = toWei('5');
+    const initialTotalSupply = await shareToken.totalSupply();
+    const initialAssets = await proxyMarbleLsd.totalAssets();
+    const initialShares = await proxyMarbleLsd.totalShares();
+    const lastRequestId = +(await proxyMarbleLsd.lastRequestId()).toString();
+    const lastFinalizedRequestId = + (await proxyMarbleLsd.lastFinalizedRequestId()).toString();
+    const redemptionFees = await proxyMarbleLsd.redemptionFees()
+    const previewRedeem =  await proxyMarbleLsd.previewRedeem(shares);
+    const convertToAssets =  await proxyMarbleLsd.convertToAssets(shares);
+    const fees = feesOnTotal(convertToAssets.toString(), redemptionFees.toString())
+    expect(fees).to.equal(new BigNumber(convertToAssets.toString()).minus(previewRedeem.toString()))
+    // approve transfer of share token
+    await shareToken.connect(signer).approve(await proxyMarbleLsd.getAddress(), convertToAssets)
+    const amountAfterFees = new BigNumber(convertToAssets.toString()).minus(fees)
+    await expect(proxyMarbleLsd.connect(signer).requestRedeem(shares, signer.address))
+      .to.emit(proxyMarbleLsd, 'WithdrawalRequested')
+      .withArgs(lastRequestId + 1, signer.address, signer.address, amountAfterFees, shares, fees);
+    const preFinalize = await proxyMarbleLsd.prefinalize([lastFinalizedRequestId + 1]);
+    const blockTime = await time.latest()
+    await expect(proxyMarbleLsd.connect(rewardDistributerAndFinalizeSigner).finalize(lastFinalizedRequestId + 1, { value: preFinalize.assetsToLock }))
+      .to.emit(proxyMarbleLsd, 'WithdrawalsFinalized')
+      .withArgs(lastFinalizedRequestId + 1, lastFinalizedRequestId + 1, preFinalize.assetsToLock, preFinalize.sharesToBurn, blockTime + 1);
+    const withdrawalRequests = (await proxyMarbleLsd.getWithdrawalRequests(signer.address)).map((i) => i.toString());
+    await expect(proxyMarbleLsd.connect(signer).claimWithdrawals(withdrawalRequests))
+      .to.emit(proxyMarbleLsd, 'WithdrawalClaimed')
+      .withArgs(withdrawalRequests[0], signer.address, signer.address, amountAfterFees, shares, fees);
 
-  //   const updatedAssets = await proxyMarbleLsd.totalAssets()
-  //   expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(amount.toString()));
-  //   const updatedShares = await proxyMarbleLsd.totalShares()
-  //   expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
-  //   // Check receipt token balance
-  //   const balance = await shareToken.balanceOf(signer.address)
-  //   expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
-  //   const totalSupply = await shareToken.totalSupply()
-  //   expect(totalSupply).to.equal(new BigNumber(initialTotalSupply.toString()).minus(amount.toString()));
-  // });
+    const updatedAssets = await proxyMarbleLsd.totalAssets()
+    expect(updatedAssets).to.equal(new BigNumber(initialAssets.toString()).minus(convertToAssets.toString()));
+    const updatedShares = await proxyMarbleLsd.totalShares()
+    expect(updatedShares).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
+    // Check receipt token balance
+    const balance = await shareToken.balanceOf(signer.address)
+    expect(balance).to.equal(new BigNumber(initialShares.toString()).minus(shares.toString()));
+    const totalSupply = await shareToken.totalSupply()
+    expect(totalSupply).to.equal(new BigNumber(initialTotalSupply.toString()).minus(shares.toString()));
+  });
 
-  describe.skip('Minimum deposit update tests', () => {
+  describe('Minimum deposit update tests', () => {
     it('Should not update minimum deposit if new amount is 0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
@@ -358,7 +382,7 @@ describe('MarbleLsdProxy', () => {
     });
   });
 
-  describe.skip('Minimum withdrawal update tests', () => {
+  describe('Minimum withdrawal update tests', () => {
     it('Should not update minimum withdrawal if new amount is 0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
@@ -389,7 +413,7 @@ describe('MarbleLsdProxy', () => {
     });
   });
 
-  describe.skip('Flush funds', () => {
+  describe('Flush funds', () => {
     it('Should flush fund if contract have more than zero amount to withdrawal ', async () => {
       const availableFundsToFlush = await proxyMarbleLsd.getAvailableFundsToFlush();
       const walletAddress = await proxyMarbleLsd.walletAddress();
@@ -404,7 +428,7 @@ describe('MarbleLsdProxy', () => {
     });
   });
   
-  describe.skip('Wallet address update tests', () => {
+  describe('Wallet address update tests', () => {
     it('Should not update if new address is 0x0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
@@ -436,7 +460,7 @@ describe('MarbleLsdProxy', () => {
     });
   });
 
-  describe.skip('Pause Unpause deposit and withdraw', () => {
+  describe('Pause Unpause deposit and withdraw', () => {
     it('Should not pause deposit when not called from administrator', async () => {
       const signer = accounts[4]
       const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
@@ -520,7 +544,7 @@ describe('MarbleLsdProxy', () => {
 
   });
 
-  describe.skip('Roles', () => {
+  describe('Roles', () => {
     it('Should have admin role to defaultAdminSigner address', async () => {
       const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
       expect(adminRoleHash).to.equal('0x0000000000000000000000000000000000000000000000000000000000000000')
@@ -558,7 +582,7 @@ describe('MarbleLsdProxy', () => {
     })
   });
 
-  describe.skip('Manage rewards', () => {
+  describe('Manage rewards', () => {
     it('Should fail if distributed rewards with non REWARDS_DISTRIBUTER_ROLE', async () => {
       const amount = toWei('10');
       const hash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE()
@@ -575,44 +599,49 @@ describe('MarbleLsdProxy', () => {
 
     it('Should update DFI-mDFI ratio when rewards are distributed', async () => {
       // Need to add to the timestamp of the previous block to match the next block the tx is mined in
-      const amount = toWei('10');
+      const amount = toWei('10.05');
       const signer = accounts[4]
-      const shares = await proxyMarbleLsd.previewDeposit(amount);
+      const mintingFees = await proxyMarbleLsd.mintingFees()
+      const fees = feesOnTotal(amount.toString(), mintingFees.toString());
+      const amountAfterFees = new BigNumber(amount.toString()).minus(fees)
+      const shares = await proxyMarbleLsd.convertToShares(amountAfterFees.toString());
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
-      .to.emit(proxyMarbleLsd, 'Deposit')
-      .withArgs(signer.address, signer.address, amount, shares);
+        .to.emit(proxyMarbleLsd, 'Deposit')
+        .withArgs(signer.address, signer.address, amountAfterFees, shares, fees);
       const initialSupply = await proxyMarbleLsd.totalShares()
-      expect(initialSupply).to.equal(amount);
+      expect(initialSupply).to.equal(shares);
       const initialAssets = await proxyMarbleLsd.totalAssets()
-      expect(initialAssets).to.equal(amount);
+      expect(initialAssets).to.equal(amountAfterFees);
       // Check receipt token balance
       const balance = await shareToken.balanceOf(signer.address)
       expect(balance).to.equal(shares);
-
+      const performanceFees = await proxyMarbleLsd.performanceFees()
+      const performanceAmount = feesOnRaw(amountAfterFees.toString(), performanceFees.toString())
+      const rewardsWithFees = new BigNumber(amountAfterFees.toString()).plus(performanceAmount)
       // send rewards
       await expect(rewardDistributerAndFinalizeSigner.sendTransaction({
         to: await proxyMarbleLsd.getAddress(),
         data: "0x",
-        value: amount
+        value: rewardsWithFees.toString()
       }))
-      .to.emit(proxyMarbleLsd, 'Rewards')
-      .withArgs(rewardDistributerAndFinalizeSigner.address, amount);
+        .to.emit(proxyMarbleLsd, 'Rewards')
+        .withArgs(rewardDistributerAndFinalizeSigner.address, amountAfterFees, performanceAmount);
       const rewards = await proxyMarbleLsd.totalRewardAssets()
-      expect(rewards).to.equal(amount);
+      expect(rewards).to.equal(amountAfterFees);
 
       const updateSupply = await proxyMarbleLsd.totalShares()
       expect(updateSupply).to.equal(initialSupply);
       const updatedAssets = await proxyMarbleLsd.totalAssets()
-      expect(updatedAssets).to.equal(new BigNumber(amount.toString()).plus(amount.toString()));
+      expect(updatedAssets).to.equal(new BigNumber(amountAfterFees.toString()).multipliedBy(2));
 
       // share = 10 (mDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
-      const resultingShares = new BigNumber(amount.toString()).multipliedBy(0.5)
+      const resultingShares = new BigNumber(amountAfterFees.toString()).multipliedBy(0.5)
       const updatedShare = await proxyMarbleLsd.previewDeposit(amount);
       expect(updatedShare).to.equal(resultingShares);
 
       await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }))
       .to.emit(proxyMarbleLsd, 'Deposit')
-      .withArgs(signer.address, signer.address, amount, resultingShares);
+      .withArgs(signer.address, signer.address, amountAfterFees, resultingShares, fees);
     });
   });
 });
