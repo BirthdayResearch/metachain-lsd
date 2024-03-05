@@ -1,8 +1,8 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
+import BigNumber from 'bignumber.js';
 
 import { MarbleLsdV1, ShareToken } from '../generated';
 import { deployContracts, MarbleLsdDeploymentResult } from './testUtils/deployment';
