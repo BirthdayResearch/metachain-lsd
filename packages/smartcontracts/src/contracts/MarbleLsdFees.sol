@@ -1,15 +1,14 @@
 pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/utils/math/Math.sol';
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
-
+import './MarbleLsdAccessControl.sol';
 /** 
  * @notice @dev
  * This error occurs when using Zero address
  */
 error ZERO_ADDRESS();
 
-contract MarbleLsdFees is AccessControlUpgradeable {
+contract MarbleLsdFees is MarbleLsdAccessControl {
   using Math for uint256;
   uint256 private constant _BASIS_POINT_SCALE = 1e4;
 
@@ -72,7 +71,7 @@ contract MarbleLsdFees is AccessControlUpgradeable {
    * @notice Used by addresses with Admin and Operational roles to set the fees reciepiant address
    * @param _newAddress New fees reciepiant
    */
-  function updateFeesRecipientAddress(address _newAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateFeesRecipientAddress(address _newAddress) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = feesRecipientAddress;
     feesRecipientAddress = _newAddress;
@@ -86,7 +85,7 @@ contract MarbleLsdFees is AccessControlUpgradeable {
    * @notice Used by addresses with Admin and Operational roles to set the new minting fees
    * @param _fees New amount to be set as minting fees
    */
-  function updateMintingFees(uint16 _fees) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateMintingFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > 10000) revert("Invalid fees");
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
@@ -97,7 +96,7 @@ contract MarbleLsdFees is AccessControlUpgradeable {
    * @notice Used by addresses with Admin and Operational roles to set the new minting fees
    * @param _fees New amount to be set as minting fees
    */
-  function updateRedemptionFees(uint16 _fees) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateRedemptionFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > 10000) revert("Invalid fees");
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
@@ -108,7 +107,7 @@ contract MarbleLsdFees is AccessControlUpgradeable {
    * @notice Used by addresses with Admin and Operational roles to set the new performance fees
    * @param _fees New amount to be set as minting fees
    */
-  function updatePerformanceFees(uint16 _fees) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updatePerformanceFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > 10000) revert("Invalid fees");
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;

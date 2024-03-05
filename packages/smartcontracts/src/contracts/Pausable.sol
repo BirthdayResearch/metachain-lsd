@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+import './MarbleLsdAccessControl.sol';
 
 /** 
  * @notice @dev
@@ -19,7 +19,7 @@ error WITHDRAWAL_PAUSED();
  * @title Pausable
  * @dev Base contract which allows children to implement an emergency stop mechanism.
  */
-contract Pausable is AccessControlUpgradeable {
+contract Pausable is MarbleLsdAccessControl {
 
   /**
    * @notice Emitted when pause/unpause of deposit happens
@@ -43,7 +43,6 @@ contract Pausable is AccessControlUpgradeable {
 
   bool public isDepositPaused = false;
   bool public isWithdrawalPaused = false;
-  bytes32 public constant ADMINISTRATOR_ROLE = keccak256('ADMINISTRATOR_ROLE');
 
   /**
    * @dev Modifier to make a function callable only when the deposit is not paused.  

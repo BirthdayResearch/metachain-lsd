@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
+import '../../MarbleLsdAccessControl.sol';
 import '../../ShareToken.sol';
 import '../../Pausable.sol';
 import '../../MarbleLsdQueue.sol';
@@ -64,11 +64,9 @@ error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
-contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgradeable, Pausable, MarbleLsdQueue, MarbleLsdFees {
+contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessControl, Pausable, MarbleLsdQueue, MarbleLsdFees {
   using Math for uint256;
 
-  bytes32 public constant REWARDS_DISTRIBUTER_ROLE = keccak256('REWARDS_DISTRIBUTER_ROLE');
-  bytes32 public constant FINALIZE_ROLE = keccak256('FINALIZE_ROLE');
 
   ShareToken public shareToken;
   
