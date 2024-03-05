@@ -29,7 +29,10 @@ const HowItWorksItems = [
 
 export default function HowItWorksSection() {
   return (
-    <SectionContainer customContainerStyle="flex-col gap-12">
+    <SectionContainer
+      customContainerStyle="flex-col gap-12 scroll-mt-40"
+      id="how-it-works-section"
+    >
       <>
         <div className="flex flex-col text-center gap-2">
           <CardTitle
