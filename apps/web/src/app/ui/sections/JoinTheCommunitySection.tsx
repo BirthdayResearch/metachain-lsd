@@ -6,7 +6,8 @@ import SectionContainer from "@/app/ui/components/SectionContainer";
 export default function JoinTheCommunitySection() {
   const [emailString, setEmailString] = useState("");
   return (
-    <SectionContainer 
+    <SectionContainer
+      id="community-section"
       customContainerStyle="flex-col text-center md:text-left items-left px-6 py-10 md:p-10 rounded-xl card-gradient-background"
     >
       <div className="w-full flex flex-col gap-6">
