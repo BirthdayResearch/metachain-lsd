@@ -1,16 +1,20 @@
-import { run } from 'hardhat';
+import { run } from "hardhat";
 
-export async function verify({ contractAddress, args, contract }: ContractInput) {
-  console.log('Verifying contract...');
+export async function verify({
+  contractAddress,
+  args,
+  contract,
+}: ContractInput) {
+  console.log("Verifying contract...");
   try {
-    await run('verify:verify', {
+    await run("verify:verify", {
       address: contractAddress,
       constructorArguments: args,
       contract,
     });
   } catch (e) {
-    if ((e as Error).message.toLowerCase().includes('already verified')) {
-      console.log('Already verified!');
+    if ((e as Error).message.toLowerCase().includes("already verified")) {
+      console.log("Already verified!");
     } else {
       console.log(e);
     }

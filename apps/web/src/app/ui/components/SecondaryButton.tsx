@@ -20,7 +20,7 @@ export function SecondaryButton({
         "border-light-1000 hover:border-brand-100 active:text-opacity-60",
         "text-sm font-bold text-light-1000",
         customTextStyle,
-        customStyle ?? "w-fit"
+        customStyle ?? "w-fit",
       )}
     >
       {text}

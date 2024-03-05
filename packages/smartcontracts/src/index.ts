@@ -1,3 +1,3 @@
-export * from './envvar';
+export * from "./envvar";
 // Export the generated typechain types
-export * from './generated';
+export * from "./generated";
