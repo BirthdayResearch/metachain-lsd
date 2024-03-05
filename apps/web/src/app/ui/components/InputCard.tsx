@@ -14,10 +14,12 @@ export function PercentageButton({
   amount,
   percentage,
   onClick,
+  disabled,
 }: {
   percentage: AmountButton;
   amount: BigNumber;
   onClick: (amount: string) => void;
+  disabled: boolean;
 }) {
   const decimalPlace = 5;
   let value = amount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
@@ -51,6 +53,7 @@ export function PercentageButton({
       onClick={(): void => {
         onClick(value);
       }}
+      disabled={disabled}
     >
       <span className="font-medium text-xs">{percentage}</span>
     </button>
@@ -63,12 +66,14 @@ export function InputCard({
   onChange,
   displayPercentageBtn,
   maxAmount,
+  disabled = false,
 }: {
   amount: string;
   value: string;
   onChange: (amt: string) => void;
   displayPercentageBtn: boolean;
   maxAmount: BigNumber;
+  disabled: boolean;
 }) {
   const [focus, setFocus] = useState(false);
   return (
@@ -95,6 +100,8 @@ export function InputCard({
         </div>
         <div className="flex flex-col w-full">
           <input
+            disabled={disabled}
+            data-testid="input-amount"
             value={amount}
             type="text"
             className="w-full rounded text-base outline-0"
@@ -106,13 +113,17 @@ export function InputCard({
           <span className="text-xs font-light">${value}</span>
         </div>
         {displayPercentageBtn ? (
-          <div className="gap-x-1 flex bg-zinc-50 p-1 rounded-[20px]">
+          <div
+            className="gap-x-1 flex bg-zinc-50 p-1 rounded-[20px]"
+            data-testid="percentage-btn"
+          >
             {Object.values(AmountButton).map((percentage) => (
               <PercentageButton
                 key={percentage}
                 percentage={percentage}
                 amount={maxAmount}
                 onClick={onChange}
+                disabled={disabled}
               />
             ))}
           </div>

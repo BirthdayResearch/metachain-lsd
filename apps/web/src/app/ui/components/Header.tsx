@@ -25,7 +25,7 @@ export default function Header({
         <NavigationBar isHeader parentReference={parentReference} />
         <div className="items-end justify-center md:flex hidden">
           <CTAButton
-              label="Launch app"
+            label="Launch app"
             testID="launch-app"
             customStyle="w-full md:w-fit"
           />

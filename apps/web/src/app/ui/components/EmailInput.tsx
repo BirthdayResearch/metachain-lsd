@@ -20,11 +20,10 @@ export default function EmailInput({
   };
   return (
     <div
-      className={
-        clsx(
-          "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
-          value && !isValidEmail(value) ? "bg-red" : "input-gradient-1"
-        )}
+      className={clsx(
+        "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
+        value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
+      )}
     >
       <form
         className={clsx(
@@ -49,7 +48,7 @@ export default function EmailInput({
             className="absolute right-7 rounded-full"
             onClick={() => setValue("")}
           >
-            <IoIosCloseCircle size={16}  className="opacity-70 text-dark-00"/>
+            <IoIosCloseCircle size={16} className="opacity-70 text-dark-00" />
           </button>
         )}
       </form>

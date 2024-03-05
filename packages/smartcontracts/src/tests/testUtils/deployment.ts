@@ -10,7 +10,7 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const MarbleLsdUpgradeable = await ethers.getContractFactory('MarbleLsdV1');
   const marbleLsdUpgradeable = await MarbleLsdUpgradeable.deploy();
   await marbleLsdUpgradeable.waitForDeployment();
-  const marbleLsdUpgradeableAddress = await marbleLsdUpgradeable.getAddress()
+  const marbleLsdUpgradeableAddress = await marbleLsdUpgradeable.getAddress();
   const MarbleLsdProxy = await ethers.getContractFactory('MarbleLsdProxy');
   // deployment arguments for the Proxy contract
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData('initialize', [
@@ -21,30 +21,30 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     // receipt token name
     'DFI STAKING RECEIPT TOKEN',
     // receipt token symbol
-    'xDFI'
+    'xDFI',
   ]);
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(marbleLsdUpgradeableAddress, encodedData);
   await marbleLsdProxy.waitForDeployment();
-  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress()
+  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(marbleLsdProxyAddress) as MarbleLsdV1;
-  
-  const shareTokenAddress = await proxyMarbleLsd.shareToken()
-  const shareTokenFactory = await ethers.getContractFactory('ShareToken');
-  const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken
 
-  const rewardDistributerSigner = accounts[3]
-  // set REWARDS_DISTRIBUTER_ROLE      
+  const shareTokenAddress = await proxyMarbleLsd.shareToken();
+  const shareTokenFactory = await ethers.getContractFactory('ShareToken');
+  const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken;
+
+  const rewardDistributerSigner = accounts[3];
+  // set REWARDS_DISTRIBUTER_ROLE
   const hash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
   await proxyMarbleLsd.grantRole(hash, rewardDistributerSigner.address);
-  
+
   return {
     proxyMarbleLsd,
     marbleLsdImplementation: marbleLsdUpgradeable,
     defaultAdminSigner,
     rewardDistributerSigner,
     walletSigner,
-    shareToken
+    shareToken,
   };
 }
 

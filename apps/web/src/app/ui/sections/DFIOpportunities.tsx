@@ -3,9 +3,7 @@ import Image from "next/image";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
 import clsx from "clsx";
 
-
 export default function DFIOpportunities() {
-
   return (
     <SectionContainer id="about-section">
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center scroll-mt-40">
