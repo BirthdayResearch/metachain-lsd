@@ -398,7 +398,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, AccessControlUpgrade
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
-    uint256 fees = _feeOnTotal(assets, redemptionFees);
+    uint256 fees = _feeOnRaw(assets, redemptionFees);
     if (assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     requestId = _requestWithdrawal(_msgSender(), _receiver, assets, _shares, fees);
   }
