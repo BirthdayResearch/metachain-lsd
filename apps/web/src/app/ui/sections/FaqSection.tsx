@@ -30,14 +30,14 @@ const FaqItems = [
 
 export default function FaqSection() {
   return (
-    <SectionContainer>
+    <SectionContainer id="faq-section">
       <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-16">
         <div className="flex flex-col gap-y-3 w-full md:gap-y-6 md:w-1/2 text-left">
           <Tag text="ECOSYSTEM" testID="faq-ecosystem" />
           <div className="flex flex-col gap-y-5">
-            <CardTitle 
-              text="Frequently asked questions" 
-              testID="faq-title" 
+            <CardTitle
+              text="Frequently asked questions"
+              testID="faq-title"
               customStyle="text-start text-2xl !leading-7 md:!leading-10"
             />
             <CardDesc
@@ -47,11 +47,14 @@ export default function FaqSection() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col md:w-1/2 w-full gap-y-4">
+        <div className="w-full flex flex-col md:w-1/2 gap-y-4">
           {FaqItems.map((item) => (
             <Disclosure key={item.testId}>
               {({ open }) => (
-                <div className="px-7 py-[18px] bg-light-00/30 rounded-md" data-testid={item.testId}>
+                <div
+                  className="px-7 py-[18px] bg-light-00/30 rounded-md"
+                  data-testid={item.testId}
+                >
                   <Disclosure.Button className="flex w-full justify-between rounded-lg text-left text-sm">
                     <span
                       className={`mr-6 flex-1 self-center ${open ? "font-semibold" : "font-normal"}`}

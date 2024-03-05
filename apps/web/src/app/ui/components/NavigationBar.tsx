@@ -6,7 +6,7 @@ const navigationTabs = [
   { label: "How it works", href: "#how-it-works-section" },
   { label: "About mDFI", href: "#about-section" },
   { label: "Community", href: "#community-section" },
-  { label: "FAQs", href: "#faqs-section" },
+  { label: "FAQs", href: "#faq-section" },
 ];
 
 export default function NavigationBar({
