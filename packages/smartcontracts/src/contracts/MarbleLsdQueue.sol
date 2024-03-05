@@ -240,10 +240,11 @@ contract MarbleLsdQueue {
   }
 
   /** 
-   * @notice Returns the amount of assets in the queue yet to be finalized
+   * @notice Returns the amount of assets and fees in the queue yet to be finalized
    */
-  function unfinalizedAssets() external view returns (uint256) {
-    return _getQueue()[lastRequestId].cumulativeAssets - _getQueue()[lastFinalizedRequestId].cumulativeAssets;
+  function unfinalizedAssets() external view returns (uint256 assets, uint256 fees) {
+    assets =  _getQueue()[lastRequestId].cumulativeAssets - _getQueue()[lastFinalizedRequestId].cumulativeAssets;
+    fees =  _getQueue()[lastRequestId].cumulativeFees - _getQueue()[lastFinalizedRequestId].cumulativeFees;
   }
 
   /** 
@@ -298,7 +299,7 @@ contract MarbleLsdQueue {
     receiver = request.receiver;
     assetsToTransfer = request.cumulativeAssets - prevRequest.cumulativeAssets;
     sharesToBurn = request.cumulativeShares - prevRequest.cumulativeShares;
-    feesToTransfer = request.cumulativeFees - prevRequest.cumulativeShares;
+    feesToTransfer = request.cumulativeFees - prevRequest.cumulativeFees;
     lockedAssets = lockedAssets - assetsToTransfer - feesToTransfer;
   }
 
