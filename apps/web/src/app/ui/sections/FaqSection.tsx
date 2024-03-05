@@ -30,7 +30,7 @@ const FaqItems = [
 
 export default function FaqSection() {
   return (
-    <SectionContainer>
+    <SectionContainer id="faq-section">
       <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-16">
         <div className="flex flex-col gap-y-3 w-full md:gap-y-6 md:w-1/2 text-left">
           <Tag text="ECOSYSTEM" testID="faq-ecosystem" />
@@ -47,7 +47,7 @@ export default function FaqSection() {
             />
           </div>
         </div>
-        <div className="w-full flex flex-col md:w-1/2 w-full gap-y-4">
+        <div className="w-full flex flex-col md:w-1/2 gap-y-4">
           {FaqItems.map((item) => (
             <Disclosure key={item.testId}>
               {({ open }) => (
