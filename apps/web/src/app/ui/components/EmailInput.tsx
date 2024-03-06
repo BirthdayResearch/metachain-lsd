@@ -22,20 +22,20 @@ export default function EmailInput({
     <div
       className={clsx(
         "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
-        value && !isValidEmail(value) ? "bg-red" : "input-gradient-1"
+        value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
       )}
     >
       <form
         className={clsx(
           "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px]",
-          customStyle
+          customStyle,
         )}
       >
         <HiOutlineMail className="mr-3" size={20} />
         <input
           className={clsx(
             "mr-6 w-full bg-light-00 caret-brand-100",
-            "placeholder:text-light-1000 focus:outline-none"
+            "placeholder:text-light-1000 focus:outline-none",
           )}
           type="text"
           placeholder={placeholder}
