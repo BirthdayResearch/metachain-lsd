@@ -5,10 +5,10 @@ import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
 import './MarbleLsdAccessControl.sol';
-import './ShareToken.sol';
-import './Pausable.sol';
 import './MarbleLsdQueue.sol';
 import './MarbleLsdFees.sol';
+import './ShareToken.sol';
+import './Pausable.sol';
 
 /** 
  * @notice @dev
@@ -85,7 +85,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @param receiver Address receiving shares
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
-   * @param fees Amount of fees that being charged
+   * @param fees Amount of asset that being charged as fees for minting
    */
   event Deposit(
     address indexed owner,
