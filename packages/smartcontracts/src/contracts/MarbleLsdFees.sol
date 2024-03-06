@@ -4,6 +4,12 @@ pragma solidity 0.8.20;
 import '@openzeppelin/contracts/utils/math/Math.sol';
 import './MarbleLsdAccessControl.sol';
 
+/** 
+ * @notice @dev
+ * This error occurs when `_fees` is invalid
+ */
+error INVALID_FEES();
+
 contract MarbleLsdFees is MarbleLsdAccessControl {
   using Math for uint256;
   uint256 private constant _BASIS_POINT_SCALE = 1e4;
@@ -91,7 +97,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updateMintingFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
     emit MINTING_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -102,7 +108,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updateRedemptionFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
     emit REDEMPTION_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -113,7 +119,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updatePerformanceFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;
     emit PERFORMANCE_FEES_UPDATED(_oldFee, _fees, _msgSender());

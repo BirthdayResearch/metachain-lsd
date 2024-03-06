@@ -33,10 +33,10 @@ describe('Proxy behavior', () => {
 
     // Upgrading the Proxy contract
     const marbleLsdV2UpgradeableAddress = await marbleLsdV2Upgradeable.getAddress()
-    const signer = accounts[5]
+    const signer = accounts[6]
     const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
 
-    await expect(proxyMarbleLsd.connect(accounts[5]).upgradeToAndCall(marbleLsdV2UpgradeableAddress, encodedData))
+    await expect(proxyMarbleLsd.connect(accounts[6]).upgradeToAndCall(marbleLsdV2UpgradeableAddress, encodedData))
       .to.be.revertedWith(
       `AccessControl: account ${signer.address.toLowerCase()} is missing role ${adminRoleHash}`,
     );;
