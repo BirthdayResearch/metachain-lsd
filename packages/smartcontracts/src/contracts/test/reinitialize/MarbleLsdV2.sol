@@ -5,10 +5,10 @@ import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
 import '../../MarbleLsdAccessControl.sol';
-import '../../ShareToken.sol';
-import '../../Pausable.sol';
 import '../../MarbleLsdQueue.sol';
 import '../../MarbleLsdFees.sol';
+import '../../ShareToken.sol';
+import '../../Pausable.sol';
 
 /** 
  * @notice @dev
@@ -85,12 +85,14 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @param receiver Address receiving shares
    * @param assets Amount of asset that being staked
    * @param shares Amount of shares that being alloted
+   * @param fees Amount of asset that being charged as fees for minting
    */
   event Deposit(
     address indexed owner,
     address indexed receiver,
     uint256 assets,
-    uint256 shares
+    uint256 shares,
+    uint256 fees
   );
 
   /**
@@ -155,7 +157,6 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice To initialize this contract (No constructor as part of the proxy pattern)
    * @param _version Updated version of latest smart contract
    */
-  
   function initialize(
     uint8 _version
   ) external reinitializer(_version) {
@@ -377,7 +378,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
-    uint256 fees = _feeOnTotal(assets, redemptionFees);
+    uint256 fees = _feeOnRaw(assets, redemptionFees);
     if (assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     requestId = _requestWithdrawal(_msgSender(), _receiver, assets, _shares, fees);
   }
@@ -520,7 +521,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     // mint shares token for receiver
     shareToken.mint(_receiver, _shares);
 
-    emit Deposit(_owner, _receiver, _assets, _shares);
+    emit Deposit(_owner, _receiver, assetsToBeStaked, _shares, fees);
 
     if (fees > 0 && feesRecipientAddress != address(this)) {
       _sendValue(feesRecipientAddress, fees);
