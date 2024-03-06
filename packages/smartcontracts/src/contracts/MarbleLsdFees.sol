@@ -91,7 +91,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updateMintingFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > 10000) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
     emit MINTING_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -102,7 +102,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updateRedemptionFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > 10000) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
     emit REDEMPTION_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -113,7 +113,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @param _fees New amount to be set as minting fees
    */
   function updatePerformanceFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > 10000) revert("Invalid fees");
+    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert("Invalid fees");
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;
     emit PERFORMANCE_FEES_UPDATED(_oldFee, _fees, _msgSender());
