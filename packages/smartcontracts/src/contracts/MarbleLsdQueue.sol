@@ -385,7 +385,7 @@ contract MarbleLsdQueue {
   function _getRequestsByOwner() internal pure returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner) {
     bytes32 position = REQUEST_BY_OWNER_POSITION;
     assembly {
-        requestsByOwner.slot := position
+      requestsByOwner.slot := position
     }
   }
 }

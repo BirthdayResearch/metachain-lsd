@@ -84,6 +84,14 @@ describe('MarbleLsdProxy', () => {
     expect(owner).to.equal(await proxyMarbleLsd.getAddress());
   });
 
+  it('Should get default entry at index 0', async () => {
+    const withdrawReq = await proxyMarbleLsd.getWithdrawalRequests(ethers.ZeroAddress)
+    expect(withdrawReq.length).to.equal(0);
+    await expect(proxyMarbleLsd.getWithdrawalStatus([0]))
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
+      .withArgs(0);
+  });
+
   it('Should fail when deposit amount is less than min deposit amount', async () => {
     const signer = accounts[5]
     await expect(proxyMarbleLsd.connect(signer).deposit(signer.address, { value: 0 }))
