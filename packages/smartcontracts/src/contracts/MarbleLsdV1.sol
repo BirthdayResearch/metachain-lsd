@@ -76,8 +76,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
 
   uint256 public totalStakedAssets;
   uint256 public totalRewardAssets;
-  uint256 public minDeposit = 1e18; // 1 DFI 
-  uint256 public minWithdrawal = 1e18; // 1 DFI 
+  uint256 public minDeposit;
+  uint256 public minWithdrawal;
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
@@ -178,6 +178,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     _grantRole(REWARDS_DISTRIBUTER_ROLE, _rewardDistributerAddress);
     _grantRole(FINALIZE_ROLE, _finalizerAddress);
     walletAddress = _walletAddress;
+    minDeposit = 1e18; // 1 DFI 
+    minWithdrawal = 1e18; // 1 DFI 
     shareToken = new ShareToken('DFI STAKING SHARE TOKEN', 'mDFI');
   }
 
@@ -475,7 +477,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Used by addresses with Admin and Operational roles to set the new min deposit amount
    * @param _amount New amount to be set as min deposit
    */
-  function updateMinDeposit(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateMinDeposit(uint256 _amount) external onlyRole(ADMINISTRATOR_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldDeposit = minDeposit;
@@ -488,7 +490,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Used by addresses with Admin and Operational roles to set the new min Withdrawal amount
    * @param _amount New amount to be set as min deposit
    */
-  function updateMinWithdrawal(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateMinWithdrawal(uint256 _amount) external onlyRole(ADMINISTRATOR_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldWithdrawal = minWithdrawal;

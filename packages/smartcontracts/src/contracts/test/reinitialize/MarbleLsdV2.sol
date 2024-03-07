@@ -76,8 +76,8 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
 
   uint256 public totalStakedAssets;
   uint256 public totalRewardAssets;
-  uint256 public minDeposit = 1e18; // 1 DFI 
-  uint256 public minWithdrawal = 1e18; // 1 DFI 
+  uint256 public minDeposit;
+  uint256 public minWithdrawal;
 
   /**
    * @notice Emitted when deposit/mint happen on smart contract
