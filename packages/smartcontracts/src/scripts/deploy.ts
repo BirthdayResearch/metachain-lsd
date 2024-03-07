@@ -1,8 +1,8 @@
 import { ethers } from 'hardhat';
 
-import { deployMarbleLsdProxy } from "./deployMarbleLsdProxy";
-import { deployMarbleLsdV1 } from "./deployMarbleLsdV1";
-import { deployTimelockController } from "./deployTimelockController";
+import { deployMarbleLsdProxy } from './deployMarbleLsdProxy';
+import { deployMarbleLsdV1 } from './deployMarbleLsdV1';
+import { deployTimelockController } from './deployTimelockController';
 
 // when deploying, replace the following values with the correct ones
 const minDelay = 259200; // 3 days
@@ -20,14 +20,14 @@ const TIMELOCK_ADMIN_ADDRESS = ''; // Multi sig wallet
 
 async function main() {
   const marbleLsdV1 = await deployMarbleLsdV1();
-  const marbleLsdV1Address = await marbleLsdV1.getAddress()
+  const marbleLsdV1Address = await marbleLsdV1.getAddress();
   const timelockController = await deployTimelockController({
     minDelay,
     proposers: [TIMELOCK_ADMIN_ADDRESS],
     executors: [TIMELOCK_ADMIN_ADDRESS],
     admin: ethers.ZeroAddress,
   });
-  const timelockControllerAddress =  await timelockController.getAddress()
+  const timelockControllerAddress = await timelockController.getAddress();
   await deployMarbleLsdProxy({
     adminAddress: timelockControllerAddress,
     administratorAddress: ADMINISTRATOR_ADDRESS,
@@ -35,7 +35,7 @@ async function main() {
     feesRecipientAddress: FEES_RECIPIENT_ADDRESS,
     rewardDistributerAddress: REWARD_DISTRIBUTER_ADDRESS,
     finalizerAddress: FINALIZER_ADDRESS,
-    marbleLsdV1Address
+    marbleLsdV1Address,
   });
 }
 

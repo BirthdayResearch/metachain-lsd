@@ -11,10 +11,10 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const MarbleLsdUpgradeable = await ethers.getContractFactory('MarbleLsdV1');
   const marbleLsdUpgradeable = await MarbleLsdUpgradeable.deploy();
   await marbleLsdUpgradeable.waitForDeployment();
-  const marbleLsdUpgradeableAddress = await marbleLsdUpgradeable.getAddress()
+  const marbleLsdUpgradeableAddress = await marbleLsdUpgradeable.getAddress();
   const MarbleLsdProxy = await ethers.getContractFactory('MarbleLsdProxy');
-  const administratorSigner = accounts[3]
-  const rewardDistributerAndFinalizeSigner = accounts[4]
+  const administratorSigner = accounts[3];
+  const rewardDistributerAndFinalizeSigner = accounts[4];
   // deployment arguments for the Proxy contract
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData('initialize', [
     // default admin address
@@ -28,18 +28,18 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     // default wallet address
     walletSigner.address,
     // default fees recipient address
-    feesRecipientSigner.address
+    feesRecipientSigner.address,
   ]);
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(marbleLsdUpgradeableAddress, encodedData);
   await marbleLsdProxy.waitForDeployment();
-  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress()
+  const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(marbleLsdProxyAddress) as MarbleLsdV1;
-  
-  const shareTokenAddress = await proxyMarbleLsd.shareToken()
+
+  const shareTokenAddress = await proxyMarbleLsd.shareToken();
   const shareTokenFactory = await ethers.getContractFactory('ShareToken');
-  const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken
-  
+  const shareToken = shareTokenFactory.attach(shareTokenAddress) as ShareToken;
+
   return {
     proxyMarbleLsd,
     marbleLsdImplementation: marbleLsdUpgradeable,
@@ -48,7 +48,7 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     administratorSigner,
     walletSigner,
     feesRecipientSigner,
-    shareToken
+    shareToken,
   };
 }
 

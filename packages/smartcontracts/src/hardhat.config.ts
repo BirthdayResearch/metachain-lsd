@@ -1,11 +1,11 @@
 import '@nomicfoundation/hardhat-chai-matchers';
-import "@nomicfoundation/hardhat-toolbox";
+import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-verify';
 import 'solidity-coverage';
 
-import  { HardhatUserConfig, task, types }  from "hardhat/config";
+import { HardhatUserConfig, task, types } from 'hardhat/config';
 
-import { TX_AUTOMINE_ENV_VAR, TX_AUTOMINE_INTERVAL_ENV_VAR } from "./envvar";
+import { TX_AUTOMINE_ENV_VAR, TX_AUTOMINE_INTERVAL_ENV_VAR } from './envvar';
 
 // Default chainId for local testing purposes. Most local testnets (Ganache, etc) use this chainId
 export const DEFAULT_CHAINID = 1337;
@@ -19,7 +19,6 @@ interface DeployContractArgs {
   deployargs: string | undefined;
   libraries: Record<string, string>;
 }
-
 
 task('deployContract', 'Deploys a contract based on the name of the contract')
   .addParam(

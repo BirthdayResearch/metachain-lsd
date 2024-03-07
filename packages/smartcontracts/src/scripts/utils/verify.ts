@@ -6,7 +6,7 @@ export async function verify({ contractAddress, args, contract }: ContractInput)
     await run('verify:verify', {
       address: contractAddress,
       constructorArguments: args,
-      contract
+      contract,
     });
   } catch (e) {
     if ((e as Error).message.toLowerCase().includes('already verified')) {
