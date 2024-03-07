@@ -5,6 +5,8 @@ import { ethers } from 'hardhat';
 import { MarbleLsdDeploymentResult, deployContracts } from './testUtils/deployment';
 import { MarbleLsdV1, ShareToken } from '../generated';
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
+import { feesOnRaw, feesOnTotal, toWei } from './testUtils/mathUtils';
+import BigNumber from 'bignumber.js';
 
 describe('MarbleLsdFees', () => {
   let proxyMarbleLsd: MarbleLsdV1;
@@ -101,5 +103,75 @@ describe('MarbleLsdFees', () => {
     await proxyMarbleLsd.connect(administratorSigner).updatePerformanceFees(110)
     const updatedFees = await proxyMarbleLsd.performanceFees()
     expect(updatedFees).to.equal(110);
+  });
+
+  it('Should change share token amount on updating mintingFees to zero', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateMintingFees(0)
+    const updatedFees = await proxyMarbleLsd.mintingFees()
+    expect(updatedFees).to.equal(0);
+    const previewDeposit =  await proxyMarbleLsd.previewDeposit(amount);
+    expect(previewDeposit).to.equal(amount);
+    const convertToShares =  await proxyMarbleLsd.convertToShares(amount);
+    expect(previewDeposit).to.equal(convertToShares);
+  });
+
+  it('Should change share token amount on updating mintingFees to 15%', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateMintingFees(1500)
+    const convertToShares =  await proxyMarbleLsd.convertToShares(amount);
+    expect(convertToShares).to.equal(amount);
+    const fees = feesOnTotal(convertToShares.toString(), '1500')
+    const updatedFees = await proxyMarbleLsd.mintingFees()
+    expect(updatedFees).to.equal(1500);
+    const previewDeposit =  await proxyMarbleLsd.previewDeposit(amount);
+    expect(previewDeposit).to.equal(new BigNumber(amount.toString()).minus(fees));
+    expect(convertToShares).to.equal(new BigNumber(previewDeposit.toString()).plus(fees));
+  });
+
+  it('Should change withdrawal asset amount on updating redemption to zero', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(0)
+    const convertToAssets =  await proxyMarbleLsd.convertToAssets(amount);
+    expect(convertToAssets).to.equal(amount);
+    const updatedFees = await proxyMarbleLsd.redemptionFees()
+    expect(updatedFees).to.equal(0);
+    const previewWithdrawal =  await proxyMarbleLsd.previewWithdrawal(amount);
+    expect(previewWithdrawal).to.equal(convertToAssets);
+  });
+
+  it('Should change withdrawal asset amount on updating redemption to 15%', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(1500)
+    const convertToAssets =  await proxyMarbleLsd.convertToAssets(amount);
+    expect(convertToAssets).to.equal(amount);
+    const updatedFees = await proxyMarbleLsd.redemptionFees()
+    expect(updatedFees).to.equal(1500);
+    const fees = feesOnRaw(convertToAssets.toString(), '1500')
+    const previewWithdrawal =  await proxyMarbleLsd.previewWithdrawal(amount);
+    expect(previewWithdrawal).to.equal(new BigNumber(convertToAssets.toString()).plus(fees));
+  });
+
+  it('Should change redeem asset amount on updating redemption to zero', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(0)
+    const convertToAssets =  await proxyMarbleLsd.convertToAssets(amount);
+    expect(convertToAssets).to.equal(amount);
+    const updatedFees = await proxyMarbleLsd.redemptionFees()
+    expect(updatedFees).to.equal(0);
+    const previewRedeem =  await proxyMarbleLsd.previewRedeem(amount);
+    expect(previewRedeem).to.equal(convertToAssets);
+  });
+
+  it('Should change redeem asset amount on updating redemption to 15%', async () => {
+    const amount = toWei('10')
+    await proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(1500)
+    const convertToAssets =  await proxyMarbleLsd.convertToAssets(amount);
+    expect(convertToAssets).to.equal(amount);
+    const updatedFees = await proxyMarbleLsd.redemptionFees()
+    expect(updatedFees).to.equal(1500);
+    const fees = feesOnTotal(convertToAssets.toString(), '1500')
+    const previewRedeem =  await proxyMarbleLsd.previewRedeem(amount);
+    expect(previewRedeem).to.equal(new BigNumber(convertToAssets.toString()).minus(fees));
   });
 });
