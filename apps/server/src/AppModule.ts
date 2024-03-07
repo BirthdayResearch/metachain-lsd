@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import {appConfig, ENV_VALIDATION_SCHEMA} from "./AppConfig";
-import {UserModule} from "./user/UserModule";
-import {ConfigModule} from "@nestjs/config";
+import { appConfig, ENV_VALIDATION_SCHEMA } from "./AppConfig";
+import { UserModule } from "./user/UserModule";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -10,6 +10,7 @@ import {ConfigModule} from "@nestjs/config";
       load: [appConfig],
       validationSchema: ENV_VALIDATION_SCHEMA,
     }),
-    UserModule],
+    UserModule,
+  ],
 })
 export class AppModule {}
