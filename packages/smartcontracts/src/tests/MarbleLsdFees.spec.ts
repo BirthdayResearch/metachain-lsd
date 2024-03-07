@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
 import { MarbleLsdDeploymentResult, deployContracts } from './testUtils/deployment';
-import { MarbleLsdV1, ShareToken } from '../generated';
+import { MarbleLsdV1 } from '../generated';
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { feesOnRaw, feesOnTotal, toWei } from './testUtils/mathUtils';
 import BigNumber from 'bignumber.js';
@@ -11,16 +11,12 @@ import BigNumber from 'bignumber.js';
 describe('MarbleLsdFees', () => {
   let proxyMarbleLsd: MarbleLsdV1;
   let administratorSigner: SignerWithAddress;
-  let walletSigner: SignerWithAddress;
   let accounts: SignerWithAddress[] = [];
-  let shareToken: ShareToken;
 
   before(async () => {
     const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     administratorSigner = fixture.administratorSigner;
-    walletSigner = fixture.walletSigner;
-    shareToken = fixture.shareToken;
     accounts = await ethers.getSigners();
   })
 
