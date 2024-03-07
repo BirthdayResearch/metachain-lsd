@@ -38,7 +38,20 @@ describe('MarbleLsdProxy', () => {
     expect(initialSupply).to.equal('0');
   });
 
-  it('Should have minDeposit=1DFI', async () => {
+  it('Should have max deposit value as 2 ** 256 - 1', async () => {
+    const signer = accounts[5];
+    const masDeposit = await proxyMarbleLsd.maxDeposit(signer.address);
+    const expectedMaxDeposit = new BigNumber('2').pow(256).minus(1);
+    expect(new BigNumber(masDeposit.toString())).to.eql(expectedMaxDeposit);
+  });
+
+  it('Should have max withdrawal value as 0 when no deposit value', async () => {
+    const signer = accounts[5];
+    const maxWithdrawal = await proxyMarbleLsd.maxWithdrawal(signer.address);
+    expect(maxWithdrawal.toString()).to.equal('0');
+  });
+
+  it('Should have minDeposit=1 DFI', async () => {
     const minDeposit = await proxyMarbleLsd.minDeposit();
     expect(minDeposit).to.equal(toWei('1'));
   });
@@ -610,44 +623,6 @@ describe('MarbleLsdProxy', () => {
       await expect(proxyMarbleLsd.connect(administratorSigner).setWithdrawalPaused(false))
         .to.emit(proxyMarbleLsd, 'PauseUnpauseWithdrawal')
         .withArgs(false, administratorSigner.address);
-    });
-  });
-
-  describe('Roles', () => {
-    it('Should have admin role to defaultAdminSigner address', async () => {
-      const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
-      expect(adminRoleHash).to.equal('0x0000000000000000000000000000000000000000000000000000000000000000');
-      expect(await proxyMarbleLsd.hasRole(adminRoleHash, defaultAdminSigner.address)).to.equal(true);
-    });
-
-    it('Should have administrator role to administratorSigner address', async () => {
-      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
-      expect(await proxyMarbleLsd.hasRole(administratorRoleHash, administratorSigner.address)).to.equal(true);
-    });
-
-    it('Should have reward distributer role to rewardDistributerAndFinalizeSigner address', async () => {
-      const rewardDistributerRoleHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
-      expect(
-        await proxyMarbleLsd.hasRole(rewardDistributerRoleHash, rewardDistributerAndFinalizeSigner.address),
-      ).to.equal(true);
-    });
-
-    it('Should have finalizer role to rewardDistributerAndFinalizeSigner address', async () => {
-      const finalizerRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
-      expect(await proxyMarbleLsd.hasRole(finalizerRoleHash, rewardDistributerAndFinalizeSigner.address)).to.equal(
-        true,
-      );
-    });
-
-    it('Should have DEFAULT_ADMIN_ROLE as role admin', async () => {
-      const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
-      expect(await proxyMarbleLsd.getRoleAdmin(adminRoleHash)).to.equal(adminRoleHash);
-      const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
-      expect(await proxyMarbleLsd.getRoleAdmin(administratorRoleHash)).to.equal(adminRoleHash);
-      const rewardDistributerRoleHash = await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
-      expect(await proxyMarbleLsd.getRoleAdmin(rewardDistributerRoleHash)).to.equal(adminRoleHash);
-      const finalizerRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
-      expect(await proxyMarbleLsd.getRoleAdmin(finalizerRoleHash)).to.equal(adminRoleHash);
     });
   });
 

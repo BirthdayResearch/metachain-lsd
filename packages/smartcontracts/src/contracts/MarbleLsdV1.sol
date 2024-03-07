@@ -42,7 +42,7 @@ error LESS_THAN_MIN_WITHDRAWAL();
 
 /** 
  * @notice @dev
- * This error occurs when withdraw `assets` is more than contract balance
+ * This error occurs when withdrawal `assets` is more than contract balance
  */
 error INSUFFICIENT_WITHDRAW_AMOUNT();
 
@@ -54,7 +54,7 @@ error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
 
 /** 
  * @notice @dev
- * Attempted to withdraw more assets than the max amount for `receiver`.
+ * Attempted to withdrawal more assets than the max amount for `receiver`.
  */
 error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
 
@@ -260,12 +260,12 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
 
   /**
    * @dev Returns the maximum amount of the underlying asset that can be withdrawn from the owner balance in the
-   * contract, through a withdraw call.
+   * contract, through a withdrawal call.
    *
    * - MUST return a limited value if owner is subject to some withdrawal limit or timelock.
    * - MUST NOT revert.
    */
-  function maxWithdraw(address _owner) public view virtual returns (uint256) {
+  function maxWithdrawal(address _owner) public view virtual returns (uint256) {
     return _convertToAssets(_shareBalanceOf(_owner), Math.Rounding.Down);
   }
 
@@ -306,9 +306,9 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * given current on-chain conditions.
    *
    * - MUST return as close to and no fewer than the exact amount of shares that would be burned in a withdraw
-   *   call in the same transaction. I.e. withdraw should return the same or fewer shares as previewWithdrawal if
+   *   call in the same transaction. I.e. withdrawal should return the same or fewer shares as previewWithdrawal if
    *   called in the same transaction.
-   * - MUST NOT account for withdrawal limits like those returned from maxWithdraw and should always act as though
+   * - MUST NOT account for withdrawal limits like those returned from maxWithdrawal and should always act as though
    *   the withdrawal would be accepted, regardless if the user has enough shares, etc.
    * - MUST be inclusive of withdrawal fees. Integrators should be aware of the existence of withdrawal fees.
    * - MUST NOT revert.
@@ -371,8 +371,8 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
 
-    // check if balance of asset is less/equal to withdraw amount
-    uint256 maxAssets = maxWithdraw(_msgSender());
+    // check if balance of asset is less/equal to withdrawal amount
+    uint256 maxAssets = maxWithdrawal(_msgSender());
     if (_assets > maxAssets) revert ExceededMaxWithdrawal(_receiver, _assets, maxAssets);
     
     uint256 shares = previewWithdrawal(_assets);
@@ -394,7 +394,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     if (_receiver == address(0)) revert ZERO_ADDRESS();
 
     uint256 maxShares = maxRedeem(_msgSender());
-    // check if balance of shares token is less/equal to withdraw amount
+    // check if balance of shares token is less/equal to withdrawal amount
     if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
@@ -549,7 +549,7 @@ contract MarbleLsdV1 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
   }
 
   /**
-   * @dev Internal withdraw function with common workflow.
+   * @dev Internal withdrawal function with common workflow.
    */
   function _requestWithdrawal(
     address _owner,

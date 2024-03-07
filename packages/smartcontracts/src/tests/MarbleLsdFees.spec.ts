@@ -11,12 +11,14 @@ import BigNumber from 'bignumber.js';
 describe('MarbleLsdFees', () => {
   let proxyMarbleLsd: MarbleLsdV1;
   let administratorSigner: SignerWithAddress;
+  let defaultAdminSigner: SignerWithAddress;
   let accounts: SignerWithAddress[] = [];
 
   before(async () => {
     const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     administratorSigner = fixture.administratorSigner;
+    defaultAdminSigner = fixture.defaultAdminSigner;
     accounts = await ethers.getSigners();
   });
 
@@ -34,6 +36,14 @@ describe('MarbleLsdFees', () => {
     const performanceFees = await proxyMarbleLsd.performanceFees();
     expect(performanceFees).to.be.equal('800');
   });
+
+  it('Should not update Fees Recipient Address from non admin address', async () => {
+    const signer = accounts[5];
+    await expect(proxyMarbleLsd.connect(signer).updateFeesRecipientAddress(signer.address)).to.be.revertedWith(
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${'0'.repeat(64)}`,
+    );
+  });
+
 
   it('Should not update minting fees from non administrator address', async () => {
     const signer = accounts[5];
@@ -77,6 +87,13 @@ describe('MarbleLsdFees', () => {
     await expect(
       proxyMarbleLsd.connect(administratorSigner).updatePerformanceFees(10001),
     ).to.be.revertedWithCustomError(proxyMarbleLsd, 'INVALID_FEES');
+  });
+
+  it('Should update Fees Recipient Address from admin address', async () => {
+    const signer = accounts[5];
+    await proxyMarbleLsd.connect(defaultAdminSigner).updateFeesRecipientAddress(signer.address);
+    const updatedAddress = await proxyMarbleLsd.feesRecipientAddress();
+    expect(updatedAddress).to.equal(signer.address);
   });
 
   it('Should update minting fees', async () => {
