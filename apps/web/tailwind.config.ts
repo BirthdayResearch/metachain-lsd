@@ -53,6 +53,7 @@ const config: Config = {
         error: "#E54545",
         warning: "#FF9D42",
         valid: "#0CC72C",
+        green: "#4DE22C",
       },
       borderRadius: {
         DEFAULT: "5px",

@@ -55,7 +55,7 @@ export function NetworkEnvironmentProvider({
   const [networkEnv, setNetworkEnv] =
     useState<EnvironmentNetwork>(initialNetwork);
 
-  // TODO @chloezxyyy
+  // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
     router.replace(pathName + (value === defaultNetwork ? "" : value));
   };

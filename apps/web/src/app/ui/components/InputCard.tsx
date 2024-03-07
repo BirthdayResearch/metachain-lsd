@@ -103,8 +103,8 @@ export function InputCard({
             disabled={disabled}
             data-testid="input-amount"
             value={amount}
-            type="text"
-            className="w-full rounded text-base outline-0"
+            type="number"
+            className="w-full rounded text-base outline-0 caret-green"
             placeholder="0.00"
             onChange={(e) => {
               onChange(e.target.value);
