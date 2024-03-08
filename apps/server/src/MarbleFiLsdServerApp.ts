@@ -9,7 +9,7 @@ import { AppModule } from "./AppModule";
  * App which starts the default MarbleFi Lsd Server Application
  */
 export class MarbleFiLsdServerApp<
-  App extends NestFastifyApplication = NestFastifyApplication,
+  App extends NestFastifyApplication = NestFastifyApplication
 > {
   protected app?: App;
 
