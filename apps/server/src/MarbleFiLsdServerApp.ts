@@ -6,9 +6,9 @@ import { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "./AppModule";
 
 /**
- * App which starts the default Metachain Lsd Server Application
+ * App which starts the default MarbleFi Lsd Server Application
  */
-export class MetachainLsdServerApp<
+export class MarbleFiLsdServerApp<
   App extends NestFastifyApplication = NestFastifyApplication,
 > {
   protected app?: App;
