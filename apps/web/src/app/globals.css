@@ -248,6 +248,5 @@ input[type=number] {
 
 .highlighted-button-ui {
   border-radius: 30px;
-  border: 0.5px solid var(--UI-Component-Stroke-1, #FFF);
   background: var(--UI-Component-BG-4);
 }

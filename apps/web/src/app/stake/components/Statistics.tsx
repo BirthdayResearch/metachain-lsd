@@ -33,7 +33,7 @@ export default function Statistics() {
             key={item.testID}
             data-testid={item.testID}
             className={clsx(
-              "flex flex-col justify-between items-center border-l-[0.5px] gap-y-2",
+              "flex flex-col justify-between items-center border-black/10 border-l-[0.5px] gap-y-2",
               index === StatsDetails.length - 1 ? "border-r-[0.5px]" : "",
             )}
           >
@@ -42,7 +42,7 @@ export default function Statistics() {
           </article>
         ))}
       </div>
-      <div className="flex flex-row items-center gap-x-6">
+      <div className="flex flex-row items-center gap-x-6 w-full">
         <p className="text-xs font-light">
           mDFI is a reward-bearing token. It earns rewards not by amount but by
           value in relation to the staked DFI.
@@ -55,7 +55,7 @@ export default function Statistics() {
 
 function HighlightedButton() {
   return (
-    <button className="highlighted-button-ui pl-2 pr-3 py-2 ml-2 mr-3 flex flex-row items-center min-w-[133px] gap-x-2">
+    <button className="highlighted-button-ui pl-2 pr-3 py-2 flex flex-row items-center gap-x-2 min-w-fit">
       <Image
         data-testid="mdfi-logo"
         src="/mDFI.svg"
@@ -63,7 +63,7 @@ function HighlightedButton() {
         width={23.7}
         height={23.7}
       />
-      <span className="text-xs font-semibold w-fit">View mDFI stats</span>
+      <span className="text-xs font-semibold">View mDFI stats</span>
     </button>
   );
 }
