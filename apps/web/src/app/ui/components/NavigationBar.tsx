@@ -32,7 +32,7 @@ export default function NavigationBar({
       className={clsx(
         isHeader && headerStyle,
         !isHeader && "md:flex",
-        "py-1.5 px-5 justify-center items-center gap-x-1",
+        "py-1.5 px-5 justify-center items-center gap-x-1"
       )}
     >
       {navigationTabs.map((link) => (
@@ -40,7 +40,7 @@ export default function NavigationBar({
           key={link.label}
           className={clsx(
             "flex h-[48px] items-center justify-center text-sm text-light-00 p-2.5 px-4 rounded-[30px] cursor-pointer",
-            hoverStyle,
+            hoverStyle
           )}
           onClick={() => {
             if (parentRef) {

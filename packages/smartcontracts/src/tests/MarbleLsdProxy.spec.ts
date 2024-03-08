@@ -1,8 +1,8 @@
 import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import BigNumber from "bignumber.js";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import BigNumber from "bignumber.js";
 
 import { MarbleLsdV1, ShareToken } from "../generated";
 import {
@@ -20,8 +20,9 @@ describe("MarbleLsdProxy", () => {
   let shareToken: ShareToken;
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult =
-      await loadFixture(deployContracts);
+    const fixture: MarbleLsdDeploymentResult = await loadFixture(
+      deployContracts
+    );
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
     rewardDistributerSigner = fixture.rewardDistributerSigner;
@@ -81,28 +82,28 @@ describe("MarbleLsdProxy", () => {
   it("Should fail when deposit amount is less than min deposit amount", async () => {
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.connect(signer).deposit(signer.address, { value: 0 }),
+      proxyMarbleLsd.connect(signer).deposit(signer.address, { value: 0 })
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "LESS_THAN_MIN_DEPOSIT");
   });
 
   it("Should fail when deposit with zero receiver address", async () => {
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.connect(signer).deposit(ethers.ZeroAddress, { value: 10 }),
+      proxyMarbleLsd.connect(signer).deposit(ethers.ZeroAddress, { value: 10 })
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
   });
 
   it("Should fail when withdraw zero amount", async () => {
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.withdraw(0, signer.address),
+      proxyMarbleLsd.withdraw(0, signer.address)
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO");
   });
 
   it("Should fail when withdraw with zero receiver address", async () => {
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.connect(signer).withdraw(10, ethers.ZeroAddress),
+      proxyMarbleLsd.connect(signer).withdraw(10, ethers.ZeroAddress)
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
   });
 
@@ -120,7 +121,7 @@ describe("MarbleLsdProxy", () => {
     const shares = amount; // considering 1:1 ratio
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount }),
+      proxyMarbleLsd.connect(signer).deposit(signer.address, { value: amount })
     )
       .to.emit(proxyMarbleLsd, "Deposit")
       .withArgs(signer.address, signer.address, amount, shares);
@@ -138,22 +139,22 @@ describe("MarbleLsdProxy", () => {
     const shares = await proxyMarbleLsd.convertToShares(amount);
     const signer = accounts[4];
     await expect(
-      proxyMarbleLsd.connect(signer).withdraw(amount, signer.address),
+      proxyMarbleLsd.connect(signer).withdraw(amount, signer.address)
     )
       .to.emit(proxyMarbleLsd, "Withdraw")
       .withArgs(signer.address, signer.address, amount, shares);
     const updatedAssets = await proxyMarbleLsd.totalAssets();
     expect(updatedAssets).to.equal(
-      new BigNumber(initialAssets.toString()).minus(amount.toString()),
+      new BigNumber(initialAssets.toString()).minus(amount.toString())
     );
     const updatedShares = await proxyMarbleLsd.totalShares();
     expect(updatedShares).to.equal(
-      new BigNumber(initialShares.toString()).minus(shares.toString()),
+      new BigNumber(initialShares.toString()).minus(shares.toString())
     );
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address);
     expect(balance).to.equal(
-      new BigNumber(initialShares.toString()).minus(shares.toString()),
+      new BigNumber(initialShares.toString()).minus(shares.toString())
     );
   });
 
@@ -168,16 +169,16 @@ describe("MarbleLsdProxy", () => {
       .withArgs(signer.address, signer.address, amount, shares);
     const updatedAssets = await proxyMarbleLsd.totalAssets();
     expect(updatedAssets).to.equal(
-      new BigNumber(initialAssets.toString()).minus(amount.toString()),
+      new BigNumber(initialAssets.toString()).minus(amount.toString())
     );
     const updatedShares = await proxyMarbleLsd.totalShares();
     expect(updatedShares).to.equal(
-      new BigNumber(initialShares.toString()).minus(shares.toString()),
+      new BigNumber(initialShares.toString()).minus(shares.toString())
     );
     // Check receipt token balance
     const balance = await shareToken.balanceOf(signer.address);
     expect(balance).to.equal(
-      new BigNumber(initialShares.toString()).minus(shares.toString()),
+      new BigNumber(initialShares.toString()).minus(shares.toString())
     );
   });
 
@@ -185,10 +186,10 @@ describe("MarbleLsdProxy", () => {
     it("Unable to update minimum deposit if new amount is 0", async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
-        walletSigner.address,
+        walletSigner.address
       );
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).updateMinDeposit(0),
+        proxyMarbleLsd.connect(defaultAdminSigner).updateMinDeposit(0)
       ).to.be.revertedWithCustomError(proxyMarbleLsd, "AMOUNT_IS_ZERO");
     });
 
@@ -197,9 +198,11 @@ describe("MarbleLsdProxy", () => {
       // Test will fail if the signer is neither admin or operational admin
       const newSigner = accounts[10];
       await expect(
-        proxyMarbleLsd.connect(newSigner).updateMinDeposit(toWei("1")),
+        proxyMarbleLsd.connect(newSigner).updateMinDeposit(toWei("1"))
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+          64
+        )}`
       );
       expect(await proxyMarbleLsd.minDeposit()).to.equal(initialMinDeposit);
     });
@@ -208,7 +211,7 @@ describe("MarbleLsdProxy", () => {
       const initialMinDeposit = await proxyMarbleLsd.minDeposit();
       const newAmount = toWei("2");
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).updateMinDeposit(toWei("2")),
+        proxyMarbleLsd.connect(defaultAdminSigner).updateMinDeposit(toWei("2"))
       )
         .to.emit(proxyMarbleLsd, "MIN_DEPOSIT_UPDATED")
         .withArgs(initialMinDeposit, newAmount);
@@ -220,43 +223,43 @@ describe("MarbleLsdProxy", () => {
     it("Unable to update if new address is 0x0", async () => {
       // Test will fail with the error if input address is a dead address "0x0"
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
-        walletSigner.address,
+        walletSigner.address
       );
       await expect(
         proxyMarbleLsd
           .connect(defaultAdminSigner)
-          .updateWalletAddress("0x0000000000000000000000000000000000000000"),
+          .updateWalletAddress("0x0000000000000000000000000000000000000000")
       ).to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
     });
 
     it("Unable to update wallet address if not DEFAULT_ADMIN_ROLE", async () => {
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
-        walletSigner.address,
+        walletSigner.address
       );
       // Test will fail if the signer is neither admin or operational admin
       const newSigner = accounts[10];
       await expect(
-        proxyMarbleLsd
-          .connect(newSigner)
-          .updateWalletAddress(newSigner.address),
+        proxyMarbleLsd.connect(newSigner).updateWalletAddress(newSigner.address)
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+          64
+        )}`
       );
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
-        walletSigner.address,
+        walletSigner.address
       );
     });
 
     it("Successfully update the wallet address By Admin account", async () => {
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
-        walletSigner.address,
+        walletSigner.address
       );
       // Change wallet address by Admin and Operational addresses
       const newSigner = accounts[10];
       await expect(
         proxyMarbleLsd
           .connect(defaultAdminSigner)
-          .updateWalletAddress(newSigner.address),
+          .updateWalletAddress(newSigner.address)
       )
         .to.emit(proxyMarbleLsd, "WALLET_ADDRESS_UPDATED")
         .withArgs(walletSigner.address, newSigner.address);
@@ -268,13 +271,13 @@ describe("MarbleLsdProxy", () => {
     before(async () => {
       // pause deposit
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(true),
+        proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(true)
       )
         .to.emit(proxyMarbleLsd, "PauseUnpauseDeposit")
         .withArgs(true, defaultAdminSigner.address);
       // pause withdraw
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(true),
+        proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(true)
       )
         .to.emit(proxyMarbleLsd, "PauseUnpauseWithdraw")
         .withArgs(true, defaultAdminSigner.address);
@@ -283,13 +286,13 @@ describe("MarbleLsdProxy", () => {
     after(async () => {
       // unpause deposit
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(false),
+        proxyMarbleLsd.connect(defaultAdminSigner).setDepositPaused(false)
       )
         .to.emit(proxyMarbleLsd, "PauseUnpauseDeposit")
         .withArgs(false, defaultAdminSigner.address);
       // unpause withdraw
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(false),
+        proxyMarbleLsd.connect(defaultAdminSigner).setWithdrawPaused(false)
       )
         .to.emit(proxyMarbleLsd, "PauseUnpauseWithdraw")
         .withArgs(false, defaultAdminSigner.address);
@@ -301,7 +304,7 @@ describe("MarbleLsdProxy", () => {
       await expect(
         proxyMarbleLsd
           .connect(signer)
-          .deposit(signer.address, { value: amount }),
+          .deposit(signer.address, { value: amount })
       ).to.be.revertedWithCustomError(proxyMarbleLsd, "DEPOSIT_PAUSED");
     });
 
@@ -309,7 +312,7 @@ describe("MarbleLsdProxy", () => {
       const amount = toWei("10");
       const signer = accounts[4];
       await expect(
-        proxyMarbleLsd.connect(signer).withdraw(amount, signer.address),
+        proxyMarbleLsd.connect(signer).withdraw(amount, signer.address)
       ).to.be.revertedWithCustomError(proxyMarbleLsd, "WITHDRAWAL_PAUSED");
     });
   });
@@ -325,9 +328,9 @@ describe("MarbleLsdProxy", () => {
           to: await proxyMarbleLsd.getAddress(),
           data: "0x",
           value: amount,
-        }),
+        })
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role ${hash}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role ${hash}`
       );
     });
 
@@ -339,7 +342,7 @@ describe("MarbleLsdProxy", () => {
       await expect(
         proxyMarbleLsd
           .connect(signer)
-          .deposit(signer.address, { value: amount }),
+          .deposit(signer.address, { value: amount })
       )
         .to.emit(proxyMarbleLsd, "Deposit")
         .withArgs(signer.address, signer.address, amount, shares);
@@ -357,7 +360,7 @@ describe("MarbleLsdProxy", () => {
           to: await proxyMarbleLsd.getAddress(),
           data: "0x",
           value: amount,
-        }),
+        })
       )
         .to.emit(proxyMarbleLsd, "Rewards")
         .withArgs(rewardDistributerSigner.address, amount);
@@ -368,12 +371,12 @@ describe("MarbleLsdProxy", () => {
       expect(updateSupply).to.equal(initialSupply);
       const updatedAssets = await proxyMarbleLsd.totalAssets();
       expect(updatedAssets).to.equal(
-        new BigNumber(amount.toString()).plus(amount.toString()),
+        new BigNumber(amount.toString()).plus(amount.toString())
       );
 
       // share = 10 (xDFI) / (10 (staked) + 10 (rewards)) = 0.5 ratio
       const resultingShares = new BigNumber(amount.toString()).multipliedBy(
-        0.5,
+        0.5
       );
       const updatedShare = await proxyMarbleLsd.convertToShares(amount);
       expect(updatedShare).to.equal(resultingShares);
@@ -381,7 +384,7 @@ describe("MarbleLsdProxy", () => {
       await expect(
         proxyMarbleLsd
           .connect(signer)
-          .deposit(signer.address, { value: amount }),
+          .deposit(signer.address, { value: amount })
       )
         .to.emit(proxyMarbleLsd, "Deposit")
         .withArgs(signer.address, signer.address, amount, resultingShares);

@@ -18,7 +18,7 @@ function PreConnectedButton({
       type="button"
       className={clsx(
         `primary-btn-ui relative flex items-center justify-center
-         px-9 py-4`,
+         px-9 py-4`
       )}
       onClick={onClick}
     >
@@ -47,7 +47,7 @@ function ConnectedButton({
       onClick={onClick}
       className={clsx(
         `flex h-8 items-center rounded-[10px] border-[1.5px]
-          border-dark-card-stroke pl-4 pr-3 py-3 md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`,
+          border-dark-card-stroke pl-4 pr-3 py-3 md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`
       )}
     >
       <div className="flex items-center">

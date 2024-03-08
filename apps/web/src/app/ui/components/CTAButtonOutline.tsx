@@ -20,7 +20,7 @@ export function CTAButtonOutline({
         "px-16 py-6 cta-button-outline",
         "text-[28px] font-bold",
         customTextStyle,
-        customStyle ?? "w-fit",
+        customStyle ?? "w-fit"
       )}
     >
       {text}

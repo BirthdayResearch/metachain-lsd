@@ -18,7 +18,7 @@ export function CTAButton({
         "primary-btn-ui px-9 py-5 md:py-4",
         "hover:bg-opacity-60",
         customTextStyle,
-        customStyle ?? "w-fit",
+        customStyle ?? "w-fit"
       )}
     >
       <span className="active:text-opacity-60 text-sm font-bold text-light-1000">

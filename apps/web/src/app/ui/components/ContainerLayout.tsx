@@ -38,7 +38,7 @@ const { chains } = configureChains(
       },
     }),
     publicProvider(),
-  ],
+  ]
 );
 
 const config = createConfig(
@@ -49,7 +49,7 @@ const config = createConfig(
     connectors: [metamask],
     walletConnectProjectId:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
-  }),
+  })
 );
 
 const inter = Montserrat({ subsets: ["latin"] });
