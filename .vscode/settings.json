@@ -1,4 +1,6 @@
 {
+    "solidity.compileUsingRemoteVersion": "v0.8.20+commit.a1b79de6",
+    "solidity.defaultCompiler": "localNodeModule",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": false,
     "editor.codeActionsOnSave": {
@@ -25,6 +27,7 @@
         "**/Thumbs.db": true
     },
     "cSpell.words": [
+        "sepolia",
         "fastify",
         "Middie"
     ],
