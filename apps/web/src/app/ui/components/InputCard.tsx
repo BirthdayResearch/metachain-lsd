@@ -49,7 +49,7 @@ export function PercentageButton({
   return (
     <button
       data-testid={`percentage-button-${percentage}`}
-      className="py-2 gap-x-1 grid w-[49px]"
+      className="py-2 gap-x-1 grid w-[49px] hover:accent-2 rounded-[15px]"
       onClick={(): void => {
         onClick(value);
       }}
