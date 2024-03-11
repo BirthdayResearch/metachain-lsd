@@ -14,7 +14,7 @@ export function SectionDescription({
       data-testid={`section-description-${testID}`}
       className={clsx(
         "text-center text-xl leading-7 md:text-2xl  md:leading-9 font-light text-light-1000",
-        customStyle ?? "w-fit",
+        customStyle ?? "w-fit"
       )}
     >
       {text}

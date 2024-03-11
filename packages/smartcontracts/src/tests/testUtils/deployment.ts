@@ -1,7 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
-import { ShareToken, MarbleLsdV1, MarbleLsdV1__factory } from "../../generated";
+import { MarbleLsdV1, MarbleLsdV1__factory, ShareToken } from "../../generated";
 
 export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const accounts = await ethers.getSigners();
@@ -24,17 +24,17 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
       "DFI STAKING RECEIPT TOKEN",
       // receipt token symbol
       "xDFI",
-    ],
+    ]
   );
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(
     marbleLsdUpgradeableAddress,
-    encodedData,
+    encodedData
   );
   await marbleLsdProxy.waitForDeployment();
   const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(
-    marbleLsdProxyAddress,
+    marbleLsdProxyAddress
   ) as MarbleLsdV1;
 
   const shareTokenAddress = await proxyMarbleLsd.shareToken();

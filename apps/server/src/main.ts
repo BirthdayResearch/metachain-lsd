@@ -1,8 +1,8 @@
 import { AppModule } from "./AppModule";
-import { MetachainLsdServerApp } from "./MetachainLsdServerApp";
+import { MarbleFiLsdServerApp } from "./MarbleFiLsdServerApp";
 
 async function bootstrap() {
-  const app = new MetachainLsdServerApp(AppModule);
+  const app = new MarbleFiLsdServerApp(AppModule);
   await app.start();
 }
 

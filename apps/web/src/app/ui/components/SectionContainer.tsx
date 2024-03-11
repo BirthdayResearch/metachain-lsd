@@ -15,7 +15,7 @@ export default function SectionContainer({
       id={id}
       className={clsx(
         customContainerStyle,
-        "w-full flex items-center justify-between",
+        "w-full flex items-center justify-between"
       )}
     >
       {children}

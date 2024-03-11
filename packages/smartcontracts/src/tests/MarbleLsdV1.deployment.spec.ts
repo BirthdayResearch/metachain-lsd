@@ -13,12 +13,12 @@ describe("MarbleLsdV1 deployment test", () => {
     expect(
       await proxyMarbleLsd.hasRole(
         DEFAULT_ADMIN_ROLE,
-        defaultAdminSigner.address,
-      ),
+        defaultAdminSigner.address
+      )
     ).to.equal(true);
     // Check if the relayer address is same as accounts[0]
     expect(walletSigner.address).to.be.equal(
-      await proxyMarbleLsd.walletAddress(),
+      await proxyMarbleLsd.walletAddress()
     );
     // checking Contract version, should be 1
     expect(await proxyMarbleLsd.version()).to.be.equal("1");
