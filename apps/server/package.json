@@ -28,6 +28,7 @@
     "@waveshq/standard-api-express": "^3.0.1",
     "@waveshq/standard-api-fastify": "^3.0.1",
     "class-validator": "^0.14.1",
+    "joi": "^17.12.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
