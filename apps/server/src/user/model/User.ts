@@ -1,6 +1,6 @@
-import {SubscriptionStatus} from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 
 export type createUserParams = {
-    email: string
-    status?: SubscriptionStatus[];
+  email: string;
+  status?: SubscriptionStatus[];
 };
