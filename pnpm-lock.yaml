@@ -20,9 +20,6 @@ importers:
       '@prisma/client':
         specifier: ^5.6.0
         version: 5.10.2(prisma@5.10.2)
-      '@waveshq/standard-api-express':
-        specifier: ^3.0.1
-        version: 3.0.1(@prisma/client@5.10.2)(class-validator@0.14.1)(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3)
       '@waveshq/standard-api-fastify':
         specifier: ^3.0.1
         version: 3.0.1(@prisma/client@5.10.2)(class-validator@0.14.1)(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3)
@@ -80,7 +77,7 @@ importers:
         version: 0.5.10(tailwindcss@3.4.1)
       '@waveshq/standard-api-express':
         specifier: ^3.0.1
-        version: 3.0.1(@prisma/client@5.10.2)(class-validator@0.14.1)(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3)
+        version: 3.0.1(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3)
       '@waveshq/walletkit-ui':
         specifier: ^1.3.1
         version: 1.3.10(@babel/core@7.23.9)(@types/node@20.11.1)(@types/tar-fs@2.0.4)(@typescript-eslint/eslint-plugin@6.21.0)(@typescript-eslint/parser@6.21.0)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)(typescript@5.3.3)
@@ -6316,7 +6313,7 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@waveshq/standard-api-express@3.0.1(@prisma/client@5.10.2)(class-validator@0.14.1)(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3):
+  /@waveshq/standard-api-express@3.0.1(pino-http@8.6.1)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typescript@5.3.3):
     resolution: {integrity: sha512-BGjH3sc9B2j6llCFg4vSErG9Njo++Z39egPbbChAGQrKwWp92fEcGgtV0pd5Ur3HYJzi40xGRya6S+vDRgaT1g==}
     dependencies:
       '@compodoc/compodoc': 1.1.23(typescript@5.3.3)
@@ -8194,7 +8191,7 @@ packages:
     resolution: {integrity: sha512-2VEG9JICxIqTpoK1eMzZqaV+u/EiwEJkMGzTrZf6sU/fwsnOITVgYJ8yojSy6CaXtO9V0Cc6ZQZ8h8m4UBuLwQ==}
     dependencies:
       '@types/validator': 13.11.9
-      libphonenumber-js: 1.10.57
+      libphonenumber-js: 1.10.58
       validator: 13.11.0
     dev: false
 
@@ -13053,8 +13050,8 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  /libphonenumber-js@1.10.57:
-    resolution: {integrity: sha512-OjsEd9y4LgcX+Ig09SbxWqcGESxliDDFNVepFhB9KEsQZTrnk3UdEU+cO0sW1APvLprHstQpS23OQpZ3bwxy6Q==}
+  /libphonenumber-js@1.10.58:
+    resolution: {integrity: sha512-53A0IpJFL9LdHbpeatwizf8KSwPICrqn9H0g3Y7WQ+Jgeu9cQ4Ew3WrRtrLBu/CX2lXd5+rgT01/tGlkbkzOjw==}
     dev: false
 
   /light-my-request@5.11.0:
