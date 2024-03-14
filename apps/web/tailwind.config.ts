@@ -58,7 +58,7 @@ const config: Config = {
         DEFAULT: "5px",
         md: "10px",
         lg: "15px",
-        xl: "20px"
+        xl: "20px",
       },
     },
   },
