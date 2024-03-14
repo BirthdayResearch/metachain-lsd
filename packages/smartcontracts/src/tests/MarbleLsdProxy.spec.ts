@@ -1,8 +1,8 @@
 import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import BigNumber from "bignumber.js";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import BigNumber from "bignumber.js";
 
 import { MarbleLsdV1, ShareToken } from "../generated";
 import {
@@ -199,7 +199,9 @@ describe("MarbleLsdProxy", () => {
       await expect(
         proxyMarbleLsd.connect(newSigner).updateMinDeposit(toWei("1")),
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+          64,
+        )}`,
       );
       expect(await proxyMarbleLsd.minDeposit()).to.equal(initialMinDeposit);
     });
@@ -240,7 +242,9 @@ describe("MarbleLsdProxy", () => {
           .connect(newSigner)
           .updateWalletAddress(newSigner.address),
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+          64,
+        )}`,
       );
       expect(await proxyMarbleLsd.walletAddress()).to.equal(
         walletSigner.address,
