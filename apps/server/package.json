@@ -16,11 +16,11 @@
     "migration:dev": "npx prisma migrate dev",
     "playground:start": "docker-compose rm -fsv && docker-compose -f ./docker-compose.yml --env-file ./.env up",
     "prepare": "npx prisma generate",
-    "test": "jest",
+    "test": "jest --maxWorkers=4 --coverage --forceExit --passWithNoTests",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --selectProjects test:e2e",
+    "test:i9n": "jest --selectProjects test:i9n",
+    "test:unit": "jest --selectProjects test:unit"
   },
   "prettier": "@waveshq/standard-prettier",
   "dependencies": {
