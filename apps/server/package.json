@@ -25,7 +25,6 @@
   "prettier": "@waveshq/standard-prettier",
   "dependencies": {
     "@prisma/client": "^5.6.0",
-    "@waveshq/standard-api-express": "^3.0.1",
     "@waveshq/standard-api-fastify": "^3.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
