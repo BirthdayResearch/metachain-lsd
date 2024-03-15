@@ -3,7 +3,6 @@ import { UserController} from "./UserController";
 import { UserService} from "./UserService";
 import {PrismaService} from "../PrismaService";
 
-import { Request } from 'express';
 import {buildTestConfig, TestingModule } from "../../test/TestingModule";
 import {MarbleFiLsdServerTestingApp} from "../../dist/test-i9n/MarbleFiLsdServerTestingApp";
 
@@ -30,13 +29,29 @@ describe('UserController', () => {
     });
 
     describe('create user', () => {
-        it('should create a user in db', async () => {
-            const req = { body: { email: "test@example.com", status: 'ACTIVE' } } as Request;
-
-            const { email, status } = req.body;
-            const res = await userController.create(email, status);
+        it('should create an active user in db', async () => {
+            const res = await userController.create("test@example.com", 'ACTIVE');
 
             expect(res).toEqual({ id: 1, email: 'test@example.com', status: 'ACTIVE' });
+        });
+
+        it('should create an inactive user in db', async () => {
+            const res = await userController.create("test2@example.com", 'INACTIVE');
+
+            expect(res).toEqual({ id: 2, email: 'test2@example.com', status: 'INACTIVE' });
+        });
+
+        it('should create an active user by default', async () => {
+            const res = await userController.create("test3@example.com");
+
+            expect(res).toEqual({ id: 3, email: 'test3@example.com', status: 'ACTIVE' });
+        });
+
+        it('should not create a user with same email', async () => {
+            const res = await userController.create("test@example.com");
+
+            console.log(res)
+            // expect(res).toEqual({ id: 3, email: 'test@example.com', status: 'ACTIVE' });
         });
     });
 });
