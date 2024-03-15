@@ -25,9 +25,11 @@
   "prettier": "@waveshq/standard-prettier",
   "dependencies": {
     "@prisma/client": "^5.6.0",
+    "@stickyjs/testcontainers": "^1.3.10",
     "@waveshq/standard-api-fastify": "^3.0.1",
     "class-validator": "^0.14.1",
     "joi": "^17.12.2",
+    "light-my-request": "^5.12.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

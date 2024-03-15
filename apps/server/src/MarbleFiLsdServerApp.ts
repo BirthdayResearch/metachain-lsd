@@ -1,7 +1,10 @@
-import { Request, Response, NextFunction } from "express";
-import { INestApplication } from "@nestjs/common";
+import { NextFunction, Request, Response } from "express";
+import { INestApplication, NestApplicationOptions } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { NestFastifyApplication } from "@nestjs/platform-fastify";
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from "@nestjs/platform-fastify";
 
 import { AppModule } from "./AppModule";
 
@@ -14,6 +17,16 @@ export class MarbleFiLsdServerApp<
   protected app?: App;
 
   constructor(protected readonly module: any) {}
+
+  get nestApplicationOptions(): NestApplicationOptions {
+    return {
+      bufferLogs: true,
+    };
+  }
+
+  get fastifyAdapter(): FastifyAdapter {
+    return new FastifyAdapter();
+  }
 
   async createNestApp(): Promise<App> {
     const app = await NestFactory.create(AppModule);
