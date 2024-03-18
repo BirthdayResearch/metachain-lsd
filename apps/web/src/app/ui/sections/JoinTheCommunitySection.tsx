@@ -2,9 +2,22 @@ import { CardDesc } from "@/app/ui/components/CardDesc";
 import EmailInput from "@/app/ui/components/EmailInput";
 import { useState } from "react";
 import SectionContainer from "@/app/ui/components/SectionContainer";
+import { useCreateUserMutation } from "@/app/store/marbleFiApi";
 
 export default function JoinTheCommunitySection() {
   const [emailString, setEmailString] = useState("");
+  const [createUser] = useCreateUserMutation();
+  async function create() {
+    try {
+      const body = {
+        email: "test",
+      };
+
+      const response = await createUser(body).unwrap();
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <SectionContainer
       id="community-section"
