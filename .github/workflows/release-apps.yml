@@ -64,5 +64,5 @@ jobs:
           ECR_REGISTRY: ${{ matrix.acc }}.dkr.ecr.ap-southeast-1.amazonaws.com
           IMAGE_TAG: marblefi-ops:${{ steps.ecr-tags.outputs.result }}
         run: |
-          docker build --file Dockerfile -t $ECR_REGISTRY/$IMAGE_TAG .
+          docker build --file apps/server/Dockerfile -t $ECR_REGISTRY/$IMAGE_TAG .
           docker push $ECR_REGISTRY/$IMAGE_TAG
