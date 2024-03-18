@@ -1,4 +1,3 @@
-# Dockerfile used to build an image for the defichain-wallet-api
 FROM node:18.17.0-alpine3.17
 
 WORKDIR /app
