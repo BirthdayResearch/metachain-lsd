@@ -12,8 +12,6 @@ RUN npm install -g pnpm
 COPY pnpm-lock.yaml ./
 COPY package.json ./
 
-COPY apps ./apps
-
 EXPOSE 5741
 
 RUN pnpm fetch
