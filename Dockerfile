@@ -12,7 +12,7 @@ RUN npm install -g pnpm
 COPY pnpm-lock.yaml ./
 COPY package.json ./
 
-COPY . .
+COPY apps ./apps
 
 EXPOSE 5741
 
