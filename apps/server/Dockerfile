@@ -20,4 +20,4 @@ RUN pnpm fetch
 RUN pnpm install -r --offline
 RUN pnpm build
 
-CMD node dist/main.js
+CMD node apps/server/dist/main.js
