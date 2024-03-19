@@ -1,6 +1,11 @@
 import { IoIosCloseCircle } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import clsx from "clsx";
+import { CTAButton } from "@/app/ui/components/CTAButton";
+import { SubscriptionStatus } from "@/app/types/user";
+import { useCreateUserMutation } from "@/app/store/marbleFiApi";
+import { useEffect, useState } from "react";
+import { FaCheck } from "react-icons/fa6";
 
 export default function EmailInput({
   value,
@@ -13,45 +18,89 @@ export default function EmailInput({
   placeholder?: string;
   customStyle?: string;
 }) {
+  const [createUser] = useCreateUserMutation();
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
   const isValidEmail = (email: string) => {
     // Regular expression for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  const handleSubmit = async (email: string, status?: SubscriptionStatus) => {
+    try {
+      const data = await createUser({ email, status });
+      console.log("User created:", data);
+      // @ts-ignore
+      if (data?.error) {
+        // @ts-ignore
+        setErrorMsg(data.error.data.message);
+        setSuccess(false);
+      } else {
+        setErrorMsg("");
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
+  };
+  useEffect(() => {
+    setSuccess(false);
+    setErrorMsg("");
+  }, [value]);
   return (
-    <div
-      className={clsx(
-        "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
-        value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
-      )}
-    >
-      <form
+    <div>
+      <div
         className={clsx(
-          "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px]",
-          customStyle,
+          "border border-light-1000/10 rounded-[32px] flex relative w-full md:w-[472px]",
+          value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
         )}
       >
-        <HiOutlineMail className="mr-3" size={20} />
-        <input
+        <form
           className={clsx(
-            "mr-6 w-full bg-light-00 caret-brand-100",
-            "placeholder:text-light-1000 focus:outline-none",
+            "relative w-full md:w-[472px] py-4 px-7 flex items-center bg-light-00 rounded-[32px]",
+            customStyle,
           )}
-          type="text"
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        {value !== "" && (
-          <button
-            type="button"
-            className="absolute right-7 rounded-full"
-            onClick={() => setValue("")}
-          >
-            <IoIosCloseCircle size={16} className="opacity-70 text-dark-00" />
-          </button>
-        )}
-      </form>
+        >
+          <HiOutlineMail className="mr-3" size={20} />
+          <input
+            className={clsx(
+              "mr-6 w-full bg-light-00 caret-brand-100",
+              "placeholder:text-light-1000 focus:outline-none",
+            )}
+            type="text"
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <div className="flex absolute right-4">
+            {value !== "" && !success && (
+              <button
+                type="button"
+                className="rounded-full mr-3"
+                onClick={() => setValue("")}
+              >
+                <IoIosCloseCircle
+                  size={16}
+                  className="opacity-70 text-dark-00"
+                />
+              </button>
+            )}
+            {success ? (
+              <FaCheck className="text-valid w-5 h-5" />
+            ) : (
+              <CTAButton
+                text="Submit"
+                testID="join-community-submit-btn"
+                onClick={() => handleSubmit(value)}
+                isDisabled={!isValidEmail(value) || value == ""}
+                customStyle="!py-2 !px-5"
+                customTextStyle="text-[#B2B2B2] font-semibold text-xs"
+              />
+            )}
+          </div>
+        </form>
+      </div>
+      {errorMsg && <div className="mt-2 ml-2 text-sm text-red">{errorMsg}</div>}
     </div>
   );
 }
