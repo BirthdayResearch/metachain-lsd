@@ -29,7 +29,6 @@ export default function EmailInput({
   const handleSubmit = async (email: string, status?: SubscriptionStatus) => {
     try {
       const data = await createUser({ email, status });
-      console.log("User created:", data);
       // @ts-ignore
       if (data?.error) {
         // @ts-ignore
