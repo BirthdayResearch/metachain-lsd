@@ -11,7 +11,7 @@ export function CTAButton({
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
-  onClick?: any;
+  onClick?: () => void;
 }) {
   return (
     <button
