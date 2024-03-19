@@ -41,6 +41,7 @@ export class MarbleFiLsdServerApp<
       origin:
         process.env.NODE_ENV === "production"
           ? [
+              "https://marblefi.netlify.app/",
               /https:\/\/([^.]*.)--marblefi\.netlify\.app/, // allow all netlify preview deployments
             ]
           : "*",
