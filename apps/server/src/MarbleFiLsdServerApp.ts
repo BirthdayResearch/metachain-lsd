@@ -41,10 +41,7 @@ export class MarbleFiLsdServerApp<
       origin:
         process.env.NODE_ENV === "production"
           ? [
-              "https://marblefi.app",
-              /https:\/\/([^.]*.\.)*marblefi\.app/, // allow all subdomains of marblefi
               /https:\/\/([^.]*.)--marblefi\.netlify\.app/, // allow all netlify preview deployments
-              /https?:\/\/localhost(:\d+)?/, // allow localhost connection
             ]
           : "*",
       allowedHeaders: "*",
