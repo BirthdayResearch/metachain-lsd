@@ -1,28 +1,21 @@
-name-template: "v$RESOLVED_VERSION"
-tag-template: "v$RESOLVED_VERSION"
-categories:
-  - title: "🚀 Features"
-    labels:
-      - "kind/feature"
-  - title: "🐛 Bug Fixes"
-    labels:
-      - "kind/fix"
-  - title: "Maintenance"
-    labels:
-      - "kind/refactor"
-      - "kind/chore"
-      - "kind/docs"
-  - title: "Dependencies"
-    labels:
-      - "kind/dependencies"
-change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
-change-title-escapes: '\<*_&'
-version-resolver:
-  minor:
-    labels:
-      - "kind/feature"
-  default: patch
-template: |
-  ## What’s Changed
+name: Release Drafter
 
-  $CHANGES
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@65c5fb495d1e69aa8c08a3317bc44ff8aabe9772 # v5.24.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
