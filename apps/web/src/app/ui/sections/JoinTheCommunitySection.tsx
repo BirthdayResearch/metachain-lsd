@@ -3,21 +3,21 @@ import EmailInput from "@/app/ui/components/EmailInput";
 import { useState } from "react";
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import { useCreateUserMutation } from "@/app/store/marbleFiApi";
+import { SubscriptionStatus } from "@/app/types/user";
+import { CTAButton } from "@/app/ui/components/CTAButton";
 
 export default function JoinTheCommunitySection() {
   const [emailString, setEmailString] = useState("");
   const [createUser] = useCreateUserMutation();
-  async function create() {
-    try {
-      const body = {
-        email: "test",
-      };
 
-      const response = await createUser(body).unwrap();
-    } catch (e) {
-      console.error(e);
+  const handleSubmit = async (email: string, status?: SubscriptionStatus) => {
+    try {
+      const data = await createUser({ email, status });
+      console.log("User created:", data);
+    } catch (error) {
+      console.error("Error creating user:", error);
     }
-  }
+  };
   return (
     <SectionContainer
       id="community-section"
@@ -39,6 +39,11 @@ export default function JoinTheCommunitySection() {
           value={emailString}
           setValue={setEmailString}
           placeholder="Email address"
+        />
+        <CTAButton
+          text="Submit"
+          testID="join-community-submit-btn"
+          onClick={() => handleSubmit(emailString)}
         />
         <div className="text-left text-xs font-light text-light-1000/70">
           This email will only receive updates from the platform.

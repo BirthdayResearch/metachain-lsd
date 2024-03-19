@@ -5,11 +5,13 @@ export function CTAButton({
   testID,
   customStyle,
   customTextStyle = "text-light-00",
+  onClick,
 }: {
   text: string;
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
+  onClick?: any;
 }) {
   return (
     <button
@@ -20,6 +22,7 @@ export function CTAButton({
         customTextStyle,
         customStyle ?? "w-fit",
       )}
+      onClick={onClick}
     >
       <span className="active:text-opacity-60 text-sm font-bold text-light-1000">
         {text}
