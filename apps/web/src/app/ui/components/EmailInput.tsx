@@ -99,7 +99,9 @@ export default function EmailInput({
           </div>
         </form>
       </div>
-      {errorMsg && <div className="text-left mt-2 ml-2 text-sm text-red">{errorMsg}</div>}
+      {errorMsg && (
+        <div className="text-left mt-2 ml-2 text-sm text-red">{errorMsg}</div>
+      )}
     </div>
   );
 }

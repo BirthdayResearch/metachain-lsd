@@ -5,7 +5,6 @@ import SectionContainer from "@/app/ui/components/SectionContainer";
 
 export default function JoinTheCommunitySection() {
   const [emailString, setEmailString] = useState("");
-
   return (
     <SectionContainer
       id="community-section"
