@@ -66,7 +66,7 @@ export class MarbleFiLsdServerApp<
   async start(): Promise<App> {
     const app = await this.init();
 
-    const PORT = process.env.PORT || 3001;
+    const PORT = process.env.PORT || 5741;
     await app.listen(PORT).then(() => {
       // eslint-disable-next-line no-console
       console.log(`Started server on port ${PORT}`);
