@@ -9,6 +9,7 @@ import { PrismaService } from "../PrismaService";
 
 import { buildTestConfig, TestingModule } from "../../test/TestingModule";
 import { MarbleFiLsdServerTestingApp } from "../../test/MarbleFiLsdServerTestingApp";
+import { SubscriptionStatus } from "@prisma/client";
 
 describe("UserController", () => {
   let testing: MarbleFiLsdServerTestingApp;
@@ -32,38 +33,53 @@ describe("UserController", () => {
 
   describe("create user", () => {
     it("should create an active user in db", async () => {
-      const res = await userController.create("test@example.com", "ACTIVE");
+      const user = {
+        email: "test@example.com",
+        status: SubscriptionStatus.ACTIVE,
+      };
+      const res = await userController.create(user);
 
       expect(res).toEqual({
         id: 1,
         email: "test@example.com",
-        status: "ACTIVE",
+        status: SubscriptionStatus.ACTIVE,
       });
     });
 
     it("should create an inactive user in db", async () => {
-      const res = await userController.create("test2@example.com", "INACTIVE");
+      const user = {
+        email: "test2@example.com",
+        status: SubscriptionStatus.INACTIVE,
+      };
+      const res = await userController.create(user);
 
       expect(res).toEqual({
         id: 2,
         email: "test2@example.com",
-        status: "INACTIVE",
+        status: SubscriptionStatus.INACTIVE,
       });
     });
 
     it("should create an active user by default", async () => {
-      const res = await userController.create("test3@example.com");
+      const user = {
+        email: "test3@example.com",
+        status: SubscriptionStatus.ACTIVE,
+      };
+      const res = await userController.create(user);
 
       expect(res).toEqual({
         id: 3,
         email: "test3@example.com",
-        status: "ACTIVE",
+        status: SubscriptionStatus.ACTIVE,
       });
     });
 
     it("should not create a user with same email", async () => {
       try {
-        await userController.create("test@example.com");
+        const user = {
+          email: "test@example.com",
+        };
+        await userController.create(user);
       } catch (e) {
         expect(e.response.statusCode).toStrictEqual(HttpStatus.BAD_REQUEST);
         expect(e.response.message).toStrictEqual(
