@@ -42,7 +42,7 @@ export default function NavigationBarMobile({
           {navigationTabs.map((link) => (
             <li
               key={link.label}
-              className="py-7 md:mx-12 mx-5 lg:py-3 border-b border-light-1000/10 font-semibold text-sm cursor-pointer"
+              className="py-7 md:mx-12 mx-5 lg:py-3 border-b border-light-1000/10 font-semibold text-light-1000 active:text-opacity-10 text-sm cursor-pointer"
               onClick={() => {
                 if (parentRef) {
                   const targetElement = parentRef.querySelector(`${link.href}`);
