@@ -33,7 +33,7 @@ export default function NavigationBar({
           "border border-light-00/10 backdrop-opacity-50 bg-light-00/10 rounded-[40px] hover:bg-light-00/10":
             isHeader,
         },
-        "py-1.5 px-5 justify-center items-center gap-x-1"
+        "py-1.5 px-5 justify-center items-center gap-x-1",
       )}
     >
       {navigationTabs.map((link) => (
