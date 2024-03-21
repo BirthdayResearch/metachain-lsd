@@ -16,22 +16,25 @@ export async function deployMarbleLsdProxy({
   finalizerAddress,
   marbleLsdV1Address,
 }: InputsForInitialization): Promise<MarbleLsdProxy> {
-  const contract = await ethers.getContractFactory('MarbleLsdProxy');
+  const contract = await ethers.getContractFactory("MarbleLsdProxy");
 
-  const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData('initialize', [
-    // admin address, or timelock contract address
-    adminAddress,
-    // administrator distributer address,
-    administratorAddress,
-    // reward distributer address,
-    rewardDistributerAddress,
-    // finalizer address
-    finalizerAddress,
-    // withdraw address
-    walletAddress,
-    // fees recipient address
-    feesRecipientAddress,
-  ]);
+  const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData(
+    "initialize",
+    [
+      // admin address, or timelock contract address
+      adminAddress,
+      // administrator distributer address,
+      administratorAddress,
+      // reward distributer address,
+      rewardDistributerAddress,
+      // finalizer address
+      finalizerAddress,
+      // withdraw address
+      walletAddress,
+      // fees recipient address
+      feesRecipientAddress,
+    ],
+  );
   const marbleLsdProxy = await contract.deploy(marbleLsdV1Address, encodedData);
   await marbleLsdProxy.waitForDeployment();
   const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
@@ -42,18 +45,20 @@ export async function deployMarbleLsdProxy({
   await verify({
     contractAddress: marbleLsdProxyAddress,
     args: [marbleLsdV1Address, encodedData],
-    contract: 'contracts/MarbleLsdProxy.sol:MarbleLsdProxy',
+    contract: "contracts/MarbleLsdProxy.sol:MarbleLsdProxy",
   });
   // verify receipt token
-  const MarbleLsdUpgradeable = await ethers.getContractFactory('MarbleLsdV1');
-  const proxyMarbleLsd = MarbleLsdUpgradeable.attach(marbleLsdProxyAddress) as MarbleLsdV1;
+  const MarbleLsdUpgradeable = await ethers.getContractFactory("MarbleLsdV1");
+  const proxyMarbleLsd = MarbleLsdUpgradeable.attach(
+    marbleLsdProxyAddress,
+  ) as MarbleLsdV1;
 
   const receiptToken = await proxyMarbleLsd.shareToken();
-  console.log('Share Token Address: ', receiptToken);
-  console.log('Verifying...');
+  console.log("Share Token Address: ", receiptToken);
+  console.log("Verifying...");
   await verify({
     contractAddress: receiptToken,
-    args: ['DFI STAKING SHARE TOKEN', 'mDFI'],
+    args: ["DFI STAKING SHARE TOKEN", "mDFI"],
   });
   return marbleLsdProxy;
 }

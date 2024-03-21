@@ -1,8 +1,8 @@
-import { ethers } from 'hardhat';
+import { ethers } from "hardhat";
 
-import { TimelockController } from '../generated';
-import { verify } from './utils/verify';
-import { BigNumberish } from 'ethers';
+import { TimelockController } from "../generated";
+import { verify } from "./utils/verify";
+import { BigNumberish } from "ethers";
 
 export async function deployTimelockController({
   minDelay,
@@ -10,13 +10,22 @@ export async function deployTimelockController({
   executors,
   admin,
 }: InputsForInitialization): Promise<TimelockController> {
-  const timelockControllerFactory = await ethers.getContractFactory('TimelockController');
-  const timelockController = await timelockControllerFactory.deploy(minDelay, proposers, executors, admin);
+  const timelockControllerFactory =
+    await ethers.getContractFactory("TimelockController");
+  const timelockController = await timelockControllerFactory.deploy(
+    minDelay,
+    proposers,
+    executors,
+    admin,
+  );
   await timelockController.waitForDeployment();
   const contractAddress = await timelockController.getAddress();
-  console.log('Timelock Controller Address: ', contractAddress);
-  console.log('Verifying...');
-  await verify({ contractAddress, args: [minDelay, proposers, executors, admin] });
+  console.log("Timelock Controller Address: ", contractAddress);
+  console.log("Verifying...");
+  await verify({
+    contractAddress,
+    args: [minDelay, proposers, executors, admin],
+  });
 
   return timelockController;
 }

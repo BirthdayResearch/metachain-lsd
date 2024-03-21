@@ -1,5 +1,5 @@
-import BigNumber from 'bignumber.js';
-import { BigNumberish, parseEther } from 'ethers';
+import BigNumber from "bignumber.js";
+import { BigNumberish, parseEther } from "ethers";
 
 export function toWei(amount: string): BigNumberish {
   return parseEther(amount);
@@ -21,7 +21,10 @@ interface GetTimestampOptions {
 }
 
 export function feesOnRaw(amount: string, feeBasisPoints: string): BigNumber {
-  return new BigNumber(amount).multipliedBy(feeBasisPoints).dividedBy(10000).integerValue(BigNumber.ROUND_UP);
+  return new BigNumber(amount)
+    .multipliedBy(feeBasisPoints)
+    .dividedBy(10000)
+    .integerValue(BigNumber.ROUND_UP);
 }
 
 export function feesOnTotal(amount: string, feeBasisPoints: string): BigNumber {
