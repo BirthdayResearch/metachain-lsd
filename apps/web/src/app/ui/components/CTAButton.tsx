@@ -12,7 +12,7 @@ export function CTAButton({
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
-  onClick?: () => void;
+  onClick?: (e: any) => void;
   isDisabled?: boolean;
 }) {
   return (

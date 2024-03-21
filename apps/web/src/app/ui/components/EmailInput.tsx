@@ -26,9 +26,18 @@ export default function EmailInput({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  const handleSubmit = async (email: string, status?: SubscriptionStatus) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    email: string,
+    status?: SubscriptionStatus,
+  ) => {
+    e.preventDefault();
     try {
-      const data = await createUser({ email, status });
+      const user = {
+        email: email,
+        status: status,
+      };
+      const data = await createUser(user);
       // @ts-ignore
       if (data?.error) {
         // @ts-ignore
@@ -90,7 +99,7 @@ export default function EmailInput({
               <CTAButton
                 text="Submit"
                 testID="join-community-submit-btn"
-                onClick={() => handleSubmit(value)}
+                onClick={(e) => handleSubmit(e, value)}
                 isDisabled={!isValidEmail(value) || value == ""}
                 customStyle="!py-2 !px-5"
                 customTextStyle="text-[#B2B2B2] font-semibold text-xs"
