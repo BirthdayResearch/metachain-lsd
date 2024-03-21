@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function MarbleFiLogo({
   customStyle,
 }: {
-  customStyle?: string; // change the prop
+  customStyle?: string;
 }) {
   return (
     <Link href="/">
