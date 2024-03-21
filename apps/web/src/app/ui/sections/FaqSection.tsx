@@ -57,7 +57,9 @@ export default function FaqSection() {
                 >
                   <Disclosure.Button className="flex w-full justify-between rounded-lg text-left text-sm">
                     <span
-                      className={`mr-6 flex-1 self-center ${open ? "font-semibold" : "font-normal"}`}
+                      className={`mr-6 flex-1 self-center ${
+                        open ? "font-semibold" : "font-normal"
+                      }`}
                     >
                       {item.title}
                     </span>

@@ -51,11 +51,10 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  webpack5: true,
   webpack: (config) => {
-    config.resolve.fallback = { 
+    config.resolve.fallback = {
       tls: false,
-      net: false
+      net: false,
     };
     return config;
   },

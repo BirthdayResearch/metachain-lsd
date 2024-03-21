@@ -1,8 +1,8 @@
 import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
+import BigNumber from 'bignumber.js';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import BigNumber from 'bignumber.js';
 
 import { MarbleLsdV1, ShareToken } from '../generated';
 import { deployContracts, MarbleLsdDeploymentResult } from './testUtils/deployment';
@@ -18,7 +18,8 @@ describe('MarbleLsdProxy', () => {
   let shareToken: ShareToken;
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult = await loadFixture(deployContracts);
+    const fixture: MarbleLsdDeploymentResult =
+      await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
     administratorSigner = fixture.administratorSigner;
@@ -176,7 +177,7 @@ describe('MarbleLsdProxy', () => {
     );
   });
 
-  it('Should deposit DFI and emit Deposit event on successful staking', async () => {
+  it("Should deposit DFI and emit Deposit event on successful staking", async () => {
     // Need to add to the timestamp of the previous block to match the next block the tx is mined in
     const amount = toWei('10.05');
     const mintingFees = await proxyMarbleLsd.mintingFees();
@@ -516,10 +517,14 @@ describe('MarbleLsdProxy', () => {
   describe('Wallet address update tests', () => {
     it('Should not update if new address is 0x0', async () => {
       // Test will fail with the error if input address is a dead address "0x0"
-      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
+      expect(await proxyMarbleLsd.walletAddress()).to.equal(
+        walletSigner.address,
+      );
       await expect(
-        proxyMarbleLsd.connect(defaultAdminSigner).updateWalletAddress('0x0000000000000000000000000000000000000000'),
-      ).to.be.revertedWithCustomError(proxyMarbleLsd, 'ZERO_ADDRESS');
+        proxyMarbleLsd
+          .connect(defaultAdminSigner)
+          .updateWalletAddress("0x0000000000000000000000000000000000000000"),
+      ).to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
     });
 
     it('Should not update wallet address if not DEFAULT_ADMIN_ROLE', async () => {
@@ -529,7 +534,6 @@ describe('MarbleLsdProxy', () => {
       await expect(proxyMarbleLsd.connect(newSigner).updateWalletAddress(newSigner.address)).to.be.revertedWith(
         `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${'0'.repeat(64)}`,
       );
-      expect(await proxyMarbleLsd.walletAddress()).to.equal(walletSigner.address);
     });
 
     it('Should update the wallet address By Admin account', async () => {

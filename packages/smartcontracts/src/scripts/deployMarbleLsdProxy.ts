@@ -1,7 +1,11 @@
-import { ethers } from 'hardhat';
+import { ethers } from "hardhat";
 
-import { MarbleLsdProxy, MarbleLsdV1, MarbleLsdV1__factory } from '../generated';
-import { verify } from './utils/verify';
+import {
+  MarbleLsdProxy,
+  MarbleLsdV1,
+  MarbleLsdV1__factory,
+} from "../generated";
+import { verify } from "./utils/verify";
 
 export async function deployMarbleLsdProxy({
   adminAddress,
@@ -33,8 +37,8 @@ export async function deployMarbleLsdProxy({
   const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const txn = await marbleLsdProxy.deploymentTransaction();
   await txn?.wait(10);
-  console.log('Proxy Address: ', marbleLsdProxyAddress);
-  console.log('Verifying...');
+  console.log("Proxy Address: ", marbleLsdProxyAddress);
+  console.log("Verifying...");
   await verify({
     contractAddress: marbleLsdProxyAddress,
     args: [marbleLsdV1Address, encodedData],

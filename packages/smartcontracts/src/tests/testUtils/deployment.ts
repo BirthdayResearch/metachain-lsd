@@ -1,7 +1,7 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { ethers } from 'hardhat';
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { ethers } from "hardhat";
 
-import { ShareToken, MarbleLsdV1, MarbleLsdV1__factory } from '../../generated';
+import { MarbleLsdV1, MarbleLsdV1__factory, ShareToken } from "../../generated";
 
 export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
   const accounts = await ethers.getSigners();
@@ -31,7 +31,10 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
     feesRecipientSigner.address,
   ]);
 
-  const marbleLsdProxy = await MarbleLsdProxy.deploy(marbleLsdUpgradeableAddress, encodedData);
+  const marbleLsdProxy = await MarbleLsdProxy.deploy(
+    marbleLsdUpgradeableAddress,
+    encodedData,
+  );
   await marbleLsdProxy.waitForDeployment();
   const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(marbleLsdProxyAddress) as MarbleLsdV1;
