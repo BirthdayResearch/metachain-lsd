@@ -1,6 +1,11 @@
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-export default function HeaderLogo({ isHeader = true }: { isHeader: boolean }) {
+export default function MarbleFiLogo({
+  customStyle,
+}: {
+  customStyle?: string; // change the prop
+}) {
   return (
     <Link href="/">
       <Image
@@ -10,10 +15,7 @@ export default function HeaderLogo({ isHeader = true }: { isHeader: boolean }) {
         width={170}
         height={40}
         priority={true}
-        style={{ width: "100%", height: "auto" }}
-        className={
-          isHeader ? "w-[132px] h-[30px] md:w-[170px] md:h-[40px]" : ""
-        }
+        className={clsx(customStyle)}
       />
     </Link>
   );
