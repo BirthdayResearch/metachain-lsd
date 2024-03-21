@@ -420,7 +420,7 @@ describe("MarbleLsdProxy", () => {
     let allAssets = new BigNumber(0);
     let allShares = new BigNumber(0);
     let allFees = new BigNumber(0);
-    for (let i = 0; i < requests.length; i++) {
+    for (let i = 0; i < requests.length; i += 1) {
       const [assets, shares, fees] = withdrawalStatus[i];
       const requestId = requests[i];
       await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(requestId))

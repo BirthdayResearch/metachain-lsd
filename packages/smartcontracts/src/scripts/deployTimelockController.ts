@@ -1,8 +1,8 @@
+import { BigNumberish } from "ethers";
 import { ethers } from "hardhat";
 
 import { TimelockController } from "../generated";
 import { verify } from "./utils/verify";
-import { BigNumberish } from "ethers";
 
 export async function deployTimelockController({
   minDelay,
