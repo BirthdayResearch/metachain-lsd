@@ -11,6 +11,14 @@
     "dev": {
       "cache": false
     },
+    "test:hardhat": {
+      "inputs": ["src/**", "tests/**"],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "inputs": ["src/**", "test/**"],
+      "dependsOn": []
+    },
     "generate": {
       "cache": false,
       "dependsOn": ["^build"]
