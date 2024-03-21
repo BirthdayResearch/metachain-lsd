@@ -17,7 +17,7 @@
     },
     "test": {
       "inputs": ["src/**", "test/**"],
-      "dependsOn": []
+      "dependsOn": ["^build"]
     },
     "generate": {
       "cache": false,
