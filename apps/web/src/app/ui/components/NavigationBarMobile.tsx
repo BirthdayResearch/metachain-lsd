@@ -41,6 +41,7 @@ export default function NavigationBarMobile({
         <ul className="pt-5">
           {navigationTabs.map((link) => (
             <li
+              key={link.label}
               className="py-7 md:mx-12 mx-5 lg:py-3 border-b border-light-1000/10 font-semibold text-sm cursor-pointer"
               onClick={() => {
                 if (parentRef) {
