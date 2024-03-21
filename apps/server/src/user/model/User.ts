@@ -1,16 +1,20 @@
 import { SubscriptionStatus } from "@prisma/client";
 import {
   IsDefined,
-  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  Matches,
 } from "class-validator";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export class createUserDTO {
   @IsDefined()
   @IsNotEmpty()
-  @IsEmail()
+  @Matches(emailRegex, {
+    message: "Invalid email format",
+  })
   email: string;
 
   @IsOptional()
