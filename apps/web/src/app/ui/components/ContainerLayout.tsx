@@ -68,19 +68,18 @@ export default function ContainerLayout({
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <div
-              ref={contentRef}
-              className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-0 text-light-1000"
-            >
+            <div ref={contentRef}>
               <Header parentReference={contentRef} />
-              {children}
-              <Next13ProgressBar
-                height="4px"
-                color="#69FF23"
-                options={{ showSpinner: true }}
-                showOnShallow
-              />
-              <Footer parentReference={contentRef} />
+              <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-0 text-light-1000">
+                {children}
+                <Next13ProgressBar
+                  height="4px"
+                  color="#69FF23"
+                  options={{ showSpinner: true }}
+                  showOnShallow
+                />
+                <Footer parentReference={contentRef} />
+              </div>
             </div>
           </ConnectKitProvider>
         </WagmiConfig>
