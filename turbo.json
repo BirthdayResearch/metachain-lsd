@@ -11,13 +11,20 @@
     "dev": {
       "cache": false
     },
+    "docker:pull": {
+      "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
+      "dependsOn": ["^build"]
+    },
     "test:hardhat": {
       "inputs": ["src/**", "tests/**"],
       "dependsOn": ["^build"]
     },
     "test": {
       "inputs": ["src/**", "test/**"],
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build", 
+        "docker:pull"
+      ]
     },
     "generate": {
       "cache": false,
@@ -26,6 +33,10 @@
     "build": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
       "outputs": ["dist/**", ".next/**"]
+    },
+    "generate:prisma": {
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["node_modules/@prisma/client"]
     },
     "lint": {
       "outputs": []
