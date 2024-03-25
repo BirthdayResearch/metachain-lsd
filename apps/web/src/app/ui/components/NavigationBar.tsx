@@ -36,11 +36,11 @@ export default function NavigationBar({
         "py-1.5 px-5 justify-center items-center gap-x-1",
       )}
     >
-      <ul className="flex">
+      <ul className="flex h-[48px] items-center justify-center ">
         {navigationTabs.map((link) => (
           <li
             key={link.label}
-            className="flex h-[48px] items-center justify-center text-sm text-light-1000 font-bold active:text-opacity-10 p-2.5 px-4 rounded-[30px] cursor-pointer"
+            className="text-sm text-light-1000 font-bold active:text-opacity-10 p-2.5 px-4 rounded-[30px] cursor-pointer"
             onClick={() => {
               if (parentRef) {
                 const targetElement = parentRef.querySelector(`${link.href}`);
