@@ -36,7 +36,7 @@ export default function NavigationBar({
         "py-1.5 px-5 justify-center items-center gap-x-1",
       )}
     >
-      <ul className="flex h-[48px] items-center justify-center ">
+      <ul className="flex h-[48px] items-center justify-center">
         {navigationTabs.map((link) => (
           <li
             key={link.label}
