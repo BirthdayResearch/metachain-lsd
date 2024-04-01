@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /** @notice @dev
  * This error occurs when `_requestId` is invalid or zero
@@ -51,27 +51,28 @@ error NotOwner(address _sender, address _owner);
 contract MarbleLsdQueue {
   using EnumerableSet for EnumerableSet.UintSet;
 
-  /** 
+  /**
    * @dev Queue for withdrawal requests, indexes (requestId) start from 1
    */
   bytes32 internal constant QUEUE_POSITION = keccak256("WithdrawalQueue.queue");
 
-  /** 
+  /**
    * @dev Withdrawal requests mapped to the owners
    */
-  bytes32 internal constant REQUEST_BY_OWNER_POSITION = keccak256("WithdrawalQueue.requestsByOwner");
+  bytes32 internal constant REQUEST_BY_OWNER_POSITION =
+    keccak256("WithdrawalQueue.requestsByOwner");
 
-  /** 
+  /**
    * @dev Last index in request queue
    */
   uint256 public lastRequestId;
 
-  /** 
+  /**
    * @dev Last index of finalized request in the queue
    */
   uint256 public lastFinalizedRequestId;
 
-  /** 
+  /**
    * @dev Last index of finalized request in the queue
    */
   uint256 public lockedAssets;
@@ -86,15 +87,15 @@ contract MarbleLsdQueue {
    * @param fees Amount of fees that being charged
    */
   event WithdrawalRequested(
-      uint256 indexed requestId,
-      address indexed owner,
-      address indexed receiver,
-      uint256 assets,
-      uint256 shares,
-      uint256 fees
+    uint256 indexed requestId,
+    address indexed owner,
+    address indexed receiver,
+    uint256 assets,
+    uint256 shares,
+    uint256 fees
   );
 
-  /** 
+  /**
    * @notice Emitted when withdrawal requested is finalized
    * @param from Request id from where finalisation started
    * @param to Request id from where finalisation ended
@@ -110,7 +111,7 @@ contract MarbleLsdQueue {
     uint256 timestamp
   );
 
-  /** 
+  /**
    * @notice Emitted when withdrawal is claimed
    * @param requestId Request id for which claimed
    * @param owner Recieving assets
@@ -129,7 +130,7 @@ contract MarbleLsdQueue {
     uint256 fees
   );
 
-  /** 
+  /**
    * @notice Structure representing a request for withdrawal
    */
   struct WithdrawalRequest {
@@ -149,7 +150,7 @@ contract MarbleLsdQueue {
     bool claimed;
   }
 
-  /** 
+  /**
    * @notice Output format struct for `_getWithdrawalStatus()` method
    */
   struct WithdrawalRequestStatus {
@@ -171,56 +172,75 @@ contract MarbleLsdQueue {
     bool isClaimed;
   }
 
-  /** 
+  /**
    * @dev Queue constructor
    */
   function _initializeQueue() internal {
     // setting dummy zero structs in checkpoints and queue beginning
     // to avoid uint underflows and related if-branches
     // 0-index is reserved as 'not_found' response in the interface everywhere
-    _getQueue()[0] = WithdrawalRequest(0, 0, 0, address(0), address(0), uint40(block.timestamp), true);
+    _getQueue()[0] = WithdrawalRequest(
+      0,
+      0,
+      0,
+      address(0),
+      address(0),
+      uint40(block.timestamp),
+      true
+    );
   }
 
-  /** 
+  /**
    * @notice Returns status for requests with provided ids
    * @param _requestIds array of withdrawal request ids
    */
-  function getWithdrawalStatus(uint256[] calldata _requestIds) external view returns (WithdrawalRequestStatus[] memory statuses) {
+  function getWithdrawalStatus(
+    uint256[] calldata _requestIds
+  ) external view returns (WithdrawalRequestStatus[] memory statuses) {
     statuses = new WithdrawalRequestStatus[](_requestIds.length);
     for (uint256 i = 0; i < _requestIds.length; ++i) {
       statuses[i] = _getStatus(_requestIds[i]);
     }
   }
 
-  /** 
+  /**
    * @notice Returns all withdrawal requests that belongs to the `_owner` address
    * @param _owner Owner address
    */
-  function getWithdrawalRequests(address _owner) external view returns (uint256[] memory requestsIds) {
+  function getWithdrawalRequests(
+    address _owner
+  ) external view returns (uint256[] memory requestsIds) {
     return _getRequestsByOwner()[_owner].values();
   }
 
-  /** 
+  /**
    * @notice Checks finalization batches, calculates required Assets and amount of shares to burn
    * @param _batches Sorted array of request Ids for finalization batches
    */
-  function prefinalize(uint256[] calldata _batches) external view returns (uint256 assetsToLock, uint256 sharesToBurn) {
+  function prefinalize(
+    uint256[] calldata _batches
+  ) external view returns (uint256 assetsToLock, uint256 sharesToBurn) {
     if (_batches.length == 0) revert EmptyBatches();
 
-    if (_batches[0] <= lastFinalizedRequestId) revert InvalidRequestId(_batches[0]);
-    if (_batches[_batches.length - 1] > lastRequestId) revert InvalidRequestId(_batches[_batches.length - 1]);
+    if (_batches[0] <= lastFinalizedRequestId)
+      revert InvalidRequestId(_batches[0]);
+    if (_batches[_batches.length - 1] > lastRequestId)
+      revert InvalidRequestId(_batches[_batches.length - 1]);
 
     uint256 currentBatchIndex;
     uint256 prevBatchEndRequestId = lastFinalizedRequestId;
     WithdrawalRequest memory prevBatchEnd = _getQueue()[prevBatchEndRequestId];
     while (currentBatchIndex < _batches.length) {
       uint256 batchEndRequestId = _batches[currentBatchIndex];
-      if (batchEndRequestId <= prevBatchEndRequestId) revert BatchesAreNotSorted();
+      if (batchEndRequestId <= prevBatchEndRequestId)
+        revert BatchesAreNotSorted();
 
       WithdrawalRequest memory batchEnd = _getQueue()[batchEndRequestId];
 
-      uint256 assetsDiff = batchEnd.cumulativeAssets - prevBatchEnd.cumulativeAssets;
-      uint256 sharesDiff = batchEnd.cumulativeShares - prevBatchEnd.cumulativeShares;
+      uint256 assetsDiff = batchEnd.cumulativeAssets -
+        prevBatchEnd.cumulativeAssets;
+      uint256 sharesDiff = batchEnd.cumulativeShares -
+        prevBatchEnd.cumulativeShares;
       uint256 feesDiff = batchEnd.cumulativeFees - prevBatchEnd.cumulativeFees;
       // add assets and shares and fees
       assetsToLock = assetsToLock + assetsDiff + feesDiff;
@@ -228,42 +248,65 @@ contract MarbleLsdQueue {
       // increment
       prevBatchEndRequestId = batchEndRequestId;
       prevBatchEnd = batchEnd;
-      unchecked{ ++currentBatchIndex; }
+      unchecked {
+        ++currentBatchIndex;
+      }
     }
   }
 
-  /** 
+  /**
    * @notice Return the number of unfinalized requests in the queue
    */
   function unfinalizedRequestNumber() external view returns (uint256) {
     return lastRequestId - lastFinalizedRequestId;
   }
 
-  /** 
+  /**
    * @notice Returns the amount of assets and fees in the queue yet to be finalized
    */
-  function unfinalizedAssets() external view returns (uint256 assets, uint256 fees) {
-    assets =  _getQueue()[lastRequestId].cumulativeAssets - _getQueue()[lastFinalizedRequestId].cumulativeAssets;
-    fees =  _getQueue()[lastRequestId].cumulativeFees - _getQueue()[lastFinalizedRequestId].cumulativeFees;
+  function unfinalizedAssets()
+    external
+    view
+    returns (uint256 assets, uint256 fees)
+  {
+    assets =
+      _getQueue()[lastRequestId].cumulativeAssets -
+      _getQueue()[lastFinalizedRequestId].cumulativeAssets;
+    fees =
+      _getQueue()[lastRequestId].cumulativeFees -
+      _getQueue()[lastFinalizedRequestId].cumulativeFees;
   }
 
-  /** 
+  /**
    * @dev Finalize requests in the queue
    * - MUST emit the WithdrawalsFinalized event.
    * @param _lastRequestIdToBeFinalized Finalize requests from last finalized one up to
    */
-  function _finalize(uint256 _lastRequestIdToBeFinalized, uint256 _amountOfAssets) internal {
-    if (_lastRequestIdToBeFinalized > lastRequestId) revert InvalidRequestId(_lastRequestIdToBeFinalized);
-    if (_lastRequestIdToBeFinalized <= lastFinalizedRequestId) revert InvalidRequestId(_lastRequestIdToBeFinalized);
+  function _finalize(
+    uint256 _lastRequestIdToBeFinalized,
+    uint256 _amountOfAssets
+  ) internal {
+    if (_lastRequestIdToBeFinalized > lastRequestId)
+      revert InvalidRequestId(_lastRequestIdToBeFinalized);
+    if (_lastRequestIdToBeFinalized <= lastFinalizedRequestId)
+      revert InvalidRequestId(_lastRequestIdToBeFinalized);
 
-    WithdrawalRequest memory lastFinalizedRequest = _getQueue()[lastFinalizedRequestId];
-    WithdrawalRequest memory requestToFinalize = _getQueue()[_lastRequestIdToBeFinalized];
+    WithdrawalRequest memory lastFinalizedRequest = _getQueue()[
+      lastFinalizedRequestId
+    ];
+    WithdrawalRequest memory requestToFinalize = _getQueue()[
+      _lastRequestIdToBeFinalized
+    ];
 
-    uint256 assetsToFinalize = requestToFinalize.cumulativeAssets - lastFinalizedRequest.cumulativeAssets;
-    uint256 feesToFinalize = requestToFinalize.cumulativeFees - lastFinalizedRequest.cumulativeFees;
+    uint256 assetsToFinalize = requestToFinalize.cumulativeAssets -
+      lastFinalizedRequest.cumulativeAssets;
+    uint256 feesToFinalize = requestToFinalize.cumulativeFees -
+      lastFinalizedRequest.cumulativeFees;
     uint256 totalAssets = assetsToFinalize + feesToFinalize;
-    uint256 sharesToBurn = requestToFinalize.cumulativeShares - lastFinalizedRequest.cumulativeShares;
-    if (_amountOfAssets != totalAssets) revert InvalidAssetsToFinalize(_amountOfAssets, totalAssets);
+    uint256 sharesToBurn = requestToFinalize.cumulativeShares -
+      lastFinalizedRequest.cumulativeShares;
+    if (_amountOfAssets != totalAssets)
+      revert InvalidAssetsToFinalize(_amountOfAssets, totalAssets);
 
     uint256 firstRequestIdToFinalize = lastFinalizedRequestId + 1;
     // update Locked assets
@@ -271,22 +314,34 @@ contract MarbleLsdQueue {
     lastFinalizedRequestId = _lastRequestIdToBeFinalized;
 
     emit WithdrawalsFinalized(
-        firstRequestIdToFinalize,
-        _lastRequestIdToBeFinalized,
-        _amountOfAssets,
-        sharesToBurn,
-        block.timestamp
+      firstRequestIdToFinalize,
+      _lastRequestIdToBeFinalized,
+      _amountOfAssets,
+      sharesToBurn,
+      block.timestamp
     );
   }
 
-  /** 
+  /**
    * @dev Claim the request and transfer locked assets to `_recipient`.
    * MUST emit the WithdrawalClaimed event.
    * @param _requestId Id of the request to claim
    */
-  function _claim(uint256 _requestId, address _owner) internal returns (address receiver, uint256 assetsToTransfer, uint256 sharesToBurn, uint256 feesToTransfer ) {
+  function _claim(
+    uint256 _requestId,
+    address _owner
+  )
+    internal
+    returns (
+      address receiver,
+      uint256 assetsToTransfer,
+      uint256 sharesToBurn,
+      uint256 feesToTransfer
+    )
+  {
     if (_requestId == 0) revert InvalidRequestId(_requestId);
-    if (_requestId > lastFinalizedRequestId) revert RequestNotFoundOrNotFinalized(_requestId);
+    if (_requestId > lastFinalizedRequestId)
+      revert RequestNotFoundOrNotFinalized(_requestId);
 
     WithdrawalRequest storage request = _getQueue()[_requestId];
 
@@ -303,18 +358,18 @@ contract MarbleLsdQueue {
     lockedAssets = lockedAssets - assetsToTransfer - feesToTransfer;
   }
 
-  /** 
+  /**
    * @dev Send values to _recipient address
    * @param _recipient Recipient address
    * @param _amount Amount to send
    */
   function _sendValue(address _recipient, uint256 _amount) internal {
     if (address(this).balance < _amount) revert NotEnoughAssets();
-    (bool success,) = _recipient.call{ value: _amount }("");
+    (bool success, ) = _recipient.call{value: _amount}("");
     if (!success) revert CantSendValueRecipientMayHaveReverted();
   }
 
-  /** 
+  /**
    * @dev Creates a new `WithdrawalRequest` in the queue
    */
   function _enqueue(
@@ -331,28 +386,38 @@ contract MarbleLsdQueue {
     uint256 cumulativeFees = lastRequest.cumulativeFees + _fees;
 
     requestId = lastRequestId + 1;
-    WithdrawalRequest memory newRequest =  WithdrawalRequest(
-        cumulativeAssets,
-        cumulativeShares,
-        cumulativeFees,
-        _owner,
-        _receiver,
-        uint40(block.timestamp),
-        false
+    WithdrawalRequest memory newRequest = WithdrawalRequest(
+      cumulativeAssets,
+      cumulativeShares,
+      cumulativeFees,
+      _owner,
+      _receiver,
+      uint40(block.timestamp),
+      false
     );
     _getQueue()[requestId] = newRequest;
     assert(_getRequestsByOwner()[_owner].add(requestId));
     // update last request Id
     lastRequestId = requestId;
-    emit WithdrawalRequested(requestId, _owner, _receiver, _assets, _shares, _fees);
+    emit WithdrawalRequested(
+      requestId,
+      _owner,
+      _receiver,
+      _assets,
+      _shares,
+      _fees
+    );
   }
 
-  /** 
+  /**
    * @dev Returns the status of the withdrawal
    * @param _requestId Request id
    */
-  function _getStatus(uint256 _requestId) internal view returns (WithdrawalRequestStatus memory status) {
-    if (_requestId == 0 || _requestId > lastRequestId) revert InvalidRequestId(_requestId);
+  function _getStatus(
+    uint256 _requestId
+  ) internal view returns (WithdrawalRequestStatus memory status) {
+    if (_requestId == 0 || _requestId > lastRequestId)
+      revert InvalidRequestId(_requestId);
 
     WithdrawalRequest memory request = _getQueue()[_requestId];
     WithdrawalRequest memory previousRequest = _getQueue()[_requestId - 1];
@@ -369,20 +434,28 @@ contract MarbleLsdQueue {
     );
   }
 
-  /** 
+  /**
    * @dev Returns queue storage slot assignment
    */
-  function _getQueue() internal pure returns (mapping(uint256 => WithdrawalRequest) storage queue) {
+  function _getQueue()
+    internal
+    pure
+    returns (mapping(uint256 => WithdrawalRequest) storage queue)
+  {
     bytes32 position = QUEUE_POSITION;
     assembly {
       queue.slot := position
     }
   }
 
-  /** 
+  /**
    * @dev Returns request by owner storage slot assignment
    */
-  function _getRequestsByOwner() internal pure returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner) {
+  function _getRequestsByOwner()
+    internal
+    pure
+    returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner)
+  {
     bytes32 position = REQUEST_BY_OWNER_POSITION;
     assembly {
       requestsByOwner.slot := position

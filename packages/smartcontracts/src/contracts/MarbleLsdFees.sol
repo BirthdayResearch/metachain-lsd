@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT 
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import '@openzeppelin/contracts/utils/math/Math.sol';
-import './MarbleLsdAccessControl.sol';
+import "@openzeppelin/contracts/utils/math/Math.sol";
+import "./MarbleLsdAccessControl.sol";
 
-/** 
+/**
  * @notice @dev
  * This error occurs when `_fees` is invalid
  */
@@ -57,7 +57,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
 
   /**
    * @notice Emitted when the fee reciepient wallet address is changed
-   * @param oldAddress The old reciepient address 
+   * @param oldAddress The old reciepient address
    * @param newAddress The new reciepient address
    * @param owner Owner address
    */
@@ -67,14 +67,14 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
     address owner
   );
 
-  /** 
+  /**
    * @dev Fees constructor
    */
   function _initializeFees(address _feesRecipientAddress) internal {
     // set initial fees
-    mintingFees =  50; // 50 for 0.5%
-    redemptionFees =  75; // 75 for 0.75%
-    performanceFees =  800; // 800 for 8%
+    mintingFees = 50; // 50 for 0.5%
+    redemptionFees = 75; // 75 for 0.75%
+    performanceFees = 800; // 800 for 8%
     feesRecipientAddress = _feesRecipientAddress;
   }
 
@@ -82,7 +82,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Used by addresses with admin roles to set the fees reciepiant address
    * @param _newAddress New fees reciepiant
    */
-  function updateFeesRecipientAddress(address _newAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateFeesRecipientAddress(
+    address _newAddress
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = feesRecipientAddress;
     feesRecipientAddress = _newAddress;
@@ -96,7 +98,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Used by addresses with adminstarator roles to set the new minting fees
    * @param _fees New amount to be set as minting fees
    */
-  function updateMintingFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
+  function updateMintingFees(
+    uint16 _fees
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
@@ -107,7 +111,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Used by addresses with adminstarator roles to set the new minting fees
    * @param _fees New amount to be set as minting fees
    */
-  function updateRedemptionFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
+  function updateRedemptionFees(
+    uint16 _fees
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
@@ -118,7 +124,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Used by addresses with adminstarator roles to set the new performance fees
    * @param _fees New amount to be set as minting fees
    */
-  function updatePerformanceFees(uint16 _fees) external onlyRole(ADMINISTRATOR_ROLE) {
+  function updatePerformanceFees(
+    uint16 _fees
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;
@@ -131,7 +139,10 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Calculates the fees that should be added to an amount `assets` that does not already include fees.
    * Used in {mint} and {withdraw} operations.
    */
-  function _feeOnRaw(uint256 assets, uint256 feeBasisPoints) internal pure returns (uint256) {
+  function _feeOnRaw(
+    uint256 assets,
+    uint256 feeBasisPoints
+  ) internal pure returns (uint256) {
     return assets.mulDiv(feeBasisPoints, _BASIS_POINT_SCALE, Math.Rounding.Up);
   }
 
@@ -139,7 +150,15 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Calculates the fee part of an amount `assets` that already includes fees.
    * Used in {deposit} and {redeem} operations.
    */
-  function _feeOnTotal(uint256 assets, uint256 feeBasisPoints) internal pure returns (uint256) {
-    return assets.mulDiv(feeBasisPoints, feeBasisPoints + _BASIS_POINT_SCALE, Math.Rounding.Up);
+  function _feeOnTotal(
+    uint256 assets,
+    uint256 feeBasisPoints
+  ) internal pure returns (uint256) {
+    return
+      assets.mulDiv(
+        feeBasisPoints,
+        feeBasisPoints + _BASIS_POINT_SCALE,
+        Math.Rounding.Up
+      );
   }
 }

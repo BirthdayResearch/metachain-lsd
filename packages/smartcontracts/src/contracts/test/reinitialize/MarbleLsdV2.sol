@@ -1,76 +1,82 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
-import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol';
-import '@openzeppelin/contracts/utils/math/Math.sol';
-import '../../MarbleLsdAccessControl.sol';
-import '../../MarbleLsdQueue.sol';
-import '../../MarbleLsdFees.sol';
-import '../../ShareToken.sol';
-import '../../Pausable.sol';
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
+import "../../MarbleLsdAccessControl.sol";
+import "../../MarbleLsdQueue.sol";
+import "../../MarbleLsdFees.sol";
+import "../../ShareToken.sol";
+import "../../Pausable.sol";
 
-/** 
+/**
  * @notice @dev
  * This error occurs when transfer of Staked DeFi failed
  */
 error WALLET_TRANSFER_FAILED();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when withdrawal of Staked DeFi failed
  */
 error WITHDRAWAL_FAILED();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when `_amount` is zero
  */
 error AMOUNT_IS_ZERO();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum deposit amount
  */
 error LESS_THAN_MIN_DEPOSIT();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum withdrawal amount
  */
 error LESS_THAN_MIN_WITHDRAWAL();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when withdrawal `assets` is more than contract balance
  */
 error INSUFFICIENT_WITHDRAW_AMOUNT();
 
-/** 
+/**
  * @notice @dev
  * This error occurs when attempted to deposit more assets than the max amount for `receiver`.
  */
 error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
 
-/** 
+/**
  * @notice @dev
  * Attempted to withdrawal more assets than the max amount for `receiver`.
  */
 error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
 
-/** 
+/**
  * @notice @dev
  * Attempted to redeem more assets than the max amount for `receiver`.
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
-contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessControl, Pausable, MarbleLsdQueue, MarbleLsdFees {
+contract MarbleLsdV2 is
+  UUPSUpgradeable,
+  EIP712Upgradeable,
+  MarbleLsdAccessControl,
+  Pausable,
+  MarbleLsdQueue,
+  MarbleLsdFees
+{
   using Math for uint256;
 
-
   ShareToken public shareToken;
-  
-  string public constant NAME ='MARBLE_LSD';
+
+  string public constant NAME = "MARBLE_LSD";
 
   address public walletAddress;
 
@@ -98,14 +104,10 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
   /**
    * @notice Emitted when rewards get distributed
    * @param sender Address initiated rewards
-   * @param assets Amount of asset that being rewarded 
+   * @param assets Amount of asset that being rewarded
    * @param fees Amount of asset that being charged as fees for reward distribution
    */
-  event Rewards(
-    address indexed sender,
-    uint256 assets,
-    uint256 fees
-  );
+  event Rewards(address indexed sender, uint256 assets, uint256 fees);
 
   /**
    * @notice Emitted when the wallet address is changed
@@ -144,22 +146,22 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    */
   event FLUSH_FUND(address indexed walletAddress, uint256 amount);
 
-  /** 
+  /**
    * @dev Constructor to disable initalization of implementation contract
    */
   constructor() {
     _disableInitializers();
   }
 
-  function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
+  function _authorizeUpgrade(
+    address newImplementation
+  ) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
   /**
    * @notice To initialize this contract (No constructor as part of the proxy pattern)
    * @param _version Updated version of latest smart contract
    */
-  function initialize(
-    uint8 _version
-  ) external reinitializer(_version) {
+  function initialize(uint8 _version) external reinitializer(_version) {
     __EIP712_init(NAME, StringsUpgradeable.toString(_version));
   }
 
@@ -172,7 +174,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     uint256 rewards = msg.value - fees;
     totalRewardAssets += rewards;
     emit Rewards(_msgSender(), rewards, fees);
-    
+
     if (fees > 0 && feesRecipientAddress != address(this)) {
       _sendValue(feesRecipientAddress, fees);
     }
@@ -205,7 +207,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
    * from.
    */
-  function convertToShares(uint256 _assets) public view virtual returns (uint256) {
+  function convertToShares(
+    uint256 _assets
+  ) public view virtual returns (uint256) {
     return _convertToShares(_assets, Math.Rounding.Down);
   }
 
@@ -222,7 +226,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
    * from.
    */
-  function convertToAssets(uint256 _shares) public view virtual returns (uint256) {
+  function convertToAssets(
+    uint256 _shares
+  ) public view virtual returns (uint256) {
     return _convertToAssets(_shares, Math.Rounding.Down);
   }
 
@@ -260,7 +266,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
   function maxRedeem(address _owner) public view virtual returns (uint256) {
     return _shareBalanceOf(_owner);
   }
-  
+
   /**
    * @dev Allows an on-chain or off-chain user to simulate the effects of their deposit at the current block, given
    * current on-chain conditions.
@@ -276,7 +282,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Any unfavorable discrepancy between convertToShares and previewDeposit SHOULD be considered slippage in
    * share price or some other type of condition, meaning the depositor will lose assets by depositing.
    */
-  function previewDeposit(uint256 _assets) public view virtual returns (uint256) {
+  function previewDeposit(
+    uint256 _assets
+  ) public view virtual returns (uint256) {
     uint256 fees = _feeOnTotal(_assets, mintingFees);
     return _convertToShares(_assets - fees, Math.Rounding.Down);
   }
@@ -296,7 +304,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Any unfavorable discrepancy between convertToShares and previewWithdrawal SHOULD be considered slippage in
    * share price or some other type of condition, meaning the depositor will lose assets by depositing.
    */
-  function previewWithdrawal(uint256 _assets) public view virtual returns (uint256) {
+  function previewWithdrawal(
+    uint256 _assets
+  ) public view virtual returns (uint256) {
     uint256 fees = _feeOnRaw(_assets, redemptionFees);
     return _convertToShares(_assets + fees, Math.Rounding.Up);
   }
@@ -316,7 +326,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Any unfavorable discrepancy between convertToAssets and previewRedeem SHOULD be considered slippage in
    * share price or some other type of condition, meaning the depositor will lose assets by redeeming.
    */
-  function previewRedeem(uint256 _shares) public view virtual returns (uint256) {
+  function previewRedeem(
+    uint256 _shares
+  ) public view virtual returns (uint256) {
     uint256 assets = _convertToAssets(_shares, Math.Rounding.Down);
     return assets - _feeOnTotal(assets, redemptionFees);
   }
@@ -324,8 +336,10 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
   /**
    * @notice Mints shares to receiver by depositing exact amount of underlying asset.
    */
-  function deposit(address _receiver) payable public virtual whenDepositNotPaused returns (uint256) {
-    if (msg.value <= minDeposit) revert LESS_THAN_MIN_DEPOSIT();
+  function deposit(
+    address _receiver
+  ) public payable virtual whenDepositNotPaused returns (uint256) {
+    if (msg.value < minDeposit) revert LESS_THAN_MIN_DEPOSIT();
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
     uint256 maxAssets = maxDeposit(_receiver);
@@ -345,7 +359,10 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @param _receiver Receiver address
    * @return requestId Request id of submitted request to track status
    */
-  function requestWithdrawal(uint256 _assets, address _receiver) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
+  function requestWithdrawal(
+    uint256 _assets,
+    address _receiver
+  ) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
     // check min withdrawal
     if (_assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     // check zero address
@@ -353,12 +370,19 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
 
     // check if balance of asset is less/equal to withdrawal amount
     uint256 maxAssets = maxWithdrawal(_msgSender());
-    if (_assets > maxAssets) revert ExceededMaxWithdrawal(_receiver, _assets, maxAssets);
-    
+    if (_assets > maxAssets)
+      revert ExceededMaxWithdrawal(_receiver, _assets, maxAssets);
+
     uint256 shares = previewWithdrawal(_assets);
     uint256 fees = _feeOnRaw(_assets, redemptionFees);
 
-    requestId = _requestWithdrawal(_msgSender(), _receiver, _assets, shares, fees);
+    requestId = _requestWithdrawal(
+      _msgSender(),
+      _receiver,
+      _assets,
+      shares,
+      fees
+    );
   }
 
   /**
@@ -367,7 +391,10 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @param _receiver Receiver address
    * @return requestId Request id of submitted request to track status
    */
-  function requestRedeem(uint256 _shares, address _receiver) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
+  function requestRedeem(
+    uint256 _shares,
+    address _receiver
+  ) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
     // check zero amount
     if (_shares == 0) revert AMOUNT_IS_ZERO();
     // check zero address
@@ -375,12 +402,19 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
 
     uint256 maxShares = maxRedeem(_msgSender());
     // check if balance of shares token is less/equal to withdrawal amount
-    if (_shares > maxShares) revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
+    if (_shares > maxShares)
+      revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
     uint256 fees = _feeOnRaw(assets, redemptionFees);
     if (assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
-    requestId = _requestWithdrawal(_msgSender(), _receiver, assets, _shares, fees);
+    requestId = _requestWithdrawal(
+      _msgSender(),
+      _receiver,
+      assets,
+      _shares,
+      fees
+    );
   }
 
   /**
@@ -407,7 +441,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @dev Assets to finalize all the requests should be calculated using `prefinalize()` and sent along
    * @param _lastRequestIdToBeFinalized Finalize requests from last finalized one up to
    */
-  function finalize(uint256 _lastRequestIdToBeFinalized) external payable onlyRole(FINALIZE_ROLE) {
+  function finalize(
+    uint256 _lastRequestIdToBeFinalized
+  ) external payable onlyRole(FINALIZE_ROLE) {
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
     _finalize(_lastRequestIdToBeFinalized, msg.value);
   }
@@ -420,7 +456,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    */
   function claimWithdrawals(uint256[] calldata _requestIds) external {
     for (uint256 i = 0; i < _requestIds.length; ++i) {
-      claimWithdrawal(_requestIds[i]);       
+      claimWithdrawal(_requestIds[i]);
     }
   }
 
@@ -431,13 +467,25 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * - Reverts if msg sender is not an owner of the requests
    */
   function claimWithdrawal(uint256 _requestId) public {
-    (address receiver, uint256 assetsToTransfer, uint256 sharesToBurn, uint256 feesToTransfer) = _claim(_requestId, _msgSender());
+    (
+      address receiver,
+      uint256 assetsToTransfer,
+      uint256 sharesToBurn,
+      uint256 feesToTransfer
+    ) = _claim(_requestId, _msgSender());
     _sendValue(receiver, assetsToTransfer);
     if (feesToTransfer > 0 && feesRecipientAddress != address(this)) {
       _sendValue(feesRecipientAddress, feesToTransfer);
     }
     totalStakedAssets = totalStakedAssets - assetsToTransfer - feesToTransfer;
-    emit WithdrawalClaimed(_requestId, _msgSender(), receiver, assetsToTransfer, sharesToBurn, feesToTransfer);
+    emit WithdrawalClaimed(
+      _requestId,
+      _msgSender(),
+      receiver,
+      assetsToTransfer,
+      sharesToBurn,
+      feesToTransfer
+    );
     shareToken.burn(address(this), sharesToBurn);
   }
 
@@ -445,7 +493,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Used by addresses with Admin and Operational roles to set the new flush receive address
    * @param _newAddress New address to be flushed to
    */
-  function updateWalletAddress(address _newAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateWalletAddress(
+    address _newAddress
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = walletAddress;
     walletAddress = _newAddress;
@@ -457,7 +507,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Used by addresses with Admin and Operational roles to set the new min deposit amount
    * @param _amount New amount to be set as min deposit
    */
-  function updateMinDeposit(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateMinDeposit(
+    uint256 _amount
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldDeposit = minDeposit;
@@ -470,7 +522,9 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
    * @notice Used by addresses with Admin and Operational roles to set the new min Withdrawal amount
    * @param _amount New amount to be set as min deposit
    */
-  function updateMinWithdrawal(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function updateMinWithdrawal(
+    uint256 _amount
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldWithdrawal = minWithdrawal;
@@ -489,30 +543,45 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
   /**
    * @dev Internal balance function, returns the amount of tokens owned by `account`.
    */
-  function _shareBalanceOf(address _account) internal view virtual returns (uint256) {
+  function _shareBalanceOf(
+    address _account
+  ) internal view virtual returns (uint256) {
     return shareToken.balanceOf(_account);
   }
 
   /**
    * @dev Internal conversion function (from assets to shares) with support for rounding direction.
    */
-  function _convertToShares(uint256 _assets, Math.Rounding _rounding) internal view virtual returns (uint256) {
+  function _convertToShares(
+    uint256 _assets,
+    Math.Rounding _rounding
+  ) internal view virtual returns (uint256) {
     uint256 supply = totalShares(); // Saves an extra SLOAD if totalShares is non-zero.
-    return supply == 0 ? _assets : _assets.mulDiv(supply, totalAssets(), _rounding);
+    return
+      supply == 0 ? _assets : _assets.mulDiv(supply, totalAssets(), _rounding);
   }
 
   /**
    * @dev Internal conversion function (from shares to assets) with support for rounding direction.
    */
-  function _convertToAssets(uint256 _shares, Math.Rounding _rounding) internal view virtual returns (uint256) {
+  function _convertToAssets(
+    uint256 _shares,
+    Math.Rounding _rounding
+  ) internal view virtual returns (uint256) {
     uint256 supply = totalShares(); // Saves an extra SLOAD if totalShares is non-zero.
-    return supply == 0 ? _shares : _shares.mulDiv(totalAssets(), supply, _rounding);
+    return
+      supply == 0 ? _shares : _shares.mulDiv(totalAssets(), supply, _rounding);
   }
 
   /**
    * @dev Internal deposit function with common workflow.
    */
-  function _deposit(address _owner, address _receiver, uint256 _assets, uint256 _shares) internal virtual {
+  function _deposit(
+    address _owner,
+    address _receiver,
+    uint256 _assets,
+    uint256 _shares
+  ) internal virtual {
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
     uint256 fees = _feeOnTotal(_assets, mintingFees);
     uint256 assetsToBeStaked = _assets - fees;
@@ -538,7 +607,7 @@ contract MarbleLsdV2 is UUPSUpgradeable, EIP712Upgradeable, MarbleLsdAccessContr
     uint256 _shares,
     uint256 _fees
   ) internal returns (uint256 requestId) {
-    // Transfer shares 
+    // Transfer shares
     shareToken.transferFrom(_owner, address(this), _shares);
     // Create entry in queue for withdrawal request
     requestId = _enqueue(_owner, _receiver, _assets, _shares, _fees);
