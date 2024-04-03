@@ -21,7 +21,7 @@ import SecuredStoreAPI from "../../../api/secure-storage";
 import Logging from "@/api/logging";
 import { ContractProvider } from "@/app/lib/context/ContractContext";
 import { NetworkEnvironmentProvider } from "@/app/lib/context/NetworkEnvironmentContext";
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Footer from "@/app/ui/components/Footer";
 
 export const metadata: Metadata = {
@@ -69,6 +69,12 @@ export default function ContainerLayout({
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <html lang="en">
       <body
@@ -76,41 +82,30 @@ export default function ContainerLayout({
       >
         <WagmiConfig config={config}>
           <ConnectKitProvider options={{ initialChainId: 0 }}>
-            <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-              <WhaleProvider>
-                <NetworkEnvironmentProvider>
-                  <ContractProvider>
-                    <div
-                      ref={contentRef}
-                      className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
-                    >
-                      <Header parentReference={contentRef} />
-                      {children}
-                      <Next13ProgressBar
-                        height="4px"
-                        color="#69FF23"
-                        options={{ showSpinner: true }}
-                        showOnShallow
-                      />
-                      <Footer parentReference={contentRef} />
-                    </div>
-                  </ContractProvider>
-                </NetworkEnvironmentProvider>
-              </WhaleProvider>
-            </WhaleNetworkProvider>
-            <div ref={contentRef}>
-              <Header parentReference={contentRef} />
-              <div className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-0 text-light-1000">
-                {children}
-                <Next13ProgressBar
-                  height="4px"
-                  color="#69FF23"
-                  options={{ showSpinner: true }}
-                  showOnShallow
-                />
-                <Footer parentReference={contentRef} />
-              </div>
-            </div>
+            {mounted && (
+              <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+                <WhaleProvider>
+                  <NetworkEnvironmentProvider>
+                    <ContractProvider>
+                      <div
+                        ref={contentRef}
+                        className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
+                      >
+                        <Header parentReference={contentRef} />
+                        {children}
+                        <Next13ProgressBar
+                          height="4px"
+                          color="#69FF23"
+                          options={{ showSpinner: true }}
+                          showOnShallow
+                        />
+                        <Footer parentReference={contentRef} />
+                      </div>
+                    </ContractProvider>
+                  </NetworkEnvironmentProvider>
+                </WhaleProvider>
+              </WhaleNetworkProvider>
+            )}
           </ConnectKitProvider>
         </WagmiConfig>
       </body>
