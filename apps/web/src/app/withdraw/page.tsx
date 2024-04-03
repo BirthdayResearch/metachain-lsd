@@ -20,10 +20,10 @@ import { useDfiPrice } from "@/app/lib/hooks/useDfiPrice";
 import { useContractContext } from "@/app/lib/context/ContractContext";
 import { useNetworkContext } from "@waveshq/walletkit-ui";
 import DialogueBox from "@/app/stake/components/DialogueBox";
-import Statistics from "@/app/stake/components/Statistics";
+import WithdrawalsFooter from "@/app/withdraw/components/WithdrawalsFooter";
 import Image from "next/image";
 
-export default function Stake() {
+export default function Withdraw() {
   const { push } = useRouter();
 
   const { address, isConnected, status } = useAccount();
@@ -121,7 +121,7 @@ export default function Stake() {
         return "Return to Main Page";
 
       case isConnected:
-        return "Stake DFI";
+        return "Withdraw mDFI";
 
       default:
         return "Connect wallet";
@@ -137,9 +137,11 @@ export default function Stake() {
     <DialogueBox>
       <div className="grid gap-y-10">
         <div>
-          <h3 className="text-2xl font-semibold mb-8">Stake DFI</h3>
+          <h3 className="text-2xl font-semibold mb-8">Withdraw DFI</h3>
           <div className="flex w-full justify-between mb-1">
-            <span className="text-xs font-medium">Enter amount to stake</span>
+            <span className="text-xs font-medium">
+              How much do you want to withdraw?
+            </span>
             {isWalletConnected ? (
               <p>
                 <span className="opacity-40">Available: </span>
@@ -158,20 +160,18 @@ export default function Stake() {
               amount={stakeAmount}
               onChange={setStakeAmount}
               maxAmount={new BigNumber(walletBalanceAmount)}
-              value={stakedValue}
               displayPercentageBtn={isWalletConnected}
               disabled={isDepositInProgress || isDepositTxnInProgress}
               icon={
                 <Image
-                  data-testid="dfi-icon"
-                  src="/icons/dfi-icon.svg"
-                  alt="DFI icon"
-                  className="min-w-6"
-                  width={24}
-                  height={24}
-                  priority
+                  data-testid="mdfi-logo"
+                  src="/mDFI.svg"
+                  alt="mDFI Logo"
+                  width={23.7}
+                  height={23.7}
                 />
               }
+              customStyle="px-6 py-4"
             />
             <section>
               <TransactionRow
@@ -180,10 +180,7 @@ export default function Stake() {
               />
               <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
               {/* TODO fee schedule*/}
-              <TransactionRow
-                label="Estimated transaction cost"
-                value="$0.00"
-              />
+              <TransactionRow label="Max transaction cost" value="$0.00" />
             </section>
             <ConnectKitButton.Custom>
               {({ show }) => (
@@ -200,7 +197,7 @@ export default function Stake() {
           </div>
         </div>
 
-        <Statistics />
+        <WithdrawalsFooter />
       </div>
     </DialogueBox>
   );

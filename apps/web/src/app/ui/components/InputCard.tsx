@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState } from "react";
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
@@ -67,13 +66,17 @@ export function InputCard({
   displayPercentageBtn,
   maxAmount,
   disabled = false,
+  icon,
+  customStyle,
 }: {
   amount: string;
-  value: string;
+  value?: string;
   onChange: (amt: string) => void;
   displayPercentageBtn: boolean;
   maxAmount: BigNumber;
   disabled: boolean;
+  icon?: React.ReactNode;
+  customStyle?: string;
 }) {
   const [focus, setFocus] = useState(false);
   return (
@@ -86,17 +89,14 @@ export function InputCard({
         focus && "accent-1",
       )}
     >
-      <div className="flex flex-row justify-between gap-x-6 bg-white p-6 rounded-[10px] items-center">
+      <div
+        className={clsx(
+          "flex flex-row justify-between gap-x-6 bg-white p-6 rounded-[10px] items-center",
+          customStyle,
+        )}
+      >
         <div className="flex justify-center items-center text-center">
-          <Image
-            data-testid="dfi-icon"
-            src="/icons/dfi-icon.svg"
-            alt="DFI icon"
-            className="min-w-6"
-            width={24}
-            height={24}
-            priority
-          />
+          {icon}
         </div>
         <div className="flex flex-col w-full">
           <input
@@ -110,7 +110,7 @@ export function InputCard({
               onChange(e.target.value);
             }}
           />
-          <span className="text-xs font-light">${value}</span>
+          {value && <span className="text-xs font-light">${value}</span>}
         </div>
         {displayPercentageBtn ? (
           <div
