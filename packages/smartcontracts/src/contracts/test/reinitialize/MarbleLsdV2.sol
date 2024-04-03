@@ -4,11 +4,11 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/EIP712Upgradeable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-import "./MarbleLsdAccessControl.sol";
-import "./MarbleLsdQueue.sol";
-import "./MarbleLsdFees.sol";
-import "./ShareToken.sol";
-import "./Pausable.sol";
+import "../../MarbleLsdAccessControl.sol";
+import "../../MarbleLsdQueue.sol";
+import "../../MarbleLsdFees.sol";
+import "../../ShareToken.sol";
+import "../../Pausable.sol";
 
 /**
  * @notice @dev
@@ -64,7 +64,7 @@ error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
-contract MarbleLsdV1 is
+contract MarbleLsdV2 is
   UUPSUpgradeable,
   EIP712Upgradeable,
   MarbleLsdAccessControl,
@@ -159,32 +159,10 @@ contract MarbleLsdV1 is
 
   /**
    * @notice To initialize this contract (No constructor as part of the proxy pattern)
-   * @param _adminAddress Admin address who will have the DEFAULT_ADMIN_ROLE
-   * @param _administratorAddress Adminstrator address who will have the ADMINISTRATOR_ROLE
-   * @param _rewardDistributerAddress Reward distributer address who will have the REWARDS_DISTRIBUTER_ROLE
-   * @param _finalizerAddress Finalizer address who will have the FINALIZE_ROLE
-   * @param _walletAddress Wallet address who will have the all staked asset transferred
-   * @param _feesRecipientAddress Fees recipient address who will have the all fees transfered
+   * @param _version Updated version of latest smart contract
    */
-  function initialize(
-    address _adminAddress,
-    address _administratorAddress,
-    address _rewardDistributerAddress,
-    address _finalizerAddress,
-    address _walletAddress,
-    address _feesRecipientAddress
-  ) external initializer {
-    __EIP712_init(NAME, "1");
-    _initializeQueue();
-    _initializeFees(_feesRecipientAddress);
-    _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
-    _grantRole(ADMINISTRATOR_ROLE, _administratorAddress);
-    _grantRole(REWARDS_DISTRIBUTER_ROLE, _rewardDistributerAddress);
-    _grantRole(FINALIZE_ROLE, _finalizerAddress);
-    walletAddress = _walletAddress;
-    minDeposit = 1e18; // 1 DFI
-    minWithdrawal = 1e18; // 1 DFI
-    shareToken = new ShareToken("DFI STAKING SHARE TOKEN", "mDFI");
+  function initialize(uint8 _version) external reinitializer(_version) {
+    __EIP712_init(NAME, StringsUpgradeable.toString(_version));
   }
 
   /**
@@ -531,7 +509,7 @@ contract MarbleLsdV1 is
    */
   function updateMinDeposit(
     uint256 _amount
-  ) external onlyRole(ADMINISTRATOR_ROLE) {
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldDeposit = minDeposit;
@@ -546,7 +524,7 @@ contract MarbleLsdV1 is
    */
   function updateMinWithdrawal(
     uint256 _amount
-  ) external onlyRole(ADMINISTRATOR_ROLE) {
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldWithdrawal = minWithdrawal;

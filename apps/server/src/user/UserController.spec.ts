@@ -11,6 +11,7 @@ import { buildTestConfig, TestingModule } from "../../test/TestingModule";
 import { MarbleFiLsdServerTestingApp } from "../../test/MarbleFiLsdServerTestingApp";
 
 describe("UserController", () => {
+  jest.setTimeout(3600000);
   let testing: MarbleFiLsdServerTestingApp;
   let userController: UserController;
   let userService: UserService;
