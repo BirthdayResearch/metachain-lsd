@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import { INestApplication, NestApplicationOptions } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import {
@@ -47,7 +46,7 @@ export class MarbleFiLsdServerApp<
 
   // Middleware to log the origin
   private registerLoggerMiddleware(app: INestApplication): void {
-    app.use((req: Request, res: Response, next: NextFunction) => {
+    app.use((req, res: any, next) => {
       const origin = req.get("Origin");
       console.log(`Request Origin: ${origin}`);
       next();
