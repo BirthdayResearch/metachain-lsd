@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { useNetwork } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import MetaMaskIcon from "@/app/ui/icons/MetaMaskIcon";
-import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
-import truncateTextFromMiddle from "@/app/lib/textHelper";
-import useResponsive from "@/app/lib/hooks/useResponsive";
+import MetaMaskIcon from "@/app/landing-page/components/MetaMaskIcon";
+import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
+import truncateTextFromMiddle from "@/lib/textHelper";
+import useResponsive from "@/hooks/useResponsive";
 
 function PreConnectedButton({
   onClick,

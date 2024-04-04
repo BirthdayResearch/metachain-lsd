@@ -1,9 +1,9 @@
-import { SectionTitle } from "@/app/ui/components/SectionTitle";
-import { SectionDescription } from "@/app/ui/components/SectionDescription";
-import { SecondaryButton } from "@/app/ui/components/SecondaryButton";
-import SectionContainer from "@/app/ui/components/SectionContainer";
-import { CTAButton } from "@/app/ui/components/button/CTAButton";
-import { Tag } from "@/app/ui/components/Tag";
+import { SectionTitle } from "@/components/SectionTitle";
+import { SectionDescription } from "@/components/SectionDescription";
+import { SecondaryButton } from "@/components/SecondaryButton";
+import SectionContainer from "@/components/SectionContainer";
+import { CTAButton } from "@/components/button/CTAButton";
+import { Tag } from "@/components/Tag";
 
 export default function UnlockPower() {
   return (

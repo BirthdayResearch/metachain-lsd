@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { marbleFiApi } from "@/app/store/marbleFiApi";
+import { marbleFiApi } from "@/store/marbleFiApi";
 
 export const store = configureStore({
   reducer: {

@@ -1,12 +1,12 @@
-import "../../globals.css";
+import "../globals.css";
 
 import { useState, RefObject } from "react";
 import { MdMenu } from "react-icons/md";
 import clsx from "clsx";
-import NavigationBar from "@/app/ui/components/NavigationBar";
-import NavigationBarMobile from "@/app/ui/components/NavigationBarMobile";
-import MarbleFiLogo from "@/app/ui/components/MarbleFiLogo";
-import { CTAButton } from "@/app/ui/components/CTAButton";
+import NavigationBar from "@/components/NavigationBar";
+import NavigationBarMobile from "@/components/NavigationBarMobile";
+import MarbleFiLogo from "@/components/MarbleFiLogo";
+import { CTAButton } from "@/components/CTAButton";
 
 export default function Header({
   parentReference,

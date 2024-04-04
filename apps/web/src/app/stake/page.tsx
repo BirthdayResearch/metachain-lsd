@@ -4,10 +4,10 @@ import { useBalance, useAccount } from "wagmi";
 import { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
-import { CTAButton } from "@/app/ui/components/button/CTAButton";
 import { useRouter } from "next/navigation";
-import { useDfiPrice } from "@/app/lib/hooks/useDfiPrice";
 import { useNetworkContext } from "@waveshq/walletkit-ui";
+import { CTAButton } from "@/components/button/CTAButton";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 import DialogueBox from "@/app/stake/components/DialogueBox";
 
 export default function Stake() {

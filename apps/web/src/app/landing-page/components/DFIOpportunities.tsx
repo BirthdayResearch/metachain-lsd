@@ -1,6 +1,6 @@
-import SectionContainer from "@/app/ui/components/SectionContainer";
+import SectionContainer from "@/components/SectionContainer";
 import Image from "next/image";
-import { CTAButton } from "@/app/ui/components/button/CTAButton";
+import { CTAButton } from "@/components/button/CTAButton";
 import clsx from "clsx";
 
 export default function DFIOpportunities() {

@@ -1,5 +1,5 @@
 import { useMediaQuery } from "react-responsive";
-import config from "../../../../tailwind.config";
+import config from "../../tailwind.config";
 
 const useResponsive = () => {
   const { screens } = config.theme as { screens: Record<string, string> };

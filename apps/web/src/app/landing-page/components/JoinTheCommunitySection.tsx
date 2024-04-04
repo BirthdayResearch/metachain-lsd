@@ -1,7 +1,7 @@
-import { CardDesc } from "@/app/ui/components/CardDesc";
-import EmailInput from "@/app/ui/components/EmailInput";
+import { CardDesc } from "@/components/CardDesc";
+import EmailInput from "@/components/EmailInput";
 import { useState } from "react";
-import SectionContainer from "@/app/ui/components/SectionContainer";
+import SectionContainer from "@/components/SectionContainer";
 
 export default function JoinTheCommunitySection() {
   const [emailString, setEmailString] = useState("");

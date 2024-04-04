@@ -1,15 +1,15 @@
 "use client";
 
 import type { Metadata } from "next";
-import "../../globals.css";
-import Header from "@/app/ui/components/Header";
+import "../globals.css";
+import Header from "@/components/Header";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { sepolia, mainnet } from "wagmi/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-import { ETHEREUM_MAINNET_ID } from "@/app/lib/constants";
+import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
@@ -17,12 +17,12 @@ import {
   NetworkProvider as WhaleNetworkProvider,
   WhaleProvider,
 } from "@waveshq/walletkit-ui";
-import SecuredStoreAPI from "../../../api/secure-storage";
+import SecuredStoreAPI from "../api/secure-storage";
 import Logging from "@/api/logging";
-import { ContractProvider } from "@/app/lib/context/ContractContext";
-import { NetworkEnvironmentProvider } from "@/app/lib/context/NetworkEnvironmentContext";
+import { ContractProvider } from "@/context/ContractContext";
+import { NetworkEnvironmentProvider } from "@/context/NetworkEnvironmentContext";
 import React, { useRef, useState, useEffect } from "react";
-import Footer from "@/app/ui/components/Footer";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "MarbleFI",

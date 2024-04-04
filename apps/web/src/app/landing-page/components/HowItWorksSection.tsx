@@ -1,10 +1,10 @@
-import { Card } from "@/app/ui/components/Card";
-import { CardTitle } from "@/app/ui/components/CardTitle";
-import { CardDesc } from "@/app/ui/components/CardDesc";
-import StakeAmountIcon from "@/app/ui/icons/StakeAmountIcon";
-import YieldValueIcon from "@/app/ui/icons/YieldValueIcon";
-import MaximizeTokenIcon from "@/app/ui/icons/MaximizeTokenIcon";
-import SectionContainer from "../components/SectionContainer";
+import { Card } from "@/components/Card";
+import { CardTitle } from "@/components/CardTitle";
+import { CardDesc } from "@/components/CardDesc";
+import StakeAmountIcon from "@/app/landing-page/components/StakeAmountIcon";
+import YieldValueIcon from "@/app/landing-page/components/YieldValueIcon";
+import MaximizeTokenIcon from "@/app/landing-page/components/MaximizeTokenIcon";
+import SectionContainer from "@/components/SectionContainer";
 
 const HowItWorksItems = [
   {

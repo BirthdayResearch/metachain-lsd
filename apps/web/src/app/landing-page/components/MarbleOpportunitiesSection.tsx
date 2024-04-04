@@ -1,5 +1,5 @@
-import { CardTitle } from "@/app/ui/components/CardTitle";
-import { CardDesc } from "@/app/ui/components/CardDesc";
+import { CardTitle } from "@/components/CardTitle";
+import { CardDesc } from "@/components/CardDesc";
 import { AiOutlineDollar } from "react-icons/ai";
 import {
   HiOutlineSquaresPlus,
@@ -7,7 +7,7 @@ import {
   HiOutlineShieldCheck,
 } from "react-icons/hi2";
 import { IconType } from "react-icons";
-import SectionContainer from "@/app/ui/components/SectionContainer";
+import SectionContainer from "@/components/SectionContainer";
 
 const OpportunitiesItems = [
   {

@@ -1,9 +1,9 @@
-import { CardDesc } from "@/app/ui/components/CardDesc";
-import SectionContainer from "@/app/ui/components/SectionContainer";
-import { CardTitle } from "@/app/ui/components/CardTitle";
+import { CardDesc } from "@/components/CardDesc";
+import SectionContainer from "@/components/SectionContainer";
+import { CardTitle } from "@/components/CardTitle";
 import { Disclosure, Transition } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
-import { Tag } from "@/app/ui/components/Tag";
+import { Tag } from "@/components/Tag";
 
 const FaqItems = [
   {

@@ -1,5 +1,5 @@
 import { IconType } from "react-icons";
-import { Tag } from "@/app/ui/components/Tag";
+import { Tag } from "@/components/Tag";
 
 export function Card({
   label,
