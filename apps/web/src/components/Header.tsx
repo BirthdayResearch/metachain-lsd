@@ -6,6 +6,8 @@ import NavigationBarMobile from "@/components/NavigationBarMobile";
 import MarbleFiLogo from "@/components/MarbleFiLogo";
 import { usePathname } from "next/navigation";
 import MainHeader from "@/components/header/MainHeader";
+import AppHeader from "@/components/header/AppHeader";
+import AppNavigationBarMobile from "@/components/AppNavigationBarMobile";
 
 export default function Header({
   parentReference,
@@ -40,10 +42,8 @@ export default function Header({
                 setIsActive={setIsActive}
               />
             ) : (
-              //   TODO AppHeader
-              <MainHeader
+              <AppHeader
                 handleOnClick={handleOnClick}
-                parentReference={parentReference}
                 isActive={isActive}
                 setIsActive={setIsActive}
               />
@@ -59,11 +59,7 @@ export default function Header({
               parentReference={parentReference}
             />
           ) : (
-            //   TODO AppNavigationBarMobile
-            <NavigationBarMobile
-              onClose={handleOnClick}
-              parentReference={parentReference}
-            />
+            <AppNavigationBarMobile onClose={handleOnClick} />
           )}
         </div>
       )}
