@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --UI-Component-Stroke: #fff;
+  --UI-Button-Stroke: #fff;
+  --UI-Component-Stroke-1: #fff;
+  --Mono-0: #fff;
+  --Mono-100: #000;
+
+  --Accent-1: linear-gradient(
+    90deg,
+    rgba(105, 255, 35, 0.9) 0.03%,
+    rgba(0, 255, 255, 0.9) 96.46%
+  );
+  --Accent-1-hover: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.3) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(105, 255, 35, 0.9) 0.03%,
+      rgba(0, 255, 255, 0.9) 96.46%
+    );
+  --Accent-2: linear-gradient(
+    90deg,
+    rgba(105, 255, 35, 0.15) 0.03%,
+    rgba(0, 255, 255, 0.15) 96.46%
+  );
+
+  --UI-Button-Fill: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  --UI-Button-FIll-Hover: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(97, 38, 221, 0.06) 100%
+  );
+
+  --UI-Gradient-2: #5444fe;
+  --UI-Component-BG-1: linear-gradient(
+    180deg,
+    rgba(203, 203, 203, 0.25) 0%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
+  --UI-Component-BG-2: rgba(255, 255, 255, 0.1);
+
+  --UI-Component-BG-3: linear-gradient(
+    180deg,
+    rgba(229, 229, 229, 0.25) 0%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
+
+  --UI-Component-BG-4: linear-gradient(
+    180deg,
+    rgba(229, 229, 229, 0.25) 0%,
+    rgba(255, 255, 255, 0.13) 100%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  background-color: black;
+}
+
+body {
+}
+
+@layer utilities {
+  .accent-1 {
+    background-image: var(--Accent-1);
+    backdrop-filter: blur(27.899999618530273px);
+  }
+
+  .accent-1:hover {
+    background: var(--Accent-1-hover);
+  }
+
+  .accent-2 {
+    background: var(--Accent-2);
+    backdrop-filter: blur(27.899999618530273px);
+  }
+
+  .accent-2:active {
+    opacity: 0.7;
+    background: var(--Accent-2);
+    backdrop-filter: blur(27.899999618530273px);
+  }
+}
+
+/* Hide arrows/spinners from input type number */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+/* Hide arrows/spinners from input type number */
+
+.tag-ui {
+  border-radius: 20px;
+  background: var(--Mono-0);
+  backdrop-filter: blur(27.899999618530273px);
+}
+.card-border {
+  border: 1px solid;
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+.card-gradient-background {
+  background: linear-gradient(
+      180deg,
+      rgba(203, 203, 203, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-gradient-bg {
+  background: linear-gradient(
+      180deg,
+      rgba(229, 229, 229, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-border {
+  border-left: 1px solid;
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+
+.h1-text {
+  color: var(--Mono-100);
+
+  /* H1 */
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 56px; /* 140% */
+}
+
+.h4-text {
+  /* H4 */
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px; /* 120% */
+}
+
+.body-1-regular-text {
+  color: var(--Mono-100);
+
+  /* Body 1/Regular */
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px; /* 140% */
+}
+
+.body-2-regular-text {
+  color: var(--Mono-100);
+
+  /* Body 2/Regular */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.details-container-ui {
+  border-radius: 10px;
+  background: var(--UI-Component-BG-1);
+  backdrop-filter: blur(10px);
+}
+
+.card-border {
+  border: 1px solid;
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+.card-gradient-background {
+  background: linear-gradient(
+      180deg,
+      rgba(203, 203, 203, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-gradient-bg {
+  background: linear-gradient(
+      180deg,
+      rgba(229, 229, 229, 0.25) 0%,
+      rgba(255, 255, 255, 0.125) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 249.88%
+    );
+}
+.marble-opp-border {
+  border-image-source: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 249.88%
+  );
+}
+.header-bg {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.03) 90.35%
+  );
+  background-blend-mode: overlay;
+  backdrop-filter: blur(15px);
+}
+
+.input-gradient-1:hover,
+.input-gradient-1:focus-within {
+  background: linear-gradient(
+    90.07deg,
+    rgba(105, 255, 35, 0.9) 0.03%,
+    rgba(0, 255, 255, 0.9) 96.46%
+  );
+}
+
+.dialogue-box-ui {
+  border-radius: 64px;
+  background: var(--UI-Component-BG-3);
+  backdrop-filter: blur(100px);
+}
+
+.highlighted-button-ui {
+  border-radius: 30px;
+  background: var(--UI-Component-BG-4);
+}

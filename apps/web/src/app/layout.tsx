@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import ContainerLayout from "@/app/ui/components/ContainerLayout";
+import "../globals.css";
+import ContainerLayout from "@/components/ContainerLayout";
 import { Montserrat } from "next/font/google";
 
 const inter = Montserrat({ subsets: ["latin"] });
@@ -20,7 +20,11 @@ export default function RootLayout({
 }) {
   return (
     <ContainerLayout>
-      <main className={`${inter.className} md:max-w-5xl`}>{children}</main>
+      <div
+        className={`${inter.className} max-w-5xl w-full flex flex-row items-center justify-between`}
+      >
+        {children}
+      </div>
     </ContainerLayout>
   );
 }
