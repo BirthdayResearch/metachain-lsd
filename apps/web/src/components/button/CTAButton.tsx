@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import Spinner from "@/app/ui/icons/Spinner";
 import Link from "next/link";
+import Spinner from "../../components/Spinner";
 
 export function CTAButton({
   label,

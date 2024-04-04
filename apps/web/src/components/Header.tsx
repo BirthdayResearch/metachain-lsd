@@ -1,18 +1,18 @@
 import "../globals.css";
 
 import { useState, RefObject } from "react";
-import { MdMenu } from "react-icons/md";
 import clsx from "clsx";
-import NavigationBar from "@/components/NavigationBar";
 import NavigationBarMobile from "@/components/NavigationBarMobile";
 import MarbleFiLogo from "@/components/MarbleFiLogo";
-import { CTAButton } from "@/components/button/CTAButton";
+import { usePathname } from "next/navigation";
+import MainHeader from "@/components/header/MainHeader";
 
 export default function Header({
   parentReference,
 }: {
   parentReference: RefObject<HTMLDivElement>;
 }) {
+  const pathname = usePathname();
   const [isActive, setIsActive] = useState(false);
 
   const handleOnClick = () => {
@@ -31,38 +31,41 @@ export default function Header({
       >
         <div className="flex w-full items-center px-5 min-w-fit max-w-5xl justify-between md:pt-0 pt-2">
           <MarbleFiLogo customStyle="md:w-full w-[132px] h-[30px] sm:h-auto" />
-
-          {/* Mobile Header View */}
-          <div className="md:hidden block">
-            {!isActive && (
-              <button
-                onClick={handleOnClick}
-                className="md:hidden flex text-light-1000 py-1.5 375 justify-center items-center"
-              >
-                <MdMenu size={28} />
-              </button>
+          <>
+            {pathname === "/" ? (
+              <MainHeader
+                handleOnClick={handleOnClick}
+                parentReference={parentReference}
+                isActive={isActive}
+                setIsActive={setIsActive}
+              />
+            ) : (
+              //   TODO AppHeader
+              <MainHeader
+                handleOnClick={handleOnClick}
+                parentReference={parentReference}
+                isActive={isActive}
+                setIsActive={setIsActive}
+              />
             )}
-          </div>
-          {/* End of Mobile Header View */}
-
-          <NavigationBar isHeader parentReference={parentReference} />
-
-          <div className="items-end justify-center md:flex hidden">
-            <CTAButton
-              text="Launch app"
-              testID="launch-app"
-              customStyle="w-full md:w-fit"
-            />
-          </div>
+          </>
         </div>
       </div>
       {isActive && (
-        <>
-          <NavigationBarMobile
-            onClose={handleOnClick}
-            parentReference={parentReference}
-          />
-        </>
+        <div className="relative">
+          {pathname === "/" ? (
+            <NavigationBarMobile
+              onClose={handleOnClick}
+              parentReference={parentReference}
+            />
+          ) : (
+            //   TODO AppNavigationBarMobile
+            <NavigationBarMobile
+              onClose={handleOnClick}
+              parentReference={parentReference}
+            />
+          )}
+        </div>
       )}
     </>
   );

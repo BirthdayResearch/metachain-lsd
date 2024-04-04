@@ -1,7 +1,8 @@
 import { MdMenu } from "react-icons/md";
-import NavigationBar from "@/app/ui/components/navigation/NavigationBar";
-import { CTAButton } from "@/app/ui/components/button/CTAButton";
+
 import { RefObject } from "react";
+import NavigationBar from "@/components/NavigationBar";
+import { CTAButton } from "@/components/button/CTAButton";
 
 export default function MainHeader({
   parentReference,
