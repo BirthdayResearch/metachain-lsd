@@ -28,7 +28,10 @@ export class MarbleFiLsdServerApp<
   }
 
   async createNestApp(): Promise<App> {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestFastifyApplication>(
+      AppModule,
+      this.fastifyAdapter,
+    );
     await this.configureApp(app);
     // Register the middleware to log the origin
     this.registerLoggerMiddleware(app);
