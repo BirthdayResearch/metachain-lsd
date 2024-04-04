@@ -1,6 +1,6 @@
 import { SectionTitle } from "@/app/ui/components/SectionTitle";
 import { SectionDescription } from "@/app/ui/components/SectionDescription";
-import { SecondaryButton } from "@/app/ui/components/SecondaryButton";
+import { SecondaryButton } from "@/app/ui/components/button/SecondaryButton";
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import { CTAButton } from "@/app/ui/components/button/CTAButton";
 import { Tag } from "@/app/ui/components/Tag";

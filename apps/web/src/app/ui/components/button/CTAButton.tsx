@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Spinner from "@/app/ui/icons/Spinner";
+import Link from "next/link";
 
 export function CTAButton({
   label,
@@ -7,27 +8,29 @@ export function CTAButton({
   customStyle,
   customTextStyle = "text-light-00",
   onClick,
-  disabled,
+  isDisabled,
   isLoading = false,
+  navigateTo = "",
 }: {
   label: string;
   testID: string;
-  disabled?: boolean;
-  onClick?: () => void;
+  isDisabled?: boolean;
+  onClick?: (e: any) => void;
   customStyle?: string;
   customTextStyle?: string;
   isLoading?: boolean;
+  navigateTo?: string;
 }) {
-  return (
+  const Button = (
     <button
-      disabled={disabled}
+      disabled={isDisabled}
       onClick={onClick}
       data-testid={`cta-button-${testID}`}
       className={clsx(
         "accent-1 rounded-[30px] px-9 py-5 md:py-4",
-        !disabled && "hover:bg-opacity-60",
+        !isDisabled && "hover:bg-opacity-60",
         customTextStyle,
-        disabled ? "opacity-70" : "",
+        isDisabled ? "opacity-70" : "",
         customStyle ?? "w-fit",
       )}
     >
@@ -38,5 +41,12 @@ export function CTAButton({
         {isLoading ? <Spinner className="animate-spin w-5 h-5" /> : null}
       </div>
     </button>
+  );
+  return navigateTo ? (
+    <Link href={navigateTo} rel="noopener noreferrer" target="_blank">
+      {Button}
+    </Link>
+  ) : (
+    Button
   );
 }
