@@ -17,6 +17,7 @@ export async function deployMarbleLsdProxy({
   marbleLsdV1Address,
 }: InputsForInitialization): Promise<MarbleLsdProxy> {
   const contract = await ethers.getContractFactory("MarbleLsdProxy");
+
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData(
     "initialize",
     [
