@@ -1,6 +1,6 @@
 import SectionContainer from "@/app/ui/components/SectionContainer";
 import MarbleFiLogo from "@/app/ui/components/MarbleFiLogo";
-import NavigationBar from "@/app/ui/components/NavigationBar";
+import NavigationBar from "@/app/ui/components/navigation/NavigationBar";
 import { RefObject } from "react";
 // import Image from "next/image";
 

@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next";
 import "../../globals.css";
-import Header from "@/app/ui/components/Header";
+import Header from "@/app/ui/components/header/Header";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { sepolia, mainnet } from "wagmi/chains";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
@@ -89,10 +89,10 @@ export default function ContainerLayout({
                     <ContractProvider>
                       <div
                         ref={contentRef}
-                        className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
+                        className="flex min-h-screen flex-col items-center pb-8 text-light-1000"
                       >
                         <Header parentReference={contentRef} />
-                        {children}
+                        <div className="mx-5 md:mx-12">{children}</div>
                         <Next13ProgressBar
                           height="4px"
                           color="#69FF23"
