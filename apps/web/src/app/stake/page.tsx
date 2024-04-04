@@ -136,15 +136,13 @@ export default function Stake() {
     <DialogueBox>
       <div className="grid gap-y-10">
         <div>
-          <h3 className="text-2xl font-semibold mb-8">Stake DFI</h3>
-          <div className="flex w-full justify-between mb-1">
-            <span className="text-xs font-medium">Enter amount to stake</span>
+          <h3 className="text-2xl leading-7 font-semibold mb-11">Stake DFI</h3>
+          <div className="flex items-center w-full justify-between mb-3">
+            <span className="text-sm">How much do you want to stake?</span>
             {isWalletConnected ? (
-              <p>
-                <span className="opacity-40">Available: </span>
-                <span className="font-semibold opacity-70">
-                  {walletBalanceAmount}
-                </span>
+              <p className="text-xs text-light-1000/50">
+                <span>Available: </span>
+                <span className="font-semibold">{walletBalanceAmount} DFI</span>
               </p>
             ) : (
               <span className="text-xs text-warning font-semibold">
@@ -161,6 +159,20 @@ export default function Stake() {
               displayPercentageBtn={isWalletConnected}
               disabled={isDepositInProgress || isDepositTxnInProgress}
             />
+            <div className="flex w-full justify-between mb-1">
+              <span className="text-sm">Receiving address</span>
+              <span className="text-xs text-light-1000/50">
+                Use connected wallet
+              </span>
+            </div>
+            <InputCard
+              amount={stakeAmount}
+              onChange={setStakeAmount}
+              maxAmount={new BigNumber(walletBalanceAmount)}
+              value={stakedValue}
+              displayPercentageBtn={isWalletConnected}
+              disabled={isDepositInProgress || isDepositTxnInProgress}
+            />
             <section>
               <TransactionRow
                 label="You will receive"
@@ -168,10 +180,7 @@ export default function Stake() {
               />
               <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
               {/* TODO fee schedule*/}
-              <TransactionRow
-                label="Estimated transaction cost"
-                value="$0.00"
-              />
+              <TransactionRow label="Max transaction cost" value="$0.00" />
             </section>
             <ConnectKitButton.Custom>
               {({ show }) => (
@@ -198,7 +207,7 @@ function TransactionRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-row justify-between py-[10px]">
       <span>{label}</span>
-      <span className="text-sm font-semibold">{value}</span>
+      <span className="text-sm">{value}</span>
     </div>
   );
 }
