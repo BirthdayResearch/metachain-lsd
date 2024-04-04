@@ -9,23 +9,30 @@ import { verify } from "./utils/verify";
 
 export async function deployMarbleLsdProxy({
   adminAddress,
+  administratorAddress,
   walletAddress,
+  feesRecipientAddress,
+  rewardDistributerAddress,
+  finalizerAddress,
   marbleLsdV1Address,
 }: InputsForInitialization): Promise<MarbleLsdProxy> {
   const contract = await ethers.getContractFactory("MarbleLsdProxy");
-  const receiptTokenName = "DFI STAKING SHARE TOKEN";
-  const receiptTokenSymbol = "mDFI";
+
   const encodedData = MarbleLsdV1__factory.createInterface().encodeFunctionData(
     "initialize",
     [
       // admin address, or timelock contract address
       adminAddress,
+      // administrator distributer address,
+      administratorAddress,
+      // reward distributer address,
+      rewardDistributerAddress,
+      // finalizer address
+      finalizerAddress,
       // withdraw address
       walletAddress,
-      // receipt token name
-      receiptTokenName,
-      // receipt token symbol
-      receiptTokenSymbol,
+      // fees recipient address
+      feesRecipientAddress,
     ],
   );
   const marbleLsdProxy = await contract.deploy(marbleLsdV1Address, encodedData);
@@ -51,13 +58,17 @@ export async function deployMarbleLsdProxy({
   console.log("Verifying...");
   await verify({
     contractAddress: receiptToken,
-    args: [receiptTokenName, receiptTokenSymbol],
+    args: ["DFI STAKING SHARE TOKEN", "mDFI"],
   });
   return marbleLsdProxy;
 }
 
 interface InputsForInitialization {
   adminAddress: string;
+  administratorAddress: string;
   walletAddress: string;
+  feesRecipientAddress: string;
   marbleLsdV1Address: string;
+  rewardDistributerAddress: string;
+  finalizerAddress: string;
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import ContainerLayout from "@/app/ui/components/ContainerLayout";
+import "../globals.css";
+import ContainerLayout from "@/components/ContainerLayout";
 import { Montserrat } from "next/font/google";
 
 const inter = Montserrat({ subsets: ["latin"] });

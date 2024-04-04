@@ -1,6 +1,7 @@
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
+import "solidity-coverage";
 
 import { HardhatUserConfig, task, types } from "hardhat/config";
 
@@ -70,7 +71,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 999_999,
           },
         },
       },
@@ -89,7 +90,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     currency: "USD",
     // To enable gas report, set enabled to true
-    enabled: false,
+    enabled: true,
     gasPriceApi: process.env.ETHERSCAN_API,
     coinmarketcap: process.env.COINMARKET_API,
   },

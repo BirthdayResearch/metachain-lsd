@@ -12,6 +12,7 @@
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
     },
+    "editor.tabSize": 2,
     "eslint.workingDirectories": [
         {
             "mode": "auto"
