@@ -14,10 +14,10 @@ import { parseEther } from "viem";
 import { ConnectKitButton } from "connectkit";
 import BigNumber from "bignumber.js";
 import { InputCard } from "@/app/ui/components/InputCard";
-import { CTAButton } from "@/app/ui/components/button/CTAButton";
+import { CTAButton } from "@/components/button/CTAButton";
 import { useRouter } from "next/navigation";
-import { useDfiPrice } from "@/app/lib/hooks/useDfiPrice";
-import { useContractContext } from "@/app/lib/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { useContractContext } from "@/context/ContractContext";
 import { useNetworkContext } from "@waveshq/walletkit-ui";
 import DialogueBox from "@/app/stake/components/DialogueBox";
 import Statistics from "@/app/stake/components/Statistics";
@@ -159,20 +159,23 @@ export default function Stake() {
               displayPercentageBtn={isWalletConnected}
               disabled={isDepositInProgress || isDepositTxnInProgress}
             />
-            <div className="flex w-full justify-between mb-1">
-              <span className="text-sm">Receiving address</span>
-              <span className="text-xs text-light-1000/50">
-                Use connected wallet
-              </span>
+            <div>
+              <div className="flex w-full items-center justify-between mb-3">
+                <span className="text-sm">Receiving address</span>
+                <span className="text-xs text-light-1000/50">
+                  Use connected wallet
+                </span>
+              </div>
+              <InputCard
+                amount={stakeAmount}
+                onChange={setStakeAmount}
+                maxAmount={new BigNumber(walletBalanceAmount)}
+                value={stakedValue}
+                displayPercentageBtn={isWalletConnected}
+                disabled={isDepositInProgress || isDepositTxnInProgress}
+              />
             </div>
-            <InputCard
-              amount={stakeAmount}
-              onChange={setStakeAmount}
-              maxAmount={new BigNumber(walletBalanceAmount)}
-              value={stakedValue}
-              displayPercentageBtn={isWalletConnected}
-              disabled={isDepositInProgress || isDepositTxnInProgress}
-            />
+
             <section>
               <TransactionRow
                 label="You will receive"
@@ -207,7 +210,7 @@ function TransactionRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-row justify-between py-[10px]">
       <span>{label}</span>
-      <span className="text-sm">{value}</span>
+      <span className="text-sm font-semibold">{value}</span>
     </div>
   );
 }

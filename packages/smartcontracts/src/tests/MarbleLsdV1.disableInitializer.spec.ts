@@ -5,15 +5,22 @@ import { deployContracts } from "./testUtils/deployment";
 
 describe("Disable the initialization for MarbleLsdV1", () => {
   it("Should disable the initialization of the implementation contract after creating it", async () => {
-    const { marbleLsdImplementation, defaultAdminSigner, walletSigner } =
-      await loadFixture(deployContracts);
+    const {
+      marbleLsdImplementation,
+      defaultAdminSigner,
+      walletSigner,
+      rewardDistributerAndFinalizeSigner,
+      administratorSigner,
+    } = await loadFixture(deployContracts);
     await expect(
       marbleLsdImplementation.initialize(
         defaultAdminSigner.address,
+        administratorSigner.address,
+        rewardDistributerAndFinalizeSigner.address,
+        rewardDistributerAndFinalizeSigner.address,
         walletSigner.address,
-        "DFI STAKING RECEIPT TOKEN",
-        "xDFI",
-      ),
+        walletSigner.address
+      )
     ).to.be.revertedWith("Initializable: contract is already initialized");
   });
 });

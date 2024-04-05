@@ -1,4 +1,4 @@
-import { ContractContextI } from "@/app/lib/types";
+import { ContractContextI } from "@/lib/types";
 import { MarbleLsdV1__factory } from "smartcontracts/src";
 
 // export const MAINNET_CONFIG: ContractContextI = {

@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+import "./MarbleLsdAccessControl.sol";
 
-/** @notice @dev
+/**
+ * @notice @dev
  * This error occurs when deposit of DeFi failed
  */
 error DEPOSIT_PAUSED();
 
-/** @notice @dev
+/**
+ * @notice @dev
  * This error occurs when withdrawal of staked DeFi failed
  */
 error WITHDRAWAL_PAUSED();
@@ -17,33 +19,26 @@ error WITHDRAWAL_PAUSED();
  * @title Pausable
  * @dev Base contract which allows children to implement an emergency stop mechanism.
  */
-contract Pausable is AccessControlUpgradeable {
-
+contract Pausable is MarbleLsdAccessControl {
   /**
    * @notice Emitted when pause/unpause of deposit happens
    * @param status Status of pause/unpause
    * @param owner Owner address
    */
-  event PauseUnpauseDeposit(
-    bool status,
-    address owner
-  );
+  event PauseUnpauseDeposit(bool status, address owner);
 
   /**
    * @notice Emitted when pause/unpause of withdraw happens
    * @param status Status of pause/unpause
    * @param owner Owner address
    */
-  event PauseUnpauseWithdraw(
-    bool status,
-    address owner
-  );
+  event PauseUnpauseWithdrawal(bool status, address owner);
 
   bool public isDepositPaused = false;
-  bool public isWithdrawPaused = false;
+  bool public isWithdrawalPaused = false;
 
   /**
-   * @dev Modifier to make a function callable only when the deposit is not paused.  
+   * @dev Modifier to make a function callable only when the deposit is not paused.
    */
   modifier whenDepositNotPaused() {
     if (isDepositPaused) revert DEPOSIT_PAUSED();
@@ -51,17 +46,19 @@ contract Pausable is AccessControlUpgradeable {
   }
 
   /**
-   * @dev Modifier to make a function callable only when the withdraw is not paused.  
+   * @dev Modifier to make a function callable only when the withdraw is not paused.
    */
-  modifier whenWithdrawNotPaused() {
-    if(isWithdrawPaused) revert WITHDRAWAL_PAUSED();
+  modifier whenWithdrawalNotPaused() {
+    if (isWithdrawalPaused) revert WITHDRAWAL_PAUSED();
     _;
   }
 
   /**
    * @dev called by the owner to pause/unpause deposit
    */
-  function setDepositPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE){
+  function setDepositPaused(
+    bool _paused
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     isDepositPaused = _paused;
     emit PauseUnpauseDeposit(_paused, _msgSender());
   }
@@ -69,8 +66,10 @@ contract Pausable is AccessControlUpgradeable {
   /**
    * @dev called by the owner to pause/unpause withdraw
    */
-  function setWithdrawPaused(bool _paused) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    isWithdrawPaused = _paused;
-    emit PauseUnpauseWithdraw(_paused, _msgSender());
+  function setWithdrawalPaused(
+    bool _paused
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
+    isWithdrawalPaused = _paused;
+    emit PauseUnpauseWithdrawal(_paused, _msgSender());
   }
 }
