@@ -1,6 +1,6 @@
 import { MdMenu } from "react-icons/md";
-import { CTAButton } from "@/components/button/CTAButton";
 import AppNavigationBar from "@/components/AppNavigationBar";
+import ConnectButton from "@/components/WalletConnect";
 
 export default function AppHeader({
   handleOnClick,
@@ -27,11 +27,7 @@ export default function AppHeader({
       <AppNavigationBar isHeader />
 
       <div className="items-end justify-center md:flex hidden">
-        <CTAButton
-          label="Connect wallet"
-          testID="connect-wallet"
-          customStyle="w-full md:w-fit"
-        />
+        <ConnectButton />
       </div>
     </>
   );

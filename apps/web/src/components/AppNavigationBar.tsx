@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export const appNavigationTabs = [
   { label: "Stake", href: "/stake" },
   { label: "Withdraw", href: "/withdraw" },
-  { label: "Claim", href: "/claim" },
+  { label: "Pool", href: "/pool" },
 ];
 
 export default function AppNavigationBar({
@@ -43,7 +43,7 @@ export default function AppNavigationBar({
             key={link.label}
             className={clsx(
               { "font-bold": isActive === link.href },
-              "text-sm text-light-1000 p-2.5 px-4 rounded-[30px] cursor-pointer",
+              "text-sm text-light-1000 py-3 px-4 rounded-[30px] cursor-pointer",
             )}
             href={link.href}
           >
