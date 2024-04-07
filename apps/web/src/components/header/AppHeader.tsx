@@ -12,7 +12,12 @@ export default function AppHeader({
 }) {
   return (
     <>
-      <div className="md:hidden block">
+      {/* Mobile View */}
+      <div className="md:hidden flex flex-row items-center gap-x-2">
+        <div className="hidden sm:block">
+          <ConnectButton />
+        </div>
+
         {!isActive && (
           <button
             onClick={handleOnClick}
@@ -22,7 +27,7 @@ export default function AppHeader({
           </button>
         )}
       </div>
-      {/* End of Mobile Header View */}
+      {/* Mobile View */}
 
       <AppNavigationBar isHeader />
 

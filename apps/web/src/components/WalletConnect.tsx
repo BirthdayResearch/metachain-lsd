@@ -17,7 +17,7 @@ function PreConnectedButton({
       data-testid="connect-button"
       type="button"
       className={clsx(
-        `accent-1 rounded-[30px] relative flex items-center justify-center
+        `accent-1 rounded-[30px] relative flex items-center justify-center max-w-full
          px-9 py-4`,
       )}
       onClick={onClick}
@@ -46,7 +46,7 @@ function ConnectedButton({
       type="button"
       onClick={onClick}
       className={clsx(
-        `flex h-8 items-center rounded-[10px] border-[1.5px]
+        `flex h-8 items-center rounded-[10px] border-[1.5px] w-full
           border-dark-card-stroke pl-4 pr-3 py-3 md:h-[52px] lg:h-12 md:pl-2.5 md:pr-7 lg:py-1.5`,
       )}
     >

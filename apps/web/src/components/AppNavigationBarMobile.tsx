@@ -3,6 +3,7 @@ import MarbleFiLogo from "./MarbleFiLogo";
 
 import { appNavigationTabs } from "@/components/AppNavigationBar";
 import Link from "next/link";
+import ConnectButton from "@/components/WalletConnect";
 
 export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
   return (
@@ -23,11 +24,15 @@ export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
         />
       </div>
       <nav data-testid="header-app-navigation-bar-mobile">
-        <ul className="pt-5 flex flex-col">
+        <div className="mt-5 md:mx-12 mx-5 w-fit">
+          <ConnectButton />
+        </div>
+
+        <ul className="flex flex-col">
           {appNavigationTabs.map((link) => (
             <Link
               key={link.label}
-              className="py-7 md:mx-12 mx-5 lg:py-3 border-b border-light-1000/10 font-bold text-light-1000 active:text-opacity-10 text-sm cursor-pointer"
+              className="md:mx-12 mx-5 py-7 lg:py-3 border-b border-light-1000/10 font-bold text-light-1000 active:text-opacity-10 text-sm cursor-pointer"
               href={link.href}
             >
               {link.label}
