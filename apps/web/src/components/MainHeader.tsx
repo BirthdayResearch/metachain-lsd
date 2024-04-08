@@ -1,7 +1,7 @@
 import { MdMenu } from "react-icons/md";
 
 import { RefObject } from "react";
-import NavigationBar from "@/components/NavigationBar";
+import NavigationBar from "@/components/navigation/NavigationBar";
 import { CTAButton } from "@/components/button/CTAButton";
 
 export default function MainHeader({
@@ -16,6 +16,7 @@ export default function MainHeader({
 }) {
   return (
     <>
+      {/* Mobile Header View */}
       <div className="md:hidden block">
         {!isActive && (
           <button
@@ -26,13 +27,13 @@ export default function MainHeader({
           </button>
         )}
       </div>
-      {/* End of Mobile Header View */}
+      {/* Mobile Header View */}
 
       <NavigationBar isHeader parentReference={parentReference} />
 
       <div className="items-end justify-center md:flex hidden">
         <CTAButton
-          navigateTo="/stake"
+          navigateTo="/app/stake"
           label="Launch app"
           testID="launch-app"
           customStyle="w-full md:w-fit"

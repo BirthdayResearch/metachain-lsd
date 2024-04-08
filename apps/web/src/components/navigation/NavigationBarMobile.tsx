@@ -1,6 +1,6 @@
 import { useEffect, useState, RefObject } from "react";
 import { IoMdClose } from "react-icons/io";
-import MarbleFiLogo from "./MarbleFiLogo";
+import MarbleFiLogo from "../MarbleFiLogo";
 
 import { navigationTabs } from "./NavigationBar";
 

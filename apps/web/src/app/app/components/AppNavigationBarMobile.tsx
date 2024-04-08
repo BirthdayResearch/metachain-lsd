@@ -1,9 +1,9 @@
 import { IoMdClose } from "react-icons/io";
-import MarbleFiLogo from "./MarbleFiLogo";
+import MarbleFiLogo from "../../../components/MarbleFiLogo";
 
-import { appNavigationTabs } from "@/components/AppNavigationBar";
 import Link from "next/link";
-import ConnectButton from "@/components/WalletConnect";
+import ConnectButton from "@/components/button/WalletConnect";
+import { appNavigationTabs } from "@/app/app/components/AppNavigationBarWeb";
 
 export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
   return (
@@ -24,11 +24,10 @@ export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
         />
       </div>
       <nav data-testid="header-app-navigation-bar-mobile">
-        <div className="mt-5 md:mx-12 mx-5 w-fit">
-          <ConnectButton />
-        </div>
-
         <ul className="flex flex-col">
+          <div className="mt-5 md:mx-12 mx-5">
+            <ConnectButton />
+          </div>
           {appNavigationTabs.map((link) => (
             <Link
               key={link.label}

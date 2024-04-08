@@ -9,7 +9,7 @@ export const appNavigationTabs = [
   { label: "Pool", href: "/pool" },
 ];
 
-export default function AppNavigationBar({
+export default function AppNavigationBarWeb({
   isHeader = true,
 }: {
   isHeader: boolean;
@@ -42,10 +42,10 @@ export default function AppNavigationBar({
           <Link
             key={link.label}
             className={clsx(
-              { "font-bold": isActive === link.href },
+              { "font-bold": isActive === `/app${link.href}` },
               "text-sm text-light-1000 py-3 px-4 rounded-[30px] cursor-pointer",
             )}
-            href={link.href}
+            href={`/app${link.href}`}
           >
             {link.label}
           </Link>
