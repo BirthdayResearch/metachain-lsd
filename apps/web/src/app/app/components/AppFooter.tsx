@@ -29,7 +29,7 @@ export default function AppFooter() {
   return (
     <footer className="mt-10 max-w-5xl px-5 min-w-fit w-full bottom-0 grid gap-y-5">
       <section className="flex flex-row items-center w-full justify-between">
-        <div className="flex flex-row items-center justify-center md:w-full">
+        <div className="flex flex-row items-center md:w-full">
           <MarbleFiLogo customStyle="w-[101px] h-[23px] md:w-fit sm:h-auto" />
 
           <div className="md:block hidden">
@@ -61,10 +61,7 @@ function FooterNaviationLinkWeb() {
   return (
     <div className="flex flex-row divide-light-1000/10 ml-6 w-full">
       {footerLinks.map((link, index) => (
-        <div
-          key={link.title}
-          className="flex flex-row items-center justify-center "
-        >
+        <div key={link.title} className="flex flex-row items-center">
           <a
             href={link.link}
             className={clsx(
