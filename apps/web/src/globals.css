@@ -253,8 +253,7 @@ input[type="number"] {
   );
 }
 
-.dialogue-box-ui {
-  border-radius: 64px;
+.panel-ui {
   background: var(--UI-Component-BG-3);
   backdrop-filter: blur(100px);
 }
