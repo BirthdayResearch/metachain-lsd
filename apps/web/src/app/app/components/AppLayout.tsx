@@ -18,6 +18,7 @@ import {
 import { ContractProvider } from "@/context/ContractContext";
 import { NetworkEnvironmentProvider } from "@/context/NetworkEnvironmentContext";
 import AppHeader from "@/app/app/components/AppHeader";
+import AppFooter from "@/app/app/components/AppFooter";
 
 const metamask = new MetaMaskConnector({
   chains: [mainnet, sepolia],
@@ -73,6 +74,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   >
                     <AppHeader />
                     <section className="mx-5 md:mx-12">{children}</section>
+                    <AppFooter />
                   </div>
                 </ContractProvider>
               </NetworkEnvironmentProvider>
