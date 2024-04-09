@@ -22,6 +22,7 @@ import { useNetworkContext } from "@waveshq/walletkit-ui";
 import DialogueBox from "@/app/stake/components/DialogueBox";
 import Statistics from "@/app/stake/components/Statistics";
 import Image from "next/image";
+import ToggleSwitch from "@/components/ToggleSwitch";
 
 enum AmountButton {
   TwentyFive = "25%",
@@ -95,6 +96,8 @@ export default function Stake() {
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+  const [isUsingConnectedWallet, setIsUsingConnectedWallet] =
+    useState<boolean>(true);
 
   // To display stake amount in USD
   const stakedValue = useMemo(() => {
@@ -247,9 +250,17 @@ export default function Stake() {
             <div>
               <div className="flex w-full items-center justify-between mb-3">
                 <span className="text-sm">Receiving address</span>
-                <span className="text-xs text-light-1000/50">
-                  Use connected wallet
-                </span>
+                <div className="flex items-center gap-x-2">
+                  <span className="text-xs text-light-1000/50">
+                    Use connected wallet
+                  </span>
+                  <ToggleSwitch
+                    setOn={(newState) => {
+                      setIsUsingConnectedWallet(newState);
+                    }}
+                    isOn={isUsingConnectedWallet}
+                  />
+                </div>
               </div>
               <InputCard
                 amount={stakeAmount}
