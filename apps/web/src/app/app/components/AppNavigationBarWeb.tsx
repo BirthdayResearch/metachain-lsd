@@ -9,11 +9,7 @@ export const appNavigationTabs = [
   { label: "Pool", href: "/pool" },
 ];
 
-export default function AppNavigationBarWeb({
-  isHeader = true,
-}: {
-  isHeader: boolean;
-}) {
+export default function AppNavigationBarWeb() {
   const pathname = usePathname();
   const [isActive, setIsActive] = useState("/stake");
 
@@ -24,20 +20,9 @@ export default function AppNavigationBarWeb({
   return (
     <nav
       data-testid="header-navigation-bar-web"
-      className={clsx(
-        {
-          "hidden md:flex": isHeader,
-          "md:flex": !isHeader,
-        },
-        "py-1.5 px-5 justify-center items-center gap-x-1",
-      )}
+      className="hidden md:flex py-1.5 px-5 justify-center items-center gap-x-1"
     >
-      <ul
-        className={clsx({
-          "flex h-[48px] items-center justify-center": isHeader,
-          "flex flex-col md:flex-row text-center": !isHeader,
-        })}
-      >
+      <ul className="flex h-[48px] items-center justify-center">
         {appNavigationTabs.map((link) => (
           <Link
             key={link.label}
