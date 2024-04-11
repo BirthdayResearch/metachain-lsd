@@ -27,8 +27,8 @@ const footerLinks = [
 
 export default function AppFooter() {
   return (
-    <footer className="mt-10 max-w-5xl px-5 py-10 min-w-fit w-full bottom-0 grid gap-y-5 border-t border-light-1000/10">
-      <section className="flex flex-row items-center w-full justify-between">
+    <footer className="mt-10 max-w-5xl px-5 min-w-fit w-full bottom-0 grid gap-y-5">
+      <section className="flex flex-row items-center w-full justify-between py-10 md:border-t md:border-light-1000/10">
         <div className="flex flex-row items-center md:w-full">
           <MarbleFiLogo customStyle="w-[101px] h-[23px] md:w-fit sm:h-auto" />
 
