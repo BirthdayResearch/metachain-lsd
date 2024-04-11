@@ -70,10 +70,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <ContractProvider>
                   <div
                     ref={contentRef}
-                    className="flex min-h-screen w-full flex-col items-center pb-8 text-light-1000"
+                    className="flex min-h-screen w-full flex-col items-center text-light-1000"
                   >
                     <AppHeader />
-                    <section className="mx-5 md:mx-12">{children}</section>
+                    <section className="mx-5 md:mx-12 flex-grow">
+                      {children}
+                    </section>
                     <AppFooter />
                   </div>
                 </ContractProvider>
