@@ -23,7 +23,7 @@ export default function NavigationBarMobile({
     <div
       className="w-full fixed top-0 right-0 bg-light-00 min-h-screen z-10"
       style={{
-        backgroundImage: "url('/header-bg-logos.svg')",
+        backgroundImage: "url('/header-bg-logo.svg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
