@@ -3,12 +3,16 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/Header";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { sepolia, mainnet } from "wagmi/chains";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { http, createConfig, WagmiProvider } from "wagmi";
+import {
+  sepolia,
+  mainnet,
+  defichainEvm,
+  defichainEvmTestnet,
+} from "wagmi/chains";
+import { injected } from "wagmi/connectors";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { publicProvider } from "wagmi/providers/public";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { Montserrat } from "next/font/google";
@@ -28,37 +32,74 @@ export const metadata: Metadata = {
   title: "MarbleFI",
   description: "LSD protocol",
 };
+const metamask = injected({ target: "metaMask" });
 
-const metamask = new MetaMaskConnector({
-  chains: [mainnet, sepolia],
-});
+// const { chains } = configureChains(
+//   [sepolia, defichainEvm, defichainEvmTestnet],
+//   [
+//     jsonRpcProvider({
+//       rpc: (chain) => {
+//         const isMainNet = chain.id === ETHEREUM_MAINNET_ID;
+//         const config = isMainNet ? MAINNET_CONFIG : TESTNET_CONFIG;
+//         return {
+//           http: (config.EthereumRpcUrl || chain.rpcUrls.default) as string,
+//         };
+//       },
+//     }),
+//     publicProvider(),
+//   ],
+// );
 
-const { chains } = configureChains(
-  [sepolia, mainnet],
-  [
-    jsonRpcProvider({
-      rpc: (chain) => {
-        const isMainNet = chain.id === ETHEREUM_MAINNET_ID;
-        const config = isMainNet ? MAINNET_CONFIG : TESTNET_CONFIG;
-        return {
-          http: (config.EthereumRpcUrl || chain.rpcUrls.default) as string,
-        };
-      },
-    }),
-    publicProvider(),
-  ],
-);
+// const config = createConfig(
+//   getDefaultConfig({
+//     autoConnect: true,
+//     chains:[sepolia, defichainEvm, defichainEvmTestnet],
+//     // appName: "marblefi",
+//     // connectors: [metamask],
+//     // walletConnectProjectId:
+//     //   process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+//   transports: {
+//       [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
+//       [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
+//       [defichainEvmTestnet.id]: http(defichainEvmTestnet.rpcUrls.default.http[0]),
+//   },
+//   }),
+// );
+
+const chains = [sepolia, defichainEvm, defichainEvmTestnet];
 
 const config = createConfig(
   getDefaultConfig({
-    autoConnect: true,
-    chains,
+    chains: [sepolia, defichainEvm, defichainEvmTestnet],
     appName: "marblefi",
-    connectors: [metamask],
     walletConnectProjectId:
       process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+    connectors: [metamask],
+    // transports: {
+    //     [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
+    //     [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
+    //     [defichainEvmTestnet.id]: http(defichainEvmTestnet.rpcUrls.default.http[0]),
+    // }
   }),
 );
+// const config = createConfig(
+//     getDefaultConfig({
+//         autoConnect: true,
+//         chains,
+//         appName: "marblefi",
+//         connectors: [metamask],
+//         walletConnectProjectId:
+//             process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+//         client: {
+//             publicClient: null, // Provide the appropriate value here if needed
+//             transports: {
+//                 [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
+//                 [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
+//                 [defichainEvmTestnet.id]: http(defichainEvmTestnet.rpcUrls.default.http[0]),
+//             },
+//         },
+//     }),
+// );
 
 const inter = Montserrat({ subsets: ["latin"] });
 
@@ -75,39 +116,43 @@ export default function ContainerLayout({
     setMounted(true);
   }, []);
 
+  const queryClient = new QueryClient();
+
   return (
     <html lang="en">
       <body
         className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-no-repeat bg-clip-border bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
       >
-        <WagmiConfig config={config}>
-          <ConnectKitProvider options={{ initialChainId: 0 }}>
-            {mounted && (
-              <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-                <WhaleProvider>
-                  <NetworkEnvironmentProvider>
-                    <ContractProvider>
-                      <div
-                        ref={contentRef}
-                        className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
-                      >
-                        <Header parentReference={contentRef} />
-                        {children}
-                        <Next13ProgressBar
-                          height="4px"
-                          color="#69FF23"
-                          options={{ showSpinner: true }}
-                          showOnShallow
-                        />
-                        <Footer parentReference={contentRef} />
-                      </div>
-                    </ContractProvider>
-                  </NetworkEnvironmentProvider>
-                </WhaleProvider>
-              </WhaleNetworkProvider>
-            )}
-          </ConnectKitProvider>
-        </WagmiConfig>
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <ConnectKitProvider options={{ initialChainId: 0 }}>
+              {mounted && (
+                <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+                  <WhaleProvider>
+                    <NetworkEnvironmentProvider>
+                      <ContractProvider>
+                        <div
+                          ref={contentRef}
+                          className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
+                        >
+                          <Header parentReference={contentRef} />
+                          {children}
+                          <Next13ProgressBar
+                            height="4px"
+                            color="#69FF23"
+                            options={{ showSpinner: true }}
+                            showOnShallow
+                          />
+                          <Footer parentReference={contentRef} />
+                        </div>
+                      </ContractProvider>
+                    </NetworkEnvironmentProvider>
+                  </WhaleProvider>
+                </WhaleNetworkProvider>
+              )}
+            </ConnectKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </body>
     </html>
   );
