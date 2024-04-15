@@ -87,6 +87,8 @@ export default function Stake() {
   const { address, isConnected, status } = useAccount();
   const { data: walletBalance } = useBalance({
     address,
+    // sepolia DFI address
+    token: "0x1f84B07483AC2D5f212a7bF14184310baE087448",
   });
 
   const { MarbleLsdV1 } = useContractContext();
