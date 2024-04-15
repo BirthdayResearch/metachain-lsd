@@ -1,7 +1,7 @@
 import { IoIosCloseCircle } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import clsx from "clsx";
-import { CTAButton } from "@/components/CTAButton";
+import { CTAButton } from "@/components/button/CTAButton";
 import { SubscriptionStatus } from "@/types/user";
 import { useCreateUserMutation } from "@/store/marbleFiApi";
 import { useEffect, useState } from "react";
@@ -97,7 +97,7 @@ export default function EmailInput({
               <FaCheck className="text-valid w-5 h-5" />
             ) : (
               <CTAButton
-                text="Submit"
+                label="Submit"
                 testID="join-community-submit-btn"
                 onClick={(e) => handleSubmit(e, value)}
                 isDisabled={!isValidEmail(value) || value == ""}
