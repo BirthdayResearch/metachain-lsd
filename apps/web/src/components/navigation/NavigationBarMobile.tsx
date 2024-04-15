@@ -1,7 +1,6 @@
 import { useEffect, useState, RefObject } from "react";
 import { IoMdClose } from "react-icons/io";
-import MarbleFiLogo from "./MarbleFiLogo";
-import Image from "next/image";
+import MarbleFiLogo from "../MarbleFiLogo";
 
 import { navigationTabs } from "./NavigationBar";
 
@@ -22,7 +21,7 @@ export default function NavigationBarMobile({
 
   return (
     <div
-      className="w-full h-full fixed bg-light-00 z-50"
+      className="w-full fixed top-0 right-0 bg-light-00 min-h-screen z-10"
       style={{
         backgroundImage: "url('/header-bg-logo.svg')",
         backgroundSize: "cover",

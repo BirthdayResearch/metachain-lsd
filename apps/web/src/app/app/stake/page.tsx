@@ -1,6 +1,6 @@
 "use client";
 
-import DialogueBox from "@/app/stake/components/DialogueBox";
+import DialogueBox from "@/app/app/stake/components/DialogueBox";
 
 export default function Stake() {
   return (
