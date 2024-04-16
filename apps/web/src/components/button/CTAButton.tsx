@@ -42,8 +42,13 @@ export function CTAButton({
       </div>
     </button>
   );
+  const isProdEnv = process.env.NODE_ENV === "production";
   return navigateTo ? (
-    <Link href={navigateTo} rel="noopener noreferrer" target="_blank">
+    <Link
+      href={navigateTo}
+      rel={isProdEnv ? "noopener noreferrer" : undefined}
+      target={isProdEnv ? "_blank" : undefined}
+    >
       {Button}
     </Link>
   ) : (

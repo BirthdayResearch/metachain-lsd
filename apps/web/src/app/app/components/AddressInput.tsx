@@ -64,6 +64,7 @@ export default function AddressInput({
           )}
         >
           <input
+            data-testid="receiver-address-input"
             disabled={isDisabled}
             className={clsx(
               "mr-6 w-full bg-light-00 disabled:bg-transparent caret-brand-100",

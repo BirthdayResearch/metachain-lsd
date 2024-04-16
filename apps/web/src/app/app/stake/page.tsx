@@ -121,7 +121,10 @@ function WalletDetails({
   style?: string;
 }) {
   return (
-    <div className={clsx("flex items-center", style)}>
+    <div
+      data-testid="wallet-connection"
+      className={clsx("flex items-center", style)}
+    >
       {isWalletConnected ? (
         <p>
           <span className="opacity-40">Available: </span>
