@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import MetaMaskIcon from "@/app/landing-page/components/MetaMaskIcon";
 import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
@@ -65,7 +65,7 @@ function ConnectedButton({
 }
 
 export default function ConnectButton() {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const displayedChainName =
     chain?.id === ETHEREUM_MAINNET_ID ? "Ethereum MainNet" : chain?.name;
 
