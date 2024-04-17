@@ -27,7 +27,7 @@ export default function ContainerLayout({
         className={`${inter.className} absolute top-0 left-0 z-auto h-full w-full bg-cover bg-no-repeat bg-clip-border bg-[url('/background-mobile-375.svg')] md:bg-[url('/background-web-1440.svg')]`}
       >
         <Provider store={store}>
-          <div className="">{children}</div>
+          <div>{children}</div>
           <Next13ProgressBar
             height="4px"
             color="#69FF23"
