@@ -13,40 +13,6 @@ export default function AddressInput({
   customStyle?: string;
   isDisabled?: boolean;
 }) {
-  // // const [createUser] = useCreateUserMutation();
-  // const [errorMsg, setErrorMsg] = useState<string>("");
-  // const [success, setSuccess] = useState<boolean>(false);
-  // const isalidaAddress = (email: string) => {
-  // };
-  // const handleSubmit = async (
-  //   e: React.FormEvent<HTMLFormElement>,
-  //   email: string,
-  //   status?: SubscriptionStatus,
-  // ) => {
-  //   e.preventDefault();
-  //   try {
-  //     const user = {
-  //       email: email,
-  //       status: status,
-  //     };
-  //     // const data = await createUser(user);
-  //     // @ts-ignore
-  //     if (data?.error) {
-  //       // @ts-ignore
-  //       setErrorMsg(data.error.data.message);
-  //       setSuccess(false);
-  //     } else {
-  //       setErrorMsg("");
-  //       setSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating user:", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   setSuccess(false);
-  //   setErrorMsg("");
-  // }, [value]);
   return (
     <div>
       <div
@@ -77,6 +43,7 @@ export default function AddressInput({
           />
         </form>
       </div>
+      {/* TODO display error msg*/}
       {/*{errorMsg && (*/}
       {/*  <div className="text-left mt-2 ml-2 text-sm text-red">{errorMsg}</div>*/}
       {/*)}*/}

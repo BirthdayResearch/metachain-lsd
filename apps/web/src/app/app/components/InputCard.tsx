@@ -2,21 +2,6 @@ import Image from "next/image";
 import { useState } from "react";
 import clsx from "clsx";
 
-// enum AmountButton {
-//   TwentyFive = "25%",
-//   Half = "50%",
-//   SeventyFive = "75%",
-//   Max = "Max",
-// }
-
-export function PercentageButton({ percentage }: { percentage: string }) {
-  return (
-    <button className="px-2">
-      <span className="font-medium text-xs">{percentage}</span>
-    </button>
-  );
-}
-
 export function InputCard({
   amount,
   value,
@@ -58,14 +43,8 @@ export function InputCard({
               setAmount(e.target.value);
             }}
           />
-          <span className="text-xs font-light">${value}</span>
+          <span className="text-xs font-light">{value}</span>
         </div>
-        {/*  Display only when wallet is connected*/}
-        {/*<div className="gap-x-1 flex">*/}
-        {/*  {Object.values(AmountButton).map((type) => (*/}
-        {/*    <PercentageButton key={type} percentage={type} />*/}
-        {/*  ))}*/}
-        {/*</div>*/}
       </div>
     </div>
   );
