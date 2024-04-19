@@ -15,12 +15,12 @@
   },
   "engines": {
     "node": ">=18.17.0",
-    "pnpm": ">=9.0.3"
+    "pnpm": ">=9.0.4"
   },
-  "packageManager": "pnpm@9.0.3",
+  "packageManager": "pnpm@9.0.4",
   "dependencies": {
     "@waveshq/standard-prettier": "^3.0.1",
-    "pnpm": "^9.0.3",
+    "pnpm": "^9.0.4",
     "semver": "^7.5.4",
     "turbo": "^1.11.3"
   }
