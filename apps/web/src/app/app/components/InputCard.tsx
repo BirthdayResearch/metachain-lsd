@@ -64,7 +64,7 @@ export function InputCard({
         </div>
       </div>
       {errorMsg && (
-        <p className="text-left mt-2 ml-2 text-sm text-red">{errorMsg}</p>
+        <p className="text-left mt-2 text-sm text-red">{errorMsg}</p>
       )}
     </section>
   );
