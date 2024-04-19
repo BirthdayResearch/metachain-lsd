@@ -26,14 +26,14 @@ export default function Footer({
         <figure className="flex flex-row gap-x-5">
           <Image
             data-testid="footer-reddit-icon"
-            src="/assets/icons/reddit.svg"
+            src="/assets/logos/reddit.svg"
             alt="Reddit Icon"
             width={24}
             height={24}
           />
           <Image
             data-testid="footer-x-icon"
-            src="/assets/icons/x.svg"
+            src="/assets/logos/x.svg"
             alt="X Icon"
             width={24}
             height={24}

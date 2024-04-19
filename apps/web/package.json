@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "cypress:open": "cypress open",
+    "cypress:run": "TZ=UTC cypress run --headless --browser chrome"
   },
   "dependencies": {
     "@defichain/whale-api-client": "^4.0.7",
@@ -31,10 +33,13 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.34",
     "@netlify/plugin-lighthouse": "^6.0.0",
     "@netlify/plugin-nextjs": "^4.41.3",
+    "@testing-library/cypress": "^10.0.1",
     "@types/node": "^20",
     "autoprefixer": "^10.4.16",
+    "cypress": "^13.7.2",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1"
   }
