@@ -43,7 +43,7 @@ export function InputCard({
               setAmount(e.target.value);
             }}
           />
-          <span className="text-xs font-light">{usdAmount}</span>
+          <span className="text-xs font-light">${usdAmount}</span>
         </div>
       </div>
     </div>
