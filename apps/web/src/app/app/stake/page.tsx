@@ -8,6 +8,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
 import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
+import BigNumber from "bignumber.js";
 
 export default function Stake() {
   const { address, isConnected } = useAccount();
@@ -17,7 +18,6 @@ export default function Stake() {
   });
 
   const [stakeAmount, setStakeAmount] = useState<string>("");
-  const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
   const [receivingWalletAddress, setReceivingWalletAddress] =
     useState<string>("");
 
@@ -52,22 +52,25 @@ export default function Stake() {
                   How much do you want to stake?
                 </span>
                 <WalletDetails
-                  isWalletConnected={isWalletConnected}
+                  isWalletConnected={isConnected}
                   style="md:block hidden"
                 />
               </div>
               <InputCard
-                amount={stakeAmount}
+                maxAmount={stakeAmount}
                 setAmount={setStakeAmount}
-                value="999"
+                usdAmount={(new BigNumber(stakeAmount).isNaN()
+                  ? new BigNumber(0)
+                  : new BigNumber(stakeAmount)
+                ).toFixed(2)} // TODO use USDT price to calculate DFI amount
               />
               <WalletDetails
-                isWalletConnected={isWalletConnected}
+                isWalletConnected={isConnected}
                 style="block md:hidden"
               />
             </div>
-            <div>
-              <span className="text-xs md:text-sm">Receiving address</span>
+            <div className="grid gap-y-2">
+              <span className="text-xs md:text-sm py-1">Receiving address</span>
               <AddressInput
                 value={receivingWalletAddress}
                 setValue={setReceivingWalletAddress}
@@ -88,13 +91,6 @@ export default function Stake() {
               testID="instant-transfer-btn"
               label={getActionBtnLabel()}
               customStyle="w-full md:py-5"
-              // isLoading={hasPendingTxn || isVerifyingTransaction}
-              // disabled={
-              //   (isConnected && !isFormValid) ||
-              //   hasPendingTxn ||
-              //   !isBalanceSufficient
-              // }
-              // isDisabled={!writeDepositTxn}
               onClick={!isConnected ? show : () => submitStake()}
             />
           )}
