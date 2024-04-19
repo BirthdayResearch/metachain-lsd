@@ -40,7 +40,13 @@ export class MarbleFiLsdServerApp<
 
   async configureApp(app: INestApplication): Promise<void> {
     app.enableCors({
-      origin: "*",
+      origin:
+        process.env.NODE_ENV === "production"
+          ? [
+              "https://marblefi.netlify.app/",
+              /https:\/\/([^.]*.)--marblefi\.netlify\.app/, // allow all netlify preview deployments
+            ]
+          : "*",
       allowedHeaders: "*",
       methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
       maxAge: 60 * 24 * 7,

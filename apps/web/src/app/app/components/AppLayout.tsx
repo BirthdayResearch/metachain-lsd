@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { mainnet, sepolia } from "wagmi/chains";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
-import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
-import { publicProvider } from "wagmi/providers/public";
+import { WagmiProvider, createConfig, http } from "wagmi";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { sepolia, defichainEvm, defichainEvmTestnet } from "wagmi/chains";
 import SecuredStoreAPI from "@/api/secure-storage";
 import Logging from "@/api/logging";
 import {
@@ -18,35 +14,30 @@ import {
 import { ContractProvider } from "@/context/ContractContext";
 import { NetworkEnvironmentProvider } from "@/context/NetworkEnvironmentContext";
 import AppHeader from "@/app/app/components/AppHeader";
-
-const metamask = new MetaMaskConnector({
-  chains: [mainnet, sepolia],
-});
-
-const { chains } = configureChains(
-  [sepolia, mainnet],
-  [
-    jsonRpcProvider({
-      rpc: (chain) => {
-        const isMainNet = chain.id === ETHEREUM_MAINNET_ID;
-        const config = isMainNet ? MAINNET_CONFIG : TESTNET_CONFIG;
-        return {
-          http: (config.EthereumRpcUrl || chain.rpcUrls.default) as string,
-        };
-      },
-    }),
-    publicProvider(),
-  ],
-);
+import AppFooter from "@/app/app/components/AppFooter";
 
 const config = createConfig(
   getDefaultConfig({
-    autoConnect: true,
-    chains,
-    appName: "marblefi",
-    connectors: [metamask],
-    walletConnectProjectId:
-      process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "",
+    // Your dApps chains
+    chains: [sepolia, defichainEvm, defichainEvmTestnet],
+    transports: {
+      [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
+      [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
+      [defichainEvmTestnet.id]: http(
+        defichainEvmTestnet.rpcUrls.default.http[0],
+      ),
+    },
+
+    // Required API Keys
+    walletConnectProjectId: process.env
+      .NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string,
+
+    // Required App Info
+    appName: "MarbleFi",
+
+    // Optional App Info
+    appDescription:
+      "Marble gives you the most exciting opportunities for your DFI.",
   }),
 );
 
@@ -59,29 +50,34 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
+  const queryClient = new QueryClient();
+
   return (
-    <WagmiConfig config={config}>
-      <ConnectKitProvider options={{ initialChainId: 0 }}>
-        {mounted && (
-          <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-            <WhaleProvider>
-              <NetworkEnvironmentProvider>
-                <ContractProvider>
-                  <div
-                    ref={contentRef}
-                    className="flex min-h-screen flex-col items-center pb-8 text-light-1000"
-                  >
-                    <AppHeader />
-                    <section className="mx-5 md:mx-12 w-full">
-                      {children}
-                    </section>
-                  </div>
-                </ContractProvider>
-              </NetworkEnvironmentProvider>
-            </WhaleProvider>
-          </WhaleNetworkProvider>
-        )}
-      </ConnectKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <ConnectKitProvider options={{ initialChainId: 0 }}>
+          {mounted && (
+            <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
+              <WhaleProvider>
+                <NetworkEnvironmentProvider>
+                  <ContractProvider>
+                    <div
+                      ref={contentRef}
+                      className="flex min-h-screen w-full flex-col items-center text-light-1000"
+                    >
+                      <AppHeader />
+                      <section className="mx-5 md:mx-12 flex-grow">
+                        {children}
+                      </section>
+                      <AppFooter />
+                    </div>
+                  </ContractProvider>
+                </NetworkEnvironmentProvider>
+              </WhaleProvider>
+            </WhaleNetworkProvider>
+          )}
+        </ConnectKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
