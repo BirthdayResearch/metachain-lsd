@@ -3,12 +3,12 @@ import { useState } from "react";
 import clsx from "clsx";
 
 export function InputCard({
-  amount,
-  value,
+  maxAmount,
+  usdAmount,
   setAmount,
 }: {
-  amount: string;
-  value: string;
+  maxAmount: string;
+  usdAmount: string;
   setAmount: (amount: string) => void;
 }) {
   const [focus, setFocus] = useState(false);
@@ -35,7 +35,7 @@ export function InputCard({
         </div>
         <div className="flex flex-col w-full">
           <input
-            value={amount}
+            value={maxAmount}
             type="text"
             className="w-full rounded text-base outline-0"
             placeholder="0.00"
@@ -43,7 +43,7 @@ export function InputCard({
               setAmount(e.target.value);
             }}
           />
-          <span className="text-xs font-light">{value}</span>
+          <span className="text-xs font-light">{usdAmount}</span>
         </div>
       </div>
     </div>
