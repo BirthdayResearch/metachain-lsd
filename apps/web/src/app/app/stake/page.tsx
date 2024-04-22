@@ -1,7 +1,7 @@
 "use client";
 
 import { useBalance, useAccount } from "wagmi";
-import { useState } from "react";
+import React, { useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -17,7 +17,10 @@ export default function Stake() {
     address,
   });
 
-  const [stakeAmount, setStakeAmount] = useState<string>("");
+  const [stakeAmountDisplay, setStakeAmountDisplay] = useState<string>(
+    parseFloat(walletBalance?.formatted ?? "0").toFixed(5),
+  );
+  const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
   const [receivingWalletAddress, setReceivingWalletAddress] =
     useState<string>("");
 
@@ -58,12 +61,14 @@ export default function Stake() {
               </div>
               <div className="pb-2 md:pb-0">
                 <InputCard
-                  maxAmount={stakeAmount}
-                  setAmount={setStakeAmount}
-                  usdAmount={(new BigNumber(stakeAmount).isNaN()
+                  maxStakeAmount={maxStakeAmount}
+                  stakeAmountDisplay={stakeAmountDisplay}
+                  setAmount={setStakeAmountDisplay}
+                  usdAmount={(new BigNumber(stakeAmountDisplay).isNaN()
                     ? new BigNumber(0)
-                    : new BigNumber(stakeAmount)
+                    : new BigNumber(stakeAmountDisplay)
                   ).toFixed(2)} // TODO use USDT price to calculate DFI amount
+                  onChange={(value) => setStakeAmountDisplay(value)}
                 />
               </div>
               <WalletDetails
