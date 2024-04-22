@@ -42,13 +42,13 @@ export default function Stake() {
 
   return (
     <Panel>
-      <div className="w-full grid gap-y-5">
+      <div className="w-full gap-y-5">
         <h3 className="text-2xl font-semibold">Stake DFI</h3>
         <div className="flex flex-col w-full justify-between gap-y-5">
-          <div className="grid gap-y-5">
-            <div className="grid gap-y-2">
-              <div className="flex justify-between gap-y-2">
-                <span className="text-xs md:text-sm">
+          <div className="mt-10">
+            <div className="mb-5">
+              <div className="flex justify-between gap-y-2 mb-2">
+                <span className="text-xs md:text-sm py-1">
                   How much do you want to stake?
                 </span>
                 <WalletDetails
@@ -56,14 +56,16 @@ export default function Stake() {
                   style="md:block hidden"
                 />
               </div>
-              <InputCard
-                maxAmount={stakeAmount}
-                setAmount={setStakeAmount}
-                usdAmount={(new BigNumber(stakeAmount).isNaN()
-                  ? new BigNumber(0)
-                  : new BigNumber(stakeAmount)
-                ).toFixed(2)} // TODO use USDT price to calculate DFI amount
-              />
+              <div className="pb-2 md:pb-0">
+                <InputCard
+                  maxAmount={stakeAmount}
+                  setAmount={setStakeAmount}
+                  usdAmount={(new BigNumber(stakeAmount).isNaN()
+                    ? new BigNumber(0)
+                    : new BigNumber(stakeAmount)
+                  ).toFixed(2)} // TODO use USDT price to calculate DFI amount
+                />
+              </div>
               <WalletDetails
                 isWalletConnected={isConnected}
                 style="block md:hidden"
