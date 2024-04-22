@@ -2,7 +2,6 @@
 
 import type { Metadata } from "next";
 import "../globals.css";
-import Header from "@/components/Header";
 import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
 import {
@@ -12,7 +11,6 @@ import {
 import SecuredStoreAPI from "../api/secure-storage";
 import Logging from "@/api/logging";
 import React, { useRef, useState, useEffect } from "react";
-import Footer from "@/components/Footer";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 
@@ -47,7 +45,7 @@ export default function ContainerLayout({
               <WhaleProvider>
                 <div
                   ref={contentRef}
-                  className="flex min-h-screen flex-col items-center w-full px-5 py-8 md:p-12 text-light-1000"
+                  className="flex min-h-screen flex-col items-center w-full text-light-1000"
                 >
                   {children}
                   <Next13ProgressBar
@@ -56,7 +54,6 @@ export default function ContainerLayout({
                     options={{ showSpinner: true }}
                     showOnShallow
                   />
-                  <Footer parentReference={contentRef} />
                 </div>
               </WhaleProvider>
             </WhaleNetworkProvider>

@@ -35,7 +35,7 @@ export default function MainHeader({
         <CTAButton
           navigateTo="/app/stake"
           label="Launch app"
-          testID="launch-app"
+          testID="header-launch-app"
           customStyle="w-full md:w-fit"
         />
       </div>
