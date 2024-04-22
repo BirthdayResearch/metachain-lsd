@@ -24,7 +24,10 @@ export default function AppHeader() {
         )}
       >
         <div className="flex w-full items-center px-5 min-w-fit max-w-5xl justify-between md:pt-0 pt-2">
-          <MarbleFiLogo customStyle="md:w-full w-[132px] h-[30px] sm:h-auto" />
+          <MarbleFiLogo
+            customStyle="md:w-full w-[132px] h-[30px] sm:h-auto"
+            testId="app-header"
+          />
           <AppNavigationBarWeb />
           <div className="items-end justify-center md:flex hidden">
             <ConnectButton />
