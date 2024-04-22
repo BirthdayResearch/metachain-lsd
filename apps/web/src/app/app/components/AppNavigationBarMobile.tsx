@@ -16,7 +16,10 @@ export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
       }}
     >
       <div className="flex items-center md:px-12 px-5 py-8 min-w-fit max-w-5xl justify-between">
-        <MarbleFiLogo customStyle="md:w-full w-[132px] h-[30px] sm:h-auto" />
+        <MarbleFiLogo
+          customStyle="md:w-full w-[132px] h-[30px] sm:h-auto"
+          testId="app-footer-mobile"
+        />
         <IoMdClose
           size={30}
           onClick={onClose}
