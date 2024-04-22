@@ -51,7 +51,7 @@ const config: Config = {
         },
         red: "#FF4F4F",
         error: "#E54545",
-        warning: "#FF9D42",
+        warning: "#F27909",
         valid: "#0CC72C",
         green: "#4DE22C",
       },
