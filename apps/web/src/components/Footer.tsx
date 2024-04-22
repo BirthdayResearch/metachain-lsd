@@ -15,7 +15,7 @@ export default function Footer({
         data-testid="footer"
         className="flex items-center justify-center flex-col gap-y-6"
       >
-        <MarbleFiLogo />
+        <MarbleFiLogo testId="landing-footer" />
         <NavigationBar isHeader={false} parentReference={parentReference} />
 
         {/* <div className="flex gap-x-1 text-xs">

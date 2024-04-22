@@ -3,13 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 export default function MarbleFiLogo({
   customStyle,
+  testId,
 }: {
   customStyle?: string;
+  testId: string;
 }) {
   return (
     <Link href="/">
       <Image
-        data-testid="header-marblefi-logo"
+        data-testid={`${testId}-marblefi-logo`}
         src="/header-logo.svg"
         alt="MarbleFi Logo"
         width={170}

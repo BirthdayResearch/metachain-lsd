@@ -18,7 +18,6 @@ const footerLinks = [
     title: "Terms of Use",
     link: "/terms-of-use",
   },
-
   {
     title: "Privacy Notice",
     link: "/privacy-notice",
@@ -30,7 +29,7 @@ export default function AppFooter() {
     <footer className="py-10 md:py-0 max-w-5xl px-5 min-w-fit w-full bottom-0 grid gap-y-5">
       <section className="flex flex-row items-center w-full justify-between md:py-10 md:border-t md:border-light-1000/10">
         <div className="flex flex-row items-center md:w-full">
-          <MarbleFiLogo customStyle="w-[101px] h-[23px] md:w-fit sm:h-auto" />
+          <MarbleFiLogo customStyle="w-[101px] h-[23px]" testId="app-footer" />
 
           <div className="md:block hidden">
             <FooterNaviationLinkWeb />
@@ -65,7 +64,7 @@ function FooterNaviationLinkWeb() {
           <a
             href={link.link}
             className={clsx(
-              "text-light-1000/50 font-mono text-sm px-3 text-center border-light-1000/10",
+              "text-light-1000/50 font-mono text-xs px-3 text-center border-light-1000/10",
               { "border-r": index !== footerLinks.length - 1 },
             )}
           >
