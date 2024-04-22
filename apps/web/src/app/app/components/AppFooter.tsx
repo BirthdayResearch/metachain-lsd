@@ -65,7 +65,7 @@ function FooterNaviationLinkWeb() {
           <a
             href={link.link}
             className={clsx(
-              "text-light-1000/50 font-mono text-sm px-3 text-center border-light-1000/10",
+              "text-light-1000/50 font-mono text-xs px-3 text-center border-light-1000/10",
               { "border-r": index !== footerLinks.length - 1 },
             )}
           >
