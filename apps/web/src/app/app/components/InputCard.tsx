@@ -8,14 +8,14 @@ import {
 } from "@/app/app/components/PercentageButton";
 
 export function InputCard({
-  maxStakeAmount,
-  stakeAmountDisplay,
+  maxAmount,
+  amountDisplay,
   usdAmount,
   setAmount,
   onChange,
 }: {
-  maxStakeAmount: BigNumber; // to calculate amount
-  stakeAmountDisplay: string; // to display amount in UI
+  maxAmount: BigNumber; // to calculate amount
+  amountDisplay: string; // to display amount in UI
   setAmount: (amount: string) => void;
   usdAmount: string;
 
@@ -65,7 +65,7 @@ export function InputCard({
             <div className="flex flex-col w-full">
               <input
                 data-testid={`input-card-amount`}
-                value={stakeAmountDisplay}
+                value={amountDisplay}
                 type="text"
                 className="w-full rounded text-base outline-0"
                 placeholder="0.00"
@@ -81,7 +81,7 @@ export function InputCard({
                 key={type}
                 percentage={type}
                 onClickRecalculateAmount={onChange}
-                maxStakeAmount={maxStakeAmount}
+                maxAmount={maxAmount}
               />
             ))}
           </aside>
