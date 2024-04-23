@@ -123,13 +123,6 @@ export default function Stake() {
               testID="instant-transfer-btn"
               label={getActionBtnLabel()}
               customStyle="w-full md:py-5 mt-10"
-              // isLoading={hasPendingTxn || isVerifyingTransaction}
-              // disabled={
-              //   (isConnected && !isFormValid) ||
-              //   hasPendingTxn ||
-              //   !isBalanceSufficient
-              // }
-              // isDisabled={!writeDepositTxn}
               onClick={!isConnected ? show : () => submitStake()}
             />
           )}
