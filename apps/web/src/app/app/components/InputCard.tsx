@@ -35,7 +35,7 @@ export function InputCard({
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         className={clsx(
-          "hover:accent-1 p-0.5 rounded-[10px]",
+          "w-full hover:accent-1 p-0.5 rounded-[10px]",
           focus && "accent-1",
         )}
       >
@@ -51,7 +51,7 @@ export function InputCard({
               priority
             />
           </div>
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full overflow-hidden">
             <input
               value={maxAmount}
               type="text"
