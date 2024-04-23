@@ -53,7 +53,6 @@ export default function Stake() {
 
   useEffect(() => {
     setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
-    setIsWalletConnected(isConnected);
   }, [address, status, walletBalance]);
 
   return (
