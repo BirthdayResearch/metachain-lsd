@@ -70,8 +70,8 @@ export default function Stake() {
               </div>
               <div className="pb-2 md:pb-0">
                 <InputCard
-                  maxStakeAmount={maxStakeAmount}
-                  stakeAmountDisplay={stakeAmountDisplay}
+                  maxAmount={maxStakeAmount}
+                  amountDisplay={stakeAmountDisplay}
                   setAmount={setStakeAmountDisplay}
                   usdAmount={(new BigNumber(stakeAmountDisplay).isNaN()
                     ? new BigNumber(0)

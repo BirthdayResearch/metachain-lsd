@@ -9,35 +9,35 @@ export enum AmountButton {
 
 export function PercentageButton({
   percentage,
-  maxStakeAmount,
+  maxAmount,
   onClickRecalculateAmount,
 }: {
   percentage: string;
-  maxStakeAmount: BigNumber;
+  maxAmount: BigNumber;
   onClickRecalculateAmount: (amount: string) => void;
 }) {
   const decimalPlace = 5;
-  let value = maxStakeAmount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+  let value = maxAmount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
 
   switch (percentage) {
     case AmountButton.TwentyFive:
-      value = maxStakeAmount
+      value = maxAmount
         .multipliedBy(0.25)
         .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
       break;
     case AmountButton.Half:
-      value = maxStakeAmount
+      value = maxAmount
         .multipliedBy(0.5)
         .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
       break;
     case AmountButton.SeventyFive:
-      value = maxStakeAmount
+      value = maxAmount
         .multipliedBy(0.75)
         .toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
       break;
     case AmountButton.Max:
     default:
-      value = maxStakeAmount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
+      value = maxAmount.toFixed(decimalPlace, BigNumber.ROUND_FLOOR);
       break;
   }
 
