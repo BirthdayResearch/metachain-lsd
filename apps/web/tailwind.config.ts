@@ -54,6 +54,7 @@ const config: Config = {
         warning: "#F27909",
         valid: "#0CC72C",
         green: "#4DE22C",
+        "valid-object": "#16E544",
       },
       borderRadius: {
         DEFAULT: "5px",
