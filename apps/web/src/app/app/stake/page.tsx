@@ -5,7 +5,6 @@ import { formatEther } from "viem";
 import {
   useContractRead,
   useContractWrite,
-  useWaitForTransaction,
   useBalance,
   useAccount,
 } from "wagmi";
@@ -19,8 +18,8 @@ import { useRouter } from "next/navigation";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useContractContext } from "@/context/ContractContext";
 import { useNetworkContext } from "@waveshq/walletkit-ui";
-import DialogueBox from "@/app/stake/components/DialogueBox";
-import Statistics from "@/app/stake/components/Statistics";
+import DialogueBox from "@/app/app/stake/components/DialogueBox";
+import Statistics from "@/app/app/stake/components/Statistics";
 import Image from "next/image";
 import ToggleSwitch from "@/components/ToggleSwitch";
 
@@ -80,109 +79,128 @@ export function PercentageButton({
     </button>
   );
 }
+export enum Network {
+  Ethereum = "Ethereum",
+  DeFiChain = "DeFiChain",
+}
 
 export default function Stake() {
   const { push } = useRouter();
+  const { network } = useNetworkContext();
 
-  const { address, isConnected, status } = useAccount();
-  const { data: walletBalance } = useBalance({
+  const { Erc20Tokens } = useContractContext();
+
+  const { address, isConnected, status, chainId } = useAccount();
+
+  // check if chainId is mainnet or sepolia
+  const isOnEthNetwork = chainId === 1 || chainId === 11155111;
+
+  const {
+    data: walletBalance,
+    refetch: refetchWalletBalance,
+    isFetching: isWalletBalanceFetching,
+  } = useBalance({
     address,
     // sepolia DFI address
-    token: "0x1f84B07483AC2D5f212a7bF14184310baE087448",
+    // token: "0x1f84B07483AC2D5f212a7bF14184310baE087448",
+    chainId,
+    ...(isOnEthNetwork && {
+      token: Erc20Tokens["DFI"].address,
+    }),
   });
 
-  const { MarbleLsdV1 } = useContractContext();
-  const { network } = useNetworkContext();
-  const dfiPrice = useDfiPrice();
-
+  // const { MarbleLsdV1 } = useContractContext();
+  // const dfiPrice = useDfiPrice();
+  //
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
   const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
   const [isUsingConnectedWallet, setIsUsingConnectedWallet] =
     useState<boolean>(true);
+  //
+  // // To display stake amount in USD
+  // const stakedValue = useMemo(() => {
+  //   const calculatedStake = new BigNumber(stakeAmount).multipliedBy(dfiPrice);
+  //   return calculatedStake.isNaN() ? "0.00" : calculatedStake.toString();
+  // }, [stakeAmount, dfiPrice]);
 
-  // To display stake amount in USD
-  const stakedValue = useMemo(() => {
-    const calculatedStake = new BigNumber(stakeAmount).multipliedBy(dfiPrice);
-    return calculatedStake.isNaN() ? "0.00" : calculatedStake.toString();
-  }, [stakeAmount, dfiPrice]);
+  // const {
+  //   data: depositFundData,
+  //   error: depositFuncTxnError,
+  //   write: writeDepositTxn,
+  //   isLoading: isDepositInProgress,
+  // } = useContractWrite({
+  //   abi: MarbleLsdV1.abi,
+  //   address: MarbleLsdV1.address,
+  //   functionName: "deposit",
+  //   args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
+  //   value: parseEther(stakeAmount),
+  // });
 
-  const {
-    data: depositFundData,
-    error: depositFuncTxnError,
-    write: writeDepositTxn,
-    isLoading: isDepositInProgress,
-  } = useContractWrite({
-    abi: MarbleLsdV1.abi,
-    address: MarbleLsdV1.address,
-    functionName: "deposit",
-    args: ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"], // receiver address of the staked tokens
-    value: parseEther(stakeAmount),
-  });
+  // const { data: previewDepositData, error: previewDepositTxnError } =
+  //   useContractRead({
+  //     abi: MarbleLsdV1.abi,
+  //     address: MarbleLsdV1.address,
+  //     functionName: "previewDeposit",
+  //     args: [parseEther(stakeAmount)],
+  //   });
+  //
+  // const { data: isDepositPaused, error: isDepositPausedError } =
+  //   useContractRead({
+  //     abi: MarbleLsdV1.abi,
+  //     address: MarbleLsdV1.address,
+  //     functionName: "isDepositPaused",
+  //   });
+  //
+  // const previewDepositFormatted = previewDepositData
+  //   ? formatEther(previewDepositData as unknown as bigint)
+  //   : "0";
 
-  const { data: previewDepositData, error: previewDepositTxnError } =
-    useContractRead({
-      abi: MarbleLsdV1.abi,
-      address: MarbleLsdV1.address,
-      functionName: "previewDeposit",
-      args: [parseEther(stakeAmount)],
-    });
+  // const {
+  //   error: depositTxnError,
+  //   isLoading: isDepositTxnInProgress,
+  //   isSuccess: isDepositTxnSuccess,
+  // } = useWaitForTransaction({
+  //   hash: depositFundData?.hash,
+  // });
 
-  const { data: isDepositPaused, error: isDepositPausedError } =
-    useContractRead({
-      abi: MarbleLsdV1.abi,
-      address: MarbleLsdV1.address,
-      functionName: "isDepositPaused",
-    });
-
-  const previewDepositFormatted = previewDepositData
-    ? formatEther(previewDepositData as unknown as bigint)
-    : "0";
-
-  const {
-    error: depositTxnError,
-    isLoading: isDepositTxnInProgress,
-    isSuccess: isDepositTxnSuccess,
-  } = useWaitForTransaction({
-    hash: depositFundData?.hash,
-  });
-
-  async function submitStake() {
-    if (isDepositTxnSuccess) {
-      // redirect to main page
-      push("/");
-      return;
-    }
-    // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
-    // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
-
-    if (isDepositPaused) {
-      // TODO display popup
-      console.log("Deposit is paused");
-      // display message to user that deposit is paused
-      return;
-    }
-    console.log("call stake");
-    try {
-      if (isDepositPaused) {
-        // TODO display popups
-        console.log("Deposit is paused");
-        // display message to user that deposit is paused
-        return;
-      }
-      writeDepositTxn?.();
-    } catch (error) {
-      console.error("Deposit failed:", error);
-      // Handle error (e.g., display error message to user)
-    }
-  }
+  // async function submitStake() {
+  //   if (isDepositTxnSuccess) {
+  //     // redirect to main page
+  //     push("/");
+  //     return;
+  //   }
+  //   // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
+  //   // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
+  //
+  //   if (isDepositPaused) {
+  //     // TODO display popup
+  //     console.log("Deposit is paused");
+  //     // display message to user that deposit is paused
+  //     return;
+  //   }
+  //   console.log("call stake");
+  //   try {
+  //     if (isDepositPaused) {
+  //       // TODO display popups
+  //       console.log("Deposit is paused");
+  //       // display message to user that deposit is paused
+  //       return;
+  //     }
+  //     writeDepositTxn?.();
+  //   } catch (error) {
+  //     console.error("Deposit failed:", error);
+  //     // Handle error (e.g., display error message to user)
+  //   }
+  // }
 
   function getActionBtnLabel() {
     switch (true) {
-      case isDepositTxnSuccess:
-        return "Return to Main Page";
+      // case isDepositTxnSuccess:
+      //   return "Return to Main Page";
 
       case isConnected:
+        isConnected;
         return "Stake DFI";
 
       default:
@@ -193,7 +211,11 @@ export default function Stake() {
   useEffect(() => {
     setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
     setIsWalletConnected(isConnected);
-  }, [address, status, network]);
+  }, [address, status, network, walletBalance]);
+
+  useEffect(() => {
+    console.log(walletBalanceAmount);
+  }, [walletBalanceAmount]);
 
   return (
     <DialogueBox>
@@ -217,8 +239,9 @@ export default function Stake() {
             <InputCard
               amount={stakeAmount}
               onChange={setStakeAmount}
-              value={stakedValue}
-              disabled={isDepositInProgress || isDepositTxnInProgress}
+              value={"0"}
+              // disabled={isDepositInProgress || isDepositTxnInProgress}
+              disabled={false}
               icon={
                 <Image
                   data-testid="dfi-icon"
@@ -240,9 +263,10 @@ export default function Stake() {
                       <PercentageButton
                         key={percentage}
                         percentage={percentage}
-                        amount={new BigNumber(walletBalanceAmount)}
+                        amount={new BigNumber(0)}
                         onClick={setStakeAmount}
-                        disabled={isDepositInProgress || isDepositTxnInProgress}
+                        // disabled={isDepositInProgress || isDepositTxnInProgress}
+                        disabled={false}
                       />
                     ))}
                   </div>
@@ -256,25 +280,27 @@ export default function Stake() {
                   <span className="text-xs text-light-1000/50">
                     Use connected wallet
                   </span>
-                  <ToggleSwitch
-                    setOn={(newState) => {
-                      setIsUsingConnectedWallet(newState);
-                    }}
-                    isOn={isUsingConnectedWallet}
-                  />
+                  {/*<ToggleSwitch*/}
+                  {/*  setOn={(newState) => {*/}
+                  {/*    setIsUsingConnectedWallet(newState);*/}
+                  {/*  }}*/}
+                  {/*  isOn={isUsingConnectedWallet}*/}
+                  {/*/>*/}
                 </div>
               </div>
               <InputCard
                 amount={stakeAmount}
                 onChange={setStakeAmount}
-                disabled={isDepositInProgress || isDepositTxnInProgress}
+                // disabled={isDepositInProgress || isDepositTxnInProgress}
+                disabled={false}
               />
             </div>
 
             <section>
               <TransactionRow
                 label="You will receive"
-                value={`${previewDepositFormatted} mDFI`}
+                // value={`${previewDepositFormatted} mDFI`}
+                value={"0"}
               />
               <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
               {/* TODO fee schedule*/}
@@ -286,9 +312,9 @@ export default function Stake() {
                   testID="instant-transfer-btn"
                   label={getActionBtnLabel()}
                   customStyle="w-full md:py-5"
-                  isLoading={isDepositInProgress || isDepositTxnInProgress}
-                  disabled={isDepositInProgress || isDepositTxnInProgress}
-                  onClick={!isConnected ? show : () => submitStake()}
+                  // isLoading={isDepositInProgress || isDepositTxnInProgress}
+                  // disabled={isDepositInProgress || isDepositTxnInProgress}
+                  // onClick={!isConnected ? show : () => submitStake()}
                 />
               )}
             </ConnectKitButton.Custom>

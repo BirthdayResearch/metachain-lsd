@@ -20,6 +20,9 @@ export const MAINNET_CONFIG: ContractContextI = {
     address: "0x9FA70916182c75F401bF038EC775266941C46909",
     abi: MarbleLsdV1__factory.abi,
   },
+  Erc20Tokens: {
+    DFI: { address: "0x8fc8f8269ebca376d046ce292dc7eac40c8d358a" },
+  },
 };
 
 // Sepolia
@@ -29,5 +32,8 @@ export const TESTNET_CONFIG: ContractContextI = {
   MarbleLsdV1: {
     address: "0x9FA70916182c75F401bF038EC775266941C46909",
     abi: MarbleLsdV1__factory.abi,
+  },
+  Erc20Tokens: {
+    DFI: { address: "0x1f84B07483AC2D5f212a7bF14184310baE087448" },
   },
 };

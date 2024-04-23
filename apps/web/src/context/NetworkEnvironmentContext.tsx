@@ -36,7 +36,7 @@ export function NetworkEnvironmentProvider({
 
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = searchParams.get("network");
-  const defaultNetwork = EnvironmentNetwork.MainNet;
+  const defaultNetwork = EnvironmentNetwork.TestNet;
   const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
   const isEthereumMainNet = chain?.id === ETHEREUM_MAINNET_ID;
