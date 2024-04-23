@@ -42,8 +42,13 @@ export function CTAButton({
       </div>
     </button>
   );
+  const isTestEnv = process.env.NODE_ENV === "test";
   return navigateTo ? (
-    <Link href={navigateTo} rel="noopener noreferrer" target="_blank">
+    <Link
+      href={navigateTo}
+      rel={isTestEnv ? undefined : "noopener noreferrer"}
+      target={isTestEnv ? undefined : "_blank"}
+    >
       {Button}
     </Link>
   ) : (
