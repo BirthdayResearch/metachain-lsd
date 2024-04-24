@@ -10,6 +10,7 @@ import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useContractContext } from "@/context/ContractContext";
+import ToggleSwitch from "@/components/ToggleSwitch";
 
 export default function Stake() {
   const { Erc20Tokens } = useContractContext();
@@ -32,6 +33,8 @@ export default function Stake() {
     `0x${string}` | string | undefined
   >(address);
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
+  const [enableConnectedWallet, setEnableConnectedWallet] =
+    useState(isConnected);
 
   // TODO
   async function submitStake() {
@@ -59,11 +62,11 @@ export default function Stake() {
   return (
     <Panel>
       <div className="w-full gap-y-5">
-        <h3 className="text-2xl font-semibold">Stake DFI</h3>
+        <h3 className="text-2xl leading-7 font-semibold">Stake DFI</h3>
         <div className="flex flex-col w-full justify-between gap-y-5">
           <div className="mt-10">
             <div className="mb-5">
-              <div className="flex justify-between gap-y-2 mb-2">
+              <div className="flex justify-between gap-y-2 mb-2 items-center">
                 <span className="text-xs md:text-sm py-1">
                   How much do you want to stake?
                 </span>
@@ -90,10 +93,25 @@ export default function Stake() {
               />
             </div>
             <div className="grid gap-y-2">
-              <span className="text-xs md:text-sm py-1">Receiving address</span>
+              <div className="flex flex-row items-center justify-between">
+                <span className="text-xs md:text-sm py-1">
+                  Receiving address
+                </span>
+                <div className="flex items-center gap-x-2">
+                  <span className="text-xs text-light-1000/50">
+                    Use connected wallet
+                  </span>
+                  <ToggleSwitch
+                    setOn={setEnableConnectedWallet}
+                    isOn={enableConnectedWallet}
+                  />
+                </div>
+              </div>
               <AddressInput
-                value={receivingWalletAddress}
+                value={enableConnectedWallet ? address : receivingWalletAddress}
                 setValue={setReceivingWalletAddress}
+                receivingWalletAddress={address}
+                setEnableConnectedWallet={setEnableConnectedWallet}
                 placeholder="Connect a wallet"
                 isDisabled={!isConnected}
               />
@@ -144,11 +162,9 @@ function WalletDetails({
       className={clsx("flex items-center", style)}
     >
       {isWalletConnected ? (
-        <p>
-          <span className="opacity-40">Available: </span>
-          <span className="font-semibold opacity-70">
-            {walletBalanceAmount} DFI
-          </span>
+        <p className="text-xs text-light-1000/50">
+          <span>Available: </span>
+          <span className="font-semibold">{walletBalanceAmount} DFI</span>
         </p>
       ) : (
         <span className="text-xs text-warning font-semibold">

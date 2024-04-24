@@ -29,12 +29,16 @@ export function SuccessCopy({
 export default function AddressInput({
   value,
   setValue,
+  receivingWalletAddress,
+  setEnableConnectedWallet,
   placeholder,
   customStyle,
   isDisabled,
 }: {
   value?: `0x${string}` | string;
   setValue: (text: `0x${string}` | string) => void;
+  receivingWalletAddress?: `0x${string}`;
+  setEnableConnectedWallet: (enableConnectedWallet: boolean) => void;
   placeholder?: string;
   customStyle?: string;
   isDisabled?: boolean;
@@ -80,15 +84,24 @@ export default function AddressInput({
                 data-testid="receiver-address-input"
                 disabled={isDisabled}
                 className={clsx(
-                  "min-w-96 mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
+                  "min-w-[26rem] mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
                   "placeholder:text-light-1000/50 focus:outline-none",
                 )}
                 type="text"
                 placeholder={placeholder}
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                  if (receivingWalletAddress) {
+                    setEnableConnectedWallet(
+                      e.target.value === receivingWalletAddress,
+                    );
+                  }
+                }}
               />
-              <AiFillCheckCircle size={16} className="text-green" />
+              {value === receivingWalletAddress && (
+                <AiFillCheckCircle size={16} className="text-green" />
+              )}
             </div>
             <div className="p-2">
               <FiCopy size={16} onClick={() => handleOnCopy(value)} />
