@@ -10,7 +10,7 @@ import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import { useContractContext } from "@/context/ContractContext";
-import ToggleSwitch from "@/components/ToggleSwitch";
+import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 
 export default function Stake() {
   const { Erc20Tokens } = useContractContext();
@@ -97,15 +97,11 @@ export default function Stake() {
                 <span className="text-xs md:text-sm py-1">
                   Receiving address
                 </span>
-                <div className="flex items-center gap-x-2">
-                  <span className="text-xs text-light-1000/50">
-                    Use connected wallet
-                  </span>
-                  <ToggleSwitch
-                    setOn={setEnableConnectedWallet}
-                    isOn={enableConnectedWallet}
-                  />
-                </div>
+                <ConnectedWalletSwitch
+                  customStyle="md:flex hidden"
+                  enableConnectedWallet={enableConnectedWallet}
+                  setEnableConnectedWallet={setEnableConnectedWallet}
+                />
               </div>
               <AddressInput
                 value={enableConnectedWallet ? address : receivingWalletAddress}
@@ -114,6 +110,11 @@ export default function Stake() {
                 setEnableConnectedWallet={setEnableConnectedWallet}
                 placeholder="Connect a wallet"
                 isDisabled={!isConnected}
+              />
+              <ConnectedWalletSwitch
+                customStyle="flex md:hidden"
+                enableConnectedWallet={enableConnectedWallet}
+                setEnableConnectedWallet={setEnableConnectedWallet}
               />
             </div>
           </div>

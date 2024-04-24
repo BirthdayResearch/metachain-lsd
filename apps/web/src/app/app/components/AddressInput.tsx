@@ -84,7 +84,7 @@ export default function AddressInput({
                 data-testid="receiver-address-input"
                 disabled={isDisabled}
                 className={clsx(
-                  "min-w-[26rem] mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
+                  "truncate min-w-56 md:min-w-[26rem] mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
                   "placeholder:text-light-1000/50 focus:outline-none",
                 )}
                 type="text"
