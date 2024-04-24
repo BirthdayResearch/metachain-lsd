@@ -1,4 +1,30 @@
 import clsx from "clsx";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { FiCopy } from "react-icons/fi";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import { useEffect, useState } from "react";
+
+export function SuccessCopy({
+  containerClass,
+  show,
+}: {
+  containerClass: string;
+  show: boolean;
+}) {
+  return (
+    <div
+      className={clsx(
+        "absolute md:w-full text-center",
+        show ? "opacity-100" : "opacity-0",
+        containerClass,
+      )}
+    >
+      <span className="rounded bg-green px-2 py-1 text-xs text-dark-00  transition duration-300 md:text-xs">
+        Copied to clipboard
+      </span>
+    </div>
+  );
+}
 
 export default function AddressInput({
   value,
@@ -7,14 +33,33 @@ export default function AddressInput({
   customStyle,
   isDisabled,
 }: {
-  value: string;
-  setValue: (text: string) => void;
+  value?: `0x${string}` | string;
+  setValue: (text: `0x${string}` | string) => void;
   placeholder?: string;
   customStyle?: string;
   isDisabled?: boolean;
 }) {
+  const { copy } = useCopyToClipboard();
+  const [showSuccessCopy, setShowSuccessCopy] = useState(false);
+
+  const handleOnCopy = (text: string | undefined) => {
+    if (text) {
+      copy(text);
+      setShowSuccessCopy(true);
+    }
+  };
+
+  useEffect(() => {
+    if (showSuccessCopy) {
+      setTimeout(() => setShowSuccessCopy(false), 2000);
+    }
+  }, [showSuccessCopy]);
   return (
     <div>
+      <SuccessCopy
+        containerClass="m-auto right-0 left-0 top-5"
+        show={showSuccessCopy}
+      />
       <div
         className={clsx(
           "border border-light-1000/10 rounded-[10px] flex relative w-full",
@@ -29,18 +74,26 @@ export default function AddressInput({
             { "bg-opacity-30 ": isDisabled },
           )}
         >
-          <input
-            data-testid="receiver-address-input"
-            disabled={isDisabled}
-            className={clsx(
-              "mr-6 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
-              "placeholder:text-light-1000/50 focus:outline-none",
-            )}
-            type="text"
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
+          <div className="flex justify-between w-full items-center">
+            <div className="flex items-center">
+              <input
+                data-testid="receiver-address-input"
+                disabled={isDisabled}
+                className={clsx(
+                  "min-w-96 mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
+                  "placeholder:text-light-1000/50 focus:outline-none",
+                )}
+                type="text"
+                placeholder={placeholder}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <AiFillCheckCircle size={16} className="text-green" />
+            </div>
+            <div className="p-2">
+              <FiCopy size={16} onClick={() => handleOnCopy(value)} />
+            </div>
+          </div>
         </form>
       </div>
       {/* TODO display error msg*/}
