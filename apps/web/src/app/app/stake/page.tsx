@@ -28,8 +28,9 @@ export default function Stake() {
   });
 
   const [stakeAmount, setStakeAmount] = useState<string>("");
-  const [receivingWalletAddress, setReceivingWalletAddress] =
-    useState<string>("");
+  const [receivingWalletAddress, setReceivingWalletAddress] = useState<
+    `0x${string}` | string | undefined
+  >(address);
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
 
   // TODO
