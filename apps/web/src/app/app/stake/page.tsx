@@ -59,6 +59,15 @@ export default function Stake() {
     setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
   }, [address, status, walletBalance]);
 
+  useEffect(() => {
+    if (receivingWalletAddress === address && !enableConnectedWallet) {
+      setReceivingWalletAddress("");
+    }
+    if (enableConnectedWallet) {
+      setReceivingWalletAddress(address);
+    }
+  }, [receivingWalletAddress, enableConnectedWallet]);
+
   return (
     <Panel>
       <div className="w-full gap-y-5">

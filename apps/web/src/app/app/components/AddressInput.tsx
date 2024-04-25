@@ -80,28 +80,30 @@ export default function AddressInput({
         >
           <div className="flex justify-between w-full items-center">
             <div className="flex items-center">
-              <input
-                data-testid="receiver-address-input"
-                disabled={isDisabled}
-                className={clsx(
-                  "truncate min-w-56 md:min-w-[26rem] mr-2 w-full bg-light-00 disabled:bg-transparent caret-brand-100",
-                  "placeholder:text-light-1000/50 focus:outline-none",
+              <div className="w-full flex items-center">
+                <input
+                  data-testid="receiver-address-input"
+                  disabled={isDisabled}
+                  className={clsx(
+                    "truncate min-w-56 md:min-w-[26rem] w-full bg-light-00 disabled:bg-transparent caret-brand-100",
+                    "placeholder:text-light-1000/50 focus:outline-none",
+                  )}
+                  type="text"
+                  placeholder={placeholder}
+                  value={value}
+                  onChange={(e) => {
+                    setValue(e.target.value);
+                    if (receivingWalletAddress) {
+                      setEnableConnectedWallet(
+                        e.target.value === receivingWalletAddress,
+                      );
+                    }
+                  }}
+                />
+                {value === receivingWalletAddress && (
+                  <AiFillCheckCircle size={16} className="text-green" />
                 )}
-                type="text"
-                placeholder={placeholder}
-                value={value}
-                onChange={(e) => {
-                  setValue(e.target.value);
-                  if (receivingWalletAddress) {
-                    setEnableConnectedWallet(
-                      e.target.value === receivingWalletAddress,
-                    );
-                  }
-                }}
-              />
-              {value === receivingWalletAddress && (
-                <AiFillCheckCircle size={16} className="text-green" />
-              )}
+              </div>
             </div>
             <div className="p-2">
               <FiCopy size={16} onClick={() => handleOnCopy(value)} />
