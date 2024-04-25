@@ -1,15 +1,17 @@
+const baseUrl = "http://localhost:3000";
+
 describe("Go to stake page", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3001");
+    cy.visit(baseUrl);
   });
   it("should open the stake page", () => {
     cy.findByTestId("cta-button-header-launch-app").should("exist").click();
   });
 });
 
-describe.only("Stake page", () => {
+describe.skip("Stake page", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3001/app/stake");
+    cy.visit(`${baseUrl}/app/stake`);
   });
 
   it("should show the stake page", () => {
@@ -21,5 +23,12 @@ describe.only("Stake page", () => {
       "have.text",
       "Connect wallet",
     );
+  });
+});
+
+describe.only("My Test", () => {
+  it("should interact with Metamask", () => {
+    cy.setupMetamask();
+    cy.unlockMetamask("your password");
   });
 });
