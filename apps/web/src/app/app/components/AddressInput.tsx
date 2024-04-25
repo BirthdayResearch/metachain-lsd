@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function SuccessCopy({
   containerClass,
@@ -43,6 +43,12 @@ export default function AddressInput({
   customStyle?: string;
   isDisabled?: boolean;
 }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const onButtonClick = () => {
+    if (ref.current) {
+      ref.current.focus();
+    }
+  };
   const { copy } = useCopyToClipboard();
   const [showSuccessCopy, setShowSuccessCopy] = useState(false);
 
@@ -59,7 +65,7 @@ export default function AddressInput({
     }
   }, [showSuccessCopy]);
   return (
-    <div>
+    <div onClick={onButtonClick}>
       <SuccessCopy
         containerClass="m-auto right-0 left-0 top-5"
         show={showSuccessCopy}
@@ -82,6 +88,7 @@ export default function AddressInput({
             <div className="flex items-center">
               <div className="w-full flex items-center">
                 <input
+                  ref={ref}
                   data-testid="receiver-address-input"
                   disabled={isDisabled}
                   className={clsx(

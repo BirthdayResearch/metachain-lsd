@@ -1,7 +1,7 @@
 "use client";
 
 import { useBalance, useAccount } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -13,6 +13,7 @@ import { useContractContext } from "@/context/ContractContext";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 
 export default function Stake() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const { Erc20Tokens } = useContractContext();
 
   const { address, isConnected, status, chainId } = useAccount();
@@ -66,7 +67,26 @@ export default function Stake() {
     if (enableConnectedWallet) {
       setReceivingWalletAddress(address);
     }
+    const handleClick = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node) &&
+        receivingWalletAddress === "" &&
+        !enableConnectedWallet
+      ) {
+        setEnableConnectedWallet(true);
+        setReceivingWalletAddress(address);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
   }, [receivingWalletAddress, enableConnectedWallet]);
+
+  useEffect(() => {}, [receivingWalletAddress, enableConnectedWallet]); // Run only once when component mounts
 
   return (
     <Panel>
@@ -112,14 +132,19 @@ export default function Stake() {
                   setEnableConnectedWallet={setEnableConnectedWallet}
                 />
               </div>
-              <AddressInput
-                value={enableConnectedWallet ? address : receivingWalletAddress}
-                setValue={setReceivingWalletAddress}
-                receivingWalletAddress={address}
-                setEnableConnectedWallet={setEnableConnectedWallet}
-                placeholder="Connect a wallet"
-                isDisabled={!isConnected}
-              />
+              <div ref={inputRef}>
+                <AddressInput
+                  value={
+                    enableConnectedWallet ? address : receivingWalletAddress
+                  }
+                  setValue={setReceivingWalletAddress}
+                  receivingWalletAddress={address}
+                  setEnableConnectedWallet={setEnableConnectedWallet}
+                  placeholder="Connect a wallet"
+                  isDisabled={!isConnected}
+                />
+              </div>
+
               <ConnectedWalletSwitch
                 customStyle="flex md:hidden"
                 enableConnectedWallet={enableConnectedWallet}
