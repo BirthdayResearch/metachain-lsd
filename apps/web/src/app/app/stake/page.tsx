@@ -152,7 +152,7 @@ export default function Stake() {
               />
             </div>
           </div>
-          <div>
+          <div className="mb-12 md:mb-9 lg:mb-12">
             <TransactionRow label="You will receive" value="0.00 mDFI" />
             <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
             <TransactionRow label="Max transaction cost" value="$0.00" />
