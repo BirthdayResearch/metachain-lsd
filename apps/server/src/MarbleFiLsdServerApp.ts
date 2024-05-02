@@ -56,7 +56,7 @@ export class MarbleFiLsdServerApp<
   // Middleware to log the origin
   private registerLoggerMiddleware(app: INestApplication): void {
     app.use((req, res: any, next) => {
-      const origin = req.get("Origin");
+      const origin = req.headers.origin;
       console.log(`Request Origin: ${origin}`);
       next();
     });
