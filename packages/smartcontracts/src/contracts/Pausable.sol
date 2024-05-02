@@ -34,8 +34,17 @@ contract Pausable is MarbleLsdAccessControl {
    */
   event PauseUnpauseWithdrawal(bool status, address owner);
 
-  bool public isDepositPaused = false;
-  bool public isWithdrawalPaused = false;
+  bool public isDepositPaused;
+  bool public isWithdrawalPaused;
+
+  /**
+   * @dev Pausable constructor
+   */
+  function _initializePausable() internal {
+    // set initial pausable
+    isDepositPaused = false;
+    isWithdrawalPaused = false;
+  }
 
   /**
    * @dev Modifier to make a function callable only when the deposit is not paused.

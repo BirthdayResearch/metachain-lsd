@@ -64,6 +64,7 @@ error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
+/// @custom:oz-upgrades-unsafe-allow constructor
 contract MarbleLsdV1 is
   UUPSUpgradeable,
   EIP712Upgradeable,
@@ -176,6 +177,7 @@ contract MarbleLsdV1 is
   ) external initializer {
     __EIP712_init(NAME, "1");
     _initializeQueue();
+    _initializePausable();
     _initializeFees(_feesRecipientAddress);
     _grantRole(DEFAULT_ADMIN_ROLE, _adminAddress);
     _grantRole(ADMINISTRATOR_ROLE, _administratorAddress);
