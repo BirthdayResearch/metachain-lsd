@@ -25,11 +25,13 @@ export default function UnlockPower() {
             label="Launch app"
             testID="launch-app"
             customStyle="md:w-fit w-full"
+            isDisabled
           />
           <SecondaryButton
             text="Learn more"
             testID="learn-more"
             customStyle="md:w-fit w-full"
+            href="https://marblefi.gitbook.io"
           />
         </div>
       </>

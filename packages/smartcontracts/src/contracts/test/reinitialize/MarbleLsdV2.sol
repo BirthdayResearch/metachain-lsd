@@ -64,6 +64,7 @@ error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
  */
 error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
+/// @custom:oz-upgrades-unsafe-allow constructor
 contract MarbleLsdV2 is
   UUPSUpgradeable,
   EIP712Upgradeable,
