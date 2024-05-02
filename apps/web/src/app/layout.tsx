@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import ContainerLayout from "@/app/ui/components/ContainerLayout";
-import { Montserrat } from "next/font/google";
-
-const inter = Montserrat({ subsets: ["latin"] });
+import "../globals.css";
+import ContainerLayout from "@/components/ContainerLayout";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "MarbleFI",
@@ -18,9 +16,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <ContainerLayout>
-      <main className={`${inter.className} md:max-w-5xl`}>{children}</main>
-    </ContainerLayout>
-  );
+  return <ContainerLayout>{children}</ContainerLayout>;
 }

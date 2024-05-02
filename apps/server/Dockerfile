@@ -1,4 +1,4 @@
-FROM node:18.17.0-alpine3.17
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ ENV PUPPETEER_SKIP_DOWNLOAD=false
 ENV CYPRESS_INSTALL_BINARY=0
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9.0.4
 
 COPY pnpm-lock.yaml ./
 COPY package.json ./

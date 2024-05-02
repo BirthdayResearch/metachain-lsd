@@ -4,7 +4,7 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {
@@ -51,8 +51,9 @@ const config: Config = {
         },
         red: "#FF4F4F",
         error: "#E54545",
-        warning: "#D97B01",
+        warning: "#F27909",
         valid: "#0CC72C",
+        green: "#4DE22C",
       },
       borderRadius: {
         DEFAULT: "5px",

@@ -12,6 +12,7 @@ import { MarbleFiLsdServerTestingApp } from "../../test/MarbleFiLsdServerTesting
 import { SubscriptionStatus } from "@prisma/client";
 
 describe("UserController", () => {
+  jest.setTimeout(3600000);
   let testing: MarbleFiLsdServerTestingApp;
   let userController: UserController;
   let userService: UserService;

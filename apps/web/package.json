@@ -6,24 +6,40 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "cypress:open": "cypress open",
+    "cypress:run": "TZ=UTC cypress run --headless --browser chrome"
   },
   "dependencies": {
-    "@waveshq/walletkit-ui": "^1.3.1",
-    "@waveshq/standard-api-express": "^3.0.1",
+    "@defichain/whale-api-client": "^4.0.7",
     "@headlessui/react": "^1.7.18",
+    "@reduxjs/toolkit": "^2.2.1",
     "@tailwindcss/typography": "^0.5.10",
+    "@tanstack/react-query": "^5.28.14",
+    "@waveshq/standard-web": "^4.0.1",
+    "@waveshq/walletkit-core": "^1.3.10",
+    "@waveshq/walletkit-ui": "^1.3.10",
+    "axios": "^1.6.8",
+    "bignumber.js": "^9.1.2",
     "clsx": "^2.1.0",
-    "connectkit": "^1.6.0",
+    "connectkit": "1.7.3",
     "next13-progressbar": "^1.1.3",
-    "viem": "~1.21.4",
-    "wagmi": "^1.4.13"
+    "react-icons": "^5.0.1",
+    "react-responsive": "^9.0.2",
+    "react-secure-storage": "^1.3.2",
+    "smartcontracts": "workspace:*",
+    "viem": "~2.9.16",
+    "wagmi": "^2.5.19",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.34",
     "@netlify/plugin-lighthouse": "^6.0.0",
     "@netlify/plugin-nextjs": "^4.41.3",
+    "@testing-library/cypress": "^10.0.1",
     "@types/node": "^20",
     "autoprefixer": "^10.4.16",
+    "cypress": "^13.7.2",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1"
   }

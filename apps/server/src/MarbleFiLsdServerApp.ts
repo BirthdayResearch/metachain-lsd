@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import {
   INestApplication,
   NestApplicationOptions,
@@ -33,7 +32,10 @@ export class MarbleFiLsdServerApp<
   }
 
   async createNestApp(): Promise<App> {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestFastifyApplication>(
+      AppModule,
+      this.fastifyAdapter,
+    );
     await this.configureApp(app);
     // Register the middleware to log the origin
     this.registerLoggerMiddleware(app);
@@ -43,7 +45,13 @@ export class MarbleFiLsdServerApp<
   async configureApp(app: INestApplication): Promise<void> {
     app.useGlobalPipes(new ValidationPipe());
     app.enableCors({
-      origin: "*",
+      origin:
+        process.env.NODE_ENV === "production"
+          ? [
+              "https://marblefi.netlify.app/",
+              /https:\/\/([^.]*.)--marblefi\.netlify\.app/, // allow all netlify preview deployments
+            ]
+          : "*",
       allowedHeaders: "*",
       methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
       maxAge: 60 * 24 * 7,
@@ -52,8 +60,8 @@ export class MarbleFiLsdServerApp<
 
   // Middleware to log the origin
   private registerLoggerMiddleware(app: INestApplication): void {
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      const origin = req.get("Origin");
+    app.use((req, res: any, next) => {
+      const origin = req.headers.origin;
       console.log(`Request Origin: ${origin}`);
       next();
     });
