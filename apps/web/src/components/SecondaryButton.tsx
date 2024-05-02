@@ -1,18 +1,22 @@
 import clsx from "clsx";
+import Link from "next/link";
 
 export function SecondaryButton({
+  onClick,
   text,
   testID,
   customStyle,
   customTextStyle = "text-light-00",
+  href,
 }: {
+  onClick?: () => void;
   text: string;
+  testID: string;
   customStyle?: string;
   customTextStyle?: string;
-  testID: string;
-  isOutline?: boolean;
+  href?: string;
 }) {
-  return (
+  const Button = (
     <button
       data-testid={`secondary-button-${testID}`}
       className={clsx(
@@ -22,8 +26,17 @@ export function SecondaryButton({
         customTextStyle,
         customStyle ?? "w-fit",
       )}
+      onClick={onClick}
     >
       {text}
     </button>
+  );
+
+  return href ? (
+    <Link href={href} rel="noopener noreferrer" target="_blank">
+      {Button}
+    </Link>
+  ) : (
+    Button
   );
 }

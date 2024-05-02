@@ -30,7 +30,7 @@ export function CTAButton({
         "accent-1 rounded-[30px] px-9 py-5 md:py-4",
         !isDisabled && "hover:bg-opacity-60",
         customTextStyle,
-        isDisabled ? "opacity-70" : "",
+        isDisabled ? "opacity-30" : "",
         customStyle ?? "w-fit",
       )}
     >
