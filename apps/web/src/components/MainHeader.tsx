@@ -37,6 +37,7 @@ export default function MainHeader({
           label="Launch app"
           testID="header-launch-app"
           customStyle="w-full md:w-fit"
+          isDisabled
         />
       </div>
     </>
