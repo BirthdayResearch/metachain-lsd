@@ -17,14 +17,14 @@ export default function AddressInput({
     <div>
       <div
         className={clsx(
-          "border border-light-1000/10 rounded-[10px] flex relative w-full",
+          "border border-light-1000/10 rounded-md flex relative w-full",
           // value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
           { "input-gradient-1": !isDisabled },
         )}
       >
         <form
           className={clsx(
-            "relative w-full py-4 px-3 pl-6 flex items-center bg-light-00 rounded-[10px]",
+            "relative w-full py-4 px-3 pl-6 flex items-center bg-light-00 rounded-md",
             customStyle,
             { "bg-opacity-30 ": isDisabled },
           )}
