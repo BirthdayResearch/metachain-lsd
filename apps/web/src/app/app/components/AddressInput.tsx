@@ -112,7 +112,7 @@ export default function AddressInput({
                 )}
               </div>
             </div>
-            <div className="p-2">
+            <div className="p-2 cursor-pointer">
               <FiCopy size={16} onClick={() => handleOnCopy(value)} />
             </div>
           </div>

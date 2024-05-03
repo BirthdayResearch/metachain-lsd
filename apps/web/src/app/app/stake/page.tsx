@@ -9,24 +9,16 @@ import Panel from "@/app/app/stake/components/Panel";
 import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
-import { useContractContext } from "@/context/ContractContext";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 
 export default function Stake() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { Erc20Tokens } = useContractContext();
 
   const { address, isConnected, status, chainId } = useAccount();
-
-  // check if chainId is mainnet or sepolia
-  const isOnEthNetwork = chainId === 1 || chainId === 11155111;
 
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    ...(isOnEthNetwork && {
-      token: Erc20Tokens["DFI"].address,
-    }),
   });
 
   const [stakeAmount, setStakeAmount] = useState<string>("");

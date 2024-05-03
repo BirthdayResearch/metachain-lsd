@@ -9,5 +9,4 @@ export interface ContractContextI {
   EthereumRpcUrl: string;
   ExplorerURL: string;
   MarbleLsdV1: ContractConfigI;
-  Erc20Tokens: Record<Erc20Token, ContractConfigI>;
 }

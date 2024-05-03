@@ -15,7 +15,7 @@ const securityHeaders = [
       };` +
       `style-src 'self' fonts.googleapis.com 'unsafe-inline';` +
       `font-src 'self' fonts.gstatic.com;` +
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_SERVER_URL} rpc.ankr.com rpc.sepolia.org mainnet.infura.io cloudflare-eth.com eth.testnet.ocean.jellyfishsdk.com mainnet.ocean.jellyfishsdk.com ${
+      `connect-src 'self' ${process.env.NEXT_PUBLIC_SERVER_URL} rpc.ankr.com rpc.sepolia.org mainnet.infura.io cloudflare-eth.com *.ocean.jellyfishsdk.com ${
         process.env.NODE_ENV === "development"
           ? `localhost:* 127.0.0.1:* ws://localhost:3000/_next/webpack-hmr`
           : ""
