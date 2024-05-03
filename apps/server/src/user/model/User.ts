@@ -9,9 +9,13 @@ import {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export class createUserDTO {
-  @IsDefined()
-  @IsNotEmpty()
+export class CreateUserDTO {
+  @IsDefined({
+    message: "Email should not be null or undefined",
+  })
+  @IsNotEmpty({
+    message: "Email should not be empty",
+  })
   @Matches(emailRegex, {
     message: "Invalid email format",
   })

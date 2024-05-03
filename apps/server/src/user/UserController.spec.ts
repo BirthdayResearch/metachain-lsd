@@ -3,19 +3,14 @@ import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from "@stickyjs/testcontainers";
-import { UserController } from "./UserController";
-import { UserService } from "./UserService";
 import { PrismaService } from "../PrismaService";
-
 import { buildTestConfig, TestingModule } from "../../test/TestingModule";
 import { MarbleFiLsdServerTestingApp } from "../../test/MarbleFiLsdServerTestingApp";
 import { SubscriptionStatus } from "@prisma/client";
 
-describe("UserController", () => {
+describe.only("UserController", () => {
   jest.setTimeout(3600000);
   let testing: MarbleFiLsdServerTestingApp;
-  let userController: UserController;
-  let userService: UserService;
   let prismaService: PrismaService;
   let startedPostgresContainer: StartedPostgreSqlContainer;
 
@@ -28,65 +23,102 @@ describe("UserController", () => {
 
     // init postgres database
     prismaService = app.get<PrismaService>(PrismaService);
-    userService = new UserService(prismaService);
-    userController = new UserController(userService);
   });
 
   describe("create user", () => {
-    it("should create an active user in db", async () => {
-      const user = {
+    it("should create an active user", async () => {
+      const userData = {
         email: "test@example.com",
         status: SubscriptionStatus.ACTIVE,
       };
-      const res = await userController.create(user);
-
-      expect(res).toEqual({
-        id: 1,
-        email: "test@example.com",
-        status: SubscriptionStatus.ACTIVE,
+      const initialResponse = await testing.inject({
+        method: "POST",
+        url: "/user",
+        payload: userData,
       });
+      expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
+      const response = JSON.parse(initialResponse.body);
+      expect(response).toEqual({
+        id: 1,
+        ...userData,
+      });
+      const savedData = await prismaService.user.findFirst({
+        where: { id: response.id },
+      });
+      expect(response).toEqual(savedData);
     });
 
-    it("should create an inactive user in db", async () => {
-      const user = {
-        email: "test2@example.com",
+    it("should create an inactive user", async () => {
+      const userData = {
+        email: "test_inactive@example.com",
         status: SubscriptionStatus.INACTIVE,
       };
-      const res = await userController.create(user);
-
-      expect(res).toEqual({
-        id: 2,
-        email: "test2@example.com",
-        status: SubscriptionStatus.INACTIVE,
+      const initialResponse = await testing.inject({
+        method: "POST",
+        url: "/user",
+        payload: userData,
       });
+      expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
+      const response = JSON.parse(initialResponse.body);
+      expect(response).toEqual({
+        id: 2,
+        ...userData,
+      });
+      const savedData = await prismaService.user.findFirst({
+        where: { id: response.id },
+      });
+      expect(response).toEqual(savedData);
     });
 
     it("should create an active user by default", async () => {
-      const user = {
-        email: "test3@example.com",
-        status: SubscriptionStatus.ACTIVE,
+      const userData = {
+        email: "test_default_active@example.com",
       };
-      const res = await userController.create(user);
-
-      expect(res).toEqual({
-        id: 3,
-        email: "test3@example.com",
-        status: SubscriptionStatus.ACTIVE,
+      const initialResponse = await testing.inject({
+        method: "POST",
+        url: "/user",
+        payload: userData,
       });
+      expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
+      const response = JSON.parse(initialResponse.body);
+      expect(response).toEqual({
+        id: 3,
+        status: SubscriptionStatus.ACTIVE,
+        ...userData,
+      });
+      const savedData = await prismaService.user.findFirst({
+        where: { id: response.id },
+      });
+      expect(response).toEqual(savedData);
     });
 
     it("should not create a user with same email", async () => {
-      try {
-        const user = {
-          email: "test@example.com",
-        };
-        await userController.create(user);
-      } catch (e) {
-        expect(e.response.statusCode).toStrictEqual(HttpStatus.BAD_REQUEST);
-        expect(e.response.message).toStrictEqual(
-          `Duplicate email 'test@example.com' found in database`,
-        );
-      }
+      const userData = {
+        email: "test@example.com",
+        status: SubscriptionStatus.ACTIVE,
+      };
+      const initialResponse = await testing.inject({
+        method: "POST",
+        url: "/user",
+        payload: userData,
+      });
+      const response = JSON.parse(initialResponse.body);
+      expect(response.statusCode).toStrictEqual(HttpStatus.BAD_REQUEST);
+      expect(response.message).toStrictEqual(
+        "Duplicate email 'test@example.com' found in database",
+      );
+    });
+
+    it("should not create a user with invalid email address", async () => {
+      const initialResponse = await testing.inject({
+        method: "POST",
+        url: "/user",
+        payload: {
+          email: "invalid_email",
+        },
+      });
+      const response = JSON.parse(initialResponse.body);
+      expect(response.statusCode).toStrictEqual(HttpStatus.BAD_REQUEST);
     });
   });
 });
