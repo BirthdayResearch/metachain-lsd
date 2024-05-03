@@ -1,4 +1,8 @@
-import { INestApplication, NestApplicationOptions } from "@nestjs/common";
+import {
+  INestApplication,
+  NestApplicationOptions,
+  ValidationPipe,
+} from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import {
   FastifyAdapter,
@@ -39,6 +43,7 @@ export class MarbleFiLsdServerApp<
   }
 
   async configureApp(app: INestApplication): Promise<void> {
+    app.useGlobalPipes(new ValidationPipe());
     app.enableCors({
       origin:
         process.env.NODE_ENV === "production"
