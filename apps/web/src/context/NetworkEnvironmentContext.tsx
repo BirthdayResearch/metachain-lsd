@@ -39,7 +39,6 @@ export function NetworkEnvironmentProvider({
   const defaultNetwork = EnvironmentNetwork.MainNet;
   const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
-  console.log(chain?.id);
   const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
@@ -64,11 +63,9 @@ export function NetworkEnvironmentProvider({
 
   // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
-    router.replace(
-      pathName +
-        "?" +
-        (value === defaultNetwork ? "" : getQueryStaring("network", value)),
-    );
+    if (value !== defaultNetwork) {
+      router.replace(pathName + "?" + getQueryStaring("network", value));
+    }
   };
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
