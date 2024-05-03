@@ -1,4 +1,8 @@
-import { INestApplication, NestApplicationOptions } from "@nestjs/common";
+import {
+  INestApplication,
+  NestApplicationOptions,
+  ValidationPipe,
+} from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import {
   FastifyAdapter,
@@ -39,6 +43,7 @@ export class MarbleFiLsdServerApp<
   }
 
   async configureApp(app: INestApplication): Promise<void> {
+    app.useGlobalPipes(new ValidationPipe());
     app.enableCors({
       origin:
         process.env.NODE_ENV === "production"
@@ -56,7 +61,7 @@ export class MarbleFiLsdServerApp<
   // Middleware to log the origin
   private registerLoggerMiddleware(app: INestApplication): void {
     app.use((req, res: any, next) => {
-      const origin = req.get("Origin");
+      const origin = req.headers.origin;
       console.log(`Request Origin: ${origin}`);
       next();
     });

@@ -2,9 +2,9 @@ import clsx from "clsx";
 import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import MetaMaskIcon from "@/app/landing-page/components/MetaMaskIcon";
-import { ETHEREUM_MAINNET_ID } from "@/lib/constants";
 import truncateTextFromMiddle from "@/lib/textHelper";
 import useResponsive from "@/hooks/useResponsive";
+import { ETHEREUM_MAINNET_ID } from "@/constants";
 
 function PreConnectedButton({
   onClick,

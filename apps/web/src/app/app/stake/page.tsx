@@ -36,6 +36,7 @@ export default function Stake() {
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
+  const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
 
   // TODO
   async function submitStake() {
@@ -107,12 +108,14 @@ export default function Stake() {
               </div>
               <div className="pb-2 md:pb-0">
                 <InputCard
-                  maxAmount={stakeAmount}
+                  maxAmount={maxStakeAmount}
+                  value={stakeAmount}
                   setAmount={setStakeAmount}
                   usdAmount={(new BigNumber(stakeAmount).isNaN()
                     ? new BigNumber(0)
                     : new BigNumber(stakeAmount)
                   ).toFixed(2)} // TODO use USDT price to calculate DFI amount
+                  onChange={(value) => setStakeAmount(value)}
                 />
               </div>
               <WalletDetails

@@ -1,7 +1,6 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { SubscriptionStatus } from "@prisma/client";
+import { Body, Controller, Post, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./UserService";
-import { MultiEnumValidationPipe } from "../pipes/MultiEnumValidationPipe";
+import { CreateUserDTO } from "./model/User";
 
 @Controller("user")
 export class UserController {
@@ -9,10 +8,8 @@ export class UserController {
 
   @Post()
   async create(
-    @Body("email") email: string,
-    @Body("status", new MultiEnumValidationPipe(SubscriptionStatus))
-    status?: SubscriptionStatus,
+    @Body(new ValidationPipe({ transform: true })) user: CreateUserDTO,
   ) {
-    return this.userService.createUser({ email, status });
+    return this.userService.createUser(user);
   }
 }

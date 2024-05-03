@@ -20,6 +20,7 @@ export default function DFIOpportunities() {
             label="Launch app"
             testID="launch-app"
             customStyle="w-full md:w-fit"
+            isDisabled
           />
         </div>
         <div className="flex flex-col lg:flex-row gap-y-8 md:gap-x-6 w-full">
