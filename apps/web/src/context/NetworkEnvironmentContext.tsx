@@ -6,8 +6,7 @@ import React, {
   useState,
   PropsWithChildren,
 } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import { useAccount } from "wagmi";
 import { useNetworkContext as useWhaleNetworkContext } from "@waveshq/walletkit-ui";
@@ -66,21 +65,11 @@ export function NetworkEnvironmentProvider({
 
   // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
-    router.replace(
-      {
-        pathname: router.pathname,
-        query: value === defaultNetwork ? {} : getQueryStaring("network", value),
-      },
-      undefined,
-      { shallow: true }
-    );
+    if (value !== defaultNetwork) {
+      console.log({value})
+      router.replace(pathName + "?" + getQueryStaring("network", value));
+    }
   };
-  // const updateRoute = (value: EnvironmentNetwork) => {
-  //   if (value !== defaultNetwork) {
-  //     console.log({value})
-  //     router.replace(pathName + "?" + getQueryStaring("network", value));
-  //   }
-  // };
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     setNetworkEnv(value);
