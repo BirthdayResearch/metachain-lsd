@@ -54,7 +54,7 @@ export function NetworkEnvironmentProvider({
   const initialNetwork = getInitialNetwork(networkQuery as EnvironmentNetwork);
   const [networkEnv, setNetworkEnv] =
     useState<EnvironmentNetwork>(initialNetwork);
-  
+
   const getQueryStaring = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(name, value);
