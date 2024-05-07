@@ -7,8 +7,9 @@ import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
 import AddressInput from "@/app/app/components/AddressInput";
-import clsx from "clsx";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import BigNumber from "bignumber.js";
+import TransactionRow from "@/app/app/components/TransactionRow";
 
 export default function Stake() {
   const { address, isConnected } = useAccount();
@@ -45,7 +46,7 @@ export default function Stake() {
     <Panel>
       <div className="w-full gap-y-5">
         <h3 className="text-2xl font-semibold">Stake DFI</h3>
-        <div className="flex flex-col w-full justify-between gap-y-5">
+        <div className="flex flex-col w-full justify-between gap-y-5 mb-12 md:mb-10 lg:mb-16">
           <div className="mt-10">
             <div className="mb-5">
               <div className="flex justify-between gap-y-2 mb-2">
@@ -102,40 +103,5 @@ export default function Stake() {
         </ConnectKitButton.Custom>
       </div>
     </Panel>
-  );
-}
-
-function TransactionRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <span className="text-xs md:text-sm">{label}</span>
-      <span className="text-sm font-semibold text-right">{value}</span>
-    </div>
-  );
-}
-
-function WalletDetails({
-  isWalletConnected,
-  style,
-}: {
-  isWalletConnected: boolean;
-  style?: string;
-}) {
-  return (
-    <div
-      data-testid="wallet-connection"
-      className={clsx("flex items-center", style)}
-    >
-      {isWalletConnected ? (
-        <p>
-          <span className="opacity-40">Available: </span>
-          <span className="font-semibold opacity-70">walletAmount</span>
-        </p>
-      ) : (
-        <span className="text-xs text-warning font-semibold">
-          Connect wallet to get started
-        </span>
-      )}
-    </div>
   );
 }
