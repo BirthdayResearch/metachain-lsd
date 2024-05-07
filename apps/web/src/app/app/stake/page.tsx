@@ -79,8 +79,6 @@ export default function Stake() {
     };
   }, [receivingWalletAddress, enableConnectedWallet]);
 
-  useEffect(() => {}, [receivingWalletAddress, enableConnectedWallet]); // Run only once when component mounts
-
   return (
     <Panel>
       <div className="w-full gap-y-5">
