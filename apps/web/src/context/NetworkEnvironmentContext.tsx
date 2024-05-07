@@ -63,7 +63,7 @@ export function NetworkEnvironmentProvider({
   // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
     if (value !== defaultNetwork) {
-      router.push(pathName + "?" + getQueryStaring("network", value));
+      router.replace(pathName + "?" + getQueryStaring("network", value));
     }
   };
 
