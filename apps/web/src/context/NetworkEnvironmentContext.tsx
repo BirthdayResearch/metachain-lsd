@@ -54,7 +54,6 @@ export function NetworkEnvironmentProvider({
   const initialNetwork = getInitialNetwork(networkQuery as EnvironmentNetwork);
   const [networkEnv, setNetworkEnv] =
     useState<EnvironmentNetwork>(initialNetwork);
-  console.log({initialNetwork, env: process.env.NODE_ENV})
   const getQueryStaring = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(name, value);
@@ -64,7 +63,6 @@ export function NetworkEnvironmentProvider({
   // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
     if (value !== defaultNetwork) {
-      console.log({value})
       router.push(pathName + "?" + getQueryStaring("network", value));
     }
   };
