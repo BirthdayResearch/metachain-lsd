@@ -3,8 +3,6 @@ interface ContractConfigI {
   abi?: any;
 }
 
-export type Erc20Token = "DFI";
-
 export interface ContractContextI {
   EthereumRpcUrl: string;
   ExplorerURL: string;
