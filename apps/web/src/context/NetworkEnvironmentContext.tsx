@@ -40,21 +40,20 @@ export function NetworkEnvironmentProvider({
   const defaultNetwork = EnvironmentNetwork.TestNet;
   const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
-  const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
-    if (chain === undefined || process.env.NODE_ENV === "development") {
+    if (chain === undefined) {
       return env.networks.includes(n) ? n : defaultNetwork;
     }
-
+    const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
     return isDFIMainNet
       ? EnvironmentNetwork.MainNet
       : EnvironmentNetwork.TestNet;
   }
 
-  const initialNetwork = getInitialNetwork(networkQuery as EnvironmentNetwork);
-  const [networkEnv, setNetworkEnv] =
-    useState<EnvironmentNetwork>(initialNetwork);
+  const [networkEnv, setNetworkEnv] = useState<EnvironmentNetwork>(
+    getInitialNetwork(networkQuery as EnvironmentNetwork),
+  );
 
   const getQueryStaring = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -62,12 +61,20 @@ export function NetworkEnvironmentProvider({
     return params.toString();
   };
 
-  // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
-    if (value !== defaultNetwork) {
-      router.replace(pathName + "?" + getQueryStaring("network", value));
-    }
+    router.replace(
+      pathName +
+        "?" +
+        (value === defaultNetwork ? "" : getQueryStaring("network", value)),
+    );
   };
+
+  useEffect(() => {
+    const initialNetwork = getInitialNetwork(
+      networkQuery as EnvironmentNetwork,
+    );
+    setNetworkEnv(initialNetwork);
+  }, [chain]);
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     setNetworkEnv(value);
@@ -76,14 +83,12 @@ export function NetworkEnvironmentProvider({
   };
 
   const resetNetworkEnv = () => {
-    handleNetworkEnvChange(initialNetwork);
+    handleNetworkEnvChange(networkEnv);
   };
 
   useEffect(() => {
-    setNetworkEnv(initialNetwork);
-    updateRoute(initialNetwork);
-    updateWhaleNetwork(initialNetwork);
-  }, [initialNetwork]);
+    handleNetworkEnvChange(networkEnv);
+  }, [networkEnv]);
 
   const context: NetworkContextI = useMemo(
     () => ({
