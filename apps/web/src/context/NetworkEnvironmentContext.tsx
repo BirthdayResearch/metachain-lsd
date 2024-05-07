@@ -6,8 +6,8 @@ import React, {
   useState,
   PropsWithChildren,
 } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import Router from 'next/router'
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from 'next/router'
 
 import { useAccount } from "wagmi";
 import { useNetworkContext as useWhaleNetworkContext } from "@waveshq/walletkit-ui";
@@ -37,7 +37,8 @@ export function NetworkEnvironmentProvider({
 
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = searchParams.get("network");
-  const defaultNetwork = EnvironmentNetwork.MainNet;
+  // TODO set defaultNetwork to mainnet
+  const defaultNetwork = EnvironmentNetwork.TestNet;
   const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
   const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
@@ -53,6 +54,7 @@ export function NetworkEnvironmentProvider({
   }
 
   const initialNetwork = getInitialNetwork(networkQuery as EnvironmentNetwork);
+  console.log({initialNetwork})
   const [networkEnv, setNetworkEnv] =
     useState<EnvironmentNetwork>(initialNetwork);
 
@@ -64,10 +66,21 @@ export function NetworkEnvironmentProvider({
 
   // TODO @chloezxyyy url routing on different network
   const updateRoute = (value: EnvironmentNetwork) => {
-    if (value !== defaultNetwork) {
-        Router.push(pathName + "?" + getQueryStaring("network", value), undefined, { shallow: true });
-    }
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: value === defaultNetwork ? {} : getQueryStaring("network", value),
+      },
+      undefined,
+      { shallow: true }
+    );
   };
+  // const updateRoute = (value: EnvironmentNetwork) => {
+  //   if (value !== defaultNetwork) {
+  //     console.log({value})
+  //     router.replace(pathName + "?" + getQueryStaring("network", value));
+  //   }
+  // };
 
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     setNetworkEnv(value);
