@@ -97,7 +97,7 @@ export default function AddressInput({
                   )}
                   type="text"
                   placeholder={placeholder}
-                  value={value}
+                  value={value ?? ""}
                   onChange={(e) => {
                     setValue(e.target.value);
                     if (receivingWalletAddress) {
