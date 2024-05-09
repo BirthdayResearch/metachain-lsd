@@ -1,12 +1,12 @@
 import clsx from "clsx";
 
 export function CTAButtonOutline({
-  text,
+  label,
   testID,
   customStyle,
   customTextStyle = "text-light-00",
 }: {
-  text: string;
+  label: string;
   customStyle?: string;
   customTextStyle?: string;
   testID: string;
@@ -16,13 +16,15 @@ export function CTAButtonOutline({
     <button
       data-testid={`cta-button-outline-${testID}`}
       className={clsx(
-        "px-16 py-6 cta-button-outline",
+        "rounded-[40px]  px-9 py-5 md:py-4 border border-[0.5px] border-light-1000 flex items-center justify-center",
         "text-[28px] font-bold",
         customTextStyle,
         customStyle ?? "w-fit",
       )}
     >
-      {text}
+      <span className="active:text-opacity-60 text-sm font-bold text-light-1000">
+        {label}
+      </span>
     </button>
   );
 }
