@@ -6,7 +6,7 @@ export function CTAButton({
   label,
   testID,
   customStyle,
-  customTextStyle = "text-light-00",
+  customTextStyle,
   onClick,
   isDisabled,
   isLoading = false,
@@ -29,13 +29,17 @@ export function CTAButton({
       className={clsx(
         "accent-1 rounded-[30px] px-9 py-5 md:py-4",
         !isDisabled && "hover:bg-opacity-60",
-        customTextStyle,
         isDisabled ? "opacity-30" : "",
         customStyle ?? "w-fit",
       )}
     >
       <div className="items-center justify-center flex flex-row gap-x-3">
-        <span className="active:text-opacity-60 text-sm font-bold text-light-1000">
+        <span
+          className={clsx(
+            customTextStyle ??
+              "active:text-opacity-60 text-sm font-bold text-light-1000",
+          )}
+        >
           {label}
         </span>
         {isLoading ? <Spinner className="animate-spin w-5 h-5" /> : null}
