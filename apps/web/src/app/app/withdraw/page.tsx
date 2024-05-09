@@ -58,10 +58,6 @@ export default function Withdraw() {
                     style="md:block hidden"
                   />
                 </div>
-                <WalletDetails
-                  isWalletConnected={isConnected}
-                  style="block md:hidden"
-                />
               </div>
               <div className="grid gap-y-2">
                 <AddressInput
@@ -69,6 +65,10 @@ export default function Withdraw() {
                   setValue={setReceivingWalletAddress}
                   placeholder="Connect a wallet"
                   isDisabled={!isConnected}
+                />
+                <WalletDetails
+                  isWalletConnected={isConnected}
+                  style="block md:hidden"
                 />
               </div>
             </div>
