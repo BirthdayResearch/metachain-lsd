@@ -1,8 +1,9 @@
 import clsx from "clsx";
-import { AiFillCheckCircle } from "react-icons/ai";
+import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { useEffect, useRef, useState } from "react";
+import { isAddress } from "ethers";
 
 export function SuccessCopy({
   containerClass,
@@ -64,6 +65,9 @@ export default function AddressInput({
       setTimeout(() => setShowSuccessCopy(false), 2000);
     }
   }, [showSuccessCopy]);
+
+  const isValidAddress = isAddress(value);
+
   return (
     <div onClick={onButtonClick}>
       <SuccessCopy
@@ -73,8 +77,8 @@ export default function AddressInput({
       <div
         className={clsx(
           "border border-light-1000/10 rounded-md flex relative w-full",
-          // value && !isValidEmail(value) ? "bg-red" : "input-gradient-1",
           { "input-gradient-1": !isDisabled },
+          value && !isValidAddress ? "bg-red" : "",
         )}
       >
         <form
@@ -84,20 +88,21 @@ export default function AddressInput({
             { "bg-opacity-30 ": isDisabled },
           )}
         >
-          <div className="flex justify-between w-full items-center">
-            <div className="flex items-center">
-              <div className="w-full flex items-center">
+          <div className="flex flex-row justify-between w-full items-center">
+            <div className="flex justify-start items-center w-full">
+              <div className="flex justify-start flex-row items-center">
                 <input
                   ref={ref}
                   data-testid="receiver-address-input"
                   disabled={isDisabled}
                   className={clsx(
-                    "truncate min-w-56 md:min-w-[25rem] w-full bg-light-00 disabled:bg-transparent caret-brand-100",
+                    "truncate min-w-56 md:min-w-[25rem]",
+                    "w-full bg-light-00 disabled:bg-transparent caret-brand-100",
                     "placeholder:text-light-1000/50 focus:outline-none",
                   )}
                   type="text"
                   placeholder={placeholder}
-                  value={value}
+                  value={value ?? ""}
                   onChange={(e) => {
                     setValue(e.target.value);
                     if (receivingWalletAddress) {
@@ -107,21 +112,26 @@ export default function AddressInput({
                     }
                   }}
                 />
-                {value === receivingWalletAddress && (
+                {value && isValidAddress && (
                   <AiFillCheckCircle size={16} className="text-green" />
+                )}
+                {value && !isValidAddress && (
+                  <AiFillCloseCircle size={16} className="text-red" />
                 )}
               </div>
             </div>
-            <div className="p-2 cursor-pointer">
-              <FiCopy size={16} onClick={() => handleOnCopy(value)} />
-            </div>
+            {!isDisabled && (
+              <div className="p-2 cursor-pointer">
+                <FiCopy
+                  size={16}
+                  onClick={() => handleOnCopy(value)}
+                  className="text-dark-00"
+                />
+              </div>
+            )}
           </div>
         </form>
       </div>
-      {/* TODO display error msg*/}
-      {/*{errorMsg && (*/}
-      {/*  <div className="text-left mt-2 ml-2 text-sm text-red">{errorMsg}</div>*/}
-      {/*)}*/}
     </div>
   );
 }

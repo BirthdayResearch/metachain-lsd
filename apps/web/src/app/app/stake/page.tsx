@@ -1,6 +1,6 @@
 "use client";
 
-import { useBalance, useAccount } from "wagmi";
+import { useBalance, useAccount, useReadContracts } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { InputCard } from "@/app/app/components/InputCard";
@@ -10,22 +10,25 @@ import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
 import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
+import TransactionRows from "./components/TransactionRows";
+import useDebounce from "@/hooks/useDebounce";
 
 export default function Stake() {
   const inputRef = useRef<HTMLInputElement>(null);
-
   const { address, isConnected, status, chainId } = useAccount();
 
   const { data: walletBalance } = useBalance({
     address,
     chainId,
   });
-
   const [stakeAmount, setStakeAmount] = useState<string>("");
+  // to avoid multiple contract fetch
+  const debounceStakeAmount = useDebounce(stakeAmount, 200);
+
   const [receivingWalletAddress, setReceivingWalletAddress] = useState<
     `0x${string}` | string | undefined
-  >(address);
-  const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
+  >(address ?? "");
+  const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
   const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
@@ -36,21 +39,8 @@ export default function Stake() {
     // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
   }
 
-  function getActionBtnLabel() {
-    switch (true) {
-      // case isSuccess:
-      //   return "Return to Main Page";
-
-      case isConnected:
-        return "Stake DFI";
-
-      default:
-        return "Connect wallet";
-    }
-  }
-
   useEffect(() => {
-    setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
+    setWalletBalanceAmount(walletBalance?.formatted ?? ""); // set wallet balance
   }, [address, status, walletBalance]);
 
   useEffect(() => {
@@ -60,23 +50,6 @@ export default function Stake() {
     if (enableConnectedWallet) {
       setReceivingWalletAddress(address);
     }
-    const handleClick = (event: MouseEvent) => {
-      if (
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node) &&
-        receivingWalletAddress === "" &&
-        !enableConnectedWallet
-      ) {
-        setEnableConnectedWallet(true);
-        setReceivingWalletAddress(address);
-      }
-    };
-
-    document.addEventListener("click", handleClick);
-
-    return () => {
-      document.removeEventListener("click", handleClick);
-    };
   }, [receivingWalletAddress, enableConnectedWallet]);
 
   return (
@@ -119,59 +92,61 @@ export default function Stake() {
                 <span className="text-xs md:text-sm py-1">
                   Receiving address
                 </span>
-                <ConnectedWalletSwitch
-                  customStyle="md:flex hidden"
-                  enableConnectedWallet={enableConnectedWallet}
-                  setEnableConnectedWallet={setEnableConnectedWallet}
-                />
+                {isConnected && (
+                  <ConnectedWalletSwitch
+                    customStyle="md:flex hidden"
+                    enableConnectedWallet={enableConnectedWallet}
+                    setEnableConnectedWallet={setEnableConnectedWallet}
+                  />
+                )}
               </div>
               <div ref={inputRef}>
                 <AddressInput
                   value={
-                    enableConnectedWallet ? address : receivingWalletAddress
+                    isConnected
+                      ? enableConnectedWallet
+                        ? address
+                        : receivingWalletAddress
+                      : ""
                   }
                   setValue={setReceivingWalletAddress}
                   receivingWalletAddress={address}
                   setEnableConnectedWallet={setEnableConnectedWallet}
-                  placeholder="Connect a wallet"
+                  placeholder={
+                    isConnected
+                      ? "Enter wallet address to receive mDFI"
+                      : "Connect a wallet"
+                  }
                   isDisabled={!isConnected}
                 />
               </div>
 
-              <ConnectedWalletSwitch
-                customStyle="flex md:hidden"
-                enableConnectedWallet={enableConnectedWallet}
-                setEnableConnectedWallet={setEnableConnectedWallet}
-              />
+              {isConnected && (
+                <ConnectedWalletSwitch
+                  customStyle="flex md:hidden"
+                  enableConnectedWallet={enableConnectedWallet}
+                  setEnableConnectedWallet={setEnableConnectedWallet}
+                />
+              )}
             </div>
           </div>
-          <div className="mb-12 md:mb-9 lg:mb-12">
-            <TransactionRow label="You will receive" value="0.00 mDFI" />
-            <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-            <TransactionRow label="Max transaction cost" value="$0.00" />
-          </div>
+          <TransactionRows
+            stakeAmount={debounceStakeAmount}
+            isConnected={isConnected}
+          />
         </div>
         <ConnectKitButton.Custom>
           {({ show }) => (
             <CTAButton
               testID="instant-transfer-btn"
-              label={getActionBtnLabel()}
+              label={isConnected ? "Stake DFI" : "Connect wallet"}
               customStyle="w-full md:py-5"
-              onClick={!isConnected ? show : () => submitStake()}
+              onClick={isConnected ? submitStake : show}
             />
           )}
         </ConnectKitButton.Custom>
       </div>
     </Panel>
-  );
-}
-
-function TransactionRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <span className="text-xs md:text-sm">{label}</span>
-      <span className="text-sm font-semibold text-right">{value}</span>
-    </div>
   );
 }
 
