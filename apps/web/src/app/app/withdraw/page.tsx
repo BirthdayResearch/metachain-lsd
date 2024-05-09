@@ -1,32 +1,19 @@
 "use client";
 
-import { useBalance, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import React, { useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
 import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
-import BigNumber from "bignumber.js";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 
 export default function Withdraw() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
-  const { data: walletBalance } = useBalance({
-    address,
-  });
-
-  const [stakeAmount, setStakeAmount] = useState<string>("");
-  const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
   const [receivingWalletAddress, setReceivingWalletAddress] =
     useState<string>("");
-
-  // TODO
-  async function submitStake() {
-    // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
-    // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
-  }
 
   function getActionBtnLabel() {
     switch (true) {
@@ -34,7 +21,7 @@ export default function Withdraw() {
       //   return "Return to Main Page";
 
       case isConnected:
-        return "Stake DFI";
+        return "Withdraw mDFI";
 
       default:
         return "Connect wallet";
@@ -84,7 +71,6 @@ export default function Withdraw() {
                 testID="instant-transfer-btn"
                 label={getActionBtnLabel()}
                 customStyle="w-full md:py-5"
-                onClick={!isConnected ? show : () => submitStake()}
               />
             )}
           </ConnectKitButton.Custom>
