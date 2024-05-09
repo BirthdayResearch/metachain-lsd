@@ -7,6 +7,7 @@ export function CTAButton({
   testID,
   customStyle,
   customTextStyle,
+  customBgColor,
   onClick,
   isDisabled,
   isLoading = false,
@@ -18,6 +19,7 @@ export function CTAButton({
   onClick?: (e: any) => void;
   customStyle?: string;
   customTextStyle?: string;
+  customBgColor?: string;
   isLoading?: boolean;
   navigateTo?: string;
 }) {
@@ -27,7 +29,8 @@ export function CTAButton({
       onClick={onClick}
       data-testid={`cta-button-${testID}`}
       className={clsx(
-        "accent-1 rounded-[30px] px-9 py-5 md:py-4",
+        "rounded-[30px] px-9 py-5 md:py-4",
+        customBgColor ?? "accent-1",
         !isDisabled && "hover:bg-opacity-60",
         isDisabled ? "opacity-30" : "",
         customStyle ?? "w-fit",
