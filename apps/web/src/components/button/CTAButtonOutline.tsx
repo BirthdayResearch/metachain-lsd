@@ -16,7 +16,7 @@ export function CTAButtonOutline({
     <button
       data-testid={`cta-button-outline-${testID}`}
       className={clsx(
-        "rounded-[40px]  px-9 py-5 md:py-4 border border-[0.5px] border-light-1000 flex items-center justify-center",
+        "rounded-[40px] px-8 md:px-9 py-4 border-[0.5px] border-light-1000 flex items-center justify-center",
         "text-[28px] font-bold",
         customTextStyle,
         customStyle ?? "w-fit",

@@ -11,12 +11,10 @@ export default function ConfirmingPage({
   return (
     <Panel customStyle="flex flex-col">
       <article className="flex flex-col gap-y-6 md:gap-y-10">
-        <div>
-          <SpinnerIcon />
-        </div>
+        <SpinnerIcon />
         <section className="flex flex-col gap-y-6">
           <div className="flex flex-col gap-y-2">
-            <h3 className="text-2xl	leading-7 font-semibold">
+            <h3 className="text-2xl	leading-7 font-medium">
               Confirming your stake…
             </h3>
             <p className="text-sm">
