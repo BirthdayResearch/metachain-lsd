@@ -32,7 +32,7 @@ export default function DetailsRow({
         {hasTxId && (
           <div className="flex flex-row w-full md:w-fit justify-end">
             <button
-              className="hover:bg-light-1000/[0.05] hover:rounded-[20px] p-2 cursor-pointer flex flex-row"
+              className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
               onClick={() => {
                 if (handleOnCopy) handleOnCopy(value);
               }}
@@ -40,7 +40,7 @@ export default function DetailsRow({
               <FiCopy size={16} />
             </button>
             <button
-              className="hover:bg-light-1000/[0.05] hover:rounded-[20px] p-2 cursor-pointer flex flex-row"
+              className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
               onClick={() => {
                 window.open(
                   `https://explorer.defichain.com/#/DFI/mainnet/tx/${value}`,
