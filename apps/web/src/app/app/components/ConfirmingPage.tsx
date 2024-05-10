@@ -1,45 +1,43 @@
 import Panel from "@/app/app/stake/components/Panel";
-import { CTAButton } from "@/components/button/CTAButton";
-import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
-import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
 
+import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
+import { SuccessCopy } from "@/app/app/components/SuccessCopy";
+
+// Common component for Stake and Withdraw Confirming pages
 export default function ConfirmingPage({
+  title,
+  description,
+  showSuccessCopy,
+  buttons,
   children,
 }: {
+  title: string;
+  description: string;
+  showSuccessCopy: boolean;
+  buttons: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <Panel customStyle="flex flex-col">
-      <article className="flex flex-col gap-y-6 md:gap-y-10">
-        <SpinnerIcon />
-        <section className="flex flex-col gap-y-6">
-          <div className="flex flex-col gap-y-2">
-            <h3 className="text-2xl	leading-7 font-medium">
-              Confirming your stake…
-            </h3>
-            <p className="text-sm">
-              Waiting confirmation from the blockchain. It is safe to close this
-              window – your transaction will reflect automatically in your
-              wallet once completed.
-            </p>
-          </div>
-          <section className="border rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
-            {children}
+      <>
+        <SuccessCopy
+          containerClass="m-auto right-0 left-0 top-5"
+          show={showSuccessCopy}
+        />
+        <article className="flex flex-col gap-y-6 md:gap-y-10">
+          <SpinnerIcon />
+          <section className="flex flex-col gap-y-6">
+            <div className="flex flex-col gap-y-2">
+              <h3 className="text-2xl leading-7 font-medium">{title}</h3>
+              <p className="text-sm">{description}</p>
+            </div>
+            <section className="border rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
+              {children}
+            </section>
           </section>
-        </section>
-        <div className="flex flex-col md:flex-row gap-4">
-          <CTAButton
-            label="Return to main page"
-            testID="stake-confirming-return-main"
-            customStyle={"w-full"}
-          />
-          <CTAButtonOutline
-            label="Add mDFI to wallet"
-            testID="stake-confirming-add-mdfi"
-            customStyle={"w-full"}
-          />
-        </div>
-      </article>
+          <div className="flex flex-col md:flex-row gap-4">{buttons}</div>
+        </article>
+      </>
     </Panel>
   );
 }
