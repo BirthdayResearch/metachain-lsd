@@ -36,7 +36,8 @@ export function NetworkEnvironmentProvider({
 
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = searchParams.get("network");
-  const defaultNetwork = EnvironmentNetwork.MainNet;
+  // TODO set defaultNetwork to mainnet
+  const defaultNetwork = EnvironmentNetwork.TestNet;
   const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
 
