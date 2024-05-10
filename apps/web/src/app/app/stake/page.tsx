@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useBalance, useAccount } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { ConnectKitButton } from "connectkit";
@@ -106,6 +107,17 @@ export default function Stake() {
                     : new BigNumber(stakeAmount)
                   ).toFixed(2)} // TODO use USDT price to calculate DFI amount
                   onChange={(value) => setStakeAmount(value)}
+                  Icon={
+                    <Image
+                      data-testid="dfi-icon"
+                      src="/icons/dfi-icon.svg"
+                      alt="DFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  }
                 />
               </div>
               <WalletDetails
