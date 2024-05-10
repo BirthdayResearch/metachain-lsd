@@ -26,11 +26,10 @@ export default function Stake() {
     address,
   });
 
+  // To display /stake pages based on the current step
   const [currentStep, setCurrentStep] = useState<StakeStep>(
     StakeStep.StakePage,
   );
-
-  console.log("currentStep", currentStep);
 
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
