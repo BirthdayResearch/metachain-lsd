@@ -4,6 +4,7 @@ import { SuccessCopy } from "@/app/app/components/SuccessCopy";
 import DetailsRow from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { useEffect, useState } from "react";
+import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
 
 // Common component for Stake and Withdraw Confirming and Confirmed pages
 export default function ConfirmPage({
@@ -11,11 +12,15 @@ export default function ConfirmPage({
   description,
   buttons,
   details,
+  isLoading,
+  hasCompleted,
 }: {
   title: string;
   description: string;
-  details: { label: string; value: string; hasTxId?: boolean }[];
   buttons: React.ReactNode;
+  details: { label: string; value: string; hasTxId?: boolean }[];
+  isLoading?: boolean;
+  hasCompleted?: boolean;
 }) {
   const { copy } = useCopyToClipboard();
   const [showSuccessCopy, setShowSuccessCopy] = useState(false);
@@ -40,7 +45,8 @@ export default function ConfirmPage({
           show={showSuccessCopy}
         />
         <article className="flex flex-col gap-y-6 md:gap-y-10">
-          <SpinnerIcon />
+          {isLoading && <SpinnerIcon />}
+          {hasCompleted && <TxCompletedIcon />}
           <section className="flex flex-col gap-y-6">
             <div className="flex flex-col gap-y-2">
               <h3 className="text-2xl leading-7 font-medium">{title}</h3>

@@ -30,6 +30,8 @@ export default function Stake() {
     StakeStep.StakePage,
   );
 
+  console.log("currentStep", currentStep);
+
   const [stakeAmount, setStakeAmount] = useState<string>("");
   const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
   const [receivingWalletAddress, setReceivingWalletAddress] =
@@ -40,7 +42,7 @@ export default function Stake() {
     // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
     // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
     try {
-      setCurrentStep(StakeStep.StakeConfirmingPage);
+      setCurrentStep(StakeStep.StakeConfirmationPage);
     } catch (e) {
       setCurrentStep(StakeStep.StakePage);
     }
@@ -58,6 +60,11 @@ export default function Stake() {
         return "Connect wallet";
     }
   }
+
+  // To check if stake is successful
+  // useEffect(() => {
+  //   setCurrentStep(StakeStep.StakeConfirmationPage);
+  // }, [])
 
   return (
     <div className="relative">
@@ -130,6 +137,7 @@ export default function Stake() {
       {/* Confirming Stake page */}
       {currentStep === StakeStep.StakeConfirmingPage ? (
         <ConfirmPage
+          isLoading={true}
           title="Confirming your stake…"
           description="Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
           details={[
@@ -172,8 +180,46 @@ export default function Stake() {
 
       {/* Confirmed Stake page */}
       {currentStep === StakeStep.StakeConfirmationPage ? (
-        // <StakeConfirmationPage />
-        <div />
+        <ConfirmPage
+          hasCompleted={true}
+          title="Stake confirmed"
+          description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+          details={[
+            {
+              label: "Amount staked",
+              value: `${stakeAmount} DFI`,
+            },
+            {
+              label: "Amount to receive",
+              value: "2 mDFI",
+            },
+            {
+              label: "Receiving Address",
+              value: receivingWalletAddress,
+            },
+            {
+              hasTxId: true,
+              label: "Transaction ID",
+              value:
+                "0x78d75a997b2d1a074bb2b6a042ae262d675e3a5c8c2a1beeee94701d4bff3af7",
+            },
+          ]}
+          buttons={
+            <>
+              <CTAButton
+                label="Return to main page"
+                testID="stake-confirming-return-main"
+                customStyle="w-full"
+                onClick={() => setCurrentStep(StakeStep.StakePage)}
+              />
+              <CTAButtonOutline
+                label="Add mDFI to wallet"
+                testID="stake-confirming-add-mdfi"
+                customStyle="w-full"
+              />
+            </>
+          }
+        />
       ) : null}
     </div>
   );
