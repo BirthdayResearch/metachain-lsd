@@ -32,12 +32,12 @@ function DetailsRow({
   hasTxId?: boolean;
 }) {
   return (
-    <div className="flex flex-row justify-between py-[14px]">
+    <div className="flex flex-row justify-between py-[18px] md:items-center">
       <div className="text-sm">{label}</div>
-      <div className="flex flex-col md:flex-row items-center">
+      <div className="flex flex-col md:flex-row items-center gap-y-1">
         <div
           className={clsx(
-            "break-words ext-ellipsis overflow-hidden font-semibold text-sm text-right",
+            "break-words overflow-hidden font-semibold text-sm text-right",
             {
               "line-clamp-2 w-[141px] md:w-[362px]": !hasTxId,
               "line-clamp-1 w-[141px] md:w-[264px]": hasTxId,

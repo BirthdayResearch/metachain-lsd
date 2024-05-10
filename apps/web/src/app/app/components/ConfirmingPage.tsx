@@ -10,7 +10,7 @@ export default function ConfirmingPage({
 }) {
   return (
     <Panel customStyle="flex flex-col">
-      <article className="flex flex-col gap-y-10">
+      <article className="flex flex-col gap-y-6 md:gap-y-10">
         <div>
           <SpinnerIcon />
         </div>
@@ -25,7 +25,7 @@ export default function ConfirmingPage({
               wallet once completed.
             </p>
           </div>
-          <section className="border rounded-[20px] p-10 divide-y flex justify-center flex-col">
+          <section className="border rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
             {children}
           </section>
         </section>
