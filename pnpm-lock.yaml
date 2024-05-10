@@ -90,6 +90,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: ^2.2.1
         version: 2.2.1(react-redux@8.1.3(@types/react-dom@18.2.14)(@types/react@18.2.33)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@6.0.3))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      '@tailwindcss/line-clamp':
+        specifier: ^0.4.4
+        version: 0.4.4(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.10.8)(typescript@5.4.5)))
       '@tailwindcss/typography':
         specifier: ^0.5.10
         version: 0.5.10(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.10.8)(typescript@5.4.5)))
@@ -2768,6 +2771,11 @@ packages:
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
+
+  '@tailwindcss/line-clamp@0.4.4':
+    resolution: {integrity: sha512-5U6SY5z8N42VtrCrKlsTAA35gy2VSyYtHWCsg1H87NU1SXnEfekTVlrga9fzUDrrHcGi2Lb5KenUWb4lRQT5/g==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
 
   '@tailwindcss/typography@0.5.10':
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
@@ -14247,6 +14255,10 @@ snapshots:
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tailwindcss/line-clamp@0.4.4(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.10.8)(typescript@5.4.5)))':
+    dependencies:
+      tailwindcss: 3.4.1(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.10.8)(typescript@5.4.5))
 
   '@tailwindcss/typography@0.5.10(tailwindcss@3.4.1(ts-node@10.9.2(@swc/core@1.4.16(@swc/helpers@0.5.5))(@types/node@20.10.8)(typescript@5.4.5)))':
     dependencies:
