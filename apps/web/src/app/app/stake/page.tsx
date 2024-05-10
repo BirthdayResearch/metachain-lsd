@@ -158,6 +158,7 @@ export default function Stake() {
                 label="Return to main page"
                 testID="stake-confirming-return-main"
                 customStyle="w-full"
+                onClick={() => setCurrentStep(StakeStep.StakePage)}
               />
               <CTAButtonOutline
                 label="Add mDFI to wallet"
