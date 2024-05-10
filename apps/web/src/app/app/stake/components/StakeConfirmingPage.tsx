@@ -34,7 +34,7 @@ function DetailsRow({
   return (
     <div className="flex flex-row justify-between py-[18px] md:items-center">
       <div className="text-sm">{label}</div>
-      <div className="flex flex-col md:flex-row items-center gap-y-1">
+      <div className="flex flex-col md:flex-row items-center gap-y-1 gap-x-2">
         <div
           className={clsx(
             "break-words overflow-hidden font-semibold text-sm text-right",
