@@ -10,7 +10,7 @@ export default function ComplimentarySection({
   return (
     <div
       className={clsx(
-        "rounded-[30px] flex flex-col md:flex-row gap-y-5 items-center md:py-8 py-10 lg:py-10 mt-12 md:mt-10 lg:mt-16 gap-x-4",
+        "flex flex-col md:flex-row gap-y-5 items-center md:py-8 py-10 lg:py-10 mt-12 md:mt-10 lg:mt-16 gap-x-4",
         customStyle,
       )}
     >
