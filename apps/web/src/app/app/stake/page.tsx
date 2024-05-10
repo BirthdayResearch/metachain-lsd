@@ -10,7 +10,8 @@ import AddressInput from "@/app/app/components/AddressInput";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import BigNumber from "bignumber.js";
 import TransactionRow from "@/app/app/components/TransactionRow";
-import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage";
+import ConfirmPage from "@/app/app/components/ConfirmPage";
+import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 
 enum StakeStep {
   StakePage,
@@ -126,10 +127,49 @@ export default function Stake() {
         </Panel>
       ) : null}
 
+      {/* Confirming Stake page */}
       {currentStep === StakeStep.StakeConfirmingPage ? (
-        <StakeConfirmingPage />
+        <ConfirmPage
+          title="Confirming your stake…"
+          description="Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+          details={[
+            {
+              label: "You are staking",
+              value: `${stakeAmount} DFI`,
+            },
+            {
+              label: "You will receive",
+              value: "2 mDFI",
+            },
+            {
+              label: "Receiving Address",
+              value: receivingWalletAddress,
+            },
+            {
+              hasTxId: true,
+              label: "Transaction ID",
+              value:
+                "0x78d75a997b2d1a074bb2b6a042ae262d675e3a5c8c2a1beeee94701d4bff3af7",
+            },
+          ]}
+          buttons={
+            <>
+              <CTAButton
+                label="Return to main page"
+                testID="stake-confirming-return-main"
+                customStyle="w-full"
+              />
+              <CTAButtonOutline
+                label="Add mDFI to wallet"
+                testID="stake-confirming-add-mdfi"
+                customStyle="w-full"
+              />
+            </>
+          }
+        />
       ) : null}
 
+      {/* Confirmed Stake page */}
       {currentStep === StakeStep.StakeConfirmationPage ? (
         // <StakeConfirmationPage />
         <div />

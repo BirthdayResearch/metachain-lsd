@@ -1,22 +1,37 @@
 import Panel from "@/app/app/stake/components/Panel";
-
 import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
 import { SuccessCopy } from "@/app/app/components/SuccessCopy";
+import DetailsRow from "@/app/app/components/DetailsRow";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import { useEffect, useState } from "react";
 
-// Common component for Stake and Withdraw Confirming pages
-export default function ConfirmingPage({
+// Common component for Stake and Withdraw Confirming and Confirmed pages
+export default function ConfirmPage({
   title,
   description,
-  showSuccessCopy,
   buttons,
-  children,
+  details,
 }: {
   title: string;
   description: string;
-  showSuccessCopy: boolean;
+  details: { label: string; value: string; hasTxId?: boolean }[];
   buttons: React.ReactNode;
-  children: React.ReactNode;
 }) {
+  const { copy } = useCopyToClipboard();
+  const [showSuccessCopy, setShowSuccessCopy] = useState(false);
+
+  const handleOnCopy = (text: string | undefined) => {
+    if (text) {
+      copy(text);
+      setShowSuccessCopy(true);
+    }
+  };
+
+  useEffect(() => {
+    if (showSuccessCopy) {
+      setTimeout(() => setShowSuccessCopy(false), 2000);
+    }
+  }, [showSuccessCopy]);
   return (
     <Panel customStyle="flex flex-col">
       <>
@@ -32,7 +47,15 @@ export default function ConfirmingPage({
               <p className="text-sm">{description}</p>
             </div>
             <section className="border rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
-              {children}
+              {details.map((detail, index) => (
+                <DetailsRow
+                  key={index}
+                  label={detail.label}
+                  value={detail.value}
+                  hasTxId={detail.hasTxId}
+                  handleOnCopy={handleOnCopy}
+                />
+              ))}
             </section>
           </section>
           <div className="flex flex-col md:flex-row gap-4">{buttons}</div>
