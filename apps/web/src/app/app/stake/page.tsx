@@ -1,7 +1,7 @@
 "use client";
 
-import { useBalance, useAccount, useReadContracts } from "wagmi";
-import { useEffect, useRef, useState } from "react";
+import { useBalance, useAccount, useWriteContract } from "wagmi";
+import { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -12,15 +12,27 @@ import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 import TransactionRows from "./components/TransactionRows";
 import useDebounce from "@/hooks/useDebounce";
+import NumericFormat from "@/components/NumericFormat";
+import { getDecimalPlace } from "@/lib/textHelper";
+import { useContractContext } from "@/context/ContractContext";
+import { parseEther } from "viem";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 
 export default function Stake() {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [amountError, setAmountError] = useState<string | null>(null);
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const { data: hash, isPending, writeContract } = useWriteContract();
+  console.log({ hash, isPending });
+  const { MarbleLsdProxy } = useContractContext();
+
   const { address, isConnected, status, chainId } = useAccount();
+  const { minDepositAmount } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
     address,
     chainId,
   });
+
   const [stakeAmount, setStakeAmount] = useState<string>("");
   // to avoid multiple contract fetch
   const debounceStakeAmount = useDebounce(stakeAmount, 200);
@@ -33,9 +45,23 @@ export default function Stake() {
     useState(isConnected);
   const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
 
-  // TODO
-  async function submitStake() {
-    // additional checks to ensure that the user's wallet balance is sufficient to cover the deposit amount
+  function submitStake() {
+    if (!amountError && !addressError) {
+      writeContract(
+        {
+          abi: MarbleLsdProxy.abi,
+          address: MarbleLsdProxy.address,
+          functionName: "deposit",
+          value: parseEther(stakeAmount),
+          args: [receivingWalletAddress as string],
+        },
+        {
+          onSuccess: () => {
+            // add redirect logic here
+          },
+        },
+      );
+    }
     // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
   }
 
@@ -72,13 +98,11 @@ export default function Stake() {
               <div className="pb-2 md:pb-0">
                 <InputCard
                   maxAmount={maxStakeAmount}
+                  minAmount={new BigNumber(minDepositAmount)}
                   value={stakeAmount}
                   setAmount={setStakeAmount}
-                  usdAmount={(new BigNumber(stakeAmount).isNaN()
-                    ? new BigNumber(0)
-                    : new BigNumber(stakeAmount)
-                  ).toFixed(2)} // TODO use USDT price to calculate DFI amount
-                  onChange={(value) => setStakeAmount(value)}
+                  error={amountError}
+                  setError={setAmountError}
                 />
               </div>
               <WalletDetails
@@ -100,26 +124,26 @@ export default function Stake() {
                   />
                 )}
               </div>
-              <div ref={inputRef}>
-                <AddressInput
-                  value={
-                    isConnected
-                      ? enableConnectedWallet
-                        ? address
-                        : receivingWalletAddress
-                      : ""
-                  }
-                  setValue={setReceivingWalletAddress}
-                  receivingWalletAddress={address}
-                  setEnableConnectedWallet={setEnableConnectedWallet}
-                  placeholder={
-                    isConnected
-                      ? "Enter wallet address to receive mDFI"
-                      : "Connect a wallet"
-                  }
-                  isDisabled={!isConnected}
-                />
-              </div>
+              <AddressInput
+                value={
+                  isConnected
+                    ? enableConnectedWallet
+                      ? address
+                      : receivingWalletAddress
+                    : ""
+                }
+                setValue={setReceivingWalletAddress}
+                receivingWalletAddress={address}
+                setEnableConnectedWallet={setEnableConnectedWallet}
+                placeholder={
+                  isConnected
+                    ? "Enter wallet address to receive mDFI"
+                    : "Connect a wallet"
+                }
+                isDisabled={!isConnected}
+                error={addressError}
+                setError={setAddressError}
+              />
 
               {isConnected && (
                 <ConnectedWalletSwitch
@@ -135,16 +159,27 @@ export default function Stake() {
             isConnected={isConnected}
           />
         </div>
-        <ConnectKitButton.Custom>
-          {({ show }) => (
-            <CTAButton
-              testID="instant-transfer-btn"
-              label={isConnected ? "Stake DFI" : "Connect wallet"}
-              customStyle="w-full md:py-5"
-              onClick={isConnected ? submitStake : show}
-            />
-          )}
-        </ConnectKitButton.Custom>
+        {isConnected ? (
+          <CTAButton
+            isDisabled={!!(amountError || addressError) || isPending}
+            isLoading={isPending}
+            testID="instant-transfer-btn"
+            label={"Stake DFI"}
+            customStyle="w-full md:py-5"
+            onClick={submitStake}
+          />
+        ) : (
+          <ConnectKitButton.Custom>
+            {({ show }) => (
+              <CTAButton
+                testID="instant-transfer-btn"
+                label={"Connect wallet"}
+                customStyle="w-full md:py-5"
+                onClick={show}
+              />
+            )}
+          </ConnectKitButton.Custom>
+        )}
       </div>
     </Panel>
   );
@@ -159,6 +194,7 @@ function WalletDetails({
   style?: string;
   walletBalanceAmount?: string;
 }) {
+  const decimalScale = getDecimalPlace(walletBalanceAmount ?? 0);
   return (
     <div
       data-testid="wallet-connection"
@@ -167,7 +203,15 @@ function WalletDetails({
       {isWalletConnected ? (
         <p className="text-xs text-light-1000/50">
           <span>Available: </span>
-          <span className="font-semibold">{walletBalanceAmount} DFI</span>
+          <NumericFormat
+            className="font-semibold"
+            suffix=" DFI"
+            value={new BigNumber(walletBalanceAmount ?? 0).toFormat(
+              decimalScale,
+              BigNumber.ROUND_FLOOR,
+            )}
+            decimalScale={decimalScale}
+          />
         </p>
       ) : (
         <span className="text-xs text-warning font-semibold">

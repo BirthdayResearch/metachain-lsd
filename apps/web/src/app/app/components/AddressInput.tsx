@@ -35,6 +35,8 @@ export default function AddressInput({
   placeholder,
   customStyle,
   isDisabled,
+  error,
+  setError,
 }: {
   value?: `0x${string}` | string;
   setValue: (text: `0x${string}` | string) => void;
@@ -43,6 +45,8 @@ export default function AddressInput({
   placeholder?: string;
   customStyle?: string;
   isDisabled?: boolean;
+  error: string | null;
+  setError: (msg: string | null) => void;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const onButtonClick = () => {
@@ -66,7 +70,13 @@ export default function AddressInput({
     }
   }, [showSuccessCopy]);
 
-  const isValidAddress = isAddress(value);
+  useEffect(() => {
+    const isValidAddress = isAddress(value);
+    if (value !== "" && !isValidAddress) {
+      return setError("Enter a valid wallet address");
+    }
+    return setError(null);
+  }, [value]);
 
   return (
     <div onClick={onButtonClick}>
@@ -78,7 +88,7 @@ export default function AddressInput({
         className={clsx(
           "border border-light-1000/10 rounded-md flex relative w-full",
           { "input-gradient-1": !isDisabled },
-          value && !isValidAddress ? "bg-red" : "",
+          value && error ? "bg-red" : "",
         )}
       >
         <form
@@ -112,10 +122,10 @@ export default function AddressInput({
                     }
                   }}
                 />
-                {value && isValidAddress && (
+                {value && !error && (
                   <AiFillCheckCircle size={16} className="text-green" />
                 )}
-                {value && !isValidAddress && (
+                {value && error && (
                   <AiFillCloseCircle size={16} className="text-red" />
                 )}
               </div>
@@ -132,6 +142,7 @@ export default function AddressInput({
           </div>
         </form>
       </div>
+      {error && <p className="text-left mt-2 text-sm text-red">{error}</p>}
     </div>
   );
 }

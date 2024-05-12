@@ -1,10 +1,10 @@
 import NumericFormat, { NumericFormatProps } from "@/components/NumericFormat";
 import { useContractContext } from "@/context/ContractContext";
-import { useReadContract, useReadContracts } from "wagmi";
-import { Interface, formatEther, parseEther } from "ethers";
+import { useReadContract } from "wagmi";
+import { Interface, formatEther } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
-import BigNumber from "bignumber.js";
-import { toWei } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 
 export default function TransactionRows({
   stakeAmount,
@@ -13,43 +13,14 @@ export default function TransactionRows({
   stakeAmount: string;
   isConnected: boolean;
 }) {
+  const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
-
-  const getDecimalPlace = (value: string | BigNumber): number => {
-    if (new BigNumber(value).eq(0) || new BigNumber(value).gte(1)) {
-      return 2;
-    }
-    return 5;
-  };
-
-  const { data: contractResponse } = useReadContracts({
-    contracts: [
-      {
-        address: MarbleLsdProxy.address,
-        abi: MarbleLsdProxy.abi,
-        functionName: "isDepositPaused",
-      },
-      {
-        address: MarbleLsdProxy.address,
-        abi: MarbleLsdProxy.abi,
-        functionName: "convertToAssets",
-        args: [parseEther("1")],
-      },
-    ],
-    query: {
-      enabled: isConnected,
-    },
-  });
 
   const { txnCost } = useGetTxnCost(
     new Interface(MarbleLsdProxy.abi).encodeFunctionData("deposit", [
       MarbleLsdProxy.address,
     ]) as `0x${string}`,
   );
-  const [_isDepositPausedData, convertToAssetsData] = contractResponse ?? [];
-  const mDfiToDfiConversion = formatEther(
-    (convertToAssetsData?.result as number) ?? 0,
-  ).toString();
 
   const { data: previewDepositData } = useReadContract({
     address: MarbleLsdProxy.address,
@@ -60,9 +31,11 @@ export default function TransactionRows({
       enabled: isConnected,
     },
   });
+
   const previewDeposit = formatEther(
     (previewDepositData as number) ?? 0,
   ).toString();
+
   return (
     <div className="mb-12 md:mb-9 lg:mb-12">
       <TransactionRow
