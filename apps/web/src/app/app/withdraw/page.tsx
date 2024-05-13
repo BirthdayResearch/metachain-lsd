@@ -6,10 +6,10 @@ import React, { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
-import clsx from "clsx";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
 import { InputCard } from "@/app/app/components/InputCard";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import { FiHelpCircle } from "react-icons/fi";
 import Tooltip from "@/app/app/components/Tooltip";
 
@@ -147,34 +147,6 @@ function TransactionRow({
           <span className="text-sm text-right">{secondaryValue}</span>
         )}
       </div>
-    </div>
-  );
-}
-
-function WalletDetails({
-  isWalletConnected,
-  style,
-  walletBalanceAmount,
-}: {
-  isWalletConnected: boolean;
-  style?: string;
-  walletBalanceAmount?: string;
-}) {
-  return (
-    <div
-      data-testid="wallet-connection"
-      className={clsx("flex items-center", style)}
-    >
-      {isWalletConnected ? (
-        <p className="text-xs text-light-1000/50">
-          <span>Available: </span>
-          <span className="font-semibold">{walletBalanceAmount} mDFI</span>
-        </p>
-      ) : (
-        <span className="text-xs text-warning font-semibold">
-          Connect wallet to get started
-        </span>
-      )}
     </div>
   );
 }
