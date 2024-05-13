@@ -40,6 +40,7 @@ export default function TransactionRows({
     <div className="mb-12 md:mb-9 lg:mb-12">
       <TransactionRow
         label="You will receive"
+        comment="(after fees)"
         value={{
           value: previewDeposit,
           decimalScale: getDecimalPlace(previewDeposit),
@@ -70,14 +71,23 @@ export default function TransactionRows({
 
 function TransactionRow({
   label,
+  comment,
   value,
 }: {
   label: string;
+  comment?: string;
   value: NumericFormatProps;
 }) {
   return (
     <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <span className="text-xs md:text-sm">{label}</span>
+      <div>
+        <span className="text-xs md:text-sm">{label}</span>
+        {comment && (
+          <span className="text-xs md:text-sm ml-1 text-dark-00/70">
+            {comment}
+          </span>
+        )}
+      </div>
       <NumericFormat className="text-sm font-semibold text-right" {...value} />
     </div>
   );

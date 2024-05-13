@@ -29,13 +29,20 @@ export function InputCard({
   useEffect(() => {
     if (value !== "") {
       if (isNaN(Number(value)) || new BigNumber(value).lte(0)) {
-        return setError("Please enter a valid number");
+        return setError("Please enter a valid number.");
       }
       if (new BigNumber(value).isGreaterThan(maxAmount ?? 0)) {
-        return setError("Insufficient balance, please enter a valid number");
+        return setError("Insufficient balance, please enter a valid number.");
       }
       if (new BigNumber(value).isLessThan(minAmount ?? 0)) {
-        return setError("Amount is less than minimum deposit amount");
+        let formattedNumber = new BigNumber(minAmount).toFormat({
+          decimalSeparator: ".",
+          groupSeparator: ",",
+          groupSize: 3,
+        });
+        return setError(
+          `Entered amount must be at least ${formattedNumber} DFI.`,
+        );
       }
     }
     setError(null);
