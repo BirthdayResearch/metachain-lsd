@@ -17,6 +17,9 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
 import { parseEther } from "viem";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { formatEther } from "ethers";
+import toast from "react-hot-toast";
+import { CgSpinner } from "react-icons/cg";
 
 export default function Stake() {
   const [amountError, setAmountError] = useState<string | null>(null);
@@ -24,7 +27,12 @@ export default function Stake() {
   const { MarbleLsdProxy } = useContractContext();
 
   const { address, isConnected, status, chainId } = useAccount();
-  const { data: hash, isPending, writeContract } = useWriteContract();
+  const {
+    data: hash,
+    isPending,
+    writeContract,
+    status: writeStatus,
+  } = useWriteContract();
   const { minDepositAmount } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
@@ -42,7 +50,7 @@ export default function Stake() {
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
-  const maxStakeAmount = new BigNumber(walletBalance?.formatted ?? "0");
+  const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
   function submitStake() {
     if (!amountError && !addressError) {
@@ -65,7 +73,21 @@ export default function Stake() {
   }
 
   useEffect(() => {
-    setWalletBalanceAmount(walletBalance?.formatted ?? ""); // set wallet balance
+    if (writeStatus === "pending") {
+      toast("Confirm transaction on your wallet.", {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: Infinity,
+        className:
+          "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4",
+        id: "deposit",
+      });
+    } else {
+      toast.remove("deposit");
+    }
+  }, [writeStatus]);
+
+  useEffect(() => {
+    setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
 
   useEffect(() => {
@@ -103,7 +125,7 @@ export default function Stake() {
               <div className="pb-2 md:pb-0">
                 <InputCard
                   isConnected={isConnected}
-                  maxAmount={maxStakeAmount}
+                  maxAmount={new BigNumber(walletBalanceAmount)}
                   minAmount={new BigNumber(minDepositAmount)}
                   value={stakeAmount}
                   setAmount={setStakeAmount}
