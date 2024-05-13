@@ -2,30 +2,9 @@ import clsx from "clsx";
 import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { isAddress } from "ethers";
-
-export function SuccessCopy({
-  containerClass,
-  show,
-}: {
-  containerClass: string;
-  show: boolean;
-}) {
-  return (
-    <div
-      className={clsx(
-        "absolute md:w-full text-center",
-        show ? "opacity-100" : "opacity-0",
-        containerClass,
-      )}
-    >
-      <span className="rounded bg-green px-2 py-1 text-xs text-dark-00  transition duration-300 md:text-xs">
-        Copied to clipboard
-      </span>
-    </div>
-  );
-}
+import toast from "react-hot-toast";
 
 export default function AddressInput({
   value,
@@ -55,20 +34,17 @@ export default function AddressInput({
     }
   };
   const { copy } = useCopyToClipboard();
-  const [showSuccessCopy, setShowSuccessCopy] = useState(false);
 
   const handleOnCopy = (text: string | undefined) => {
     if (text) {
       copy(text);
-      setShowSuccessCopy(true);
+      toast("Copied to clipboard", {
+        duration: 1000,
+        className: "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10",
+        id: "copy",
+      });
     }
   };
-
-  useEffect(() => {
-    if (showSuccessCopy) {
-      setTimeout(() => setShowSuccessCopy(false), 2000);
-    }
-  }, [showSuccessCopy]);
 
   useEffect(() => {
     const isValidAddress = isAddress(value);
@@ -80,10 +56,6 @@ export default function AddressInput({
 
   return (
     <div onClick={onButtonClick}>
-      <SuccessCopy
-        containerClass="m-auto right-0 left-0 top-5"
-        show={showSuccessCopy}
-      />
       <div
         className={clsx(
           "border border-light-1000/10 rounded-md flex relative w-full",

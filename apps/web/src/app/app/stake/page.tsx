@@ -77,6 +77,12 @@ export default function Stake() {
     }
   }, [receivingWalletAddress, enableConnectedWallet]);
 
+  const isDisabled =
+    !stakeAmount ||
+    !receivingWalletAddress ||
+    !!(amountError || addressError) ||
+    isPending;
+
   return (
     <Panel>
       <div className="w-full gap-y-5">
@@ -161,7 +167,7 @@ export default function Stake() {
         </div>
         {isConnected ? (
           <CTAButton
-            isDisabled={!!(amountError || addressError) || isPending}
+            isDisabled={isDisabled}
             isLoading={isPending}
             testID="instant-transfer-btn"
             label={"Stake DFI"}
