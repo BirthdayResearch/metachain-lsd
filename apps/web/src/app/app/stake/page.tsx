@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useBalance, useAccount } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { ConnectKitButton } from "connectkit";
@@ -7,7 +8,7 @@ import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
 import AddressInput from "@/app/app/components/AddressInput";
-import clsx from "clsx";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 
@@ -106,6 +107,17 @@ export default function Stake() {
                     : new BigNumber(stakeAmount)
                   ).toFixed(2)} // TODO use USDT price to calculate DFI amount
                   onChange={(value) => setStakeAmount(value)}
+                  Icon={
+                    <Image
+                      data-testid="dfi-icon"
+                      src="/icons/dfi-icon.svg"
+                      alt="DFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  }
                 />
               </div>
               <WalletDetails
@@ -171,34 +183,6 @@ function TransactionRow({ label, value }: { label: string; value: string }) {
     <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
       <span className="text-xs md:text-sm">{label}</span>
       <span className="text-sm font-semibold text-right">{value}</span>
-    </div>
-  );
-}
-
-function WalletDetails({
-  isWalletConnected,
-  style,
-  walletBalanceAmount,
-}: {
-  isWalletConnected: boolean;
-  style?: string;
-  walletBalanceAmount?: string;
-}) {
-  return (
-    <div
-      data-testid="wallet-connection"
-      className={clsx("flex items-center", style)}
-    >
-      {isWalletConnected ? (
-        <p className="text-xs text-light-1000/50">
-          <span>Available: </span>
-          <span className="font-semibold">{walletBalanceAmount} DFI</span>
-        </p>
-      ) : (
-        <span className="text-xs text-warning font-semibold">
-          Connect wallet to get started
-        </span>
-      )}
     </div>
   );
 }

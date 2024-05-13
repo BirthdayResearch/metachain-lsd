@@ -1,19 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import { useAccount } from "wagmi";
 import React, { useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
-import AddressInput from "@/app/app/components/AddressInput";
-import clsx from "clsx";
+import { InputCard } from "@/app/app/components/InputCard";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
+import BigNumber from "bignumber.js";
 
 export default function Withdraw() {
   const { isConnected } = useAccount();
 
-  const [receivingWalletAddress, setReceivingWalletAddress] =
-    useState<string>("");
+  const [withdrawAmount, setWithdrawAmount] = useState<string>("");
 
   function getActionBtnLabel() {
     switch (true) {
@@ -47,11 +48,22 @@ export default function Withdraw() {
                 </div>
               </div>
               <div className="grid gap-y-2">
-                <AddressInput
-                  value={receivingWalletAddress}
-                  setValue={setReceivingWalletAddress}
-                  placeholder="Connect a wallet"
-                  isDisabled={!isConnected}
+                <InputCard
+                  maxAmount={new BigNumber(withdrawAmount ?? "0")}
+                  value={withdrawAmount}
+                  setAmount={setWithdrawAmount}
+                  onChange={(value) => setWithdrawAmount(value)}
+                  Icon={
+                    <Image
+                      data-testid="mdfi-icon"
+                      src="/icons/mdfi-icon.svg"
+                      alt="MDFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  }
                 />
                 <WalletDetails
                   isWalletConnected={isConnected}
@@ -86,32 +98,6 @@ function TransactionRow({ label, value }: { label: string; value: string }) {
     <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
       <span className="text-xs md:text-sm">{label}</span>
       <span className="text-sm font-semibold text-right">{value}</span>
-    </div>
-  );
-}
-
-function WalletDetails({
-  isWalletConnected,
-  style,
-}: {
-  isWalletConnected: boolean;
-  style?: string;
-}) {
-  return (
-    <div
-      data-testid="wallet-connection"
-      className={clsx("flex items-center", style)}
-    >
-      {isWalletConnected ? (
-        <p>
-          <span className="opacity-40">Available: </span>
-          <span className="font-semibold opacity-70">walletAmount</span>
-        </p>
-      ) : (
-        <span className="text-xs text-warning font-semibold">
-          Connect wallet to get started
-        </span>
-      )}
     </div>
   );
 }
