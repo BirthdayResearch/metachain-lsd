@@ -40,7 +40,8 @@ export default function AddressInput({
       copy(text);
       toast("Copied to clipboard", {
         duration: 1000,
-        className: "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10",
+        className:
+          "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
         id: "copy",
       });
     }

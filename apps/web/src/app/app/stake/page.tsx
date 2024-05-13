@@ -78,7 +78,7 @@ export default function Stake() {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
         duration: Infinity,
         className:
-          "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4",
+          "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "deposit",
       });
     } else {
