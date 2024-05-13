@@ -62,7 +62,6 @@ export default function Stake() {
         },
       );
     }
-    // ensure that the entered amount meets the min. deposit req defined by the contract's minDeposit Variable
   }
 
   useEffect(() => {
