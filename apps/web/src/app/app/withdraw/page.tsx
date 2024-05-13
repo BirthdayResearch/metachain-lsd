@@ -80,6 +80,7 @@ export default function Withdraw() {
                   }
                 />
                 <WalletDetails
+                  walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
                   style="block md:hidden"
                 />
