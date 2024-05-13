@@ -18,8 +18,9 @@ describe("MarbleLsdFees", () => {
   let accounts: SignerWithAddress[] = [];
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult =
-      await loadFixture(deployContracts);
+    const fixture: MarbleLsdDeploymentResult = await loadFixture(
+      deployContracts
+    );
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     administratorSigner = fixture.administratorSigner;
     defaultAdminSigner = fixture.defaultAdminSigner;
@@ -44,9 +45,11 @@ describe("MarbleLsdFees", () => {
   it("Should not update Fees Recipient Address from non admin address", async () => {
     const signer = accounts[5];
     await expect(
-      proxyMarbleLsd.connect(signer).updateFeesRecipientAddress(signer.address),
+      proxyMarbleLsd.connect(signer).updateFeesRecipientAddress(signer.address)
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64
+      )}`
     );
   });
 
@@ -54,9 +57,9 @@ describe("MarbleLsdFees", () => {
     const signer = accounts[5];
     const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
     await expect(
-      proxyMarbleLsd.connect(signer).updateMintingFees(10),
+      proxyMarbleLsd.connect(signer).updateMintingFees(10)
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`
     );
   });
 
@@ -64,9 +67,9 @@ describe("MarbleLsdFees", () => {
     const signer = accounts[5];
     const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
     await expect(
-      proxyMarbleLsd.connect(signer).updateRedemptionFees(10),
+      proxyMarbleLsd.connect(signer).updateRedemptionFees(10)
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`
     );
   });
 
@@ -74,27 +77,27 @@ describe("MarbleLsdFees", () => {
     const signer = accounts[5];
     const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
     await expect(
-      proxyMarbleLsd.connect(signer).updatePerformanceFees(10),
+      proxyMarbleLsd.connect(signer).updatePerformanceFees(10)
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${administratorRoleHash}`
     );
   });
 
   it("Should not update minting fees more than _BASIS_POINT_SCALE", async () => {
     await expect(
-      proxyMarbleLsd.connect(administratorSigner).updateMintingFees(10001),
+      proxyMarbleLsd.connect(administratorSigner).updateMintingFees(10001)
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "INVALID_FEES");
   });
 
   it("Should not update redemption fees more than _BASIS_POINT_SCALE", async () => {
     await expect(
-      proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(10001),
+      proxyMarbleLsd.connect(administratorSigner).updateRedemptionFees(10001)
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "INVALID_FEES");
   });
 
   it("Should not update performance fees more than _BASIS_POINT_SCALE", async () => {
     await expect(
-      proxyMarbleLsd.connect(administratorSigner).updatePerformanceFees(10001),
+      proxyMarbleLsd.connect(administratorSigner).updatePerformanceFees(10001)
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "INVALID_FEES");
   });
 
@@ -148,10 +151,10 @@ describe("MarbleLsdFees", () => {
     expect(updatedFees).to.equal(1500);
     const previewDeposit = await proxyMarbleLsd.previewDeposit(amount);
     expect(previewDeposit).to.equal(
-      new BigNumber(amount.toString()).minus(fees),
+      new BigNumber(amount.toString()).minus(fees)
     );
     expect(convertToShares).to.equal(
-      new BigNumber(previewDeposit.toString()).plus(fees),
+      new BigNumber(previewDeposit.toString()).plus(fees)
     );
   });
 
@@ -178,7 +181,7 @@ describe("MarbleLsdFees", () => {
     const fees = feesOnRaw(convertToAssets.toString(), "1500");
     const previewWithdrawal = await proxyMarbleLsd.previewWithdrawal(amount);
     expect(previewWithdrawal).to.equal(
-      new BigNumber(convertToAssets.toString()).plus(fees),
+      new BigNumber(convertToAssets.toString()).plus(fees)
     );
   });
 
@@ -205,7 +208,7 @@ describe("MarbleLsdFees", () => {
     const fees = feesOnTotal(convertToAssets.toString(), "1500");
     const previewRedeem = await proxyMarbleLsd.previewRedeem(amount);
     expect(previewRedeem).to.equal(
-      new BigNumber(convertToAssets.toString()).minus(fees),
+      new BigNumber(convertToAssets.toString()).minus(fees)
     );
   });
 });
