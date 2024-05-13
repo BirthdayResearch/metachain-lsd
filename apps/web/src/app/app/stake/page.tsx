@@ -21,11 +21,10 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 export default function Stake() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
-  const { data: hash, isPending, writeContract } = useWriteContract();
-  console.log({ hash, isPending });
   const { MarbleLsdProxy } = useContractContext();
 
   const { address, isConnected, status, chainId } = useAccount();
+  const { data: hash, isPending, writeContract } = useWriteContract();
   const { minDepositAmount } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
@@ -57,6 +56,7 @@ export default function Stake() {
         },
         {
           onSuccess: () => {
+            console.log("Txn hash:", hash);
             // add redirect logic here
           },
         },
@@ -97,6 +97,7 @@ export default function Stake() {
               </div>
               <div className="pb-2 md:pb-0">
                 <InputCard
+                  isConnected={isConnected}
                   maxAmount={maxStakeAmount}
                   minAmount={new BigNumber(minDepositAmount)}
                   value={stakeAmount}

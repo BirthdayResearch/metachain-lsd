@@ -14,6 +14,7 @@ export function InputCard({
   setAmount,
   error,
   setError,
+  isConnected,
 }: {
   maxAmount: BigNumber; // to calculate amount
   minAmount: BigNumber;
@@ -21,6 +22,7 @@ export function InputCard({
   setAmount: (amount: string) => void;
   error: string | null;
   setError: (msg: string | null) => void;
+  isConnected: boolean;
 }) {
   const dfiPrice = useDfiPrice();
 
@@ -33,9 +35,7 @@ export function InputCard({
         return setError("Insufficient balance, please enter a valid number");
       }
       if (new BigNumber(value).isLessThan(minAmount ?? 0)) {
-        return setError(
-          "Amount is less than minimum deposit amount, please enter a valid number",
-        );
+        return setError("Amount is less than minimum deposit amount");
       }
     }
     setError(null);
@@ -89,14 +89,17 @@ export function InputCard({
               />
             </div>
           </div>
-          {/*  Display only when wallet is connected*/}
-          <PercentageButton
-            onClickRecalculateAmount={setAmount}
-            maxAmount={maxAmount}
-          />
+          {isConnected && (
+            <PercentageButton
+              onClickRecalculateAmount={setAmount}
+              maxAmount={maxAmount}
+            />
+          )}
         </figure>
       </div>
-      {error && <p className="text-left mt-2 text-sm text-red">{error}</p>}
+      {error && isConnected && (
+        <p className="text-left mt-2 text-sm text-red">{error}</p>
+      )}
     </section>
   );
 }
