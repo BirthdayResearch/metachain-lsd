@@ -1,19 +1,29 @@
 "use client";
 
-import { useAccount } from "wagmi";
-import React, { useState } from "react";
+import Image from "next/image";
+import { useAccount, useBalance } from "wagmi";
+import React, { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
-import AddressInput from "@/app/app/components/AddressInput";
 import clsx from "clsx";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
+import BigNumber from "bignumber.js";
+import { InputCard } from "@/app/app/components/InputCard";
+import { FiHelpCircle } from "react-icons/fi";
+import Tooltip from "@/app/app/components/Tooltip";
 
 export default function Withdraw() {
-  const { isConnected } = useAccount();
+  const { address, isConnected, status, chainId } = useAccount();
 
-  const [receivingWalletAddress, setReceivingWalletAddress] =
-    useState<string>("");
+  const { data: walletBalance } = useBalance({
+    address,
+    chainId,
+  });
+
+  const [withdrawAmount, setWithdrawAmount] = useState<string>("");
+  const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("NA");
+  const maxWithdrawAmount = new BigNumber(walletBalance?.formatted ?? "0");
 
   function getActionBtnLabel() {
     switch (true) {
@@ -28,6 +38,10 @@ export default function Withdraw() {
     }
   }
 
+  useEffect(() => {
+    setWalletBalanceAmount(walletBalance?.formatted ?? "NA"); // set wallet balance
+  }, [address, status, walletBalance]);
+
   return (
     <Panel>
       <div>
@@ -35,23 +49,35 @@ export default function Withdraw() {
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
           <div className="flex flex-col w-full justify-between gap-y-5">
             <div className="mt-10">
-              <div className="mb-5">
-                <div className="flex justify-between gap-y-2 mb-2">
+              <div>
+                <div className="flex justify-between items-center gap-y-2 mb-2">
                   <span className="text-xs md:text-sm py-1">
                     How much do you want to withdraw?
                   </span>
                   <WalletDetails
+                    walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
                   />
                 </div>
               </div>
               <div className="grid gap-y-2">
-                <AddressInput
-                  value={receivingWalletAddress}
-                  setValue={setReceivingWalletAddress}
-                  placeholder="Connect a wallet"
-                  isDisabled={!isConnected}
+                <InputCard
+                  maxAmount={maxWithdrawAmount}
+                  value={withdrawAmount}
+                  setAmount={setWithdrawAmount}
+                  onChange={(value) => setWithdrawAmount(value)}
+                  Icon={
+                    <Image
+                      data-testid="mdfi-icon"
+                      src="/icons/mdfi-icon.svg"
+                      alt="MDFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  }
                 />
                 <WalletDetails
                   isWalletConnected={isConnected}
@@ -60,9 +86,21 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="mb-12">
-              <TransactionRow label="You will receive" value="0.00 mDFI" />
-              <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-              <TransactionRow label="Max transaction cost" value="$0.00" />
+              <div className="flex flex-col gap-y-1">
+                <TransactionRow label="You will receive" value="0.00 mDFI" />
+                <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
+                <TransactionRow label="Max transaction cost" value="$0.00" />
+              </div>
+              <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
+              <div className="flex flex-col gap-y-1">
+                <TransactionRow
+                  label="Total liquidity"
+                  tooltipText="hello"
+                  value="133,939 DFI"
+                  secondaryValue="$3.23"
+                />
+                <TransactionRow label="Annual rewards" value="3.34%" />
+              </div>
             </div>
           </div>
           <ConnectKitButton.Custom>
@@ -81,11 +119,33 @@ export default function Withdraw() {
   );
 }
 
-function TransactionRow({ label, value }: { label: string; value: string }) {
+function TransactionRow({
+  label,
+  value,
+  secondaryValue,
+  tooltipText,
+}: {
+  label: string;
+  value: string;
+  secondaryValue?: string;
+  tooltipText?: string;
+}) {
   return (
     <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <span className="text-xs md:text-sm">{label}</span>
-      <span className="text-sm font-semibold text-right">{value}</span>
+      <div className="relative flex gap-x-2 items-center">
+        <span className="text-xs md:text-sm">{label}</span>
+        {tooltipText && (
+          <Tooltip content={tooltipText}>
+            <FiHelpCircle size={16} />
+          </Tooltip>
+        )}
+      </div>
+      <div className="flex gap-x-1">
+        <span className="text-sm font-semibold text-right">{value}</span>
+        {secondaryValue && (
+          <span className="text-sm text-right">{secondaryValue}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -93,9 +153,11 @@ function TransactionRow({ label, value }: { label: string; value: string }) {
 function WalletDetails({
   isWalletConnected,
   style,
+  walletBalanceAmount,
 }: {
   isWalletConnected: boolean;
   style?: string;
+  walletBalanceAmount?: string;
 }) {
   return (
     <div
@@ -103,9 +165,9 @@ function WalletDetails({
       className={clsx("flex items-center", style)}
     >
       {isWalletConnected ? (
-        <p>
-          <span className="opacity-40">Available: </span>
-          <span className="font-semibold opacity-70">walletAmount</span>
+        <p className="text-xs text-light-1000/50">
+          <span>Available: </span>
+          <span className="font-semibold">{walletBalanceAmount} mDFI</span>
         </p>
       ) : (
         <span className="text-xs text-warning font-semibold">
