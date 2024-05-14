@@ -79,6 +79,14 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   }
 
   /**
+   * @dev Modifier to make a function callable only when the fees are less than _BASIS_POINT_SCALE.
+   */
+  modifier checkFees(uint16 _fees) {
+    if (_fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
+    _;
+  }
+
+  /**
    * @notice Used by addresses with admin roles to set the fees reciepiant address
    * @param _newAddress New fees reciepiant
    */
@@ -100,8 +108,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    */
   function updateMintingFees(
     uint16 _fees
-  ) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
+  ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
     emit MINTING_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -113,8 +120,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    */
   function updateRedemptionFees(
     uint16 _fees
-  ) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
+  ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
     emit REDEMPTION_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -126,8 +132,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    */
   function updatePerformanceFees(
     uint16 _fees
-  ) external onlyRole(ADMINISTRATOR_ROLE) {
-    if (_fees < 0 || _fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
+  ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;
     emit PERFORMANCE_FEES_UPDATED(_oldFee, _fees, _msgSender());
