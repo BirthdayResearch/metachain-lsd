@@ -6,5 +6,5 @@ interface ContractConfigI {
 export interface ContractContextI {
   EthereumRpcUrl: string;
   ExplorerURL: string;
-  MarbleLsdV1: ContractConfigI;
+  MarbleLsdProxy: ContractConfigI;
 }

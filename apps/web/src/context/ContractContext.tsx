@@ -9,16 +9,11 @@ import React, {
 import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
+import { ContractContextI } from "@/lib/types";
 
 interface ContractConfigI {
   address: `0x${string}`;
   abi?: any;
-}
-
-export interface ContractContextI {
-  EthereumRpcUrl: string;
-  ExplorerURL: string;
-  MarbleLsdV1: ContractConfigI;
 }
 
 const ContractContext = createContext<ContractContextI>(undefined as any);
