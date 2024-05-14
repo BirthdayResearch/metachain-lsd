@@ -365,7 +365,7 @@ contract MarbleLsdV2 is
     address _receiver
   ) public virtual whenWithdrawalNotPaused returns (uint256 requestId) {
     // check min withdrawal
-    if (_assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
+    if (_assets < minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
 
@@ -408,7 +408,7 @@ contract MarbleLsdV2 is
 
     uint256 assets = previewRedeem(_shares);
     uint256 fees = _feeOnRaw(assets, redemptionFees);
-    if (assets <= minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
+    if (assets < minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     requestId = _requestWithdrawal(
       _msgSender(),
       _receiver,
@@ -583,7 +583,6 @@ contract MarbleLsdV2 is
     uint256 _assets,
     uint256 _shares
   ) internal virtual {
-    if (msg.value == 0) revert AMOUNT_IS_ZERO();
     uint256 fees = _feeOnTotal(_assets, mintingFees);
     uint256 assetsToBeStaked = _assets - fees;
     // update staked asset
