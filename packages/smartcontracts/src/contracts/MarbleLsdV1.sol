@@ -368,9 +368,9 @@ contract MarbleLsdV1 is
     if (_receiver == address(0)) revert ZERO_ADDRESS();
     uint256 maxAssets = maxDeposit(_receiver);
 
-    if (msg.value > maxAssets) {
+    if (msg.value > maxAssets)
       revert ExceededMaxDeposit(_receiver, msg.value, maxAssets);
-    }
+
     uint256 shares = previewDeposit(msg.value);
 
     _deposit(_msgSender(), _receiver, msg.value, shares);
