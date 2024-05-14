@@ -5,8 +5,8 @@ import { MarbleLsdV1__factory } from "smartcontracts/src";
 export const SEPOLIA_CONFIG: ContractContextI = {
   EthereumRpcUrl: "https://rpc.ankr.com/eth_sepolia",
   ExplorerURL: "https://sepolia.etherscan.io",
-  MarbleLsdV1: {
-    address: "0x9FA70916182c75F401bF038EC775266941C46909",
+  MarbleLsdProxy: {
+    address: "0x49A3e882B8Ca7BA93CD412D8dbF8b5f0C9f8FD94",
     abi: MarbleLsdV1__factory.abi,
   },
 };
@@ -15,8 +15,8 @@ export const SEPOLIA_CONFIG: ContractContextI = {
 export const MAINNET_CONFIG: ContractContextI = {
   EthereumRpcUrl: "https://rpc.ankr.com/eth_sepolia",
   ExplorerURL: "https://sepolia.etherscan.io",
-  MarbleLsdV1: {
-    address: "0x9FA70916182c75F401bF038EC775266941C46909",
+  MarbleLsdProxy: {
+    address: "0x49A3e882B8Ca7BA93CD412D8dbF8b5f0C9f8FD94",
     abi: MarbleLsdV1__factory.abi,
   },
 };
@@ -25,8 +25,8 @@ export const MAINNET_CONFIG: ContractContextI = {
 export const TESTNET_CONFIG: ContractContextI = {
   EthereumRpcUrl: "https://rpc.ankr.com/eth_sepolia",
   ExplorerURL: "https://sepolia.etherscan.io",
-  MarbleLsdV1: {
-    address: "0x9FA70916182c75F401bF038EC775266941C46909",
+  MarbleLsdProxy: {
+    address: "0x49A3e882B8Ca7BA93CD412D8dbF8b5f0C9f8FD94",
     abi: MarbleLsdV1__factory.abi,
   },
 };

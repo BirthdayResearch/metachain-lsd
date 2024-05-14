@@ -12,8 +12,8 @@ export default function ToggleSwitch({ setOn, isOn }: SwitchProps) {
       checked={isOn}
       onChange={setOn}
       className={clsx(
-        "relative inline-flex items-center h-[20px] w-[36px] shrink-0 cursor-pointer rounded-[20px] border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75",
-        isOn ? "bg-valid" : "bg-light-00/10",
+        "relative inline-flex items-center h-[20px] w-[36px] shrink-0 cursor-pointer rounded-[20px] border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75",
+        isOn ? "bg-valid" : "bg-dark-00/10",
       )}
     >
       <span
