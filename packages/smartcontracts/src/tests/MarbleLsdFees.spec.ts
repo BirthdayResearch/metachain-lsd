@@ -46,7 +46,9 @@ describe("MarbleLsdFees", () => {
     await expect(
       proxyMarbleLsd.connect(signer).updateFeesRecipientAddress(signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
   });
 

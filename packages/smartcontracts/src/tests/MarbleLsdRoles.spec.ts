@@ -43,7 +43,9 @@ describe("MarbleLsdRoles", () => {
     await expect(
       proxyMarbleLsd.connect(signer).grantRole(adminRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
   });
 
@@ -55,14 +57,18 @@ describe("MarbleLsdRoles", () => {
         .connect(signer)
         .grantRole(administratorRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
     await expect(
       proxyMarbleLsd
         .connect(administratorSigner)
         .grantRole(administratorRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${administratorSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${administratorSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
   });
 
@@ -74,14 +80,18 @@ describe("MarbleLsdRoles", () => {
         .connect(signer)
         .grantRole(finalizeRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
     await expect(
       proxyMarbleLsd
         .connect(rewardDistributerAndFinalizeSigner)
         .grantRole(finalizeRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
   });
 
@@ -94,14 +104,18 @@ describe("MarbleLsdRoles", () => {
         .connect(signer)
         .grantRole(rewardDistributerRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
     await expect(
       proxyMarbleLsd
         .connect(rewardDistributerAndFinalizeSigner)
         .grantRole(rewardDistributerRoleHash, signer.address),
     ).to.be.revertedWith(
-      `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+      `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+        64,
+      )}`,
     );
   });
 

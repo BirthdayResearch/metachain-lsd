@@ -689,7 +689,9 @@ describe("MarbleLsdProxy", () => {
           .connect(newSigner)
           .updateWalletAddress(newSigner.address),
       ).to.be.revertedWith(
-        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(64)}`,
+        `AccessControl: account ${newSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
+          64,
+        )}`,
       );
     });
 
