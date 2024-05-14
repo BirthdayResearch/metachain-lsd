@@ -456,7 +456,7 @@ contract MarbleLsdV2 is
    * - Reverts if msg sender is not an owner of the requests
    */
   function claimWithdrawals(uint256[] calldata _requestIds) external {
-    for (uint256 i = 0; i < _requestIds.length; ++i) {
+    for (uint256 i; i < _requestIds.length; ++i) {
       claimWithdrawal(_requestIds[i]);
     }
   }

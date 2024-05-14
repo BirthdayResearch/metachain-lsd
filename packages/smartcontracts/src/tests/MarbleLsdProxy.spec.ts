@@ -292,10 +292,10 @@ describe("MarbleLsdProxy", () => {
       .withArgs(withdrawalRequests[0]);
   });
 
-  it("Should fail claim when request claim withdrawals with zero request Id", async () => {
+  it("Should fail claim with RequestAlreadyClaimed, when request claim withdrawals with zero request Id", async () => {
     const signer = accounts[5];
     await expect(proxyMarbleLsd.connect(signer).claimWithdrawal(0))
-      .to.be.revertedWithCustomError(proxyMarbleLsd, "InvalidRequestId")
+      .to.be.revertedWithCustomError(proxyMarbleLsd, "RequestAlreadyClaimed")
       .withArgs(0);
   });
 

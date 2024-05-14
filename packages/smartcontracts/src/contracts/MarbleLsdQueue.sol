@@ -198,7 +198,7 @@ contract MarbleLsdQueue {
     uint256[] calldata _requestIds
   ) external view returns (WithdrawalRequestStatus[] memory statuses) {
     statuses = new WithdrawalRequestStatus[](_requestIds.length);
-    for (uint256 i = 0; i < _requestIds.length; ++i) {
+    for (uint256 i; i < _requestIds.length; ++i) {
       statuses[i] = _getStatus(_requestIds[i]);
     }
   }
@@ -339,7 +339,6 @@ contract MarbleLsdQueue {
       uint256 feesToTransfer
     )
   {
-    if (_requestId == 0) revert InvalidRequestId(_requestId);
     if (_requestId > lastFinalizedRequestId)
       revert RequestNotFoundOrNotFinalized(_requestId);
 
