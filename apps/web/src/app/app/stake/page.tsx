@@ -1,7 +1,13 @@
 "use client";
 
-import { useBalance, useAccount, useWriteContract } from "wagmi";
-import { useEffect, useState } from "react";
+import {
+  useBalance,
+  useAccount,
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
+import { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { InputCard } from "@/app/app/components/InputCard";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -13,7 +19,7 @@ import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwi
 import TransactionRows from "./components/TransactionRows";
 import useDebounce from "@/hooks/useDebounce";
 import NumericFormat from "@/components/NumericFormat";
-import { getDecimalPlace } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
 import { parseEther } from "viem";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
@@ -41,6 +47,10 @@ export default function Stake() {
     writeContract,
     status: writeStatus,
   } = useWriteContract();
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
+
   const { minDepositAmount } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
@@ -65,6 +75,20 @@ export default function Stake() {
     useState(isConnected);
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
+  const { data: previewDepositData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "previewDeposit",
+    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const previewDeposit = useMemo(() => {
+    return formatEther((previewDepositData as number) ?? 0).toString();
+  }, [previewDepositData]);
+
   function submitStake() {
     if (!amountError && !addressError) {
       writeContract(
@@ -76,9 +100,10 @@ export default function Stake() {
           args: [receivingWalletAddress as string],
         },
         {
-          onSuccess: () => {
-            console.log("Txn hash:", hash);
-            setCurrentStep(StakeStep.StakeConfirmingPage);
+          onSuccess: (hash) => {
+            if (hash) {
+              setCurrentStep(StakeStep.StakeConfirmingPage);
+            }
           },
         },
       );
@@ -99,6 +124,13 @@ export default function Stake() {
     }
   }, [writeStatus]);
 
+  // Display Confirmed stake page when transaction is confirmed on the block
+  useEffect(() => {
+    if (isConfirmed) {
+      setCurrentStep(StakeStep.StakeConfirmationPage);
+    }
+  }, [isConfirmed]);
+
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
@@ -117,11 +149,6 @@ export default function Stake() {
     !receivingWalletAddress ||
     !!(amountError || addressError) ||
     isPending;
-
-  // To check if stake is successful
-  // useEffect(() => {
-  //   setCurrentStep(StakeStep.StakeConfirmationPage);
-  // }, [])
 
   return (
     <div className="relative">
@@ -234,7 +261,9 @@ export default function Stake() {
       ) : null}
 
       {/* Confirming Stake page */}
-      {currentStep === StakeStep.StakeConfirmingPage ? (
+      {currentStep === StakeStep.StakeConfirmingPage &&
+      receivingWalletAddress &&
+      hash ? (
         <ConfirmPage
           isLoading={true}
           title="Confirming your stake…"
@@ -246,7 +275,7 @@ export default function Stake() {
             },
             {
               label: "You will receive",
-              value: "2 mDFI",
+              value: `${previewDeposit} mDFI`,
             },
             {
               label: "Receiving Address",
@@ -255,8 +284,7 @@ export default function Stake() {
             {
               hasTxId: true,
               label: "Transaction ID",
-              value:
-                "0x78d75a997b2d1a074bb2b6a042ae262d675e3a5c8c2a1beeee94701d4bff3af7",
+              value: hash,
             },
           ]}
           buttons={
@@ -278,7 +306,9 @@ export default function Stake() {
       ) : null}
 
       {/* Confirmed Stake page */}
-      {currentStep === StakeStep.StakeConfirmationPage ? (
+      {currentStep === StakeStep.StakeConfirmationPage &&
+      receivingWalletAddress &&
+      hash ? (
         <ConfirmPage
           hasCompleted={true}
           title="Stake confirmed"
@@ -290,7 +320,7 @@ export default function Stake() {
             },
             {
               label: "Amount to receive",
-              value: "2 mDFI",
+              value: `${previewDeposit} mDFI`,
             },
             {
               label: "Receiving Address",
@@ -299,8 +329,7 @@ export default function Stake() {
             {
               hasTxId: true,
               label: "Transaction ID",
-              value:
-                "0x78d75a997b2d1a074bb2b6a042ae262d675e3a5c8c2a1beeee94701d4bff3af7",
+              value: hash,
             },
           ]}
           buttons={
