@@ -415,22 +415,32 @@ contract MarbleLsdQueue {
   function _getStatus(
     uint256 _requestId
   ) internal view returns (WithdrawalRequestStatus memory status) {
-    if (_requestId == 0 || _requestId > lastRequestId)
-      revert InvalidRequestId(_requestId);
+    if (_requestId == 0 || _requestId > lastRequestId) {
+      status = WithdrawalRequestStatus(
+        0,
+        0,
+        0,
+        address(0),
+        address(0),
+        0,
+        false,
+        false
+      );
+    } else {
+      WithdrawalRequest memory request = _getQueue()[_requestId];
+      WithdrawalRequest memory previousRequest = _getQueue()[_requestId - 1];
 
-    WithdrawalRequest memory request = _getQueue()[_requestId];
-    WithdrawalRequest memory previousRequest = _getQueue()[_requestId - 1];
-
-    status = WithdrawalRequestStatus(
-      request.cumulativeAssets - previousRequest.cumulativeAssets,
-      request.cumulativeShares - previousRequest.cumulativeShares,
-      request.cumulativeFees - previousRequest.cumulativeFees,
-      request.owner,
-      request.receiver,
-      request.timestamp,
-      _requestId <= lastFinalizedRequestId,
-      request.claimed
-    );
+      status = WithdrawalRequestStatus(
+        request.cumulativeAssets - previousRequest.cumulativeAssets,
+        request.cumulativeShares - previousRequest.cumulativeShares,
+        request.cumulativeFees - previousRequest.cumulativeFees,
+        request.owner,
+        request.receiver,
+        request.timestamp,
+        _requestId <= lastFinalizedRequestId,
+        request.claimed
+      );
+    }
   }
 
   /**
