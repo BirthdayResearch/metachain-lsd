@@ -52,9 +52,9 @@ export default function Withdraw() {
         <div className="w-full gap-y-5">
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
           <div className="flex flex-col w-full justify-between gap-y-5">
-            <div className="mt-10">
+            <div className="mt-10 md:mt-7 lg:mt-10">
               <div className="mb-5">
-                <div className="flex justify-between gap-y-2 mb-2">
+                <div className="flex items-center justify-between gap-y-2 mb-2">
                   <span className="text-xs md:text-sm py-1">
                     How much do you want to withdraw?
                   </span>
@@ -93,7 +93,7 @@ export default function Withdraw() {
                 />
               </div>
             </div>
-            <div className="mb-12">
+            <div className="flex flex-col gap-y-1 mb-10 md:mb-7 lg:mb-10">
               <TransactionRow label="You will receive" value="0.00 mDFI" />
               <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
               <TransactionRow label="Max transaction cost" value="$0.00" />
