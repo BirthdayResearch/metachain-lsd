@@ -121,23 +121,27 @@ export default function Dashboard() {
         <div className="font-bold text-xl m-auto grid justify-items-stretch">
           <span className="justify-self-center">Dashboard</span>
         </div>
-        <div className="grid md:grid-cols-2 gap-2 mt-4">
-          {stats.map((each, index) => {
-            const response = contractResponse
-              ? contractResponse[index]
-              : { result: "0" };
-            return (
-              <StatsCard
-                key={each.label}
-                label={each.label}
-                format={each.format}
-                decimal={each.decimal}
-                suffix={each.suffix}
-                value={(response?.result as string) ?? "0"}
-              />
-            );
-          })}
-        </div>
+        {isConnected ? (
+          <div className="grid md:grid-cols-2 gap-2 mt-4">
+            {stats.map((each, index) => {
+              const response = contractResponse
+                ? contractResponse[index]
+                : { result: "0" };
+              return (
+                <StatsCard
+                  key={each.label}
+                  label={each.label}
+                  format={each.format}
+                  decimal={each.decimal}
+                  suffix={each.suffix}
+                  value={(response?.result as string) ?? "0"}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <div className="my-4">Connect Wallet to get status</div>
+        )}
       </div>
     </div>
   );
