@@ -5,47 +5,48 @@ import NumericFormat from "@/components/NumericFormat";
 import { useContractContext } from "@/context/ContractContext";
 import { formatEther, parseEther } from "ethers";
 import { FiCheckCircle, FiSlash } from "react-icons/fi";
+import BigNumber from "bignumber.js";
 
 const stats = [
   {
     functionName: "totalStakedAssets",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Total Staked Assets",
   },
   {
     functionName: "totalShares",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "mDFI Total Supply",
   },
   {
     functionName: "totalAssets",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Total Assets (Staked + Rewards)",
   },
   {
     functionName: "totalRewardAssets",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Total Reward Assets",
   },
   {
     functionName: "getAvailableFundsToFlush",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Available For Withdrawal",
   },
   {
     functionName: "convertToAssets",
     label: "mDFI-DFI Ratio",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     args: [parseEther("1")],
   },
   {
     functionName: "minDeposit",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Minimum Deposit",
   },
   {
     functionName: "minWithdrawal",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     label: "Minimum Withdrawal",
   },
   {
@@ -60,23 +61,29 @@ const stats = [
   },
   {
     functionName: "lockedAssets",
-    parse: true,
+    format: (value: string) => formatEther(value).toString(),
     decimal: 0,
     label: "Locked Assets",
   },
   {
     functionName: "mintingFees",
-    decimal: 0,
+    decimal: 2,
+    suffix: "%",
+    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Minting Fees",
   },
   {
     functionName: "performanceFees",
-    decimal: 0,
+    decimal: 2,
+    suffix: "%",
+    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Performance Fees",
   },
   {
     functionName: "redemptionFees",
-    decimal: 0,
+    decimal: 2,
+    suffix: "%",
+    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Redemption Fees",
   },
   {
@@ -119,13 +126,13 @@ export default function Dashboard() {
             const response = contractResponse
               ? contractResponse[index] ?? {}
               : {};
-            console.log({ response, label: each.label });
             return (
               <StatsCard
                 key={each.label}
                 label={each.label}
-                parse={each.parse}
+                format={each.format}
                 decimal={each.decimal}
+                suffix={each.suffix}
                 value={response?.result ?? "0"}
               />
             );
@@ -139,13 +146,15 @@ export default function Dashboard() {
 function StatsCard({
   value,
   label,
-  parse,
+  format,
   decimal = 8,
+  suffix,
 }: {
   value: string | boolean;
   label: string;
-  parse?: boolean;
+  format?: (value: string) => string;
   decimal?: number;
+  suffix?: string;
 }) {
   return (
     <div className="panel-ui w-full border border-dark-700/40 rounded-md flex flex-col p-4 mx-auto !backdrop-blur-sm">
@@ -160,12 +169,9 @@ function StatsCard({
           </span>
         ) : (
           <NumericFormat
+            suffix={suffix}
             decimalScale={decimal}
-            value={
-              parse && !isNaN(Number(value))
-                ? formatEther(value).toString()
-                : value
-            }
+            value={format ? format(value) : value}
             className="font-medium text-dark-300/80 text-wrap	break-all"
           />
         )}
