@@ -124,8 +124,8 @@ export default function Dashboard() {
         <div className="grid md:grid-cols-2 gap-2 mt-4">
           {stats.map((each, index) => {
             const response = contractResponse
-              ? contractResponse[index] ?? {}
-              : {};
+              ? contractResponse[index]
+              : { result: "0" };
             return (
               <StatsCard
                 key={each.label}
@@ -133,7 +133,7 @@ export default function Dashboard() {
                 format={each.format}
                 decimal={each.decimal}
                 suffix={each.suffix}
-                value={response?.result ?? "0"}
+                value={(response?.result as string) ?? "0"}
               />
             );
           })}
