@@ -3,7 +3,6 @@ import React, { PropsWithChildren, useState } from "react";
 
 interface Props {
   content: string;
-  title?: string;
   containerClass?: string;
   disableTooltip?: boolean;
   defaultStyle?: string;
@@ -12,10 +11,9 @@ interface Props {
 
 export default function Tooltip({
   content,
-  title,
   children,
   containerClass,
-  defaultStyle = "w-fit bottom-[150%]",
+  defaultStyle = "bottom-[100%]",
   customStyle,
   disableTooltip = false,
 }: PropsWithChildren<Props>): JSX.Element {
@@ -64,13 +62,10 @@ export default function Tooltip({
       {!disableTooltip && active && (
         <div
           className={clsx(
-            `absolute  z-[30] -translate-x-1/2 rounded bg-dark-1000 px-3 py-2 text-dark-00 text-caption-2-400
-      before:absolute before:-z-[1] before:bottom-0 before:left-[27%] before:md:left-[35%] before:h-0 before:w-0 before:rotate-45 before:rounded-[1px]
-          before:border-[10.5px] before:border-transparent before:border-t-dark-1000 before:bg-dark-1000`,
+            `absolute  z-[30] -translate-x-[40%] md:-translate-x-1/2 rounded-[10px] bg-dark-00 px-4 py-3 text-dark-1000 text-xs whitespace-nowrap`,
             customStyle ?? defaultStyle,
           )}
         >
-          {title && <p className="text-caption-1-600 mb-1">{title}</p>}
           {content}
         </div>
       )}

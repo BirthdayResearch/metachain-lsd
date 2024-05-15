@@ -105,7 +105,7 @@ export default function Withdraw() {
               <div className="flex flex-col gap-y-1">
                 <TransactionRow
                   label="Total liquidity"
-                  tooltipText="hello"
+                  tooltipText="Total amount available for withdrawal."
                   value="133,939 DFI"
                   secondaryValue="$3.23"
                 />
