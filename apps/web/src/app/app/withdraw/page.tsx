@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useAccount } from "wagmi";
-import React, { useState } from "react";
+import { useAccount, useBalance } from "wagmi";
+import React, { useEffect, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
@@ -10,11 +10,24 @@ import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
+import { formatEther } from "ethers";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 
 export default function Withdraw() {
-  const { isConnected } = useAccount();
+  const { address, isConnected, status, chainId } = useAccount();
 
+  const { data: walletBalance } = useBalance({
+    address,
+    chainId,
+  });
+
+  const { minDepositAmount } = useGetReadContractConfigs();
+
+  const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
+  const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
+  const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
   function getActionBtnLabel() {
     switch (true) {
@@ -29,6 +42,10 @@ export default function Withdraw() {
     }
   }
 
+  useEffect(() => {
+    setWalletBalanceAmount(balance); // set wallet balance
+  }, [address, status, walletBalance]);
+
   return (
     <Panel>
       <div>
@@ -42,6 +59,7 @@ export default function Withdraw() {
                     How much do you want to withdraw?
                   </span>
                   <WalletDetails
+                    walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
                   />
@@ -49,10 +67,13 @@ export default function Withdraw() {
               </div>
               <div className="grid gap-y-2">
                 <InputCard
-                  maxAmount={new BigNumber(withdrawAmount ?? "0")}
+                  isConnected={isConnected}
+                  maxAmount={new BigNumber(walletBalanceAmount)}
+                  minAmount={new BigNumber(minDepositAmount)}
+                  error={amountError}
+                  setError={setAmountError}
                   value={withdrawAmount}
                   setAmount={setWithdrawAmount}
-                  onChange={(value) => setWithdrawAmount(value)}
                   Icon={
                     <Image
                       data-testid="mdfi-icon"
@@ -66,6 +87,7 @@ export default function Withdraw() {
                   }
                 />
                 <WalletDetails
+                  walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
                   style="block md:hidden"
                 />

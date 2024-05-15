@@ -1,17 +1,16 @@
 import { WhaleApiClient } from "@defichain/whale-api-client";
 import { useEffect, useState } from "react";
-import { PriceTicker } from "@defichain/whale-api-client/dist/api/prices";
 import BigNumber from "bignumber.js";
 
 export function useDfiPrice(): BigNumber {
-  const [dfiPrice, setDfiPrice] = useState<PriceTicker | null>(null);
+  const [dfiPrice, setDfiPrice] = useState<number>(0);
 
   const fetchDfiPrice = () => {
     const whaleApiClient = new WhaleApiClient({ network: "mainnet" });
-    whaleApiClient.prices
-      .get("DFI", "USD")
-      .then((price) => {
-        setDfiPrice(price);
+    whaleApiClient.stats
+      .get()
+      .then(({ price }) => {
+        setDfiPrice(price.usd);
       })
       .catch((error) => {
         console.error("Failed to fetch DFI price", error);
@@ -22,5 +21,5 @@ export function useDfiPrice(): BigNumber {
     fetchDfiPrice();
   }, []);
 
-  return new BigNumber(dfiPrice?.price.aggregated.amount ?? 0);
+  return new BigNumber(dfiPrice ?? 0);
 }
