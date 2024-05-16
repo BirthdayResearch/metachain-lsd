@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
 
 // Common component for Stake and Withdraw Confirming and Confirmed pages
-export default function ConfirmPage({
+export default function ConfirmScreen({
   title,
   description,
   buttons,

@@ -26,7 +26,7 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { formatEther } from "ethers";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
-import ConfirmPage from "@/app/app/components/ConfirmPage";
+import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 
 enum StakeStep {
@@ -264,7 +264,7 @@ export default function Stake() {
       {currentStep === StakeStep.StakeConfirmingPage &&
       receivingWalletAddress &&
       hash ? (
-        <ConfirmPage
+        <ConfirmScreen
           isLoading={true}
           title="Confirming your stake…"
           description="Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
@@ -309,7 +309,7 @@ export default function Stake() {
       {currentStep === StakeStep.StakeConfirmationPage &&
       receivingWalletAddress &&
       hash ? (
-        <ConfirmPage
+        <ConfirmScreen
           hasCompleted={true}
           title="Stake confirmed"
           description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
