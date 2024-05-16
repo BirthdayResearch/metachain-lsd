@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { FiCopy, FiExternalLink } from "react-icons/fi";
+import { useContractContext } from "@/context/ContractContext";
 
 export default function DetailsRow({
   label,
@@ -12,6 +13,7 @@ export default function DetailsRow({
   hasTxId?: boolean;
   handleOnCopy?: (text: string) => void;
 }) {
+  const { ExplorerURL } = useContractContext();
   return (
     <div className="flex flex-row justify-between py-[18px] md:items-center">
       <div className="text-sm">{label}</div>
@@ -42,9 +44,7 @@ export default function DetailsRow({
             <button
               className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
               onClick={() => {
-                window.open(
-                  `https://explorer.defichain.com/#/DFI/mainnet/tx/${value}`,
-                );
+                window.open(`${ExplorerURL}/tx/${value}`);
               }}
             >
               <FiExternalLink size={16} />
