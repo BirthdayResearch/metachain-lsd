@@ -130,7 +130,7 @@ export default function Dashboard() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Contract
+            MarbleFi Contract
           </Link>
         </div>
         {isConnected ? (
