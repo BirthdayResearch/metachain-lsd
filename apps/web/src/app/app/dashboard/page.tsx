@@ -6,6 +6,7 @@ import { useContractContext } from "@/context/ContractContext";
 import { formatEther, parseEther } from "ethers";
 import { FiCheckCircle, FiSlash } from "react-icons/fi";
 import BigNumber from "bignumber.js";
+import Link from "next/link";
 
 const stats = [
   {
@@ -97,7 +98,7 @@ const stats = [
 ];
 
 export default function Dashboard() {
-  const { MarbleLsdProxy } = useContractContext();
+  const { MarbleLsdProxy, ExplorerURL } = useContractContext();
 
   const { isConnected } = useAccount();
 
@@ -115,11 +116,22 @@ export default function Dashboard() {
       refetchInterval: 10000,
     },
   });
+
   return (
     <div className="panel-ui rounded-[30px] flex flex-col p-5 mx-auto w-full md:max-w-4xl">
       <div>
-        <div className="font-bold text-xl m-auto grid justify-items-stretch">
-          <span className="justify-self-center">Dashboard</span>
+        <div className="m-auto grid justify-items-stretch">
+          <span className="font-bold text-xl justify-self-center">
+            Dashboard
+          </span>
+          <Link
+            className="justify-self-center text-blue-600"
+            href={`${ExplorerURL}/address/${MarbleLsdProxy.address}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Contract
+          </Link>
         </div>
         {isConnected ? (
           <div className="grid md:grid-cols-2 gap-2 mt-4">
