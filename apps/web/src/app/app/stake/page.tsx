@@ -192,10 +192,12 @@ export default function Stake() {
               )}
             </div>
           </div>
-          <TransactionRows
-            stakeAmount={debounceStakeAmount}
-            isConnected={isConnected}
-          />
+          <div className="mb-10 md:mb-7 lg:mb-10">
+            <TransactionRows
+              stakeAmount={debounceStakeAmount}
+              isConnected={isConnected}
+            />
+          </div>
         </div>
         {isConnected ? (
           <CTAButton

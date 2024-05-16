@@ -5,6 +5,9 @@ import { Interface, formatEther } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import Tooltip from "@/app/app/components/Tooltip";
+import { FiHelpCircle } from "react-icons/fi";
+import React from "react";
 
 export default function TransactionRows({
   stakeAmount,
@@ -37,7 +40,7 @@ export default function TransactionRows({
   ).toString();
 
   return (
-    <div className="mb-12 md:mb-9 lg:mb-12">
+    <div className="flex flex-col gap-y-1">
       <TransactionRow
         label="You will receive"
         comment="(after fees)"
@@ -69,26 +72,45 @@ export default function TransactionRows({
   );
 }
 
-function TransactionRow({
+export function TransactionRow({
   label,
   comment,
   value,
+  secondaryValue,
+  tooltipText,
 }: {
   label: string;
   comment?: string;
   value: NumericFormatProps;
+  secondaryValue?: NumericFormatProps;
+  tooltipText?: string;
 }) {
   return (
     <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <div>
-        <span className="text-xs md:text-sm">{label}</span>
-        {comment && (
-          <span className="text-xs md:text-sm ml-1 text-dark-00/70">
-            {comment}
-          </span>
+      <div className="relative flex gap-x-2 items-center">
+        <div>
+          <span className="text-xs md:text-sm">{label}</span>
+          {comment && (
+            <span className="text-xs md:text-sm ml-1 text-dark-00/70">
+              {comment}
+            </span>
+          )}
+        </div>
+        {tooltipText && (
+          <Tooltip content={tooltipText}>
+            <FiHelpCircle size={16} />
+          </Tooltip>
         )}
       </div>
-      <NumericFormat className="text-sm font-semibold text-right" {...value} />
+      <div className="flex gap-x-1">
+        <NumericFormat
+          className="text-sm font-semibold text-right"
+          {...value}
+        />
+        {secondaryValue && (
+          <NumericFormat className="text-sm text-right" {...secondaryValue} />
+        )}
+      </div>
     </div>
   );
 }

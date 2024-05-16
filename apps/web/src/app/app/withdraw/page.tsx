@@ -10,10 +10,13 @@ import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
+import TransactionRows, {
+  TransactionRow,
+} from "@/app/app/stake/components/TransactionRows";
+import useDebounce from "@/hooks/useDebounce";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { FiHelpCircle } from "react-icons/fi";
-import Tooltip from "@/app/app/components/Tooltip";
+import { getDecimalPlace } from "@/lib/textHelper";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
@@ -30,6 +33,8 @@ export default function Withdraw() {
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
+  // to avoid multiple contract fetch
+  const debounceWithdrawAmount = useDebounce(withdrawAmount, 200);
 
   function getActionBtnLabel() {
     switch (true) {
@@ -96,20 +101,34 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <div className="flex flex-col gap-y-1">
-                <TransactionRow label="You will receive" value="0.00 mDFI" />
-                <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-                <TransactionRow label="Max transaction cost" value="$0.00" />
-              </div>
+              <TransactionRows
+                stakeAmount={debounceWithdrawAmount}
+                isConnected={isConnected}
+              />
               <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
               <div className="flex flex-col gap-y-1">
                 <TransactionRow
                   label="Total liquidity"
                   tooltipText="Total amount available for withdrawal."
-                  value="133,939 DFI"
-                  secondaryValue="$3.23"
+                  value={{
+                    value: 133939,
+                    suffix: " DFI",
+                    decimalScale: 0,
+                  }}
+                  secondaryValue={{
+                    value: 3.23,
+                    decimalScale: getDecimalPlace(3.23),
+                    prefix: "$",
+                  }}
                 />
-                <TransactionRow label="Annual rewards" value="3.34%" />
+                <TransactionRow
+                  label="Annual rewards"
+                  value={{
+                    value: 3.34,
+                    suffix: "%",
+                    decimalScale: getDecimalPlace(3.34),
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -126,36 +145,5 @@ export default function Withdraw() {
         <ComplimentarySection />
       </div>
     </Panel>
-  );
-}
-
-function TransactionRow({
-  label,
-  value,
-  secondaryValue,
-  tooltipText,
-}: {
-  label: string;
-  value: string;
-  secondaryValue?: string;
-  tooltipText?: string;
-}) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <div className="relative flex gap-x-2 items-center">
-        <span className="text-xs md:text-sm">{label}</span>
-        {tooltipText && (
-          <Tooltip content={tooltipText}>
-            <FiHelpCircle size={16} />
-          </Tooltip>
-        )}
-      </div>
-      <div className="flex gap-x-1">
-        <span className="text-sm font-semibold text-right">{value}</span>
-        {secondaryValue && (
-          <span className="text-sm text-right">{secondaryValue}</span>
-        )}
-      </div>
-    </div>
   );
 }
