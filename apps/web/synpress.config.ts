@@ -46,7 +46,9 @@ export default defineConfig({
     },
   },
   component: {
-    setupNodeEvents(on, config) {},
+    setupNodeEvents(on, config) {
+      synpressPlugins(on, config);
+    },
     specPattern: "./**/*spec.{js,jsx,ts,tsx}",
     supportFile,
   },
