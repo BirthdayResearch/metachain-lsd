@@ -5,6 +5,7 @@ import { Interface, formatEther } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 export default function TransactionRows({
   stakeAmount,
@@ -38,7 +39,7 @@ export default function TransactionRows({
 
   return (
     <div className="mb-12 md:mb-9 lg:mb-12">
-      <TransactionRow
+      <NumericTransactionRow
         label="You will receive"
         comment="(after fees)"
         value={{
@@ -47,7 +48,7 @@ export default function TransactionRows({
           suffix: ` mDFI`,
         }}
       />
-      <TransactionRow
+      <NumericTransactionRow
         label="Exchange rate"
         value={{
           value: mDfiToDfiConversion,
@@ -56,7 +57,7 @@ export default function TransactionRows({
           prefix: `1 mDFI = `,
         }}
       />
-      <TransactionRow
+      <NumericTransactionRow
         label="Max transaction cost"
         value={{
           value: txnCost,
@@ -65,30 +66,6 @@ export default function TransactionRows({
           prefix: "$",
         }}
       />
-    </div>
-  );
-}
-
-function TransactionRow({
-  label,
-  comment,
-  value,
-}: {
-  label: string;
-  comment?: string;
-  value: NumericFormatProps;
-}) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <div>
-        <span className="text-xs md:text-sm">{label}</span>
-        {comment && (
-          <span className="text-xs md:text-sm ml-1 text-dark-00/70">
-            {comment}
-          </span>
-        )}
-      </div>
-      <NumericFormat className="text-sm font-semibold text-right" {...value} />
     </div>
   );
 }

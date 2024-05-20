@@ -5,12 +5,15 @@ import DetailsRow from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { useEffect, useState } from "react";
 import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
+import { NumericFormatProps } from "@/components/NumericFormat";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 // Common component for Stake and Withdraw Confirming and Confirmed pages
 export default function ConfirmScreen({
   title,
   description,
   buttons,
+  dfiAmounts,
   details,
   isLoading,
   hasCompleted,
@@ -18,6 +21,7 @@ export default function ConfirmScreen({
   title: string;
   description: string;
   buttons: React.ReactNode;
+  dfiAmounts: { label: string; value: NumericFormatProps }[];
   details: { label: string; value: string; displayActions?: boolean }[];
   isLoading?: boolean;
   hasCompleted?: boolean;
@@ -53,6 +57,17 @@ export default function ConfirmScreen({
               <p className="text-sm">{description}</p>
             </div>
             <section className="border rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
+              {/* DFI and mDFI components */}
+              {dfiAmounts.map((item, index) => (
+                <NumericTransactionRow
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  customStyle="py-[18px]"
+                />
+              ))}
+
+              {/* Receiving Address and ID components */}
               {details.map((detail, index) => (
                 <DetailsRow
                   key={index}

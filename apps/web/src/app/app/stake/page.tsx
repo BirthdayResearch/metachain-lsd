@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
-import { toWei } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import WalletDetails from "@/app/app/stake/components/WalletDetails";
 
 enum StakeStep {
@@ -267,15 +267,27 @@ export default function Stake() {
           isLoading={true}
           title="Confirming your stake…"
           description="Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
-          details={[
+          dfiAmounts={[
             {
               label: "You are staking",
-              value: `${stakeAmount} DFI`,
+              value: {
+                value: stakeAmount,
+                suffix: " DFI",
+                decimalScale: getDecimalPlace(stakeAmount),
+                trimTrailingZeros: true,
+              },
             },
             {
               label: "You will receive",
-              value: `${previewDeposit} mDFI`,
+              value: {
+                value: previewDeposit,
+                suffix: " mDFI",
+                decimalScale: getDecimalPlace(previewDeposit),
+                trimTrailingZeros: true,
+              },
             },
+          ]}
+          details={[
             {
               displayActions: true,
               label: "Receiving Address",
@@ -313,15 +325,27 @@ export default function Stake() {
           hasCompleted={true}
           title="Stake confirmed"
           description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
-          details={[
+          dfiAmounts={[
             {
               label: "Amount staked",
-              value: `${stakeAmount} DFI`,
+              value: {
+                value: stakeAmount,
+                suffix: " DFI",
+                decimalScale: getDecimalPlace(stakeAmount),
+                trimTrailingZeros: true,
+              },
             },
             {
               label: "Amount to receive",
-              value: `${previewDeposit} mDFI`,
+              value: {
+                value: previewDeposit,
+                suffix: " mDFI",
+                decimalScale: getDecimalPlace(previewDeposit),
+                trimTrailingZeros: true,
+              },
             },
+          ]}
+          details={[
             {
               displayActions: true,
               label: "Receiving Address",
