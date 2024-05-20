@@ -404,7 +404,7 @@ MarbleLsdFees
     uint256 maxShares = maxRedeem(_msgSender());
     // check if balance of shares token is less/equal to withdrawal amount
     if (_shares > maxShares)
-      revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
+      revert ExceededMaxRedeem(_receiver, _shares, maxShares);
 
     uint256 assets = previewRedeem(_shares);
     uint256 fees = _feeOnRaw(assets, redemptionFees);

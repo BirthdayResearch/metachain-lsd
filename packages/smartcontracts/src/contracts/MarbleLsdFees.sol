@@ -180,7 +180,8 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   /**
    * @notice Calculates the fee part of an amount `assets` that already includes fees.
    * @dev feeOnTotal is used in deposit and redeem operations.
-   * This is when we know the total price (with the fee) and you want to know how much of that is actually available when fees are removed.
+   * Calculate the fee amount based on the total assets value (including fees) and the fee rate in basis points,
+   * returning the resulting fee value. Used in {deposit} and {redeem} operations
    */
   function _feeOnTotal(
     uint256 assets,
