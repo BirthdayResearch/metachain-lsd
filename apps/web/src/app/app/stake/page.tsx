@@ -125,7 +125,7 @@ export default function Stake() {
 
   // Display Confirmed stake page when transaction is confirmed on the block
   useEffect(() => {
-    if (isConfirmed) {
+    if (isConfirmed && currentStep !== StakeStep.StakeConfirmationPage) {
       setCurrentStep(StakeStep.StakeConfirmationPage);
     }
   }, [isConfirmed]);
