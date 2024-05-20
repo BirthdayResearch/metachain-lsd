@@ -10,14 +10,13 @@ export async function deployTimelockController({
   executors,
   admin,
 }: InputsForInitialization): Promise<TimelockController> {
-  const timelockControllerFactory = await ethers.getContractFactory(
-    "TimelockController"
-  );
+  const timelockControllerFactory =
+    await ethers.getContractFactory("TimelockController");
   const timelockController = await timelockControllerFactory.deploy(
     minDelay,
     proposers,
     executors,
-    admin
+    admin,
   );
   await timelockController.waitForDeployment();
   const contractAddress = await timelockController.getAddress();
