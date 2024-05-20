@@ -14,64 +14,64 @@ import "../../Pausable.sol";
  * @notice @dev
  * This error occurs when transfer of Staked DeFi failed
  */
-  error WALLET_TRANSFER_FAILED();
+error WALLET_TRANSFER_FAILED();
 
 /**
  * @notice @dev
  * This error occurs when withdrawal of Staked DeFi failed
  */
-  error WITHDRAWAL_FAILED();
+error WITHDRAWAL_FAILED();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is zero
  */
-  error AMOUNT_IS_ZERO();
+error AMOUNT_IS_ZERO();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum deposit amount
  */
-  error LESS_THAN_MIN_DEPOSIT();
+error LESS_THAN_MIN_DEPOSIT();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum withdrawal amount
  */
-  error LESS_THAN_MIN_WITHDRAWAL();
+error LESS_THAN_MIN_WITHDRAWAL();
 
 /**
  * @notice @dev
  * This error occurs when withdrawal `assets` is more than contract balance
  */
-  error INSUFFICIENT_WITHDRAW_AMOUNT();
+error INSUFFICIENT_WITHDRAW_AMOUNT();
 
 /**
  * @notice @dev
  * This error occurs when attempted to deposit more assets than the max amount for `receiver`.
  */
-  error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
+error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
 
 /**
  * @notice @dev
  * Attempted to withdrawal more assets than the max amount for `receiver`.
  */
-  error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
+error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
 
 /**
  * @notice @dev
  * Attempted to redeem more assets than the max amount for `receiver`.
  */
-  error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
+error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract MarbleLsdV2 is
-UUPSUpgradeable,
-EIP712Upgradeable,
-MarbleLsdAccessControl,
-Pausable,
-MarbleLsdQueue,
-MarbleLsdFees
+  UUPSUpgradeable,
+  EIP712Upgradeable,
+  MarbleLsdAccessControl,
+  Pausable,
+  MarbleLsdQueue,
+  MarbleLsdFees
 {
   using Math for uint256;
 
@@ -170,9 +170,12 @@ MarbleLsdFees
    * @dev To allocate rewards send fund to wallet address
    */
   receive() external payable onlyRole(REWARDS_DISTRIBUTER_ROLE) {
+    // check zero amount
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
+    // remove fees from amount
     uint256 fees = _feeOnTotal(msg.value, performanceFees);
     uint256 rewards = msg.value - fees;
+    // increment reward assets
     totalRewardAssets += rewards;
     emit Rewards(_msgSender(), rewards, fees);
 
@@ -340,14 +343,15 @@ MarbleLsdFees
   function deposit(
     address _receiver
   ) public payable virtual whenDepositNotPaused returns (uint256) {
+    // check min deposit invariant
     if (msg.value < minDeposit) revert LESS_THAN_MIN_DEPOSIT();
     // check zero address
     if (_receiver == address(0)) revert ZERO_ADDRESS();
     uint256 maxAssets = maxDeposit(_receiver);
-
-    if (msg.value > maxAssets) {
+    // check if amount exceeds maxAssets
+    if (msg.value > maxAssets)
       revert ExceededMaxDeposit(_receiver, msg.value, maxAssets);
-    }
+    // calculate shares for corresponding deposit
     uint256 shares = previewDeposit(msg.value);
 
     _deposit(_msgSender(), _receiver, msg.value, shares);
@@ -373,8 +377,9 @@ MarbleLsdFees
     uint256 maxAssets = maxWithdrawal(_msgSender());
     if (_assets > maxAssets)
       revert ExceededMaxWithdrawal(_receiver, _assets, maxAssets);
-
+    // calculate shares to burn for corresponding assets
     uint256 shares = previewWithdrawal(_assets);
+    // calculate withdrawal fees
     uint256 fees = _feeOnRaw(_assets, redemptionFees);
 
     requestId = _requestWithdrawal(
@@ -406,8 +411,11 @@ MarbleLsdFees
     if (_shares > maxShares)
       revert ExceededMaxRedeem(_msgSender(), _shares, maxShares);
 
+    // calculate assets to return for corresponding shares
     uint256 assets = previewRedeem(_shares);
+    // calculate redeem fees
     uint256 fees = _feeOnRaw(assets, redemptionFees);
+    // check min withdrawal
     if (assets < minWithdrawal) revert LESS_THAN_MIN_WITHDRAWAL();
     requestId = _requestWithdrawal(
       _msgSender(),
@@ -424,7 +432,9 @@ MarbleLsdFees
    */
   function flushFunds() external {
     uint256 amountToFlush = getAvailableFundsToFlush();
+    // check amountToFlush is zero
     if (amountToFlush == 0) revert AMOUNT_IS_ZERO();
+    // send amount out of the contract
     _sendValue(walletAddress, amountToFlush);
     emit FLUSH_FUND(walletAddress, amountToFlush);
   }
@@ -445,6 +455,7 @@ MarbleLsdFees
   function finalize(
     uint256 _lastRequestIdToBeFinalized
   ) external payable onlyRole(FINALIZE_ROLE) {
+    // check amount zero
     if (msg.value == 0) revert AMOUNT_IS_ZERO();
     _finalize(_lastRequestIdToBeFinalized, msg.value);
   }
@@ -474,10 +485,13 @@ MarbleLsdFees
       uint256 sharesToBurn,
       uint256 feesToTransfer
     ) = _claim(_requestId, _msgSender());
+    // send assets to receiver
     _sendValue(receiver, assetsToTransfer);
+    // send fees to feesRecipient
     if (feesToTransfer > 0 && feesRecipientAddress != address(this)) {
       _sendValue(feesRecipientAddress, feesToTransfer);
     }
+    // update totalStakedAssets
     totalStakedAssets = totalStakedAssets - assetsToTransfer - feesToTransfer;
     emit WithdrawalClaimed(
       _requestId,
@@ -487,6 +501,7 @@ MarbleLsdFees
       sharesToBurn,
       feesToTransfer
     );
+    // Burn shares after token transfer to maintain peg
     shareToken.burn(address(this), sharesToBurn);
   }
 
@@ -497,8 +512,10 @@ MarbleLsdFees
   function updateWalletAddress(
     address _newAddress
   ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // check zero address
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = walletAddress;
+    // update
     walletAddress = _newAddress;
 
     emit WALLET_ADDRESS_UPDATED(_oldAddress, _newAddress);
@@ -510,10 +527,11 @@ MarbleLsdFees
    */
   function updateMinDeposit(
     uint256 _amount
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldDeposit = minDeposit;
+    // update
     minDeposit = _amount;
 
     emit MIN_DEPOSIT_UPDATED(_oldDeposit, _amount);
@@ -525,10 +543,11 @@ MarbleLsdFees
    */
   function updateMinWithdrawal(
     uint256 _amount
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  ) external onlyRole(ADMINISTRATOR_ROLE) {
     // check zero amount
     if (_amount == 0) revert AMOUNT_IS_ZERO();
     uint256 _oldWithdrawal = minWithdrawal;
+    // update
     minWithdrawal = _amount;
 
     emit MIN_WITHDRAWAL_UPDATED(_oldWithdrawal, _amount);
@@ -547,6 +566,7 @@ MarbleLsdFees
   function _shareBalanceOf(
     address _account
   ) internal view virtual returns (uint256) {
+    // mDFI balance
     return shareToken.balanceOf(_account);
   }
 
@@ -591,7 +611,7 @@ MarbleLsdFees
     shareToken.mint(_receiver, _shares);
 
     emit Deposit(_owner, _receiver, assetsToBeStaked, _shares, fees);
-
+    // send fees to feesRecipient
     if (fees > 0 && feesRecipientAddress != address(this)) {
       _sendValue(feesRecipientAddress, fees);
     }

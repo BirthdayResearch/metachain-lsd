@@ -14,64 +14,64 @@ import "./Pausable.sol";
  * @notice @dev
  * This error occurs when transfer of Staked DeFi failed
  */
-  error WALLET_TRANSFER_FAILED();
+error WALLET_TRANSFER_FAILED();
 
 /**
  * @notice @dev
  * This error occurs when withdrawal of Staked DeFi failed
  */
-  error WITHDRAWAL_FAILED();
+error WITHDRAWAL_FAILED();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is zero
  */
-  error AMOUNT_IS_ZERO();
+error AMOUNT_IS_ZERO();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum deposit amount
  */
-  error LESS_THAN_MIN_DEPOSIT();
+error LESS_THAN_MIN_DEPOSIT();
 
 /**
  * @notice @dev
  * This error occurs when `_amount` is less than minimum withdrawal amount
  */
-  error LESS_THAN_MIN_WITHDRAWAL();
+error LESS_THAN_MIN_WITHDRAWAL();
 
 /**
  * @notice @dev
  * This error occurs when withdrawal `assets` is more than contract balance
  */
-  error INSUFFICIENT_WITHDRAW_AMOUNT();
+error INSUFFICIENT_WITHDRAW_AMOUNT();
 
 /**
  * @notice @dev
  * This error occurs when attempted to deposit more assets than the max amount for `receiver`.
  */
-  error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
+error ExceededMaxDeposit(address receiver, uint256 assets, uint256 max);
 
 /**
  * @notice @dev
  * Attempted to withdrawal more assets than the max amount for `receiver`.
  */
-  error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
+error ExceededMaxWithdrawal(address owner, uint256 assets, uint256 max);
 
 /**
  * @notice @dev
  * Attempted to redeem more assets than the max amount for `receiver`.
  */
-  error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
+error ExceededMaxRedeem(address owner, uint256 shares, uint256 max);
 
 /// @custom:oz-upgrades-unsafe-allow constructor
 contract MarbleLsdV1 is
-UUPSUpgradeable,
-EIP712Upgradeable,
-MarbleLsdAccessControl,
-Pausable,
-MarbleLsdQueue,
-MarbleLsdFees
+  UUPSUpgradeable,
+  EIP712Upgradeable,
+  MarbleLsdAccessControl,
+  Pausable,
+  MarbleLsdQueue,
+  MarbleLsdFees
 {
   using Math for uint256;
 
@@ -150,7 +150,6 @@ MarbleLsdFees
   /**
    * @dev Constructor to disable initalization of implementation contract
    */
-  /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
   }
