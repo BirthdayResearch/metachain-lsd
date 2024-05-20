@@ -167,8 +167,8 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @notice Calculates the fees that should be added to an amount `assets` that does not already include fees.
    *
    * @dev feeOnRaw is used in mint and withdraw opeartions.
-   * This is when we have a value without fees (in the case of mint the amount of share we want to get), and
-   * we add the fees on top of that (fees are a percentage of that value).
+   * Calculate the fee amount based on the raw assets value (before any fees are added) and the fee rate in
+   * basis points, returning the resulting fee value. Used in {mint} and {withdraw} operations.
    */
   function _feeOnRaw(
     uint256 assets,
