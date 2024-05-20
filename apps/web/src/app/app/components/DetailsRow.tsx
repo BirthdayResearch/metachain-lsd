@@ -5,10 +5,12 @@ import { useContractContext } from "@/context/ContractContext";
 export default function DetailsRow({
   label,
   value,
+  linkType,
   displayActions = false,
   handleOnCopy,
 }: {
   label: string;
+  linkType: string;
   value: string;
   displayActions?: boolean;
   handleOnCopy?: (text: string) => void;
@@ -44,7 +46,7 @@ export default function DetailsRow({
             <button
               className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
               onClick={() => {
-                window.open(`${ExplorerURL}/tx/${value}`);
+                window.open(`${ExplorerURL}/${linkType}/${value}`);
               }}
             >
               <FiExternalLink size={16} />

@@ -292,11 +292,13 @@ export default function Stake() {
               displayActions: true,
               label: "Receiving Address",
               value: receivingWalletAddress,
+              linkType: "address",
             },
             {
               displayActions: true,
               label: "Transaction ID",
               value: hash,
+              linkType: "tx",
             },
           ]}
           buttons={
@@ -350,11 +352,13 @@ export default function Stake() {
               displayActions: true,
               label: "Receiving Address",
               value: receivingWalletAddress,
+              linkType: "address",
             },
             {
               displayActions: true,
               label: "Transaction ID",
               value: hash,
+              linkType: "tx",
             },
           ]}
           buttons={
