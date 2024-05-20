@@ -18,7 +18,7 @@ export default function ConfirmScreen({
   title: string;
   description: string;
   buttons: React.ReactNode;
-  details: { label: string; value: string; hasTxId?: boolean }[];
+  details: { label: string; value: string; displayActions?: boolean }[];
   isLoading?: boolean;
   hasCompleted?: boolean;
 }) {
@@ -58,7 +58,7 @@ export default function ConfirmScreen({
                   key={index}
                   label={detail.label}
                   value={detail.value}
-                  hasTxId={detail.hasTxId}
+                  displayActions={detail.displayActions}
                   handleOnCopy={handleOnCopy}
                 />
               ))}

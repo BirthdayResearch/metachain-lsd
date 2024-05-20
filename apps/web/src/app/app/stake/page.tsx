@@ -277,11 +277,12 @@ export default function Stake() {
               value: `${previewDeposit} mDFI`,
             },
             {
+              displayActions: true,
               label: "Receiving Address",
               value: receivingWalletAddress,
             },
             {
-              hasTxId: true,
+              displayActions: true,
               label: "Transaction ID",
               value: hash,
             },
@@ -322,11 +323,12 @@ export default function Stake() {
               value: `${previewDeposit} mDFI`,
             },
             {
+              displayActions: true,
               label: "Receiving Address",
               value: receivingWalletAddress,
             },
             {
-              hasTxId: true,
+              displayActions: true,
               label: "Transaction ID",
               value: hash,
             },

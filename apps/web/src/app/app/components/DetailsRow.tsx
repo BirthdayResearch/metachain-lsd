@@ -5,12 +5,12 @@ import { useContractContext } from "@/context/ContractContext";
 export default function DetailsRow({
   label,
   value,
-  hasTxId = false,
+  displayActions = false,
   handleOnCopy,
 }: {
   label: string;
   value: string;
-  hasTxId?: boolean;
+  displayActions?: boolean;
   handleOnCopy?: (text: string) => void;
 }) {
   const { ExplorerURL } = useContractContext();
@@ -20,10 +20,10 @@ export default function DetailsRow({
       <div className="flex flex-col md:flex-row items-center gap-y-1 gap-x-2">
         <div
           className={clsx(
-            "break-words overflow-hidden font-semibold text-sm text-right w-[141px]",
+            "break-words font-semibold text-sm text-right line-clamp-1 w-[135px] md:w-[228px]",
             {
-              "line-clamp-2 md:w-[362px]": !hasTxId,
-              "line-clamp-1 md:w-[264px]": hasTxId,
+              "lg:w-[400px]": !displayActions,
+              "lg:w-[350px]": displayActions,
             },
           )}
         >
@@ -31,7 +31,7 @@ export default function DetailsRow({
         </div>
 
         {/*  Copy and external link icon for txId*/}
-        {hasTxId && (
+        {displayActions && (
           <div className="flex flex-row w-full md:w-fit justify-end">
             <button
               className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
