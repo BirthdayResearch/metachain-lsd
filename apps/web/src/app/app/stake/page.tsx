@@ -17,7 +17,7 @@ import { toWei } from "@/lib/textHelper";
 import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage";
 import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
 import StakePage from "@/app/app/stake/components/StakePage";
-import { StakeStep } from "@/types/stake";
+import { StakeStep } from "@/types";
 import { watchAsset } from "viem/actions";
 
 export default function Stake() {

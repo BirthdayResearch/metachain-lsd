@@ -2,7 +2,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
-import { StakeStep } from "@/types/stake";
+import { StakeStep } from "@/types";
 
 export default function StakeConfirmedPage({
   stakeAmount,
