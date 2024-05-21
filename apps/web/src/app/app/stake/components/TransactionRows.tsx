@@ -1,7 +1,7 @@
 import { useContractContext } from "@/context/ContractContext";
 import { Interface } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
-import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { getDecimalPlace } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 

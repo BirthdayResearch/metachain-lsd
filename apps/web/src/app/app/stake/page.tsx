@@ -28,7 +28,7 @@ export default function Stake() {
   const [addressError, setAddressError] = useState<string | null>(null);
   const { MarbleLsdProxy } = useContractContext();
 
-  const { address, isConnected, status } = useAccount();
+  const { address, isConnected } = useAccount();
   const {
     data: hash,
     isPending,
