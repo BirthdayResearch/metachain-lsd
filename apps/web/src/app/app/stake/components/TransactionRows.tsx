@@ -1,18 +1,14 @@
-import NumericFormat, { NumericFormatProps } from "@/components/NumericFormat";
 import { useContractContext } from "@/context/ContractContext";
-import { useReadContract } from "wagmi";
-import { Interface, formatEther } from "ethers";
+import { Interface } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 export default function TransactionRows({
-  stakeAmount,
-  isConnected,
+  previewDeposit,
 }: {
-  stakeAmount: string;
-  isConnected: boolean;
+  previewDeposit: string;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
@@ -22,20 +18,6 @@ export default function TransactionRows({
       MarbleLsdProxy.address,
     ]) as `0x${string}`,
   );
-
-  const { data: previewDepositData } = useReadContract({
-    address: MarbleLsdProxy.address,
-    abi: MarbleLsdProxy.abi,
-    functionName: "previewDeposit",
-    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
-    query: {
-      enabled: isConnected,
-    },
-  });
-
-  const previewDeposit = formatEther(
-    (previewDepositData as number) ?? 0,
-  ).toString();
 
   return (
     <div className="mb-12 md:mb-9 lg:mb-12">
@@ -55,6 +37,7 @@ export default function TransactionRows({
           suffix: " DFI",
           decimalScale: getDecimalPlace(mDfiToDfiConversion),
           prefix: `1 mDFI = `,
+          trimTrailingZeros: false,
         }}
       />
       <NumericTransactionRow

@@ -16,7 +16,7 @@ export default function NumericFormat({
   suffix = "",
   thousandSeparator,
   decimalScale = 8,
-  trimTrailingZeros = false,
+  trimTrailingZeros = true,
   testId,
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
