@@ -6,13 +6,11 @@ export default function DetailsRow({
   label,
   value,
   linkType,
-  displayActions = false,
   handleOnCopy,
 }: {
   label: string;
   linkType: string;
   value: string;
-  displayActions?: boolean;
   handleOnCopy?: (text: string) => void;
 }) {
   const { ExplorerURL } = useContractContext();
@@ -22,37 +20,31 @@ export default function DetailsRow({
       <div className="flex flex-col md:flex-row items-center gap-y-1 gap-x-2">
         <div
           className={clsx(
-            "break-words font-semibold text-sm text-right line-clamp-1 w-[135px] md:w-[228px]",
-            {
-              "lg:w-[400px]": !displayActions,
-              "lg:w-[350px]": displayActions,
-            },
+            "break-words font-semibold text-sm text-right line-clamp-1 w-[135px] md:w-[228px] lg:w-[350px]",
           )}
         >
           {value}
         </div>
 
         {/*  Copy and external link icon for txId*/}
-        {displayActions && (
-          <div className="flex flex-row w-full md:w-fit justify-end">
-            <button
-              className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
-              onClick={() => {
-                if (handleOnCopy) handleOnCopy(value);
-              }}
-            >
-              <FiCopy size={16} />
-            </button>
-            <button
-              className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
-              onClick={() => {
-                window.open(`${ExplorerURL}/${linkType}/${value}`);
-              }}
-            >
-              <FiExternalLink size={16} />
-            </button>
-          </div>
-        )}
+        <div className="flex flex-row w-full md:w-fit justify-end">
+          <button
+            className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
+            onClick={() => {
+              if (handleOnCopy) handleOnCopy(value);
+            }}
+          >
+            <FiCopy size={16} />
+          </button>
+          <button
+            className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
+            onClick={() => {
+              window.open(`${ExplorerURL}/${linkType}/${value}`);
+            }}
+          >
+            <FiExternalLink size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );

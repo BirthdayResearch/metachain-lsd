@@ -11,9 +11,6 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { formatEther } from "ethers";
 import { useAccount, useBalance } from "wagmi";
-import { parseEther } from "viem";
-import { StakeStep } from "@/app/app/stake/page";
-import useDebounce from "@/hooks/useDebounce";
 
 export default function StakePage({
   stakeAmount,

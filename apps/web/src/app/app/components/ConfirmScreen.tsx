@@ -1,9 +1,7 @@
 import Panel from "@/app/app/stake/components/Panel";
 import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
-import { SuccessCopy } from "@/app/app/components/SuccessCopy";
 import DetailsRow from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
-import { useEffect, useState } from "react";
 import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
 import { NumericFormatProps } from "@/components/NumericFormat";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
@@ -27,7 +25,6 @@ export default function ConfirmScreen({
     label: string;
     value: string;
     linkType: string;
-    displayActions?: boolean;
   }[];
   isLoading?: boolean;
   hasCompleted?: boolean;
@@ -74,7 +71,6 @@ export default function ConfirmScreen({
                 label={detail.label}
                 value={detail.value}
                 linkType={detail.linkType}
-                displayActions={detail.displayActions}
                 handleOnCopy={handleOnCopy}
               />
             ))}
