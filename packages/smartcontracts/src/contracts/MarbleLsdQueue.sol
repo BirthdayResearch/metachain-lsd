@@ -6,47 +6,47 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 /** @notice @dev
  * This error occurs when `_requestId` is invalid or zero
  */
-error InvalidRequestId(uint256 _requestId);
+  error InvalidRequestId(uint256 _requestId);
 
 /** @notice @dev
  * This error occurs when provided empty batch
  */
-error EmptyBatches();
+  error EmptyBatches();
 
 /** @notice @dev
  * This error occurs when provided batch array is not sorted
  */
-error BatchesAreNotSorted();
+  error BatchesAreNotSorted();
 
 /** @notice @dev
  * This error occurs when provided too much assets to finalize
  */
-error InvalidAssetsToFinalize(uint256 sent, uint256 maxExpected);
+  error InvalidAssetsToFinalize(uint256 sent, uint256 maxExpected);
 
 /** @notice @dev
  * This error occurs when requested fund is not finalized
  */
-error RequestNotFoundOrNotFinalized(uint256 _requestId);
+  error RequestNotFoundOrNotFinalized(uint256 _requestId);
 
 /** @notice @dev
  * This error occurs when request is already claimed
  */
-error RequestAlreadyClaimed(uint256 _requestId);
+  error RequestAlreadyClaimed(uint256 _requestId);
 
 /** @notice @dev
  * This error occurs when there is not enough assets
  */
-error NotEnoughAssets();
+  error NotEnoughAssets();
 
 /** @notice @dev
  * This error occurs when recipient refuse to receive assets
  */
-error CantSendValueRecipientMayHaveReverted();
+  error CantSendValueRecipientMayHaveReverted();
 
 /** @notice @dev
  * This error occurs when sender is not a owner
  */
-error NotOwner(address _sender, address _owner);
+  error NotOwner(address _sender, address _owner);
 
 contract MarbleLsdQueue {
   using EnumerableSet for EnumerableSet.UintSet;
@@ -60,7 +60,7 @@ contract MarbleLsdQueue {
    * @dev Withdrawal requests mapped to the owners
    */
   bytes32 internal constant REQUEST_BY_OWNER_POSITION =
-    keccak256("WithdrawalQueue.requestsByOwner");
+  keccak256("WithdrawalQueue.requestsByOwner");
 
   /**
    * @dev Last index in request queue
@@ -220,10 +220,12 @@ contract MarbleLsdQueue {
   function prefinalize(
     uint256[] calldata _batches
   ) external view returns (uint256 assetsToLock, uint256 sharesToBurn) {
+    // check zero array length
     if (_batches.length == 0) revert EmptyBatches();
-
+    // check first item is already finalized or not
     if (_batches[0] <= lastFinalizedRequestId)
       revert InvalidRequestId(_batches[0]);
+    // check last item is valid or not
     if (_batches[_batches.length - 1] > lastRequestId)
       revert InvalidRequestId(_batches[_batches.length - 1]);
 
@@ -232,15 +234,16 @@ contract MarbleLsdQueue {
     WithdrawalRequest memory prevBatchEnd = _getQueue()[prevBatchEndRequestId];
     while (currentBatchIndex < _batches.length) {
       uint256 batchEndRequestId = _batches[currentBatchIndex];
+      // check for sorted array with no duplicates
       if (batchEndRequestId <= prevBatchEndRequestId)
         revert BatchesAreNotSorted();
 
       WithdrawalRequest memory batchEnd = _getQueue()[batchEndRequestId];
-
+      // calculate total assets, total shares & total fees from the given batch
       uint256 assetsDiff = batchEnd.cumulativeAssets -
-        prevBatchEnd.cumulativeAssets;
+              prevBatchEnd.cumulativeAssets;
       uint256 sharesDiff = batchEnd.cumulativeShares -
-        prevBatchEnd.cumulativeShares;
+              prevBatchEnd.cumulativeShares;
       uint256 feesDiff = batchEnd.cumulativeFees - prevBatchEnd.cumulativeFees;
       // add assets and shares and fees
       assetsToLock = assetsToLock + assetsDiff + feesDiff;
@@ -258,6 +261,7 @@ contract MarbleLsdQueue {
    * @notice Return the number of unfinalized requests in the queue
    */
   function unfinalizedRequestNumber() external view returns (uint256) {
+    // unfinalized requests count
     return lastRequestId - lastFinalizedRequestId;
   }
 
@@ -265,10 +269,11 @@ contract MarbleLsdQueue {
    * @notice Returns the amount of assets and fees in the queue yet to be finalized
    */
   function unfinalizedAssets()
-    external
-    view
-    returns (uint256 assets, uint256 fees)
+  external
+  view
+  returns (uint256 assets, uint256 fees)
   {
+    // unfinalized assets & fees
     assets =
       _getQueue()[lastRequestId].cumulativeAssets -
       _getQueue()[lastFinalizedRequestId].cumulativeAssets;
@@ -286,25 +291,28 @@ contract MarbleLsdQueue {
     uint256 _lastRequestIdToBeFinalized,
     uint256 _amountOfAssets
   ) internal {
+    // check invalid request id
     if (_lastRequestIdToBeFinalized > lastRequestId)
       revert InvalidRequestId(_lastRequestIdToBeFinalized);
+    // check already finalized or not
     if (_lastRequestIdToBeFinalized <= lastFinalizedRequestId)
       revert InvalidRequestId(_lastRequestIdToBeFinalized);
 
     WithdrawalRequest memory lastFinalizedRequest = _getQueue()[
-      lastFinalizedRequestId
-    ];
+          lastFinalizedRequestId
+      ];
     WithdrawalRequest memory requestToFinalize = _getQueue()[
-      _lastRequestIdToBeFinalized
-    ];
-
+          _lastRequestIdToBeFinalized
+      ];
+    // calculate total assets, fees & shares from lastFinalized to the given request id
     uint256 assetsToFinalize = requestToFinalize.cumulativeAssets -
-      lastFinalizedRequest.cumulativeAssets;
+            lastFinalizedRequest.cumulativeAssets;
     uint256 feesToFinalize = requestToFinalize.cumulativeFees -
-      lastFinalizedRequest.cumulativeFees;
+            lastFinalizedRequest.cumulativeFees;
     uint256 totalAssets = assetsToFinalize + feesToFinalize;
     uint256 sharesToBurn = requestToFinalize.cumulativeShares -
-      lastFinalizedRequest.cumulativeShares;
+            lastFinalizedRequest.cumulativeShares;
+    // check exact amount paid by finalizer to the contract
     if (_amountOfAssets != totalAssets)
       revert InvalidAssetsToFinalize(_amountOfAssets, totalAssets);
 
@@ -331,25 +339,30 @@ contract MarbleLsdQueue {
     uint256 _requestId,
     address _owner
   )
-    internal
-    returns (
-      address receiver,
-      uint256 assetsToTransfer,
-      uint256 sharesToBurn,
-      uint256 feesToTransfer
-    )
+  internal
+  returns (
+    address receiver,
+    uint256 assetsToTransfer,
+    uint256 sharesToBurn,
+    uint256 feesToTransfer
+  )
   {
+    // check for valid requestId
     if (_requestId > lastFinalizedRequestId)
       revert RequestNotFoundOrNotFinalized(_requestId);
 
     WithdrawalRequest storage request = _getQueue()[_requestId];
-
+    // check if already claimed
     if (request.claimed) revert RequestAlreadyClaimed(_requestId);
+    // check if the caller is owner or not
     if (request.owner != _owner) revert NotOwner(_owner, request.owner);
 
+    // set claimed
     request.claimed = true;
+    // remove request id from owners requestId set
     assert(_getRequestsByOwner()[request.owner].remove(_requestId));
     WithdrawalRequest memory prevRequest = _getQueue()[_requestId - 1];
+    // calculate fees, assets to distribute  & shares to burn
     receiver = request.receiver;
     assetsToTransfer = request.cumulativeAssets - prevRequest.cumulativeAssets;
     sharesToBurn = request.cumulativeShares - prevRequest.cumulativeShares;
@@ -363,8 +376,11 @@ contract MarbleLsdQueue {
    * @param _amount Amount to send
    */
   function _sendValue(address _recipient, uint256 _amount) internal {
+    // check if amount exceeds current balance
     if (address(this).balance < _amount) revert NotEnoughAssets();
+    // send to _recipient
     (bool success, ) = _recipient.call{value: _amount}("");
+    // check token transfer failure
     if (!success) revert CantSendValueRecipientMayHaveReverted();
   }
 
@@ -379,11 +395,11 @@ contract MarbleLsdQueue {
     uint256 _fees
   ) internal returns (uint256 requestId) {
     WithdrawalRequest memory lastRequest = _getQueue()[lastRequestId];
-
+    // update cumulative values
     uint256 cumulativeAssets = lastRequest.cumulativeAssets + _assets;
     uint256 cumulativeShares = lastRequest.cumulativeShares + _shares;
     uint256 cumulativeFees = lastRequest.cumulativeFees + _fees;
-
+    // increment requests count
     requestId = lastRequestId + 1;
     WithdrawalRequest memory newRequest = WithdrawalRequest(
       cumulativeAssets,
@@ -394,7 +410,9 @@ contract MarbleLsdQueue {
       uint40(block.timestamp),
       false
     );
+    // add new request
     _getQueue()[requestId] = newRequest;
+    // add request under the caller
     assert(_getRequestsByOwner()[_owner].add(requestId));
     // update last request Id
     lastRequestId = requestId;
@@ -415,7 +433,9 @@ contract MarbleLsdQueue {
   function _getStatus(
     uint256 _requestId
   ) internal view returns (WithdrawalRequestStatus memory status) {
+    // check invalid request id
     if (_requestId == 0 || _requestId > lastRequestId) {
+      // return dummy data
       status = WithdrawalRequestStatus(
         0,
         0,
@@ -429,7 +449,7 @@ contract MarbleLsdQueue {
     } else {
       WithdrawalRequest memory request = _getQueue()[_requestId];
       WithdrawalRequest memory previousRequest = _getQueue()[_requestId - 1];
-
+      // prepare withdrawl request
       status = WithdrawalRequestStatus(
         request.cumulativeAssets - previousRequest.cumulativeAssets,
         request.cumulativeShares - previousRequest.cumulativeShares,
@@ -447,9 +467,9 @@ contract MarbleLsdQueue {
    * @dev Returns queue storage slot assignment
    */
   function _getQueue()
-    internal
-    pure
-    returns (mapping(uint256 => WithdrawalRequest) storage queue)
+  internal
+  pure
+  returns (mapping(uint256 => WithdrawalRequest) storage queue)
   {
     bytes32 position = QUEUE_POSITION;
     assembly {
@@ -461,9 +481,9 @@ contract MarbleLsdQueue {
    * @dev Returns request by owner storage slot assignment
    */
   function _getRequestsByOwner()
-    internal
-    pure
-    returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner)
+  internal
+  pure
+  returns (mapping(address => EnumerableSet.UintSet) storage requestsByOwner)
   {
     bytes32 position = REQUEST_BY_OWNER_POSITION;
     assembly {

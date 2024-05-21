@@ -8,15 +8,32 @@ import "./MarbleLsdAccessControl.sol";
  * @notice @dev
  * This error occurs when `_fees` is invalid
  */
-error INVALID_FEES();
+  error INVALID_FEES();
 
 contract MarbleLsdFees is MarbleLsdAccessControl {
   using Math for uint256;
+
+  /**
+  * @dev Basis point scale used for fee calculations, set to 10,000.
+  * This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).
+  */
   uint256 private constant _BASIS_POINT_SCALE = 1e4;
 
+  /**
+  * @dev Address where the fees will be sent.
+  */
   address public feesRecipientAddress;
+  /**
+  * @dev Fee applied during the deposit process, represented in basis points.
+  */
   uint16 public mintingFees;
+  /**
+  * @dev Fee applied during the redemption or withdrawal process, represented in basis points.
+  */
   uint16 public redemptionFees;
+  /**
+  * @dev Fee applied during rewards allocation, represented in basis points.
+  */
   uint16 public performanceFees;
 
   /**
@@ -82,6 +99,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
    * @dev Modifier to make a function callable only when the fees are less than _BASIS_POINT_SCALE.
    */
   modifier checkFees(uint16 _fees) {
+    // Fee should not exceed 100%
     if (_fees > _BASIS_POINT_SCALE) revert INVALID_FEES();
     _;
   }
@@ -93,8 +111,10 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   function updateFeesRecipientAddress(
     address _newAddress
   ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // check zero address
     if (_newAddress == address(0)) revert ZERO_ADDRESS();
     address _oldAddress = feesRecipientAddress;
+    // update feesRecipient
     feesRecipientAddress = _newAddress;
 
     emit FEE_RECIEPIENT_ADDRESS_UPDATED(_oldAddress, _newAddress, _msgSender());
@@ -109,6 +129,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   function updateMintingFees(
     uint16 _fees
   ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
+    // check fee invariant & update minting fee
     uint16 _oldFee = mintingFees;
     mintingFees = _fees;
     emit MINTING_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -121,6 +142,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   function updateRedemptionFees(
     uint16 _fees
   ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
+    // check fee invariant & update redemption or withdrawal fee
     uint16 _oldFee = redemptionFees;
     redemptionFees = _fees;
     emit REDEMPTION_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -133,6 +155,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   function updatePerformanceFees(
     uint16 _fees
   ) external onlyRole(ADMINISTRATOR_ROLE) checkFees(_fees) {
+    // check fee invariant & update performance fee
     uint16 _oldFee = performanceFees;
     performanceFees = _fees;
     emit PERFORMANCE_FEES_UPDATED(_oldFee, _fees, _msgSender());
@@ -142,7 +165,10 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
 
   /**
    * @notice Calculates the fees that should be added to an amount `assets` that does not already include fees.
-   * Used in {mint} and {withdraw} operations.
+   *
+   * @dev feeOnRaw is used in mint and withdraw opeartions.
+   * Calculate the fee amount based on the raw assets value (before any fees are added) and the fee rate in
+   * basis points, returning the resulting fee value. Used in {mint} and {withdraw} operations.
    */
   function _feeOnRaw(
     uint256 assets,
@@ -153,7 +179,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
 
   /**
    * @notice Calculates the fee part of an amount `assets` that already includes fees.
-   * Used in {deposit} and {redeem} operations.
+   * @dev feeOnTotal is used in deposit and redeem operations.
+   * Calculate the fee amount based on the total assets value (including fees) and the fee rate in basis points,
+   * returning the resulting fee value. Used in {deposit} and {redeem} operations
    */
   function _feeOnTotal(
     uint256 assets,
@@ -161,9 +189,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   ) internal pure returns (uint256) {
     return
       assets.mulDiv(
-        feeBasisPoints,
-        feeBasisPoints + _BASIS_POINT_SCALE,
-        Math.Rounding.Up
-      );
+      feeBasisPoints,
+      feeBasisPoints + _BASIS_POINT_SCALE,
+      Math.Rounding.Up
+    );
   }
 }
