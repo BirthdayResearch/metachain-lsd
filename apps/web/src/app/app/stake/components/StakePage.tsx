@@ -22,7 +22,6 @@ export default function StakePage({
   addressError,
   setAddressError,
   previewDeposit,
-  isDisabled,
   isPending,
   submitStake,
   amountError,
@@ -37,7 +36,6 @@ export default function StakePage({
   addressError: string | null;
   setAddressError: (value: string | null) => void;
   previewDeposit: string;
-  isDisabled: boolean;
   isPending: boolean;
   submitStake: () => void;
   amountError: string | null;
@@ -59,6 +57,11 @@ export default function StakePage({
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
 
+  const isDisabled =
+    !stakeAmount ||
+    !receivingWalletAddress ||
+    !!(amountError || addressError) ||
+    isPending;
   return (
     <Panel>
       <div className="w-full gap-y-5">

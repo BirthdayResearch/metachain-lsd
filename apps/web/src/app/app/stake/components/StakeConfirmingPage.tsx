@@ -11,6 +11,8 @@ export default function StakeConfirmingPage({
   setCurrentStep,
   previewDeposit,
   resetFields,
+  addTokenToWallet,
+  isAddTokenRequested,
 }: {
   stakeAmount: string;
   hash: string;
@@ -18,6 +20,8 @@ export default function StakeConfirmingPage({
   receivingWalletAddress: string;
   setCurrentStep: (step: StakeStep) => void;
   resetFields: () => void;
+  addTokenToWallet: () => void;
+  isAddTokenRequested: boolean;
 }) {
   return (
     <ConfirmScreen
@@ -66,9 +70,11 @@ export default function StakeConfirmingPage({
             }}
           />
           <CTAButtonOutline
+            isDisabled={isAddTokenRequested}
             label="Add mDFI to wallet"
             testID="stake-confirming-add-mdfi"
             customStyle="w-full"
+            onClick={addTokenToWallet}
           />
         </>
       }

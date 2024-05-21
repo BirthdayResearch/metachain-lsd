@@ -5,6 +5,7 @@ import {
   useWriteContract,
   useReadContract,
   useWaitForTransactionReceipt,
+  useConnectorClient,
 } from "wagmi";
 import { useEffect, useMemo, useState } from "react";
 import { useContractContext } from "@/context/ContractContext";
@@ -17,11 +18,41 @@ import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage"
 import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
 import StakePage from "@/app/app/stake/components/StakePage";
 import { StakeStep } from "@/types/stake";
+import { watchAsset } from "viem/actions";
 
 export default function Stake() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
-  const { MarbleLsdProxy } = useContractContext();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
+
+  const { data: connectorClient } = useConnectorClient();
+  const [isAddTokenRequested, setIsAddTokenRequested] = useState(false);
+
+  const addTokenToWallet = async () => {
+    if (connectorClient) {
+      try {
+        setIsAddTokenRequested(true);
+        const tokenAdded = await watchAsset(connectorClient, {
+          type: "ERC20",
+          options: {
+            address: mDFI.address,
+            decimals: mDFI.decimal,
+            symbol: mDFI.symbol,
+          },
+        });
+        if (tokenAdded) {
+          toast("mDFI token added to wallet", {
+            duration: 1000,
+            className:
+              "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+            id: "tokenAdded",
+          });
+        }
+      } finally {
+        setIsAddTokenRequested(false);
+      }
+    }
+  };
 
   const { address, isConnected } = useAccount();
   const {
@@ -42,7 +73,7 @@ export default function Stake() {
   const [stakeAmount, setStakeAmount] = useState<string>("");
 
   const [receivingWalletAddress, setReceivingWalletAddress] = useState<
-    `0x${string}` | string | undefined
+    `0x${string}` | string
   >(address ?? "");
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
@@ -120,20 +151,14 @@ export default function Stake() {
       setReceivingWalletAddress("");
     }
     if (enableConnectedWallet) {
-      setReceivingWalletAddress(address);
+      setReceivingWalletAddress(address ?? "");
     }
   }, [receivingWalletAddress, enableConnectedWallet]);
-
-  const isDisabled =
-    !stakeAmount ||
-    !receivingWalletAddress ||
-    !!(amountError || addressError) ||
-    isPending;
 
   return (
     <div className="relative">
       {/* First step: Stake poge */}
-      {currentStep === StakeStep.StakePage ? (
+      {currentStep === StakeStep.StakePage && (
         <StakePage
           stakeAmount={stakeAmount}
           setStakeAmount={setStakeAmount}
@@ -144,41 +169,44 @@ export default function Stake() {
           addressError={addressError}
           setAddressError={setAddressError}
           previewDeposit={previewDeposit}
-          isDisabled={isDisabled}
           isPending={isPending}
           submitStake={submitStake}
           amountError={amountError}
           setAmountError={setAmountError}
         />
-      ) : null}
+      )}
 
       {/* Second step: Confirming Stake page */}
       {currentStep === StakeStep.StakeConfirmingPage &&
-      receivingWalletAddress &&
-      hash ? (
-        <StakeConfirmingPage
-          stakeAmount={stakeAmount}
-          previewDeposit={previewDeposit}
-          receivingWalletAddress={receivingWalletAddress}
-          hash={hash}
-          setCurrentStep={setCurrentStep}
-          resetFields={resetFields}
-        />
-      ) : null}
+        receivingWalletAddress &&
+        hash && (
+          <StakeConfirmingPage
+            addTokenToWallet={addTokenToWallet}
+            isAddTokenRequested={isAddTokenRequested}
+            stakeAmount={stakeAmount}
+            previewDeposit={previewDeposit}
+            receivingWalletAddress={receivingWalletAddress}
+            hash={hash}
+            setCurrentStep={setCurrentStep}
+            resetFields={resetFields}
+          />
+        )}
 
       {/* Last step: Confirmed Stake page */}
       {currentStep === StakeStep.StakeConfirmationPage &&
-      receivingWalletAddress &&
-      hash ? (
-        <StakeConfirmedPage
-          stakeAmount={stakeAmount}
-          previewDeposit={previewDeposit}
-          receivingWalletAddress={receivingWalletAddress}
-          hash={hash}
-          setCurrentStep={setCurrentStep}
-          resetFields={resetFields}
-        />
-      ) : null}
+        receivingWalletAddress &&
+        hash && (
+          <StakeConfirmedPage
+            addTokenToWallet={addTokenToWallet}
+            isAddTokenRequested={isAddTokenRequested}
+            stakeAmount={stakeAmount}
+            previewDeposit={previewDeposit}
+            receivingWalletAddress={receivingWalletAddress}
+            hash={hash}
+            setCurrentStep={setCurrentStep}
+            resetFields={resetFields}
+          />
+        )}
     </div>
   );
 }
