@@ -66,6 +66,14 @@ export default function Stake() {
     return formatEther((previewDepositData as number) ?? 0).toString();
   }, [previewDepositData]);
 
+  const resetFields = () => {
+    setStakeAmount("");
+    setReceivingWalletAddress(address ?? "");
+    setEnableConnectedWallet(isConnected);
+    setAmountError(null);
+    setAddressError(null);
+  };
+
   function submitStake() {
     if (!amountError && !addressError) {
       writeContract(
@@ -159,6 +167,7 @@ export default function Stake() {
           receivingWalletAddress={receivingWalletAddress}
           hash={hash}
           setCurrentStep={setCurrentStep}
+          resetFields={resetFields}
         />
       ) : null}
 
@@ -172,6 +181,7 @@ export default function Stake() {
           receivingWalletAddress={receivingWalletAddress}
           hash={hash}
           setCurrentStep={setCurrentStep}
+          resetFields={resetFields}
         />
       ) : null}
     </div>

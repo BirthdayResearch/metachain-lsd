@@ -10,12 +10,14 @@ export default function StakeConfirmedPage({
   receivingWalletAddress,
   setCurrentStep,
   previewDeposit,
+  resetFields,
 }: {
   stakeAmount: string;
   hash: string;
   previewDeposit: string;
   receivingWalletAddress: string;
   setCurrentStep: (step: StakeStep) => void;
+  resetFields: () => void;
 }) {
   return (
     <ConfirmScreen
@@ -58,7 +60,10 @@ export default function StakeConfirmedPage({
             label="Return to main page"
             testID="stake-confirming-return-main"
             customStyle="w-full"
-            onClick={() => setCurrentStep(StakeStep.StakePage)}
+            onClick={() => {
+              resetFields();
+              setCurrentStep(StakeStep.StakePage);
+            }}
           />
           <CTAButtonOutline
             label="Add mDFI to wallet"
