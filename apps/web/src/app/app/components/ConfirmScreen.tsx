@@ -53,7 +53,7 @@ export default function ConfirmScreen({
             <h3 className="text-2xl leading-7 font-medium">{title}</h3>
             <p className="text-sm">{description}</p>
           </div>
-          <section className="border-[0.5px] border-light-1000/10 bg-red-300 rounded-[20px] p-5 md:p-8 divide-y flex justify-center flex-col">
+          <section className="border-[0.5px] border-light-1000/10 bg-red-300 rounded-[20px] p-5 md:p-8 divide-light-1000/10 divide-y flex justify-center flex-col">
             {/* DFI and mDFI components */}
             {dfiAmounts.map((item) => (
               <NumericTransactionRow
