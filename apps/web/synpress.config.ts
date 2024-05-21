@@ -1,5 +1,5 @@
 const log = require("debug")("synpress:config");
-import synpressPlugins from "@synthetixio/synpress/plugins";
+const synpressPlugins = require("@synthetixio/synpress/plugins");
 import { defineConfig } from "cypress";
 
 const synpressPath = "@synthetixio/synpress";
