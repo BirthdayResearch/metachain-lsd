@@ -26,7 +26,7 @@ export default function DetailsRow({
           {value}
         </div>
 
-        {/*  Copy and external link icon for txId*/}
+        {/*  Copy and external link icon */}
         <div className="flex flex-row w-full md:w-fit justify-end">
           <button
             className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
