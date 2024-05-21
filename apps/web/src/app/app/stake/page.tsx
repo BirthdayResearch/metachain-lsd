@@ -16,12 +16,7 @@ import { toWei } from "@/lib/textHelper";
 import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage";
 import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
 import StakePage from "@/app/app/stake/components/StakePage";
-
-export enum StakeStep {
-  StakePage,
-  StakeConfirmingPage,
-  StakeConfirmationPage,
-}
+import { StakeStep } from "@/types/stake";
 
 export default function Stake() {
   const [amountError, setAmountError] = useState<string | null>(null);
