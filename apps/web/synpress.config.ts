@@ -45,11 +45,4 @@ export default defineConfig({
       network: process.env.NETWORK_NAME,
     },
   },
-  component: {
-    setupNodeEvents(on, config) {
-      synpressPlugins(on, config);
-    },
-    specPattern: "./**/*spec.{js,jsx,ts,tsx}",
-    supportFile,
-  },
 });
