@@ -96,15 +96,19 @@ export default function Stake() {
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "deposit",
       });
-    } else {
-      toast.remove("deposit");
     }
+
+    // cleanup
+    return () => toast.remove("deposit");
   }, [writeStatus]);
 
   // Display Confirmed stake page when transaction is confirmed on the block
   useEffect(() => {
     if (isConfirmed && currentStep !== StakeStep.StakeConfirmationPage) {
-      setCurrentStep(StakeStep.StakeConfirmationPage);
+      // to schedule component change only after toast is removed
+      setTimeout(() => {
+        setCurrentStep(StakeStep.StakeConfirmationPage);
+      }, 0);
     }
   }, [isConfirmed]);
 
