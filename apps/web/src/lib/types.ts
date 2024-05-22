@@ -8,3 +8,8 @@ export interface ContractContextI {
   ExplorerURL: string;
   MarbleLsdProxy: ContractConfigI;
 }
+
+export interface AppNavigation {
+  label: string;
+  href: string;
+}
