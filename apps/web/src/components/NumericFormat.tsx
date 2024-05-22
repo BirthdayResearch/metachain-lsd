@@ -34,7 +34,11 @@ export default function NumericFormat({
   }
 
   return (
-    <span className={className} data-testid={testId}>
+    <span
+      className={className}
+      data-testid={testId}
+      title={value ? new BigNumber(value).toString() : ""}
+    >
       {formattedNumber}
     </span>
   );

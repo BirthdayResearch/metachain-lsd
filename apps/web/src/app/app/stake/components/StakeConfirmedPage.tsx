@@ -2,7 +2,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
-import { StakeStep } from "@/types/stake";
+import { StakeStep } from "@/types";
 
 export default function StakeConfirmedPage({
   stakeAmount,
@@ -11,6 +11,8 @@ export default function StakeConfirmedPage({
   setCurrentStep,
   previewDeposit,
   resetFields,
+  addTokenToWallet,
+  isAddTokenRequested,
 }: {
   stakeAmount: string;
   hash: string;
@@ -18,6 +20,8 @@ export default function StakeConfirmedPage({
   receivingWalletAddress: string;
   setCurrentStep: (step: StakeStep) => void;
   resetFields: () => void;
+  addTokenToWallet: () => void;
+  isAddTokenRequested: boolean;
 }) {
   return (
     <ConfirmScreen
@@ -69,6 +73,8 @@ export default function StakeConfirmedPage({
             label="Add mDFI to wallet"
             testID="stake-confirming-add-mdfi"
             customStyle="w-full"
+            isDisabled={isAddTokenRequested}
+            onClick={addTokenToWallet}
           />
         </>
       }
