@@ -63,7 +63,7 @@ export default function AppFooter() {
         </div>
       </section>
 
-      {/*  Mobile view */}
+      {/* Mobile view */}
       <div className="block md:hidden">
         <FooterNaviationLinkMobile />
       </div>
