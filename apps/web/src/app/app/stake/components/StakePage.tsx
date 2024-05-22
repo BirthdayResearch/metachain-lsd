@@ -55,7 +55,7 @@ export default function StakePage({
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
-  }, [address, status, walletBalance]);
+  }, [address, status, balance]);
 
   const isDisabled =
     !stakeAmount ||
