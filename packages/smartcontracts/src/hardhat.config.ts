@@ -108,6 +108,13 @@ const config: HardhatUserConfig = {
       // could be larger than the stipulated max size in EIP-170
       allowUnlimitedContractSize: true,
     },
+    DMCTestnet: {
+      url: "https://eth.testnet.ocean.jellyfishsdk.com",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      // ledgerAccounts: ['first EVM address of your ledger'],
+      chainId: 1131,
+    },
     sepolia: {
       url: process.env.SEPOLIA_URL || "",
       accounts:
@@ -123,8 +130,19 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      DMCTestnet: process.env.ETHERSCAN_API_KEY || "",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
     },
+    customChains: [
+      {
+        network: "DMCTestnet",
+        chainId: 1131,
+        urls: {
+          apiURL: "https://blockscout.testnet.ocean.jellyfishsdk.com/api",
+          browserURL: "https://blockscout.testnet.ocean.jellyfishsdk.com",
+        },
+      },
+    ],
   },
 };
 

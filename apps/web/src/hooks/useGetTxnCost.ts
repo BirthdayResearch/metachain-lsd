@@ -15,7 +15,7 @@ export function useGetTxnCost(data: `0x${string}`): {
   const { data: estimateGas } = useEstimateGas({
     data,
     to: MarbleLsdProxy.address,
-    value: parseEther("0.001"),
+    value: parseEther("1"),
     query: {
       refetchIntervalInBackground: false,
     },
