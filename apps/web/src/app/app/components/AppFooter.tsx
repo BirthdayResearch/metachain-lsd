@@ -6,10 +6,10 @@ import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
 
 const footerLinks = [
-  {
-    title: "FAQs",
-    link: "/faqs",
-  },
+  // {
+  //   title: "FAQs",
+  //   link: "/faqs",
+  // },
   {
     title: "Documentation",
     link: "https://marblefi.gitbook.io/marblefi-documentation",
@@ -17,12 +17,13 @@ const footerLinks = [
   },
   {
     title: "Terms of Use",
-    link: "/terms-of-use",
+    link: "https://marblefi.gitbook.io/marblefi-documentation/legal/terms-and-conditions",
+    tewTab: true,
   },
-  {
-    title: "Privacy Notice",
-    link: "/privacy-notice",
-  },
+  // {
+  //   title: "Privacy Notice",
+  //   link: "/privacy-notice",
+  // },
 ];
 
 export default function AppFooter() {
@@ -37,8 +38,9 @@ export default function AppFooter() {
           </div>
         </div>
         <div className="ml-2 w-full md:w-fit md:justify-end">
+          {/* TODO fetch this from api */}
           <Tag
-            text="v1.21"
+            text="v1.0.0"
             testID="footer-version-tag"
             customStyle="bg-light-1000/[0.05] px-3 !py-1 mr-2 w-fit"
           />
