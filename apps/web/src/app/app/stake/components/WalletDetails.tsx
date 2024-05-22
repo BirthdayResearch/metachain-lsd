@@ -24,10 +24,7 @@ export default function WalletDetails({
           <NumericFormat
             className="font-semibold"
             suffix=" DFI"
-            value={new BigNumber(walletBalanceAmount ?? 0).toFormat(
-              decimalScale,
-              BigNumber.ROUND_FLOOR,
-            )}
+            value={new BigNumber(walletBalanceAmount ?? 0).toString()}
             decimalScale={decimalScale}
           />
         </p>

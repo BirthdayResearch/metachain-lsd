@@ -12,7 +12,7 @@ export function truncateTextFromMiddle(text: string, length = 5): string {
 }
 
 export function toWei(amount: string | BigNumber): string {
-  return parseEther(new BigNumber(amount).toFixed(18)).toString();
+  return parseEther(new BigNumber(amount ?? 0).toFixed(18)).toString();
 }
 
 export const getDecimalPlace = (value: string | BigNumber | number): number => {

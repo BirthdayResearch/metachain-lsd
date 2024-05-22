@@ -7,7 +7,7 @@ import {
   useWaitForTransactionReceipt,
   useConnectorClient,
 } from "wagmi";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useContractContext } from "@/context/ContractContext";
 import { parseEther } from "viem";
 import { formatEther } from "ethers";
@@ -21,6 +21,7 @@ import { StakeStep } from "@/types";
 import { watchAsset } from "viem/actions";
 
 export default function Stake() {
+  const mainContentRef = useRef(null);
   const [amountError, setAmountError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
   const { MarbleLsdProxy, mDFI } = useContractContext();
@@ -113,7 +114,7 @@ export default function Stake() {
         {
           onSuccess: (hash) => {
             if (hash) {
-              setCurrentStep(StakeStep.StakeConfirmingPage);
+              setCurrentStepAndScroll(StakeStep.StakeConfirmingPage);
             }
           },
         },
@@ -141,7 +142,7 @@ export default function Stake() {
     if (isConfirmed && currentStep !== StakeStep.StakeConfirmationPage) {
       // to schedule component change only after toast is removed
       setTimeout(() => {
-        setCurrentStep(StakeStep.StakeConfirmationPage);
+        setCurrentStepAndScroll(StakeStep.StakeConfirmationPage);
       }, 0);
     }
   }, [isConfirmed]);
@@ -155,8 +156,16 @@ export default function Stake() {
     }
   }, [receivingWalletAddress, enableConnectedWallet]);
 
+  const setCurrentStepAndScroll = (step: StakeStep) => {
+    setCurrentStep(step);
+    if (mainContentRef.current) {
+      // TODO update this with NextJs scroll
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="relative">
+    <div className="relative" ref={mainContentRef}>
       {/* First step: Stake poge */}
       {currentStep === StakeStep.StakePage && (
         <StakePage
@@ -187,7 +196,7 @@ export default function Stake() {
             previewDeposit={previewDeposit}
             receivingWalletAddress={receivingWalletAddress}
             hash={hash}
-            setCurrentStep={setCurrentStep}
+            setCurrentStep={setCurrentStepAndScroll}
             resetFields={resetFields}
           />
         )}
@@ -203,7 +212,7 @@ export default function Stake() {
             previewDeposit={previewDeposit}
             receivingWalletAddress={receivingWalletAddress}
             hash={hash}
-            setCurrentStep={setCurrentStep}
+            setCurrentStep={setCurrentStepAndScroll}
             resetFields={resetFields}
           />
         )}
