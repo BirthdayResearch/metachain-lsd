@@ -20,7 +20,7 @@ export default function WalletDetails({
     >
       {isWalletConnected ? (
         <p className="text-xs text-light-1000/50">
-          <span>Available: </span>
+          <span className="mr-1">Available:</span>
           <NumericFormat
             className="font-semibold"
             suffix=" DFI"
