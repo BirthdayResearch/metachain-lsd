@@ -19,7 +19,7 @@ export default function AddressInput({
 }: {
   value?: `0x${string}` | string;
   setValue: (text: `0x${string}` | string) => void;
-  receivingWalletAddress?: `0x${string}`;
+  receivingWalletAddress?: `0x${string}` | string;
   setEnableConnectedWallet: (enableConnectedWallet: boolean) => void;
   placeholder?: string;
   customStyle?: string;
