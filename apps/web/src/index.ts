@@ -42,7 +42,7 @@ export const TESTNET_CONFIG: ContractContextI = {
     abi: MarbleLsdV1__factory.abi,
   },
   mDFI: {
-    address: "0x1F1BCfbF082e274D0eeE0ED62C28CE51B6A33330",
+    address: "0x960e9a07e36dc74302e707d84b5eb772dae726cc",
     abi: ShareToken__factory.abi,
     decimal: 18,
     symbol: "mDFI",
