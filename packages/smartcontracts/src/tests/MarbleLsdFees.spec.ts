@@ -101,6 +101,14 @@ describe("MarbleLsdFees", () => {
     ).to.be.revertedWithCustomError(proxyMarbleLsd, "INVALID_FEES");
   });
 
+  it("Should not update Fees Recipient with zero Address", async () => {
+    await expect(
+      proxyMarbleLsd
+        .connect(defaultAdminSigner)
+        .updateFeesRecipientAddress(ethers.ZeroAddress)
+    ).to.be.revertedWithCustomError(proxyMarbleLsd, "ZERO_ADDRESS");
+  });
+
   it("Should update Fees Recipient Address from admin address", async () => {
     const signer = accounts[5];
     await proxyMarbleLsd

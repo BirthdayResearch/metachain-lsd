@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useAccount, useBalance } from "wagmi";
-import React, { useEffect, useState } from "react";
+import { useAccount, useBalance, useReadContract } from "wagmi";
+import React, { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
@@ -10,16 +10,17 @@ import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
-import TransactionRows, {
-  TransactionRow,
-} from "@/app/app/stake/components/TransactionRows";
+import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import useDebounce from "@/hooks/useDebounce";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { getDecimalPlace } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { useContractContext } from "@/context/ContractContext";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
+  const { MarbleLsdProxy } = useContractContext();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -31,6 +32,20 @@ export default function Withdraw() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
+  const { data: previewDepositData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "previewDeposit",
+    args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const previewDeposit = useMemo(() => {
+    return formatEther((previewDepositData as number) ?? 0).toString();
+  }, [previewDepositData]);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
   // to avoid multiple contract fetch
@@ -101,13 +116,10 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows
-                stakeAmount={debounceWithdrawAmount}
-                isConnected={isConnected}
-              />
+              <TransactionRows previewDeposit={previewDeposit} />
               <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
               <div className="flex flex-col gap-y-1">
-                <TransactionRow
+                <NumericTransactionRow
                   label="Total liquidity"
                   tooltipText="Total amount available for withdrawal."
                   value={{
@@ -121,7 +133,7 @@ export default function Withdraw() {
                     prefix: "$",
                   }}
                 />
-                <TransactionRow
+                <NumericTransactionRow
                   label="Annual rewards"
                   value={{
                     value: 3.34,
