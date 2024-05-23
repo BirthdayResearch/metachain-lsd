@@ -1,3 +1,4 @@
+import Image from "next/image";
 import WalletDetails from "@/app/app/stake/components/WalletDetails";
 import { InputCard } from "@/app/app/components/InputCard";
 import BigNumber from "bignumber.js";
@@ -8,7 +9,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import { ConnectKitButton } from "connectkit";
 import Panel from "@/app/app/stake/components/Panel";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { formatEther } from "ethers";
 import { useAccount, useBalance } from "wagmi";
 
@@ -88,6 +89,17 @@ export default function StakePage({
                   setAmount={setStakeAmount}
                   error={amountError}
                   setError={setAmountError}
+                  Icon={
+                    <Image
+                      data-testid="dfi-icon"
+                      src="/icons/dfi-icon.svg"
+                      alt="DFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  }
                 />
               </div>
               <WalletDetails
