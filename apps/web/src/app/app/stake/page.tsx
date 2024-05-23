@@ -1,55 +1,105 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useBalance, useAccount, useWriteContract } from "wagmi";
-import { ConnectKitButton } from "connectkit";
-import { InputCard } from "@/app/app/components/InputCard";
-import { CTAButton } from "@/components/button/CTAButton";
-import Panel from "@/app/app/stake/components/Panel";
-import AddressInput from "@/app/app/components/AddressInput";
-import WalletDetails from "@/app/app/components/WalletDetails";
-import BigNumber from "bignumber.js";
-import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
-import TransactionRows from "./components/TransactionRows";
-import useDebounce from "@/hooks/useDebounce";
+import {
+  useAccount,
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useConnectorClient,
+} from "wagmi";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useContractContext } from "@/context/ContractContext";
 import { parseEther } from "viem";
-import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { formatEther } from "ethers";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
+import { toWei } from "@/lib/textHelper";
+import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage";
+import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
+import StakePage from "@/app/app/stake/components/StakePage";
+import { StakeStep } from "@/types";
+import { watchAsset } from "viem/actions";
 
 export default function Stake() {
+  const mainContentRef = useRef(null);
   const [amountError, setAmountError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
-  const { MarbleLsdProxy } = useContractContext();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
 
-  const { address, isConnected, status, chainId } = useAccount();
+  const { data: connectorClient } = useConnectorClient();
+  const [isAddTokenRequested, setIsAddTokenRequested] = useState(false);
+
+  const addTokenToWallet = async () => {
+    if (connectorClient) {
+      try {
+        setIsAddTokenRequested(true);
+        const tokenAdded = await watchAsset(connectorClient, {
+          type: "ERC20",
+          options: {
+            address: mDFI.address,
+            decimals: mDFI.decimal,
+            symbol: mDFI.symbol,
+          },
+        });
+        if (tokenAdded) {
+          toast("mDFI token added to wallet", {
+            duration: 1000,
+            className:
+              "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+            id: "tokenAdded",
+          });
+        }
+      } finally {
+        setIsAddTokenRequested(false);
+      }
+    }
+  };
+
+  const { address, isConnected } = useAccount();
   const {
     data: hash,
     isPending,
     writeContract,
     status: writeStatus,
   } = useWriteContract();
-  const { minDepositAmount } = useGetReadContractConfigs();
-
-  const { data: walletBalance } = useBalance({
-    address,
-    chainId,
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
   });
 
+  // To display /stake pages based on the current step
+  const [currentStep, setCurrentStep] = useState<StakeStep>(
+    StakeStep.StakePage,
+  );
+
   const [stakeAmount, setStakeAmount] = useState<string>("");
-  // to avoid multiple contract fetch
-  const debounceStakeAmount = useDebounce(stakeAmount, 200);
 
   const [receivingWalletAddress, setReceivingWalletAddress] = useState<
-    `0x${string}` | string | undefined
+    `0x${string}` | string
   >(address ?? "");
-  const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
-  const balance = formatEther(walletBalance?.value.toString() ?? "0");
+
+  const { data: previewDepositData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "previewDeposit",
+    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const previewDeposit = useMemo(() => {
+    return formatEther((previewDepositData as number) ?? 0).toString();
+  }, [previewDepositData]);
+
+  const resetFields = () => {
+    setStakeAmount("");
+    setReceivingWalletAddress(address ?? "");
+    setEnableConnectedWallet(isConnected);
+    setAmountError(null);
+    setAddressError(null);
+  };
 
   function submitStake() {
     if (!amountError && !addressError) {
@@ -62,9 +112,10 @@ export default function Stake() {
           args: [receivingWalletAddress as string],
         },
         {
-          onSuccess: () => {
-            console.log("Txn hash:", hash);
-            // add redirect logic here
+          onSuccess: (hash) => {
+            if (hash) {
+              setCurrentStepAndScroll(StakeStep.StakeConfirmingPage);
+            }
           },
         },
       );
@@ -80,145 +131,91 @@ export default function Stake() {
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "deposit",
       });
-    } else {
-      toast.remove("deposit");
     }
+
+    // cleanup
+    return () => toast.remove("deposit");
   }, [writeStatus]);
 
+  // Display Confirmed stake page when transaction is confirmed on the block
   useEffect(() => {
-    setWalletBalanceAmount(balance); // set wallet balance
-  }, [address, status, walletBalance]);
+    if (isConfirmed && currentStep !== StakeStep.StakeConfirmationPage) {
+      // to schedule component change only after toast is removed
+      setTimeout(() => {
+        setCurrentStepAndScroll(StakeStep.StakeConfirmationPage);
+      }, 0);
+    }
+  }, [isConfirmed]);
 
   useEffect(() => {
     if (receivingWalletAddress === address && !enableConnectedWallet) {
       setReceivingWalletAddress("");
     }
     if (enableConnectedWallet) {
-      setReceivingWalletAddress(address);
+      setReceivingWalletAddress(address ?? "");
     }
   }, [receivingWalletAddress, enableConnectedWallet]);
 
-  const isDisabled =
-    !stakeAmount ||
-    !receivingWalletAddress ||
-    !!(amountError || addressError) ||
-    isPending;
+  const setCurrentStepAndScroll = (step: StakeStep) => {
+    setCurrentStep(step);
+    if (mainContentRef.current) {
+      // TODO update this with NextJs scroll
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
-    <Panel>
-      <div className="w-full gap-y-5">
-        <h3 className="text-2xl leading-7 font-semibold">Stake DFI</h3>
-        <div className="flex flex-col w-full justify-between gap-y-5">
-          <div className="mt-10">
-            <div className="mb-5">
-              <div className="flex justify-between gap-y-2 mb-2 items-center">
-                <span className="text-xs md:text-sm py-1">
-                  How much do you want to stake?
-                </span>
-                <WalletDetails
-                  walletBalanceAmount={walletBalanceAmount}
-                  isWalletConnected={isConnected}
-                  style="md:block hidden"
-                />
-              </div>
-              <div className="pb-2 md:pb-0">
-                <InputCard
-                  isConnected={isConnected}
-                  maxAmount={new BigNumber(walletBalanceAmount)}
-                  minAmount={new BigNumber(minDepositAmount)}
-                  value={stakeAmount}
-                  setAmount={setStakeAmount}
-                  error={amountError}
-                  setError={setAmountError}
-                  Icon={
-                    <Image
-                      data-testid="dfi-icon"
-                      src="/icons/dfi-icon.svg"
-                      alt="DFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
-              </div>
-              <WalletDetails
-                walletBalanceAmount={walletBalanceAmount}
-                isWalletConnected={isConnected}
-                style="block md:hidden"
-              />
-            </div>
-            <div className="grid gap-y-2">
-              <div className="flex flex-row items-center justify-between">
-                <span className="text-xs md:text-sm py-1">
-                  Receiving address
-                </span>
-                {isConnected && (
-                  <ConnectedWalletSwitch
-                    customStyle="md:flex hidden"
-                    enableConnectedWallet={enableConnectedWallet}
-                    setEnableConnectedWallet={setEnableConnectedWallet}
-                  />
-                )}
-              </div>
-              <AddressInput
-                value={
-                  isConnected
-                    ? enableConnectedWallet
-                      ? address
-                      : receivingWalletAddress
-                    : ""
-                }
-                setValue={setReceivingWalletAddress}
-                receivingWalletAddress={address}
-                setEnableConnectedWallet={setEnableConnectedWallet}
-                placeholder={
-                  isConnected
-                    ? "Enter wallet address to receive mDFI"
-                    : "Connect a wallet"
-                }
-                isDisabled={!isConnected}
-                error={addressError}
-                setError={setAddressError}
-              />
+    <div className="relative" ref={mainContentRef}>
+      {/* First step: Stake poge */}
+      {currentStep === StakeStep.StakePage && (
+        <StakePage
+          stakeAmount={stakeAmount}
+          setStakeAmount={setStakeAmount}
+          enableConnectedWallet={enableConnectedWallet}
+          setEnableConnectedWallet={setEnableConnectedWallet}
+          receivingWalletAddress={receivingWalletAddress}
+          setReceivingWalletAddress={setReceivingWalletAddress}
+          addressError={addressError}
+          setAddressError={setAddressError}
+          previewDeposit={previewDeposit}
+          isPending={isPending}
+          submitStake={submitStake}
+          amountError={amountError}
+          setAmountError={setAmountError}
+        />
+      )}
 
-              {isConnected && (
-                <ConnectedWalletSwitch
-                  customStyle="flex md:hidden"
-                  enableConnectedWallet={enableConnectedWallet}
-                  setEnableConnectedWallet={setEnableConnectedWallet}
-                />
-              )}
-            </div>
-          </div>
-          <TransactionRows
-            stakeAmount={debounceStakeAmount}
-            isConnected={isConnected}
+      {/* Second step: Confirming Stake page */}
+      {currentStep === StakeStep.StakeConfirmingPage &&
+        receivingWalletAddress &&
+        hash && (
+          <StakeConfirmingPage
+            addTokenToWallet={addTokenToWallet}
+            isAddTokenRequested={isAddTokenRequested}
+            stakeAmount={stakeAmount}
+            previewDeposit={previewDeposit}
+            receivingWalletAddress={receivingWalletAddress}
+            hash={hash}
+            setCurrentStep={setCurrentStepAndScroll}
+            resetFields={resetFields}
           />
-        </div>
-        {isConnected ? (
-          <CTAButton
-            isDisabled={isDisabled}
-            isLoading={isPending}
-            testID="instant-transfer-btn"
-            label={"Stake DFI"}
-            customStyle="w-full md:py-5"
-            onClick={submitStake}
-          />
-        ) : (
-          <ConnectKitButton.Custom>
-            {({ show }) => (
-              <CTAButton
-                testID="instant-transfer-btn"
-                label={"Connect wallet"}
-                customStyle="w-full md:py-5"
-                onClick={show}
-              />
-            )}
-          </ConnectKitButton.Custom>
         )}
-      </div>
-    </Panel>
+
+      {/* Last step: Confirmed Stake page */}
+      {currentStep === StakeStep.StakeConfirmationPage &&
+        receivingWalletAddress &&
+        hash && (
+          <StakeConfirmedPage
+            addTokenToWallet={addTokenToWallet}
+            isAddTokenRequested={isAddTokenRequested}
+            stakeAmount={stakeAmount}
+            previewDeposit={previewDeposit}
+            receivingWalletAddress={receivingWalletAddress}
+            hash={hash}
+            setCurrentStep={setCurrentStepAndScroll}
+            resetFields={resetFields}
+          />
+        )}
+    </div>
   );
 }
