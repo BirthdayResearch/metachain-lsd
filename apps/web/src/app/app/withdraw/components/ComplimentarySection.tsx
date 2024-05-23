@@ -43,7 +43,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   return (
-    <div className="flex flex-col gap-y-5 md:gap-y-4 md:pt-8 pt-5 lg:py-10 mt-12 md:mt-10 lg:mt-16">
+    <div className="flex flex-col gap-y-5 md:gap-y-4 md:pt-8 pt-5 lg:pt-10 mt-12 md:mt-10 lg:mt-16">
       <div
         className={clsx(
           "flex flex-col justify-between md:flex-row items-center",
