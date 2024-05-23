@@ -62,7 +62,7 @@ export default function Tooltip({
       {!disableTooltip && active && (
         <div
           className={clsx(
-            `absolute  z-[30] -translate-x-[40%] md:-translate-x-1/2 rounded-[10px] bg-dark-00 px-4 py-3 text-dark-1000 text-xs whitespace-nowrap`,
+            `absolute z-[30] -translate-x-[40%] md:-translate-x-1/2 rounded-[10px] bg-dark-00 px-4 py-3 text-dark-1000 text-xs whitespace-nowrap`,
             customStyle ?? defaultStyle,
           )}
         >
