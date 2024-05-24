@@ -11,11 +11,6 @@ import { useNetworkEnvironmentContext } from "./NetworkEnvironmentContext";
 import { MAINNET_CONFIG, TESTNET_CONFIG } from "@/index";
 import { ContractContextI } from "@/lib/types";
 
-interface ContractConfigI {
-  address: `0x${string}`;
-  abi?: any;
-}
-
 const ContractContext = createContext<ContractContextI>(undefined as any);
 
 export function useContractContext(): ContractContextI {
