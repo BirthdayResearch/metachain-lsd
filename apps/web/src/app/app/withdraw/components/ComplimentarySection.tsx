@@ -25,7 +25,7 @@ export default function ComplimentarySection({
       <div className="w-full md:w-fit">
         <CTAButton
           label="View FAQs"
-          testID="faq-button"
+          testId="faq-button-complimentary-section"
           customStyle="!px-3 !py-3 md:!py-2"
           customTextStyle="whitespace-nowrap text-xs font-medium"
           customBgColor="faq-button-bg"

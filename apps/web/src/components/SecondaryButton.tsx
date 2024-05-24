@@ -4,21 +4,21 @@ import Link from "next/link";
 export function SecondaryButton({
   onClick,
   text,
-  testID,
+  testId,
   customStyle,
   customTextStyle = "text-light-00",
   href,
 }: {
   onClick?: () => void;
   text: string;
-  testID: string;
+  testId: string;
   customStyle?: string;
   customTextStyle?: string;
   href?: string;
 }) {
   const Button = (
     <button
-      data-testid={`secondary-button-${testID}`}
+      data-testid={`secondary-button-${testId}`}
       className={clsx(
         "border border-light-1000 rounded-[30px] px-9 py-5 md:py-4",
         "border-light-1000 hover:border-brand-100 active:text-opacity-60",

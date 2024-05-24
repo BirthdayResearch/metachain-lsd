@@ -102,7 +102,7 @@ export default function Withdraw() {
           <ConnectKitButton.Custom>
             {({ show }) => (
               <CTAButton
-                testID="instant-transfer-btn"
+                testId="instant-transfer-btn"
                 label={getActionBtnLabel()}
                 customStyle="w-full md:py-5"
               />

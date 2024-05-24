@@ -10,26 +10,26 @@ export default function UnlockPower() {
     <SectionContainer customContainerStyle="flex-col gap-y-16 md:max-w-3xl">
       <>
         <div className="gap-y-5 md:gap-6 flex flex-col items-center justify-center">
-          <Tag text="BETA RELEASE" testID="beta-release" />
+          <Tag text="BETA RELEASE" testId="beta-release" />
           <SectionTitle
             text="Unlock the power of your assets"
-            testID="unlock-power"
+            testId="unlock-power"
           />
           <SectionDescription
             text="Maximize your capital efficiency. Earn rewards without the hassle of managing your own Masternode."
-            testID="maximize"
+            testId="maximize"
           />
         </div>
         <div className="flex flex-col pt-12 md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
           <CTAButton
             label="Launch app"
-            testID="launch-app"
+            testId="launch-app"
             customStyle="md:w-fit w-full"
             isDisabled
           />
           <SecondaryButton
             text="Learn more"
-            testID="learn-more"
+            testId="learn-more"
             customStyle="md:w-fit w-full"
             href="https://marblefi.gitbook.io"
           />
