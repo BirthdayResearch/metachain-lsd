@@ -2,11 +2,12 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AppNavigation } from "@/lib/types";
 
-export const appNavigationTabs = [
-  { label: "Stake", href: "/stake" },
-  { label: "Withdraw", href: "/withdraw" },
-  { label: "Pool", href: "/pool" },
+export const appNavigationTabs: AppNavigation[] = [
+  // { label: "Stake", href: "/stake" },
+  // { label: "Withdraw", href: "/withdraw" },
+  // { label: "Pool", href: "/pool" },
 ];
 
 export default function AppNavigationBarWeb() {

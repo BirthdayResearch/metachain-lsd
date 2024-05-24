@@ -146,7 +146,7 @@ export default function StakePage({
             isDisabled={isDisabled}
             isLoading={isPending}
             testID="instant-transfer-btn"
-            label={"Stake DFI"}
+            label="Stake DFI"
             customStyle="w-full md:py-5"
             onClick={submitStake}
           />
@@ -155,7 +155,7 @@ export default function StakePage({
             {({ show }) => (
               <CTAButton
                 testID="instant-transfer-btn"
-                label={"Connect wallet"}
+                label="Connect wallet"
                 customStyle="w-full md:py-5"
                 onClick={show}
               />
