@@ -61,6 +61,6 @@ yarn-error.log*
 /cypress/screenshots
 /cypress/videos
 
-# scypress
+# synpress
 /tests/e2e/screenshots
 /tests/e2e/videos
