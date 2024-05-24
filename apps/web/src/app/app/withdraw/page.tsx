@@ -12,6 +12,8 @@ import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySec
 import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import { getDecimalPlace } from "@/lib/textHelper";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
@@ -81,9 +83,32 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="flex flex-col gap-y-1 mb-10 md:mb-7 lg:mb-10">
-              <TransactionRow label="You will receive" value="0.00 mDFI" />
-              <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-              <TransactionRow label="Max transaction cost" value="$0.00" />
+              <NumericTransactionRow
+                label="You will receive"
+                value={{
+                  value: 0.0,
+                  decimalScale: getDecimalPlace(0.0),
+                  suffix: ` mDFI`,
+                }}
+              />
+              <NumericTransactionRow
+                label="Exchange rate"
+                value={{
+                  value: 1,
+                  suffix: " DFI",
+                  decimalScale: getDecimalPlace(1),
+                  prefix: `1 mDFI = `,
+                  trimTrailingZeros: false,
+                }}
+              />
+              <NumericTransactionRow
+                label="Max transaction cost"
+                value={{
+                  value: 3.23,
+                  decimalScale: getDecimalPlace(3.23),
+                  prefix: "$",
+                }}
+              />
             </div>
           </div>
           <ConnectKitButton.Custom>
@@ -99,14 +124,5 @@ export default function Withdraw() {
         <ComplimentarySection />
       </div>
     </Panel>
-  );
-}
-
-function TransactionRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <span className="text-xs md:text-sm">{label}</span>
-      <span className="text-sm font-semibold text-right">{value}</span>
-    </div>
   );
 }
