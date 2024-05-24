@@ -34,7 +34,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
           testId="pending-withdrawals-button"
           customStyle="!px-3 !py-3 md:!py-1"
           customTextStyle="font-semibold leading-5 text-light-1000/30"
-          customBgColor="button-bg"
+          customBgColor="withdraw-button-bg"
         >
           <MdAccessTimeFilled className="text-warning" size={12} />
         </CTAButton>
@@ -43,7 +43,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
           testId="confirmed-withdrawals-button"
           customStyle="!px-3 !py-3 md:!py-1"
           customTextStyle="font-semibold leading-5 text-light-1000/30"
-          customBgColor="button-bg"
+          customBgColor="withdraw-button-bg"
         >
           <FaCircleCheck className="text-green" size={10} />
         </CTAButton>
@@ -70,7 +70,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="button-bg"
+                customBgColor="withdraw-button-bg"
               >
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
@@ -79,7 +79,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="button-bg"
+                customBgColor="withdraw-button-bg"
               >
                 <FaCircleCheck className="text-green" size={10} />
               </CTAButton>
@@ -133,7 +133,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2"
             customTextStyle="whitespace-nowrap text-xs font-medium"
-            customBgColor="button-bg"
+            customBgColor="withdraw-button-bg"
           >
             <Image
               data-testid="dfi-icon"
