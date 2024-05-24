@@ -12,6 +12,7 @@ export function CTAButton({
   isDisabled,
   isLoading = false,
   navigateTo = "",
+  children,
 }: {
   label: string;
   testId: string;
@@ -22,6 +23,7 @@ export function CTAButton({
   customBgColor?: string;
   isLoading?: boolean;
   navigateTo?: string;
+  children?: JSX.Element;
 }) {
   const Button = (
     <button
@@ -36,7 +38,8 @@ export function CTAButton({
         customStyle ?? "w-fit",
       )}
     >
-      <div className="items-center justify-center flex flex-row gap-x-3">
+      <div className="items-center justify-center flex flex-row gap-x-2">
+        {children}
         <span
           className={clsx(
             customTextStyle ??
