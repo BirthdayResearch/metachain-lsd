@@ -1,5 +1,5 @@
 import Image from "next/image";
-import WalletDetails from "@/app/app/stake/components/WalletDetails";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import { InputCard } from "@/app/app/components/InputCard";
 import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
