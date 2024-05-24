@@ -89,18 +89,17 @@ export default function StakePage({
                   setAmount={setStakeAmount}
                   error={amountError}
                   setError={setAmountError}
-                  Icon={
-                    <Image
-                      data-testid="dfi-icon"
-                      src="/icons/dfi-icon.svg"
-                      alt="DFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
+                >
+                  <Image
+                    data-testid="dfi-icon"
+                    src="/icons/dfi-icon.svg"
+                    alt="DFI icon"
+                    className="min-w-6"
+                    priority
+                    width={24}
+                    height={24}
+                  />
+                </InputCard>
               </div>
               <WalletDetails
                 walletBalanceAmount={walletBalanceAmount}

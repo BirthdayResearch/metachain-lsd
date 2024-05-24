@@ -63,18 +63,17 @@ export default function Withdraw() {
                   setError={setAmountError}
                   value={withdrawAmount}
                   setAmount={setWithdrawAmount}
-                  Icon={
-                    <Image
-                      data-testid="mdfi-icon"
-                      src="/icons/mdfi-icon.svg"
-                      alt="MDFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
+                >
+                  <Image
+                    data-testid="mdfi-icon"
+                    src="/icons/mdfi-icon.svg"
+                    alt="MDFI icon"
+                    className="min-w-6"
+                    priority
+                    width={24}
+                    height={24}
+                  />
+                </InputCard>
                 <WalletDetails
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
