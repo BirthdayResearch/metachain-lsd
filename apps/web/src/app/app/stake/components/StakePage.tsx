@@ -1,5 +1,5 @@
 import Image from "next/image";
-import WalletDetails from "@/app/app/stake/components/WalletDetails";
+import WalletDetails from "@/app/app/components/WalletDetails";
 import { InputCard } from "@/app/app/components/InputCard";
 import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
@@ -89,18 +89,17 @@ export default function StakePage({
                   setAmount={setStakeAmount}
                   error={amountError}
                   setError={setAmountError}
-                  Icon={
-                    <Image
-                      data-testid="dfi-icon"
-                      src="/icons/dfi-icon.svg"
-                      alt="DFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
+                >
+                  <Image
+                    data-testid="dfi-icon"
+                    src="/icons/dfi-icon.svg"
+                    alt="DFI icon"
+                    className="min-w-6"
+                    priority
+                    width={24}
+                    height={24}
+                  />
+                </InputCard>
               </div>
               <WalletDetails
                 walletBalanceAmount={walletBalanceAmount}
@@ -157,7 +156,7 @@ export default function StakePage({
           <CTAButton
             isDisabled={isDisabled}
             isLoading={isPending}
-            testID="instant-transfer-btn"
+            testId="instant-transfer-btn"
             label={"Stake DFI"}
             customStyle="w-full md:py-5"
             onClick={submitStake}
@@ -166,7 +165,7 @@ export default function StakePage({
           <ConnectKitButton.Custom>
             {({ show }) => (
               <CTAButton
-                testID="instant-transfer-btn"
+                testId="instant-transfer-btn"
                 label={"Connect wallet"}
                 customStyle="w-full md:py-5"
                 onClick={show}

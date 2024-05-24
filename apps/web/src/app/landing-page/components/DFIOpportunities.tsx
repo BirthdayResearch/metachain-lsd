@@ -18,7 +18,7 @@ export default function DFIOpportunities() {
           </p>
           <CTAButton
             label="Launch app"
-            testID="launch-app"
+            testId="launch-app"
             customStyle="w-full md:w-fit"
             isDisabled
           />

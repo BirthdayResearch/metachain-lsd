@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 export function CTAButtonOutline({
   label,
-  testID,
+  testId,
   customStyle,
   onClick,
   isDisabled,
@@ -11,14 +11,14 @@ export function CTAButtonOutline({
   label: string;
   customStyle?: string;
   customTextStyle?: string;
-  testID: string;
+  testId: string;
   isDisabled?: boolean;
   onClick: () => void;
   isOutline?: boolean;
 }) {
   return (
     <button
-      data-testid={`cta-button-outline-${testID}`}
+      data-testid={`cta-button-outline-${testId}`}
       className={clsx(
         "rounded-[40px] px-8 md:px-9 py-4 border-[0.5px] border-light-1000 flex items-center justify-center",
         "text-[28px] font-bold",

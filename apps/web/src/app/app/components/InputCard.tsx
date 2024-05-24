@@ -14,7 +14,7 @@ export function InputCard({
   error,
   setError,
   isConnected,
-  Icon,
+  children,
 }: {
   maxAmount: BigNumber; // to calculate amount
   minAmount: BigNumber;
@@ -23,7 +23,7 @@ export function InputCard({
   error: string | null;
   setError: (msg: string | null) => void;
   isConnected: boolean;
-  Icon: JSX.Element;
+  children: JSX.Element;
 }) {
   const dfiPrice = useDfiPrice();
 
@@ -69,7 +69,7 @@ export function InputCard({
         >
           <div className="flex flex-row gap-x-3 flex-1">
             <div className="flex flex-row justify-center items-center text-center">
-              {Icon}
+              {children}
             </div>
             <div className="flex flex-col w-full">
               <input

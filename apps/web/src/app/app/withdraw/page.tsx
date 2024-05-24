@@ -12,8 +12,8 @@ import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySec
 import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { FiHelpCircle } from "react-icons/fi";
-import Tooltip from "@/app/app/components/Tooltip";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import { getDecimalPlace } from "@/lib/textHelper";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
@@ -30,19 +30,6 @@ export default function Withdraw() {
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
-
-  function getActionBtnLabel() {
-    switch (true) {
-      // case isSuccess:
-      //   return "Return to Main Page";
-
-      case isConnected:
-        return "Withdraw mDFI";
-
-      default:
-        return "Connect wallet";
-    }
-  }
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
@@ -76,18 +63,17 @@ export default function Withdraw() {
                   setError={setAmountError}
                   value={withdrawAmount}
                   setAmount={setWithdrawAmount}
-                  Icon={
-                    <Image
-                      data-testid="mdfi-icon"
-                      src="/icons/mdfi-icon.svg"
-                      alt="MDFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
+                >
+                  <Image
+                    data-testid="mdfi-icon"
+                    src="/icons/mdfi-icon.svg"
+                    alt="MDFI icon"
+                    className="min-w-6"
+                    priority
+                    width={24}
+                    height={24}
+                  />
+                </InputCard>
                 <WalletDetails
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
@@ -95,29 +81,40 @@ export default function Withdraw() {
                 />
               </div>
             </div>
-            <div className="mb-10 md:mb-7 lg:mb-10">
-              <div className="flex flex-col gap-y-1">
-                <TransactionRow label="You will receive" value="0.00 mDFI" />
-                <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-                <TransactionRow label="Max transaction cost" value="$0.00" />
-              </div>
-              <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
-              <div className="flex flex-col gap-y-1">
-                <TransactionRow
-                  label="Total liquidity"
-                  tooltipText="Total amount available for withdrawal."
-                  value="133,939 DFI"
-                  secondaryValue="$3.23"
-                />
-                <TransactionRow label="Annual rewards" value="3.34%" />
-              </div>
+            <div className="flex flex-col gap-y-1 mb-10 md:mb-7 lg:mb-10">
+              <NumericTransactionRow
+                label="You will receive"
+                value={{
+                  value: 0.0,
+                  decimalScale: getDecimalPlace(0.0),
+                  suffix: ` mDFI`,
+                }}
+              />
+              <NumericTransactionRow
+                label="Exchange rate"
+                value={{
+                  value: 1,
+                  suffix: " DFI",
+                  decimalScale: getDecimalPlace(1),
+                  prefix: `1 mDFI = `,
+                  trimTrailingZeros: false,
+                }}
+              />
+              <NumericTransactionRow
+                label="Max transaction cost"
+                value={{
+                  value: 3.23,
+                  decimalScale: getDecimalPlace(3.23),
+                  prefix: "$",
+                }}
+              />
             </div>
           </div>
           <ConnectKitButton.Custom>
             {({ show }) => (
               <CTAButton
-                testID="instant-transfer-btn"
-                label={getActionBtnLabel()}
+                testId="instant-transfer-btn"
+                label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
                 customStyle="w-full md:py-5"
               />
             )}
@@ -126,36 +123,5 @@ export default function Withdraw() {
         <ComplimentarySection />
       </div>
     </Panel>
-  );
-}
-
-function TransactionRow({
-  label,
-  value,
-  secondaryValue,
-  tooltipText,
-}: {
-  label: string;
-  value: string;
-  secondaryValue?: string;
-  tooltipText?: string;
-}) {
-  return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
-      <div className="relative flex gap-x-2 items-center">
-        <span className="text-xs md:text-sm">{label}</span>
-        {tooltipText && (
-          <Tooltip content={tooltipText}>
-            <FiHelpCircle size={16} />
-          </Tooltip>
-        )}
-      </div>
-      <div className="flex gap-x-1">
-        <span className="text-sm font-semibold text-right">{value}</span>
-        {secondaryValue && (
-          <span className="text-sm text-right">{secondaryValue}</span>
-        )}
-      </div>
-    </div>
   );
 }
