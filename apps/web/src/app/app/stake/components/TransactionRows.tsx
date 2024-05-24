@@ -20,7 +20,7 @@ export default function TransactionRows({
   );
 
   return (
-    <div className="">
+    <div>
       <NumericTransactionRow
         label="You will receive"
         comment="(after fees)"
