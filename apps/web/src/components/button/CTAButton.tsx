@@ -11,7 +11,7 @@ export function CTAButton({
   onClick,
   isDisabled,
   isLoading = false,
-  navigateTo = "",
+  href,
 }: {
   label: string;
   testId: string;
@@ -21,7 +21,7 @@ export function CTAButton({
   customTextStyle?: string;
   customBgColor?: string;
   isLoading?: boolean;
-  navigateTo?: string;
+  href?: string;
 }) {
   const Button = (
     <button
@@ -49,16 +49,5 @@ export function CTAButton({
       </div>
     </button>
   );
-  const isTestEnv = process.env.NODE_ENV === "test";
-  return navigateTo ? (
-    <Link
-      href={navigateTo}
-      rel={isTestEnv ? undefined : "noopener noreferrer"}
-      target={isTestEnv ? undefined : "_blank"}
-    >
-      {Button}
-    </Link>
-  ) : (
-    Button
-  );
+  return href ? <Link href={href}>{Button}</Link> : Button;
 }

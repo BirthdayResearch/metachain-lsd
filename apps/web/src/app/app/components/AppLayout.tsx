@@ -17,16 +17,27 @@ import AppHeader from "@/app/app/components/AppHeader";
 import AppFooter from "@/app/app/components/AppFooter";
 
 const config = createConfig(
+  // TODO remove this on mainnet Prod launch
   getDefaultConfig({
     // Your dApps chains
-    chains: [sepolia, defichainEvm, defichainEvmTestnet],
-    transports: {
-      [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-      [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
-      [defichainEvmTestnet.id]: http(
-        defichainEvmTestnet.rpcUrls.default.http[0],
-      ),
-    },
+    chains:
+      process.env.NODE_ENV === "development"
+        ? [sepolia, defichainEvm, defichainEvmTestnet]
+        : [defichainEvmTestnet],
+    transports:
+      process.env.NODE_ENV === "development"
+        ? {
+            [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
+            [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
+            [defichainEvmTestnet.id]: http(
+              defichainEvmTestnet.rpcUrls.default.http[0],
+            ),
+          }
+        : {
+            [defichainEvmTestnet.id]: http(
+              defichainEvmTestnet.rpcUrls.default.http[0],
+            ),
+          },
 
     // Required API Keys
     walletConnectProjectId: process.env

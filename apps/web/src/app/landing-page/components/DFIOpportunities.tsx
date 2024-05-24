@@ -17,10 +17,10 @@ export default function DFIOpportunities() {
             protocols, and securing the blockchain.
           </p>
           <CTAButton
+            href="/app/stake"
             label="Launch app"
             testId="launch-app"
             customStyle="w-full md:w-fit"
-            isDisabled
           />
         </div>
         <div className="flex flex-col lg:flex-row gap-y-8 md:gap-x-6 w-full">
