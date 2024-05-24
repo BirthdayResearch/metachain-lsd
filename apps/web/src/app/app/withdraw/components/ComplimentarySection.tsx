@@ -30,12 +30,23 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
       </div>
       <div className="w-full md:w-fit">
         <CTAButton
-          label="View FAQs"
-          testId="faq-button-complimentary-section"
-          customStyle="!px-3 !py-3 md:!py-2"
-          customTextStyle="whitespace-nowrap text-xs font-medium"
-          customBgColor="withdraw-button-bg"
-        />
+          label="0"
+          testId="pending-withdrawals-button"
+          customStyle="!px-3 !py-3 md:!py-1"
+          customTextStyle="font-semibold leading-5 text-light-1000/30"
+          customBgColor="button-bg"
+        >
+          <MdAccessTimeFilled className="text-warning" size={12} />
+        </CTAButton>
+        <CTAButton
+          label="0"
+          testId="confirmed-withdrawals-button"
+          customStyle="!px-3 !py-3 md:!py-1"
+          customTextStyle="font-semibold leading-5 text-light-1000/30"
+          customBgColor="button-bg"
+        >
+          <FaCircleCheck className="text-green" size={10} />
+        </CTAButton>
       </div>
     </div>
   );
@@ -60,16 +71,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
                 customBgColor="button-bg"
-                Icon={<MdAccessTimeFilled className="text-warning" size={12} />}
-              />
+              >
+                <MdAccessTimeFilled className="text-warning" size={12} />
+              </CTAButton>
               <CTAButton
                 label="0"
                 testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
                 customBgColor="button-bg"
-                Icon={<FaCircleCheck className="text-green" size={10} />}
-              />
+              >
+                <FaCircleCheck className="text-green" size={10} />
+              </CTAButton>
             </div>
           </div>
           <span className="block h-[52px] mx-3 border-dark-00/10 border-[0.5px]" />
@@ -121,18 +134,17 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             customStyle="w-full md:!px-3 md:!py-2"
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="button-bg"
-            Icon={
-              <Image
-                data-testid="dfi-icon"
-                src="/icons/dfi-icon.svg"
-                alt="DFI icon"
-                className="min-w-6"
-                priority
-                width={24}
-                height={24}
-              />
-            }
-          />
+          >
+            <Image
+              data-testid="dfi-icon"
+              src="/icons/dfi-icon.svg"
+              alt="DFI icon"
+              className="min-w-6"
+              priority
+              width={24}
+              height={24}
+            />
+          </CTAButton>
         </div>
       </div>
       <span className="text-xs text-light-1000/50">
