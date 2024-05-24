@@ -31,10 +31,10 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
       <div className="w-full md:w-fit">
         <CTAButton
           label="View FAQs"
-          testID="faq-button"
+          testId="faq-button-complimentary-section"
           customStyle="!px-3 !py-3 md:!py-2"
           customTextStyle="whitespace-nowrap text-xs font-medium"
-          customBgColor="button-bg"
+          customBgColor="withdraw-button-bg"
         />
       </div>
     </div>
@@ -56,7 +56,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             <div className="flex mt-2 gap-x-2">
               <CTAButton
                 label="0"
-                testID="pending-withdrawals-button"
+                testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
                 customBgColor="button-bg"
@@ -64,7 +64,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               />
               <CTAButton
                 label="0"
-                testID="confirmed-withdrawals-button"
+                testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
                 customBgColor="button-bg"
@@ -117,7 +117,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <CTAButton
             isDisabled={true}
             label="Claim DFI"
-            testID="claim-dfi-button"
+            testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2"
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="button-bg"

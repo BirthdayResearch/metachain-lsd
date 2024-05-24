@@ -51,19 +51,6 @@ export default function Withdraw() {
   // to avoid multiple contract fetch
   const debounceWithdrawAmount = useDebounce(withdrawAmount, 200);
 
-  function getActionBtnLabel() {
-    switch (true) {
-      // case isSuccess:
-      //   return "Return to Main Page";
-
-      case isConnected:
-        return "Withdraw mDFI";
-
-      default:
-        return "Connect wallet";
-    }
-  }
-
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
@@ -96,18 +83,17 @@ export default function Withdraw() {
                   setError={setAmountError}
                   value={withdrawAmount}
                   setAmount={setWithdrawAmount}
-                  Icon={
-                    <Image
-                      data-testid="mdfi-icon"
-                      src="/icons/mdfi-icon.svg"
-                      alt="MDFI icon"
-                      className="min-w-6"
-                      priority
-                      width={24}
-                      height={24}
-                    />
-                  }
-                />
+                >
+                  <Image
+                    data-testid="mdfi-icon"
+                    src="/icons/mdfi-icon.svg"
+                    alt="MDFI icon"
+                    className="min-w-6"
+                    priority
+                    width={24}
+                    height={24}
+                  />
+                </InputCard>
                 <WalletDetails
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
@@ -147,8 +133,8 @@ export default function Withdraw() {
           <ConnectKitButton.Custom>
             {({ show }) => (
               <CTAButton
-                testID="instant-transfer-btn"
-                label={getActionBtnLabel()}
+                testId="instant-transfer-btn"
+                label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
                 customStyle="w-full md:py-5"
               />
             )}

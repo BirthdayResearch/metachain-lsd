@@ -4,7 +4,7 @@ import Spinner from "../../components/Spinner";
 
 export function CTAButton({
   label,
-  testID,
+  testId,
   customStyle,
   customTextStyle,
   customBgColor,
@@ -15,7 +15,7 @@ export function CTAButton({
   Icon,
 }: {
   label: string;
-  testID: string;
+  testId: string;
   isDisabled?: boolean;
   onClick?: (e: any) => void;
   customStyle?: string;
@@ -29,7 +29,7 @@ export function CTAButton({
     <button
       disabled={isDisabled}
       onClick={onClick}
-      data-testid={`cta-button-${testID}`}
+      data-testid={`cta-button-${testId}`}
       className={clsx(
         "rounded-[30px] px-9 py-5 md:py-4",
         customBgColor ?? "accent-1",

@@ -38,7 +38,7 @@ export default function AppFooter() {
         <div className="ml-2 w-full md:w-fit md:justify-end">
           <Tag
             text="v1.21"
-            testID="footer-version-tag"
+            testId="footer-version-tag"
             customStyle="bg-light-1000/[0.05] px-3 !py-1 mr-2 w-fit"
           />
         </div>

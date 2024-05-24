@@ -46,12 +46,12 @@ export default function MarbleOpportunitiesSection() {
         <div className="flex flex-col text-center gap-3 md:gap-2">
           <CardTitle
             text="Take advantage of Marble"
-            testID="marble-opp-title"
+            testId="marble-opp-title"
             customStyle="w-full"
           />
           <CardDesc
             text="Marble gives you the most exciting opportunities for your DFI."
-            testID="marble-opp-desc"
+            testId="marble-opp-desc"
           />
         </div>
         <div className="grid md:grid-cols-4 px-6 md:py-10 md:px-4 divide-y-[0.5px] md:divide-y-0 md:divide-x-[0.5px] divide-dark-00/10 marble-opp-gradient-bg marble-opp-border rounded-[20px]">
@@ -59,7 +59,7 @@ export default function MarbleOpportunitiesSection() {
             <Item
               key={index}
               Icon={item.icon}
-              testID={item.testId}
+              testId={item.testId}
               label={item.label}
               desc={item.desc}
             />
@@ -74,16 +74,16 @@ function Item({
   label,
   desc,
   Icon,
-  testID,
+  testId,
 }: {
   label: string;
   desc: string;
   Icon: IconType;
-  testID: string;
+  testId: string;
 }) {
   return (
     <div
-      data-testid={`marble-opp-item-${testID}`}
+      data-testid={`marble-opp-item-${testId}`}
       className="flex-col py-6 md:py-0 md:px-6"
     >
       <div className="mb-[20px]">

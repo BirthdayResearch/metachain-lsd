@@ -98,7 +98,7 @@ export default function EmailInput({
             ) : (
               <CTAButton
                 label="Submit"
-                testID="join-community-submit-btn"
+                testId="join-community-submit-btn"
                 onClick={(e) => handleSubmit(e, value)}
                 isDisabled={!isValidEmail(value) || value == ""}
                 customStyle="!py-2 !px-5"

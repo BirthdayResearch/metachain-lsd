@@ -62,7 +62,7 @@ export default function StakeConfirmedPage({
         <>
           <CTAButton
             label="Return to main page"
-            testID="stake-confirming-return-main"
+            testId="stake-confirming-return-main"
             customStyle="w-full"
             onClick={() => {
               resetFields();
@@ -71,7 +71,7 @@ export default function StakeConfirmedPage({
           />
           <CTAButtonOutline
             label="Add mDFI to wallet"
-            testID="stake-confirming-add-mdfi"
+            testId="stake-confirming-add-mdfi"
             customStyle="w-full"
             isDisabled={isAddTokenRequested}
             onClick={addTokenToWallet}

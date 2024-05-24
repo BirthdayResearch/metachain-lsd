@@ -37,12 +37,12 @@ export default function HowItWorksSection() {
         <div className="flex flex-col text-center gap-2">
           <CardTitle
             text="How it works"
-            testID="how-it-works"
+            testId="how-it-works"
             customStyle="w-full"
           />
           <CardDesc
             text="Marble makes it easy for anyone to yield rewards."
-            testID="how-it-works-desc"
+            testId="how-it-works-desc"
           />
         </div>
         <div className="grid md:grid-cols-3 gap-6">
@@ -50,7 +50,7 @@ export default function HowItWorksSection() {
             <Card
               key={item.testId}
               Icon={item.icon}
-              testID={item.testId}
+              testId={item.testId}
               label={item.label}
               desc={item.desc}
             />
