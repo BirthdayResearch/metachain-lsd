@@ -29,19 +29,6 @@ export default function Withdraw() {
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
-  function getActionBtnLabel() {
-    switch (true) {
-      // case isSuccess:
-      //   return "Return to Main Page";
-
-      case isConnected:
-        return "Withdraw mDFI";
-
-      default:
-        return "Connect wallet";
-    }
-  }
-
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
@@ -103,7 +90,7 @@ export default function Withdraw() {
             {({ show }) => (
               <CTAButton
                 testId="instant-transfer-btn"
-                label={getActionBtnLabel()}
+                label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
                 customStyle="w-full md:py-5"
               />
             )}
