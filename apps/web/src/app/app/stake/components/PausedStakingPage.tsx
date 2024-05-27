@@ -6,7 +6,7 @@ export default function PausedStakingPage() {
     <Panel>
       <div className="flex items-center gap-x-12">
         <Image
-          src="/staking-paused-logo.png"
+          src="/staking-paused-logo.svg"
           alt="staking paused logo"
           width={154}
           height={176}
