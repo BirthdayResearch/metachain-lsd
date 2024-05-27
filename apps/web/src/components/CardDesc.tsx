@@ -2,15 +2,15 @@ import clsx from "clsx";
 export function CardDesc({
   text,
   customStyle,
-  testID,
+  testId,
 }: {
   text: string;
   customStyle?: string;
-  testID: string;
+  testId: string;
 }) {
   return (
     <h1
-      data-testid={`card-desc-${testID}`}
+      data-testid={`card-desc-${testId}`}
       className={clsx("text-xl text-center font-light", customStyle ?? "w-fit")}
     >
       {text}

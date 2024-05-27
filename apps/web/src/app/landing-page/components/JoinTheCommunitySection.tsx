@@ -18,7 +18,7 @@ export default function JoinTheCommunitySection() {
           <CardDesc
             customStyle="!text-sm md:!text-xl font-normal w-fit"
             text="Learn more about MarbleFi protocol. Get involved in the community."
-            testID="community-desc"
+            testId="community-desc"
           />
         </div>
         <EmailInput

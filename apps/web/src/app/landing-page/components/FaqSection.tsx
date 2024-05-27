@@ -33,17 +33,17 @@ export default function FaqSection() {
     <SectionContainer id="faq-section">
       <div className="w-full flex flex-col md:flex-row gap-y-8 md:gap-y-0 md:gap-x-16">
         <div className="flex flex-col gap-y-3 w-full md:gap-y-6 md:w-1/2 text-left">
-          <Tag text="ECOSYSTEM" testID="faq-ecosystem" />
+          <Tag text="ECOSYSTEM" testId="faq-ecosystem" />
           <div className="flex flex-col gap-y-5">
             <CardTitle
               text="Frequently asked questions"
-              testID="faq-title"
+              testId="faq-title"
               customStyle="text-start text-2xl !leading-7 md:!leading-10"
             />
             <CardDesc
               customStyle="!text-left !font-normal"
               text="Learn more about the protocol with these frequently asked questions. Get to know what would be its value and how it can help you grow your investments."
-              testID="faq-desc"
+              testId="faq-desc"
             />
           </div>
         </div>
