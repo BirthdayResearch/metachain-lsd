@@ -42,6 +42,10 @@ export function NetworkEnvironmentProvider({
   const { chain } = useAccount();
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
+    // TODO remove this on mainnet Prod launch
+    if (process.env.NODE_ENV !== "development") {
+      return EnvironmentNetwork.TestNet;
+    }
     if (chain === undefined) {
       return env.networks.includes(n) ? n : defaultNetwork;
     }

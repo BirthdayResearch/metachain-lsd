@@ -103,31 +103,35 @@ export default function Withdraw() {
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
               <TransactionRows previewDeposit={previewDeposit} />
-              <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
-              <div className="flex flex-col gap-y-1">
-                <NumericTransactionRow
-                  label="Total liquidity"
-                  tooltipText="Total amount available for withdrawal."
-                  value={{
-                    value: 133939,
-                    suffix: " DFI",
-                    decimalScale: 0,
-                  }}
-                  secondaryValue={{
-                    value: 3.23,
-                    decimalScale: getDecimalPlace(3.23),
-                    prefix: "$",
-                  }}
-                />
-                <NumericTransactionRow
-                  label="Annual rewards"
-                  value={{
-                    value: 3.34,
-                    suffix: "%",
-                    decimalScale: getDecimalPlace(3.34),
-                  }}
-                />
-              </div>
+              {isConnected && (
+                <>
+                  <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
+                  <div className="flex flex-col gap-y-1">
+                    <NumericTransactionRow
+                      label="Total liquidity"
+                      tooltipText="Total amount available for withdrawal."
+                      value={{
+                        value: 133939,
+                        suffix: " DFI",
+                        decimalScale: 0,
+                      }}
+                      secondaryValue={{
+                        value: 3.23,
+                        decimalScale: getDecimalPlace(3.23),
+                        prefix: "$",
+                      }}
+                    />
+                    <NumericTransactionRow
+                      label="Annual rewards"
+                      value={{
+                        value: 3.34,
+                        suffix: "%",
+                        decimalScale: getDecimalPlace(3.34),
+                      }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <ConnectKitButton.Custom>

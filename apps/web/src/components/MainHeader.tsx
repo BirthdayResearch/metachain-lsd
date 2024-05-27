@@ -33,11 +33,10 @@ export default function MainHeader({
 
       <div className="items-end justify-center md:flex hidden">
         <CTAButton
-          navigateTo="/app/stake"
+          href="/app/stake"
           label="Launch app"
           testId="header-launch-app"
           customStyle="w-full md:w-fit"
-          isDisabled
         />
       </div>
     </>
