@@ -12,3 +12,8 @@ export interface ContractContextI {
     symbol: string;
   };
 }
+
+export interface AppNavigation {
+  label: string;
+  href: string;
+}

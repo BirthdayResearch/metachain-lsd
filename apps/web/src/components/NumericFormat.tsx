@@ -16,7 +16,7 @@ export default function NumericFormat({
   suffix = "",
   thousandSeparator,
   decimalScale = 8,
-  trimTrailingZeros = true,
+  // trimTrailingZeros,
   testId,
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
@@ -28,10 +28,11 @@ export default function NumericFormat({
   };
 
   let formattedNumber = new BigNumber(value).toFormat(decimalScale, fmt);
-  if (trimTrailingZeros) {
-    const num = formattedNumber.split(" ")[0].replace(/\.?0+$/, "");
-    formattedNumber = `${num} ${suffix}`;
-  }
+  // TODO incorrect logic Fix this
+  // if (trimTrailingZeros) {
+  //   const num = formattedNumber.split(" ")[0].replace(/\.?0+$/, "");
+  //   formattedNumber = `${num} ${suffix}`;
+  // }
 
   return (
     <span

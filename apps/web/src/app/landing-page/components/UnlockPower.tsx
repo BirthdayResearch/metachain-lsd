@@ -22,10 +22,10 @@ export default function UnlockPower() {
         </div>
         <div className="flex flex-col pt-12 md:pt-0 md:flex-row items-center gap-6 w-full md:w-fit">
           <CTAButton
+            href="/app/stake"
             label="Launch app"
             testId="launch-app"
             customStyle="md:w-fit w-full"
-            isDisabled
           />
           <SecondaryButton
             text="Learn more"
