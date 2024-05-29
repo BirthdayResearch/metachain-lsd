@@ -131,7 +131,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             isDisabled={true}
             label="Claim DFI"
             testId="claim-dfi-button"
-            customStyle="w-full md:!px-3 md:!py-2"
+            customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="withdraw-button-bg"
           >
