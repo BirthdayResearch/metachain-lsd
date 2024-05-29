@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CreateUserI } from "@/types/user";
+import { CreateUserI } from "@/types";
 import process from "process";
 
 // eslint-disable-next-line import/prefer-default-export
