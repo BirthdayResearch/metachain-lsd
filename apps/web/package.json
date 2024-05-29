@@ -41,7 +41,7 @@
     "@cypress/code-coverage": "^3.12.34",
     "@netlify/plugin-lighthouse": "^6.0.0",
     "@netlify/plugin-nextjs": "^5.2.1",
-    "@synthetixio/synpress": "github:fullstackninja864/synpress#b77c1745b44f6ee07fb06e5b91c5095a63232408",
+    "@synthetixio/synpress": "^3.7.2",
     "@testing-library/cypress": "^10.0.1",
     "@types/node": "^20",
     "autoprefixer": "^10.4.16",
