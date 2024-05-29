@@ -16,10 +16,12 @@ import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRo
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import TransactionRows from "@/app/app/stake/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
+  const dfiPrice = useDfiPrice();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -59,6 +61,10 @@ export default function Withdraw() {
   const totalAssets = useMemo(() => {
     return formatEther((totalAssetsData as number) ?? 0).toString();
   }, [totalAssetsData]);
+
+  const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
+    ? new BigNumber(0)
+    : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
@@ -128,8 +134,8 @@ export default function Withdraw() {
                         decimalScale: getDecimalPlace(totalAssets),
                       }}
                       secondaryValue={{
-                        value: 3.23,
-                        decimalScale: getDecimalPlace(3.23),
+                        value: totalAssetsUsdAmount,
+                        decimalScale: getDecimalPlace(totalAssetsUsdAmount),
                         prefix: "$",
                       }}
                     />
