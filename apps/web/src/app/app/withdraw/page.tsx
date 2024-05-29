@@ -19,11 +19,12 @@ import { useContractContext } from "@/context/ContractContext";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
-  const { MarbleLsdProxy } = useContractContext();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
 
   const { data: walletBalance } = useBalance({
     address,
     chainId,
+    token: mDFI.address,
   });
 
   const { minDepositAmount } = useGetReadContractConfigs();
@@ -45,6 +46,19 @@ export default function Withdraw() {
   const previewDeposit = useMemo(() => {
     return formatEther((previewDepositData as number) ?? 0).toString();
   }, [previewDepositData]);
+
+  const { data: totalAssetsData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "totalAssets",
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const totalAssets = useMemo(() => {
+    return formatEther((totalAssetsData as number) ?? 0).toString();
+  }, [totalAssetsData]);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
@@ -68,6 +82,7 @@ export default function Withdraw() {
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
+                    isMdfi
                   />
                 </div>
               </div>
@@ -108,9 +123,9 @@ export default function Withdraw() {
                       label="Total liquidity"
                       tooltipText="Total amount available for withdrawal."
                       value={{
-                        value: 133939,
+                        value: totalAssets,
                         suffix: " DFI",
-                        decimalScale: 0,
+                        decimalScale: getDecimalPlace(totalAssets),
                       }}
                       secondaryValue={{
                         value: 3.23,
