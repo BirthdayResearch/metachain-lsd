@@ -1,14 +1,22 @@
+"use client";
+
+import Image from "next/image";
+import { useAccount, useBalance, useReadContract } from "wagmi";
+import React, { useEffect, useMemo, useState } from "react";
+import { ConnectKitButton } from "connectkit";
+import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
 import { InputCard } from "@/app/app/components/InputCard";
-import BigNumber from "bignumber.js";
-import TransactionRow from "@/app/app/withdraw/components/TransactionRow";
-import { ConnectKitButton } from "connectkit";
-import React from "react";
-import { useAccount } from "wagmi";
-import Image from "next/image";
-import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import WalletDetails from "@/app/app/components/WalletDetails";
-import { CTAButton } from "@/components/button/CTAButton";
+import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
+import BigNumber from "bignumber.js";
+import { formatEther } from "ethers";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import { useContractContext } from "@/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function WithdrawPage({
   walletBalanceAmount,
@@ -17,6 +25,7 @@ export default function WithdrawPage({
   minDepositAmount,
   withdrawAmount,
   setWithdrawAmount,
+  setWalletBalanceAmount,
 }: {
   walletBalanceAmount: string;
   amountError: string | null;
@@ -24,21 +33,55 @@ export default function WithdrawPage({
   minDepositAmount: string;
   withdrawAmount: string;
   setWithdrawAmount: React.Dispatch<React.SetStateAction<string>>;
+  setWalletBalanceAmount: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const { isConnected } = useAccount();
+  const { address, isConnected, status, chainId } = useAccount();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
+  const dfiPrice = useDfiPrice();
 
-  function getActionBtnLabel() {
-    switch (true) {
-      // case isSuccess: previewWithdrawal
-      //   return "Return to Main Page";
+  const { data: walletBalance } = useBalance({
+    address,
+    chainId,
+    token: mDFI.address,
+  });
 
-      case isConnected:
-        return "Withdraw mDFI";
+  const { data: previewDepositData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "previewDeposit",
+    args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
+    query: {
+      enabled: isConnected,
+    },
+  });
 
-      default:
-        return "Connect wallet";
-    }
-  }
+  const previewDeposit = useMemo(() => {
+    return formatEther((previewDepositData as number) ?? 0).toString();
+  }, [previewDepositData]);
+
+  const { data: totalAssetsData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "totalAssets",
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const totalAssets = useMemo(() => {
+    return formatEther((totalAssetsData as number) ?? 0).toString();
+  }, [totalAssetsData]);
+
+  const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
+    ? new BigNumber(0)
+    : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
+
+  const balance = formatEther(walletBalance?.value.toString() ?? "0");
+
+  useEffect(() => {
+    setWalletBalanceAmount(balance); // set wallet balance
+  }, [address, status, walletBalance]);
+
   return (
     <Panel>
       <div>
@@ -55,6 +98,7 @@ export default function WithdrawPage({
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
+                    isMdfi
                   />
                 </div>
               </div>
@@ -86,21 +130,36 @@ export default function WithdrawPage({
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <div className="flex flex-col gap-y-1">
-                <TransactionRow label="You will receive" value="0.00 mDFI" />
-                <TransactionRow label="Exchange rate" value="1 mDFI = 1 DFI" />
-                <TransactionRow label="Max transaction cost" value="$0.00" />
-              </div>
-              <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
-              <div className="flex flex-col gap-y-1">
-                <TransactionRow
-                  label="Total liquidity"
-                  tooltipText="Total amount available for withdrawal."
-                  value="133,939 DFI"
-                  secondaryValue="$3.23"
-                />
-                <TransactionRow label="Annual rewards" value="3.34%" />
-              </div>
+              <TransactionRows previewDeposit={previewDeposit} />
+              {isConnected && (
+                <>
+                  <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
+                  <div className="flex flex-col gap-y-1">
+                    <NumericTransactionRow
+                      label="Total liquidity"
+                      tooltipText="Total amount available for withdrawal."
+                      value={{
+                        value: totalAssets,
+                        suffix: " DFI",
+                        decimalScale: getDecimalPlace(totalAssets),
+                      }}
+                      secondaryValue={{
+                        value: totalAssetsUsdAmount,
+                        decimalScale: getDecimalPlace(totalAssetsUsdAmount),
+                        prefix: "$",
+                      }}
+                    />
+                    <NumericTransactionRow
+                      label="Annual rewards"
+                      value={{
+                        value: 3.34,
+                        suffix: "%",
+                        decimalScale: getDecimalPlace(3.34),
+                      }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <ConnectKitButton.Custom>

@@ -1,5 +1,3 @@
-// @ts-ignore
-
 "use client";
 
 import { useAccount, useBalance, useReadContract } from "wagmi";
@@ -54,10 +52,6 @@ export default function Withdraw() {
     }
   };
 
-  useEffect(() => {
-    setWalletBalanceAmount(balance); // set wallet balance
-  }, [address, status, walletBalance]);
-
   return (
     <div>
       {currentStep === WithdrawStep.WithdrawPage ? (
@@ -68,6 +62,7 @@ export default function Withdraw() {
           minDepositAmount={minDepositAmount}
           withdrawAmount={withdrawAmount}
           setWithdrawAmount={setWithdrawAmount}
+          setWalletBalanceAmount={setWalletBalanceAmount}
         />
       ) : null}
 
@@ -81,6 +76,15 @@ export default function Withdraw() {
           resetFields={() => {}}
         />
       ) : null}
+
+      <PreviewWithdrawal
+        withdrawAmount={withdrawAmount}
+        previewDeposit={previewDeposit}
+        setCurrentStep={setCurrentStepAndScroll}
+        hash={"hash"}
+        receivingWalletAddress={"receivingWalletAddress"}
+        resetFields={() => {}}
+      />
     </div>
   );
 }
