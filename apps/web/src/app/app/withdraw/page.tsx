@@ -1,3 +1,5 @@
+// @ts-ignore
+
 "use client";
 
 import { useAccount, useBalance, useReadContract } from "wagmi";
@@ -8,8 +10,10 @@ import { toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
+import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 
 export default function Withdraw() {
+  const mainContentRef = React.useRef(null);
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy } = useContractContext();
 
@@ -43,6 +47,13 @@ export default function Withdraw() {
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
+  const setCurrentStepAndScroll = (step: WithdrawStep) => {
+    setCurrentStep(step);
+    if (mainContentRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
@@ -57,6 +68,17 @@ export default function Withdraw() {
           minDepositAmount={minDepositAmount}
           withdrawAmount={withdrawAmount}
           setWithdrawAmount={setWithdrawAmount}
+        />
+      ) : null}
+
+      {currentStep === WithdrawStep.PreviewWithdrawal ? (
+        <PreviewWithdrawal
+          withdrawAmount={withdrawAmount}
+          previewDeposit={previewDeposit}
+          setCurrentStep={setCurrentStepAndScroll}
+          hash={"hash"}
+          receivingWalletAddress={"receivingWalletAddress"}
+          resetFields={() => {}}
         />
       ) : null}
     </div>

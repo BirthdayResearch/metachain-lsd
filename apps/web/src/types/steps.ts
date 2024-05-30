@@ -6,6 +6,6 @@ export enum StakeStep {
 
 export enum WithdrawStep {
   WithdrawPage,
-  WithdrawConfirmingPage,
+  PreviewWithdrawal,
   WithdrawConfirmationPage,
 }

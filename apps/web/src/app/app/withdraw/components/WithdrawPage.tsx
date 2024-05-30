@@ -109,6 +109,7 @@ export default function WithdrawPage({
                 testId="instant-transfer-btn"
                 label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
                 customStyle="w-full md:py-5"
+                onClick={show}
               />
             )}
           </ConnectKitButton.Custom>

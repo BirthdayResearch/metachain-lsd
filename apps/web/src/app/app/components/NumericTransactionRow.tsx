@@ -1,7 +1,6 @@
 import NumericFormat, {
   NumericFormatProps,
 } from "../../../components/NumericFormat";
-import clsx from "clsx";
 import Tooltip from "@/app/app/components/Tooltip";
 import { FiHelpCircle } from "react-icons/fi";
 
@@ -9,19 +8,17 @@ export function NumericTransactionRow({
   label,
   comment,
   value,
-  customStyle,
   secondaryValue,
   tooltipText,
 }: {
   label: string;
   comment?: string;
   value: NumericFormatProps;
-  customStyle?: string;
   secondaryValue?: NumericFormatProps;
   tooltipText?: string;
 }) {
   return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
+    <div className="flex flex-row justify-between py-[18px] flex-1 text-wrap">
       <div className="relative flex gap-x-2 items-center">
         <div>
           <span className="text-xs md:text-sm">{label}</span>

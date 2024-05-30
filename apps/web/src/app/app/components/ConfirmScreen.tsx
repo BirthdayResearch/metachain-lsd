@@ -60,7 +60,6 @@ export default function ConfirmScreen({
                 key={item.label}
                 label={item.label}
                 value={item.value}
-                customStyle="py-[18px]"
               />
             ))}
 
