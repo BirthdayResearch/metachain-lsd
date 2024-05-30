@@ -1,24 +1,32 @@
 import NumericFormat, {
   NumericFormatProps,
 } from "../../../components/NumericFormat";
-import Tooltip from "@/app/app/components/Tooltip";
 import { FiHelpCircle } from "react-icons/fi";
+import { HoverPopover } from "@/app/app/components/HoverPopover";
+import clsx from "clsx";
 
 export function NumericTransactionRow({
   label,
   comment,
   value,
+  customStyle,
   secondaryValue,
   tooltipText,
 }: {
   label: string;
   comment?: string;
   value: NumericFormatProps;
+  customStyle?: string;
   secondaryValue?: NumericFormatProps;
   tooltipText?: string;
 }) {
   return (
-    <div className="flex flex-row justify-between py-2 flex-1 text-wrap">
+    <div
+      className={clsx(
+        "flex flex-row justify-between py-2 flex-1 text-wrap",
+        customStyle,
+      )}
+    >
       <div className="relative flex gap-x-2 items-center">
         <div>
           <span className="text-xs md:text-sm">{label}</span>
@@ -29,9 +37,9 @@ export function NumericTransactionRow({
           )}
         </div>
         {tooltipText && (
-          <Tooltip content={tooltipText}>
+          <HoverPopover popover={tooltipText} placement="top">
             <FiHelpCircle size={16} />
-          </Tooltip>
+          </HoverPopover>
         )}
       </div>
       <div className="flex gap-x-1">
