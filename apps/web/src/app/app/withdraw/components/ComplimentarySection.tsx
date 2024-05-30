@@ -9,14 +9,18 @@ import { FaCircleCheck } from "react-icons/fa6";
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
 
-  return <div>{isConnected ? <WithdrawalDetails /> : <WithdrawalsFaq />}</div>;
+  return (
+    <div className="absolute left-0 py-5 md:py-8 lg:py-10 px-5 md:px-10 lg:px-[120px] mt-12 md:mt-10 lg:mt-16 rounded-b-[10px] complimentary-bg">
+      {isConnected ? <WithdrawalDetails /> : <WithdrawalsFaq />}
+    </div>
+  );
 }
 
 function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
   return (
     <div
       className={clsx(
-        "flex flex-col md:flex-row gap-y-5 items-center md:py-8 py-10 lg:py-10 mt-12 md:mt-10 lg:mt-16 gap-x-4",
+        "flex flex-col md:flex-row gap-y-5 items-center gap-x-4",
         customStyle,
       )}
     >
@@ -54,7 +58,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   return (
-    <div className="flex flex-col gap-y-5 md:gap-y-4 md:pt-8 pt-5 lg:pt-10 mt-12 md:mt-10 lg:mt-16">
+    <div className="flex flex-col gap-y-5 md:gap-y-4">
       <div
         className={clsx(
           "flex flex-col justify-between md:flex-row items-center",
