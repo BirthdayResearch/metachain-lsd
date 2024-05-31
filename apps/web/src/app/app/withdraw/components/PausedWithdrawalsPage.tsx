@@ -22,8 +22,8 @@ export default function PausedWithdrawalsPage() {
           </span>
         </div>
         <span className="text-sm">
-          For any immediate concerns, you can report concerns{" "}
-          <span className="font-semibold">here.</span>
+          For any immediate concerns, you can report concerns
+          <span className="font-semibold"> here.</span>
         </span>
       </div>
     </div>
