@@ -4,7 +4,7 @@ import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { WalletProvider } from "./providers/WalletProvider";
 import { WhaleApiClientProvider } from "./providers/WhaleApiClientProvider";
 import BigNumber from "bignumber.js";
-import { PrismaService } from "src/PrismaService";
+import { PrismaService } from "../PrismaService";
 import { Network } from "@prisma/client";
 import { parseEther } from "ethers";
 

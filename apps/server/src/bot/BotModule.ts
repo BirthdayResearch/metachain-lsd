@@ -3,7 +3,7 @@ import { Module } from "@nestjs/common";
 import { BotController } from "./BotController";
 import { WhaleApiClientProvider } from "./providers/WhaleApiClientProvider";
 import { BotService } from "./BotService";
-import { PrismaService } from "src/PrismaService";
+import { PrismaService } from "../PrismaService";
 
 @Module({
   imports: [],
