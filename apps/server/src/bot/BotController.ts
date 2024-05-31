@@ -12,7 +12,7 @@ export class BotController {
     private botService: BotService,
   ) {
     const networkStr = this.configService.getOrThrow("botNetworks");
-    this.networks = networkStr.split(",");
+    this.networks = networkStr ? networkStr.split(",") : [];
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_11AM)
