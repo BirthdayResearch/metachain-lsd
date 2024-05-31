@@ -23,6 +23,8 @@ export class BotController {
   }
 
   async onModuleInit() {
-    await this.initBot();
+    if (this.configService.get("NODE_ENV") !== "test") {
+      await this.initBot();
+    }
   }
 }
