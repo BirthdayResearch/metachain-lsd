@@ -35,19 +35,19 @@ export default function Withdraw() {
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
 
-  const { data: previewDepositData } = useReadContract({
+  const { data: previewWithdrawData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
-    functionName: "previewDeposit",
+    functionName: "previewWithdraw",
     args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
     query: {
       enabled: isConnected,
     },
   });
 
-  const previewDeposit = useMemo(() => {
-    return formatEther((previewDepositData as number) ?? 0).toString();
-  }, [previewDepositData]);
+  const previewWithdraw = useMemo(() => {
+    return formatEther((previewWithdrawData as number) ?? 0).toString();
+  }, [previewWithdrawData]);
 
   const { data: totalAssetsData } = useReadContract({
     address: MarbleLsdProxy.address,
@@ -120,7 +120,7 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewDeposit={previewDeposit} />
+              <TransactionRows previewDeposit={previewWithdraw} />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
