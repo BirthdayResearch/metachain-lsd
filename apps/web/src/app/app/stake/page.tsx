@@ -88,6 +88,7 @@ export default function Stake() {
       enabled: isConnected,
     },
   });
+  console.log({ previewDepositData });
 
   const previewDeposit = useMemo(() => {
     return formatEther((previewDepositData as number) ?? 0).toString();
@@ -166,7 +167,7 @@ export default function Stake() {
 
   return (
     <div className="relative" ref={mainContentRef}>
-      {/* First step: Stake poge */}
+      {/* First step: Stake page */}
       {currentStep === StakeStep.StakePage && (
         <StakePage
           stakeAmount={stakeAmount}

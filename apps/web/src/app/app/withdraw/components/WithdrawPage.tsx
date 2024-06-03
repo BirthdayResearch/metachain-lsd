@@ -1,8 +1,6 @@
-"use client";
-
 import Image from "next/image";
 import { useAccount, useBalance, useReadContract } from "wagmi";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
@@ -11,7 +9,6 @@ import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
-import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import TransactionRows from "@/app/app/stake/components/TransactionRows";
@@ -26,6 +23,9 @@ export default function WithdrawPage({
   withdrawAmount,
   setWithdrawAmount,
   setWalletBalanceAmount,
+  isPending,
+  submitWithdraw,
+  previewWithdrawal,
 }: {
   walletBalanceAmount: string;
   amountError: string | null;
@@ -34,6 +34,9 @@ export default function WithdrawPage({
   withdrawAmount: string;
   setWithdrawAmount: React.Dispatch<React.SetStateAction<string>>;
   setWalletBalanceAmount: React.Dispatch<React.SetStateAction<string>>;
+  isPending: boolean;
+  submitWithdraw: () => void;
+  previewWithdrawal: string;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
@@ -42,22 +45,8 @@ export default function WithdrawPage({
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    token: mDFI.address,
+    // token: mDFI.address,
   });
-
-  const { data: previewDepositData } = useReadContract({
-    address: MarbleLsdProxy.address,
-    abi: MarbleLsdProxy.abi,
-    functionName: "previewDeposit",
-    args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
-    query: {
-      enabled: isConnected,
-    },
-  });
-
-  const previewDeposit = useMemo(() => {
-    return formatEther((previewDepositData as number) ?? 0).toString();
-  }, [previewDepositData]);
 
   const { data: totalAssetsData } = useReadContract({
     address: MarbleLsdProxy.address,
@@ -68,15 +57,17 @@ export default function WithdrawPage({
     },
   });
 
+  // To calculate and display the USD amount of total assets
   const totalAssets = useMemo(() => {
     return formatEther((totalAssetsData as number) ?? 0).toString();
   }, [totalAssetsData]);
-
   const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
     ? new BigNumber(0)
     : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
+
+  const isDisabled = isPending || !withdrawAmount || !!amountError;
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
@@ -130,7 +121,7 @@ export default function WithdrawPage({
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewDeposit={previewDeposit} />
+              <TransactionRows previewDetails={previewWithdrawal} />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
@@ -162,16 +153,27 @@ export default function WithdrawPage({
               )}
             </div>
           </div>
-          <ConnectKitButton.Custom>
-            {({ show }) => (
-              <CTAButton
-                testId="instant-transfer-btn"
-                label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
-                customStyle="w-full md:py-5"
-                onClick={show}
-              />
-            )}
-          </ConnectKitButton.Custom>
+          {isConnected ? (
+            <CTAButton
+              isDisabled={isDisabled}
+              isLoading={isPending}
+              testId="withdraw-mdfi-btn"
+              label="Withdraw mDFI"
+              customStyle="w-full md:py-5"
+              onClick={submitWithdraw}
+            />
+          ) : (
+            <ConnectKitButton.Custom>
+              {({ show }) => (
+                <CTAButton
+                  testId="instant-transfer-btn"
+                  label={"Connect wallet"}
+                  customStyle="w-full md:py-5"
+                  onClick={show}
+                />
+              )}
+            </ConnectKitButton.Custom>
+          )}
         </div>
         <ComplimentarySection />
       </div>

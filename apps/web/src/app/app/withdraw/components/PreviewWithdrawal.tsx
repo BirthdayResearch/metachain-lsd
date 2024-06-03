@@ -5,14 +5,14 @@ import { WithdrawStep } from "@/types";
 
 export default function PreviewWithdrawal({
   withdrawAmount,
-  previewDeposit,
+  previewWithdrawal,
   setCurrentStep,
   hash,
   receivingWalletAddress,
   resetFields,
 }: {
   withdrawAmount: string;
-  previewDeposit: string;
+  previewWithdrawal: string;
   setCurrentStep: (step: WithdrawStep) => void;
   hash: string;
   receivingWalletAddress: string;
@@ -35,9 +35,9 @@ export default function PreviewWithdrawal({
         {
           label: "You will receive",
           value: {
-            value: previewDeposit,
+            value: previewWithdrawal,
             suffix: " DFI",
-            decimalScale: getDecimalPlace(previewDeposit),
+            decimalScale: getDecimalPlace(previewWithdrawal),
           },
         },
       ]}
