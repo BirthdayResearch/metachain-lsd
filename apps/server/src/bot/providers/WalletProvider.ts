@@ -194,7 +194,7 @@ export class WalletProvider {
     evmAddress: string,
   ): Promise<boolean> {
     console.log(
-      `Transferring ${amountToTransfer.toFixed(8)} DFI DVM to EVM address: ${evmAddress}`,
+      `Transferring ${amountToTransfer.toFixed(8)} DFI from DVM to EVM address: ${evmAddress}`,
     );
     const dvmAddress = await this.account.getAddress();
     const dvmScript = await this.account.getScript();
