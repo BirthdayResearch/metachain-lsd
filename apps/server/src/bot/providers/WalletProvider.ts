@@ -21,6 +21,7 @@ import {
   parseUnits,
   TransactionRequest,
   TransactionResponse,
+  formatEther,
 } from "ethers";
 import {
   CTransactionSegWit,
@@ -90,7 +91,8 @@ export class WalletProvider {
 
   async getEvmBalance(): Promise<string> {
     const address = await this.account.getEvmAddress();
-    return (await this.evmProvider.getBalance(address)).toString();
+    const balance = await this.evmProvider.getBalance(address);
+    return formatEther(balance.toString());
   }
 
   async getAddress(): Promise<{ address: string; evmAddress: string }> {
@@ -187,14 +189,14 @@ export class WalletProvider {
   }
 
   /**
-   *  Transfer DFI from DVM to EVM
+   *  Convert DFI from DVM to EVM
    */
-  async transferDFIToEVM(
+  async convertDFIToEVM(
     amountToTransfer: BigNumber,
     evmAddress: string,
   ): Promise<boolean> {
     console.log(
-      `Transferring ${amountToTransfer.toFixed(8)} DFI from DVM to EVM address: ${evmAddress}`,
+      `Converting ${amountToTransfer.toFixed(8)} DFI from DVM to EVM address: ${evmAddress}`,
     );
     const dvmAddress = await this.account.getAddress();
     const dvmScript = await this.account.getScript();
@@ -252,22 +254,21 @@ export class WalletProvider {
     return true;
   }
 
-  async transferEvmRewards(value: string): Promise<TransactionResponse> {
+  // value in fi
+  async sendEvmRewards(value: bigint): Promise<TransactionResponse> {
     try {
-      console.log("Initializing transfer Evm rewards", value);
+      console.log("Initializing send Evm rewards", value);
       const txn = await this.evmWallet.sendTransaction({
         to: this.marbleFiContractAddress,
         value,
       });
-      console.log("Transfer Evm Rewards Txn hash ", txn.hash);
+      console.log("Sending Evm Rewards Txn hash ", txn.hash);
       // Waiting 5 confirmations. You can put any number of confirmations here
       const txReceipt = await txn.wait(5);
-      console.log("Transfer Evm rewards: ", txReceipt.hash);
+      console.log("Sending Evm rewards: ", txReceipt.hash);
       return txn;
     } catch (err) {
-      console.error(
-        `Error occurred while transferring rewards: ${err.message}`,
-      );
+      console.error(`Error occurred while sending rewards: ${err.message}`);
     }
   }
 

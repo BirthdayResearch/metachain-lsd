@@ -37,16 +37,14 @@ export class BotService {
     // transfer DFI Token To EVM
     if (tokenBalance.gt(0)) {
       const { evmAddress } = await walletProvider.getAddress();
-      await walletProvider.transferDFIToEVM(tokenBalance, evmAddress);
+      await walletProvider.convertDFIToEVM(tokenBalance, evmAddress);
     }
     const evmBalance = await walletProvider.getEvmBalance();
     // keep 1 EVM DFI for txn cost
-    const rewardAmount = new BigNumber(evmBalance).minus(
-      parseEther("1").toString(),
-    );
+    const rewardAmount = new BigNumber(evmBalance).minus(1);
     if (rewardAmount.gt(0)) {
-      const rewardsTxn = await walletProvider.transferEvmRewards(
-        rewardAmount.toString(),
+      const rewardsTxn = await walletProvider.sendEvmRewards(
+        parseEther(rewardAmount.toString()),
       );
       if (rewardsTxn) {
         await this.prismaService.rewards.create({
