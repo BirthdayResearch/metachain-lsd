@@ -159,7 +159,7 @@ export default function StakePage({
             isDisabled={isDisabled}
             isLoading={isPending}
             testId="instant-transfer-btn"
-            label={"Stake DFI"}
+            label="Stake DFI"
             customStyle="w-full md:py-5"
             onClick={submitStake}
           />
