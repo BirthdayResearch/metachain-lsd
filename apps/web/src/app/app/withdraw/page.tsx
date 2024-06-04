@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { toWei } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
@@ -20,10 +20,17 @@ import { parseEther } from "viem";
 
 export default function Withdraw() {
   const mainContentRef = React.useRef(null);
-  const { address, isConnected, chainId } = useAccount();
-  const { MarbleLsdProxy } = useContractContext();
+  const { address, isConnected, chainId, status } = useAccount();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
 
-  const { minDepositAmount } = useGetReadContractConfigs();
+  const { data: walletBalance } = useBalance({
+    address,
+    chainId,
+    token: mDFI.address,
+  });
+
+  const { minDepositAmount, totalAssets, totalAssetsUsdAmount } =
+    useGetReadContractConfigs();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -37,7 +44,7 @@ export default function Withdraw() {
   const validAmount = withdrawAmount !== "" && !amountError;
   const withdrawAmountString = validAmount ? withdrawAmount : "0";
 
-  const { data: previewWithdrawalData } = useReadContract({
+  const { data: previewRedeemData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewRedeem",
@@ -54,9 +61,11 @@ export default function Withdraw() {
     status: writeStatus,
   } = useWriteContract();
 
-  const previewWithdrawal = useMemo(() => {
-    return formatEther((previewWithdrawalData as number) ?? 0).toString();
-  }, [previewWithdrawalData]);
+  const previewRedeem = useMemo(() => {
+    return formatEther((previewRedeemData as number) ?? 0).toString();
+  }, [previewRedeemData]);
+
+  const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
   const setCurrentStepAndScroll = (step: WithdrawStep) => {
     setCurrentStep(step);
@@ -119,7 +128,7 @@ export default function Withdraw() {
           setWalletBalanceAmount={setWalletBalanceAmount}
           isPending={isPending}
           submitWithdraw={submitWithdraw}
-          previewWithdrawal={previewWithdrawal}
+          previewWithdrawal={previewRedeem}
         />
       ) : null}
 
@@ -128,7 +137,7 @@ export default function Withdraw() {
           hash && (
             <PreviewWithdrawal
               withdrawAmount={withdrawAmount}
-              previewWithdrawal={previewWithdrawal}
+              previewWithdrawal={previewRedeem}
               setCurrentStep={setCurrentStepAndScroll}
               hash={hash}
               receivingWalletAddress={address}

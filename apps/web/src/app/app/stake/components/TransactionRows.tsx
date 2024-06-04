@@ -6,9 +6,9 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 export default function TransactionRows({
-  previewDetails,
+  previewAmount,
 }: {
-  previewDetails: string;
+  previewAmount: string;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
@@ -25,8 +25,8 @@ export default function TransactionRows({
         label="You will receive"
         comment="(after fees)"
         value={{
-          value: previewDetails,
-          decimalScale: getDecimalPlace(previewDetails),
+          value: previewAmount,
+          decimalScale: getDecimalPlace(previewAmount),
           suffix: ` mDFI`,
         }}
       />
