@@ -6,14 +6,14 @@ import BigNumber from "bignumber.js";
 
 export default function WalletDetails({
   isWalletConnected,
+  suffix,
   style,
   walletBalanceAmount,
-  isMdfi,
 }: {
   isWalletConnected: boolean;
+  suffix?: string;
   style?: string;
   walletBalanceAmount?: string;
-  isMdfi?: boolean;
 }) {
   const decimalScale = getDecimalPlace(walletBalanceAmount ?? 0);
   return (
@@ -26,7 +26,7 @@ export default function WalletDetails({
           <span>Available: </span>
           <NumericFormat
             className="font-semibold"
-            suffix={isMdfi ? " mDFI" : " DFI"}
+            suffix={suffix}
             value={new BigNumber(walletBalanceAmount ?? 0).toFormat(
               decimalScale,
               BigNumber.ROUND_FLOOR,

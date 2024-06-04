@@ -78,6 +78,7 @@ export default function StakePage({
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
                   style="md:block hidden"
+                  suffix=" DFI"
                 />
               </div>
               <div className="pb-2 md:pb-0">
@@ -105,6 +106,7 @@ export default function StakePage({
                 walletBalanceAmount={walletBalanceAmount}
                 isWalletConnected={isConnected}
                 style="block md:hidden"
+                suffix=" DFI"
               />
             </div>
             <div className="grid gap-y-2">

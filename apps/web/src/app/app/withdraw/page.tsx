@@ -70,7 +70,7 @@ export default function Withdraw() {
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
-                    isMdfi
+                    suffix=" mDFI"
                   />
                 </div>
               </div>
@@ -98,6 +98,7 @@ export default function Withdraw() {
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
                   style="block md:hidden"
+                  suffix=" mDFI"
                 />
               </div>
             </div>

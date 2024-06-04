@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { Placement, useFloating, shift } from "@floating-ui/react-dom";
 import clsx from "clsx";
 
@@ -11,7 +11,7 @@ export function HoverPopover({
   popover: string | ReactNode;
   placement?: Placement;
   className?: string;
-  children?: ReactElement;
+  children?: React.ReactNode;
 }): JSX.Element {
   const [isHover, setIsHover] = useState(false);
 
