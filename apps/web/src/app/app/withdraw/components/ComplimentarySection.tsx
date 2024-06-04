@@ -10,7 +10,7 @@ export default function ComplimentarySection() {
   const { isConnected } = useAccount();
 
   return (
-    <div className="absolute left-0 py-5 md:py-8 lg:py-10 px-5 md:px-10 lg:px-[120px] mt-12 md:mt-10 lg:mt-16 rounded-b-[10px] complimentary-bg">
+    <div className="absolute left-0 py-5 md:py-8 lg:py-10 px-5 md:px-10 lg:px-[120px] mt-12 md:mt-10 lg:mt-16 rounded-b-[30px] complimentary-bg">
       {isConnected ? <WithdrawalDetails /> : <WithdrawalsFaq />}
     </div>
   );
