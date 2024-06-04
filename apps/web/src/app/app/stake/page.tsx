@@ -79,16 +79,19 @@ export default function Stake() {
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
 
+  // To prevent submitting invalid number (too large or too small)
+  const validAmount = stakeAmount !== "" && !amountError;
+  const stakeAmountString = validAmount ? stakeAmount : "0";
+
   const { data: previewDepositData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewDeposit",
-    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
+    args: [toWei(stakeAmountString)],
     query: {
       enabled: isConnected,
     },
   });
-  console.log({ previewDepositData });
 
   const previewDeposit = useMemo(() => {
     return formatEther((previewDepositData as number) ?? 0).toString();

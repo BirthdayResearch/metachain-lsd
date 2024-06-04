@@ -32,11 +32,16 @@ export default function Withdraw() {
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
   );
+
+  // To prevent submitting invalid number (too large or too small)
+  const validAmount = withdrawAmount !== "" && !amountError;
+  const withdrawAmountString = validAmount ? withdrawAmount : "0";
+
   const { data: previewWithdrawalData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewRedeem",
-    args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
+    args: [toWei(withdrawAmountString)],
     query: {
       enabled: isConnected,
     },
@@ -52,7 +57,6 @@ export default function Withdraw() {
   const previewWithdrawal = useMemo(() => {
     return formatEther((previewWithdrawalData as number) ?? 0).toString();
   }, [previewWithdrawalData]);
-  console.log({ previewWithdrawalData });
 
   const setCurrentStepAndScroll = (step: WithdrawStep) => {
     setCurrentStep(step);
@@ -102,7 +106,6 @@ export default function Withdraw() {
     // cleanup
     return () => toast.remove("withdraw");
   }, [writeStatus]);
-  console.log({ withdrawAmount });
   return (
     <div>
       {currentStep === WithdrawStep.WithdrawPage ? (
@@ -116,6 +119,7 @@ export default function Withdraw() {
           setWalletBalanceAmount={setWalletBalanceAmount}
           isPending={isPending}
           submitWithdraw={submitWithdraw}
+          previewWithdrawal={previewWithdrawal}
         />
       ) : null}
 
