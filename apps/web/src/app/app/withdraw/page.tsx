@@ -10,11 +10,12 @@ import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 import BigNumber from "bignumber.js";
+import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import useDebounce from "@/hooks/useDebounce";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
-import TransactionRows from "@/app/app/stake/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 
@@ -67,13 +68,15 @@ export default function Withdraw() {
     : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
+  // to avoid multiple contract fetch
+  const debounceWithdrawAmount = useDebounce(withdrawAmount, 200);
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
 
   return (
-    <Panel>
+    <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none ">
       <div>
         <div className="w-full gap-y-5">
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
