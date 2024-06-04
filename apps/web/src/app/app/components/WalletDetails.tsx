@@ -8,10 +8,12 @@ export default function WalletDetails({
   isWalletConnected,
   style,
   walletBalanceAmount,
+  isMdfi,
 }: {
   isWalletConnected: boolean;
   style?: string;
   walletBalanceAmount?: string;
+  isMdfi?: boolean;
 }) {
   const decimalScale = getDecimalPlace(walletBalanceAmount ?? 0);
   return (
@@ -24,7 +26,7 @@ export default function WalletDetails({
           <span>Available: </span>
           <NumericFormat
             className="font-semibold"
-            suffix=" DFI"
+            suffix={isMdfi ? " mDFI" : " DFI"}
             value={new BigNumber(walletBalanceAmount ?? 0).toFormat(
               decimalScale,
               BigNumber.ROUND_FLOOR,

@@ -150,7 +150,9 @@ export default function StakePage({
               )}
             </div>
           </div>
-          <TransactionRows previewDeposit={previewDeposit} />
+          <div className="mb-10 md:mb-7 lg:mb-10">
+            <TransactionRows previewDeposit={previewDeposit} />
+          </div>
         </div>
         {isConnected ? (
           <CTAButton

@@ -67,7 +67,7 @@ export function InputCard({
             "gap-y-3 gap-x-6 bg-white p-4 md:pl-6 rounded-md md:items-center",
           )}
         >
-          <div className="flex flex-row gap-x-3 flex-1">
+          <div className="flex flex-row gap-x-3 flex-1 max-w-64 lg:max-w-80">
             <div className="flex flex-row justify-center items-center text-center">
               {children}
             </div>
