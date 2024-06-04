@@ -263,7 +263,7 @@ input[type="number"] {
   background: var(--UI-Component-BG-4);
 }
 
-.withdraw-button-bg {
+.button-bg-gradient-1 {
   background: linear-gradient(180deg, rgba(206, 219, 245, 0.15) 0%, rgba(150, 178, 232, 0.15) 100%);
 }
 

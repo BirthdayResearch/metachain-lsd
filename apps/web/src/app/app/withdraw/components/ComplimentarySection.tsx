@@ -34,23 +34,12 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
       </div>
       <div className="w-full md:w-fit">
         <CTAButton
-          label="0"
-          testId="pending-withdrawals-button"
-          customStyle="!px-3 !py-3 md:!py-1"
-          customTextStyle="font-semibold leading-5 text-light-1000/30"
-          customBgColor="withdraw-button-bg"
-        >
-          <MdAccessTimeFilled className="text-warning" size={12} />
-        </CTAButton>
-        <CTAButton
-          label="0"
-          testId="confirmed-withdrawals-button"
-          customStyle="!px-3 !py-3 md:!py-1"
-          customTextStyle="font-semibold leading-5 text-light-1000/30"
-          customBgColor="withdraw-button-bg"
-        >
-          <FaCircleCheck className="text-green" size={10} />
-        </CTAButton>
+          label="View FAQs"
+          testId="faq-button-complimentary-section"
+          customStyle="!px-3 !py-3 md:!py-2"
+          customTextStyle="whitespace-nowrap text-xs font-medium"
+          customBgColor="button-bg-gradient-1"
+        />
       </div>
     </div>
   );
