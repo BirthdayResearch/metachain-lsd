@@ -28,7 +28,7 @@ export default function ComplimentarySection({
           testId="faq-button-complimentary-section"
           customStyle="!px-3 !py-3 md:!py-2"
           customTextStyle="whitespace-nowrap text-xs font-medium"
-          customBgColor="withdraw-button-bg"
+          customBgColor="button-bg-gradient-1"
         />
       </div>
     </div>
