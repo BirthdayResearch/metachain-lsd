@@ -122,14 +122,15 @@ export default function Withdraw() {
                         prefix: "$",
                       }}
                     />
-                    <NumericTransactionRow
-                      label="Annual rewards"
-                      value={{
-                        value: 3.34,
-                        suffix: "%",
-                        decimalScale: getDecimalPlace(3.34),
-                      }}
-                    />
+                    {/*TODO to update when api is ready*/}
+                    {/*<NumericTransactionRow*/}
+                    {/*  label="Annual rewards"*/}
+                    {/*  value={{*/}
+                    {/*    value: 3.34,*/}
+                    {/*    suffix: "%",*/}
+                    {/*    decimalScale: getDecimalPlace(3.34),*/}
+                    {/*  }}*/}
+                    {/*/>*/}
                   </div>
                 </>
               )}
