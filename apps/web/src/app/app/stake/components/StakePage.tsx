@@ -168,7 +168,7 @@ export default function StakePage({
             {({ show }) => (
               <CTAButton
                 testId="instant-transfer-btn"
-                label={"Connect wallet"}
+                label="Connect wallet"
                 customStyle="w-full md:py-5"
                 onClick={show}
               />
