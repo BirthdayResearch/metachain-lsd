@@ -12,17 +12,14 @@ import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySec
 import BigNumber from "bignumber.js";
 import TransactionRows from "@/app/app/stake/components/TransactionRows";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
-import useDebounce from "@/hooks/useDebounce";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
-import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
-  const dfiPrice = useDfiPrice();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -30,7 +27,8 @@ export default function Withdraw() {
     token: mDFI.address,
   });
 
-  const { minDepositAmount } = useGetReadContractConfigs();
+  const { minDepositAmount, totalAssets, totalAssetsUsdAmount } =
+    useGetReadContractConfigs();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -50,26 +48,7 @@ export default function Withdraw() {
     return formatEther((previewRedeemData as number) ?? 0).toString();
   }, [previewRedeemData]);
 
-  const { data: totalAssetsData } = useReadContract({
-    address: MarbleLsdProxy.address,
-    abi: MarbleLsdProxy.abi,
-    functionName: "totalAssets",
-    query: {
-      enabled: isConnected,
-    },
-  });
-
-  const totalAssets = useMemo(() => {
-    return formatEther((totalAssetsData as number) ?? 0).toString();
-  }, [totalAssetsData]);
-
-  const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
-    ? new BigNumber(0)
-    : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
-
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
-  // to avoid multiple contract fetch
-  const debounceWithdrawAmount = useDebounce(withdrawAmount, 200);
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
