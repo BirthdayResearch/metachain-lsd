@@ -10,7 +10,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import { useAccount } from "wagmi";
 import { EnvironmentNetwork, getEnvironment } from "@waveshq/walletkit-core";
-import { DFI_MAINNET_ID } from "@/constants";
+import { DFI_TESTNET_ID } from "@/constants";
 
 interface NetworkContextI {
   networkEnv: EnvironmentNetwork;
@@ -47,10 +47,10 @@ export function NetworkEnvironmentProvider({
     if (chain === undefined) {
       return env.networks.includes(n) ? n : defaultNetwork;
     }
-    const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
-    return isDFIMainNet
-      ? EnvironmentNetwork.MainNet
-      : EnvironmentNetwork.TestNet;
+    const isDFITestNet = chain?.id === DFI_TESTNET_ID;
+    return isDFITestNet
+      ? EnvironmentNetwork.TestNet
+      : EnvironmentNetwork.MainNet;
   }
 
   const [networkEnv, setNetworkEnv] = useState<EnvironmentNetwork>(

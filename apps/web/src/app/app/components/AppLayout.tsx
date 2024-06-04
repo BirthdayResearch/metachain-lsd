@@ -15,26 +15,43 @@ import { NetworkEnvironmentProvider } from "@/context/NetworkEnvironmentContext"
 import AppHeader from "@/app/app/components/AppHeader";
 import AppFooter from "@/app/app/components/AppFooter";
 
+const DefichainEvmMainnet = {
+  ...defichainEvm,
+  nativeCurrency: {
+    ...defichainEvm.nativeCurrency,
+    decimals: 18,
+  },
+};
+const DefichainEvmTestnet = {
+  ...defichainEvmTestnet,
+  nativeCurrency: {
+    ...defichainEvmTestnet.nativeCurrency,
+    decimals: 18,
+  },
+};
+
 const config = createConfig(
   // TODO remove this on mainnet Prod launch
   getDefaultConfig({
     // Your dApps chains
     chains:
       process.env.NODE_ENV === "development"
-        ? [sepolia, defichainEvm, defichainEvmTestnet]
-        : [defichainEvmTestnet],
+        ? [sepolia, DefichainEvmMainnet, DefichainEvmTestnet]
+        : [DefichainEvmTestnet],
     transports:
       process.env.NODE_ENV === "development"
         ? {
             [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-            [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
-            [defichainEvmTestnet.id]: http(
-              defichainEvmTestnet.rpcUrls.default.http[0],
+            [DefichainEvmMainnet.id]: http(
+              DefichainEvmMainnet.rpcUrls.default.http[0],
+            ),
+            [DefichainEvmTestnet.id]: http(
+              DefichainEvmTestnet.rpcUrls.default.http[0],
             ),
           }
         : {
-            [defichainEvmTestnet.id]: http(
-              defichainEvmTestnet.rpcUrls.default.http[0],
+            [DefichainEvmTestnet.id]: http(
+              DefichainEvmTestnet.rpcUrls.default.http[0],
             ),
           },
 
