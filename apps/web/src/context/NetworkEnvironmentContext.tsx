@@ -9,7 +9,6 @@ import React, {
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import { useAccount } from "wagmi";
-import { useNetworkContext as useWhaleNetworkContext } from "@waveshq/walletkit-ui";
 import { EnvironmentNetwork, getEnvironment } from "@waveshq/walletkit-core";
 import { DFI_MAINNET_ID } from "@/constants";
 
@@ -38,7 +37,6 @@ export function NetworkEnvironmentProvider({
   const networkQuery = searchParams.get("network");
   // TODO set defaultNetwork to mainnet
   const defaultNetwork = EnvironmentNetwork.TestNet;
-  const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
@@ -83,7 +81,6 @@ export function NetworkEnvironmentProvider({
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     setNetworkEnv(value);
     updateRoute(value);
-    updateWhaleNetwork(value);
   };
 
   const resetNetworkEnv = () => {
