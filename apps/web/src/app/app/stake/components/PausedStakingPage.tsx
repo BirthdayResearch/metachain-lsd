@@ -25,7 +25,9 @@ export default function PausedStakingPage() {
           </div>
           <span className="text-sm">
             For any immediate concerns, you can report concerns
-            <span className="font-semibold"> here.</span>
+            <span className="font-semibold">
+              <a href="mailto:frederick.chng@birthday.dev"> here.</a>
+            </span>
           </span>
         </div>
       </div>
