@@ -79,7 +79,7 @@ export default function Stake() {
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
 
-  // To prevent submitting invalid number (too large or too small)
+  // To prevent calling contract with invalid number (too large or too small)
   const validAmount = stakeAmount !== "" && !amountError;
   const stakeAmountString = validAmount ? stakeAmount : "0";
 

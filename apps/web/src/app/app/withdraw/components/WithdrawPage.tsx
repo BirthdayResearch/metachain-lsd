@@ -10,42 +10,43 @@ import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySec
 import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
-import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { getDecimalPlace } from "@/lib/textHelper";
 import TransactionRows from "@/app/app/stake/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 
 export default function WithdrawPage({
   walletBalanceAmount,
   amountError,
   setAmountError,
-  minDepositAmount,
   withdrawAmount,
   setWithdrawAmount,
   setWalletBalanceAmount,
   isPending,
   submitWithdraw,
-  previewWithdrawal,
+  previewRedeem,
 }: {
   walletBalanceAmount: string;
   amountError: string | null;
   setAmountError: React.Dispatch<React.SetStateAction<string | null>>;
-  minDepositAmount: string;
   withdrawAmount: string;
   setWithdrawAmount: React.Dispatch<React.SetStateAction<string>>;
   setWalletBalanceAmount: React.Dispatch<React.SetStateAction<string>>;
   isPending: boolean;
   submitWithdraw: () => void;
-  previewWithdrawal: string;
+  previewRedeem: string;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
   const dfiPrice = useDfiPrice();
 
+  const { minDepositAmount } = useGetReadContractConfigs();
+
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    // token: mDFI.address,
+    token: mDFI.address,
   });
 
   const { data: totalAssetsData } = useReadContract({
@@ -121,7 +122,7 @@ export default function WithdrawPage({
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewDetails={previewWithdrawal} />
+              <TransactionRows previewAmount={previewRedeem} />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />

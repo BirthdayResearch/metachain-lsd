@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  useAccount,
-  useBalance,
-  useReadContract,
-  useWriteContract,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
-import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
-import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
@@ -18,19 +12,16 @@ import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { parseEther } from "viem";
 
+/*
+ * Withdrawal flow
+ * The term 'redeem' is used for withdrawing mDFI shares from the vault
+ * Future: The term 'withdraw' is used for withdrawing DFI assets from the vault
+ */
+
 export default function Withdraw() {
   const mainContentRef = React.useRef(null);
-  const { address, isConnected, chainId, status } = useAccount();
-  const { MarbleLsdProxy, mDFI } = useContractContext();
-
-  const { data: walletBalance } = useBalance({
-    address,
-    chainId,
-    token: mDFI.address,
-  });
-
-  const { minDepositAmount, totalAssets, totalAssetsUsdAmount } =
-    useGetReadContractConfigs();
+  const { address, isConnected } = useAccount();
+  const { MarbleLsdProxy } = useContractContext();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -40,7 +31,7 @@ export default function Withdraw() {
     WithdrawStep.WithdrawPage,
   );
 
-  // To prevent submitting invalid number (too large or too small)
+  // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
   const withdrawAmountString = validAmount ? withdrawAmount : "0";
 
@@ -64,8 +55,6 @@ export default function Withdraw() {
   const previewRedeem = useMemo(() => {
     return formatEther((previewRedeemData as number) ?? 0).toString();
   }, [previewRedeemData]);
-
-  const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
   const setCurrentStepAndScroll = (step: WithdrawStep) => {
     setCurrentStep(step);
@@ -122,13 +111,12 @@ export default function Withdraw() {
           walletBalanceAmount={walletBalanceAmount}
           amountError={amountError}
           setAmountError={setAmountError}
-          minDepositAmount={minDepositAmount}
           withdrawAmount={withdrawAmount}
           setWithdrawAmount={setWithdrawAmount}
           setWalletBalanceAmount={setWalletBalanceAmount}
           isPending={isPending}
           submitWithdraw={submitWithdraw}
-          previewWithdrawal={previewRedeem}
+          previewRedeem={previewRedeem}
         />
       ) : null}
 
