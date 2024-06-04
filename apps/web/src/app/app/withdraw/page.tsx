@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useAccount, useBalance } from "wagmi";
-import React, { useEffect, useState } from "react";
+import { useAccount, useBalance, useReadContract } from "wagmi";
+import React, { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/stake/components/Panel";
@@ -13,14 +13,20 @@ import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
-import { getDecimalPlace } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import { useContractContext } from "@/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
+  const dfiPrice = useDfiPrice();
 
   const { data: walletBalance } = useBalance({
     address,
     chainId,
+    token: mDFI.address,
   });
 
   const { minDepositAmount } = useGetReadContractConfigs();
@@ -28,6 +34,37 @@ export default function Withdraw() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
+  const { data: previewDepositData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "previewDeposit",
+    args: [toWei(withdrawAmount !== "" ? withdrawAmount : "0")],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const previewDeposit = useMemo(() => {
+    return formatEther((previewDepositData as number) ?? 0).toString();
+  }, [previewDepositData]);
+
+  const { data: totalAssetsData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "totalAssets",
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const totalAssets = useMemo(() => {
+    return formatEther((totalAssetsData as number) ?? 0).toString();
+  }, [totalAssetsData]);
+
+  const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
+    ? new BigNumber(0)
+    : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
@@ -51,6 +88,7 @@ export default function Withdraw() {
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
+                    isMdfi
                   />
                 </div>
               </div>
@@ -81,33 +119,37 @@ export default function Withdraw() {
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-y-1 mb-10 md:mb-7 lg:mb-10">
-              <NumericTransactionRow
-                label="You will receive"
-                value={{
-                  value: 0.0,
-                  decimalScale: getDecimalPlace(0.0),
-                  suffix: ` mDFI`,
-                }}
-              />
-              <NumericTransactionRow
-                label="Exchange rate"
-                value={{
-                  value: 1,
-                  suffix: " DFI",
-                  decimalScale: getDecimalPlace(1),
-                  prefix: `1 mDFI = `,
-                  trimTrailingZeros: false,
-                }}
-              />
-              <NumericTransactionRow
-                label="Max transaction cost"
-                value={{
-                  value: 3.23,
-                  decimalScale: getDecimalPlace(3.23),
-                  prefix: "$",
-                }}
-              />
+            <div className="mb-10 md:mb-7 lg:mb-10">
+              <TransactionRows previewDeposit={previewDeposit} />
+              {isConnected && (
+                <>
+                  <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
+                  <div className="flex flex-col gap-y-1">
+                    <NumericTransactionRow
+                      label="Total liquidity"
+                      tooltipText="Total amount available for withdrawal."
+                      value={{
+                        value: totalAssets,
+                        suffix: " DFI",
+                        decimalScale: getDecimalPlace(totalAssets),
+                      }}
+                      secondaryValue={{
+                        value: totalAssetsUsdAmount,
+                        decimalScale: getDecimalPlace(totalAssetsUsdAmount),
+                        prefix: "$",
+                      }}
+                    />
+                    <NumericTransactionRow
+                      label="Annual rewards"
+                      value={{
+                        value: 3.34,
+                        suffix: "%",
+                        decimalScale: getDecimalPlace(3.34),
+                      }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <ConnectKitButton.Custom>
