@@ -71,15 +71,18 @@ export class WalletProvider {
       this.privateKey?.length === 54
         ? WIF.asEllipticPair(this.privateKey)
         : Elliptic.fromPrivKey(Buffer.from(this.privateKey, "hex"));
+
     return new WalletClassic(curvePair);
   }
 
   private async initWallet() {
     const network = getJellyfishNetwork(this.network);
+
     this.wallet = this.getWallet();
     this.client = this.whaleClient.getClient(this.network);
     this.account = new WhaleWalletAccount(this.client, this.wallet, network);
     this.evmProvider = new JsonRpcProvider(this.ethRPCUrl);
+
     const key = (await this.account.privateKey()).toString("hex");
     this.evmWallet = new Wallet(key, this.evmProvider);
   }
@@ -132,8 +135,8 @@ export class WalletProvider {
     const utxoList = await account.client.address.listTransactionUnspent(
       walletOwnerDvmAddress,
     );
-
     const utxos: Prevout[] = [];
+
     if (utxoList.length > 0) {
       utxos.push({
         txid: utxoList[0].vout.txid,
@@ -262,10 +265,13 @@ export class WalletProvider {
         to: this.marbleFiContractAddress,
         value,
       });
+
       console.log("Sending Evm Rewards Txn hash ", txn.hash);
+
       // Waiting 5 confirmations. You can put any number of confirmations here
       const txReceipt = await txn.wait(5);
       console.log("Sending Evm rewards: ", txReceipt.hash);
+
       return txn;
     } catch (err) {
       console.error(`Error occurred while sending rewards: ${err.message}`);
