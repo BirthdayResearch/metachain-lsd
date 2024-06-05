@@ -29,13 +29,11 @@ export default function EmailInput({
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     email: string,
-    status?: SubscriptionStatus,
   ) => {
     e.preventDefault();
     try {
       const user = {
         email: email,
-        status: status,
       };
       const data = await createUser(user);
       // @ts-ignore
