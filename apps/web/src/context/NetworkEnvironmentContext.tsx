@@ -9,9 +9,8 @@ import React, {
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 import { useAccount } from "wagmi";
-import { useNetworkContext as useWhaleNetworkContext } from "@waveshq/walletkit-ui";
 import { EnvironmentNetwork, getEnvironment } from "@waveshq/walletkit-core";
-import { DFI_MAINNET_ID } from "@/constants";
+import { DFI_TESTNET_ID } from "@/constants";
 
 interface NetworkContextI {
   networkEnv: EnvironmentNetwork;
@@ -38,7 +37,6 @@ export function NetworkEnvironmentProvider({
   const networkQuery = searchParams.get("network");
   // TODO set defaultNetwork to mainnet
   const defaultNetwork = EnvironmentNetwork.TestNet;
-  const { updateNetwork: updateWhaleNetwork } = useWhaleNetworkContext();
   const { chain } = useAccount();
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
@@ -49,10 +47,10 @@ export function NetworkEnvironmentProvider({
     if (chain === undefined) {
       return env.networks.includes(n) ? n : defaultNetwork;
     }
-    const isDFIMainNet = chain?.id === DFI_MAINNET_ID;
-    return isDFIMainNet
-      ? EnvironmentNetwork.MainNet
-      : EnvironmentNetwork.TestNet;
+    const isDFITestNet = chain?.id === DFI_TESTNET_ID;
+    return isDFITestNet
+      ? EnvironmentNetwork.TestNet
+      : EnvironmentNetwork.MainNet;
   }
 
   const [networkEnv, setNetworkEnv] = useState<EnvironmentNetwork>(
@@ -83,7 +81,6 @@ export function NetworkEnvironmentProvider({
   const handleNetworkEnvChange = (value: EnvironmentNetwork) => {
     setNetworkEnv(value);
     updateRoute(value);
-    updateWhaleNetwork(value);
   };
 
   const resetNetworkEnv = () => {

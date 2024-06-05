@@ -157,10 +157,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/smartcontracts
       viem:
-        specifier: ~2.9.16
+        specifier: ~2.9.32
         version: 2.9.32(bufferutil@4.0.8)(typescript@5.4.5)
       wagmi:
-        specifier: ^2.5.19
+        specifier: ^2.9.8
         version: 2.9.8(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.0(react@18.2.0))(@types/react@18.2.37)(bufferutil@4.0.8)(immer@10.1.1)(ioredis@5.4.1)(react-dom@18.2.0(react@18.2.0))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.37)(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0))(react-native@0.74.1(@babel/core@7.24.6)(@babel/preset-env@7.24.6(@babel/core@7.24.6))(@types/react@18.2.37)(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(viem@2.9.32(bufferutil@4.0.8)(typescript@5.4.5))
       ws:
         specifier: ^8.16.0

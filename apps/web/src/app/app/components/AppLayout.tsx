@@ -1,20 +1,34 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import {
+  CreateConfigParameters,
+  WagmiProvider,
+  createConfig,
+  http,
+} from "wagmi";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { sepolia, defichainEvm, defichainEvmTestnet } from "wagmi/chains";
-import SecuredStoreAPI from "@/api/secure-storage";
-import Logging from "@/api/logging";
-import {
-  NetworkProvider as WhaleNetworkProvider,
-  WhaleProvider,
-} from "@waveshq/walletkit-ui";
 import { ContractProvider } from "@/context/ContractContext";
 import { NetworkEnvironmentProvider } from "@/context/NetworkEnvironmentContext";
 import AppHeader from "@/app/app/components/AppHeader";
 import AppFooter from "@/app/app/components/AppFooter";
+
+const DefichainEvmMainnet = {
+  ...defichainEvm,
+  nativeCurrency: {
+    ...defichainEvm.nativeCurrency,
+    decimals: 18,
+  },
+};
+const DefichainEvmTestnet = {
+  ...defichainEvmTestnet,
+  nativeCurrency: {
+    ...defichainEvmTestnet.nativeCurrency,
+    decimals: 18,
+  },
+};
 
 const config = createConfig(
   // TODO remove this on mainnet Prod launch
@@ -22,20 +36,22 @@ const config = createConfig(
     // Your dApps chains
     chains:
       process.env.NODE_ENV === "development"
-        ? [sepolia, defichainEvm, defichainEvmTestnet]
-        : [defichainEvmTestnet],
+        ? [sepolia, DefichainEvmMainnet, DefichainEvmTestnet]
+        : [DefichainEvmTestnet],
     transports:
       process.env.NODE_ENV === "development"
         ? {
             [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-            [defichainEvm.id]: http(defichainEvm.rpcUrls.default.http[0]),
-            [defichainEvmTestnet.id]: http(
-              defichainEvmTestnet.rpcUrls.default.http[0],
+            [DefichainEvmMainnet.id]: http(
+              DefichainEvmMainnet.rpcUrls.default.http[0],
+            ),
+            [DefichainEvmTestnet.id]: http(
+              DefichainEvmTestnet.rpcUrls.default.http[0],
             ),
           }
         : {
-            [defichainEvmTestnet.id]: http(
-              defichainEvmTestnet.rpcUrls.default.http[0],
+            [DefichainEvmTestnet.id]: http(
+              DefichainEvmTestnet.rpcUrls.default.http[0],
             ),
           },
 
@@ -49,7 +65,7 @@ const config = createConfig(
     // Optional App Info
     appDescription:
       "Marble gives you the most exciting opportunities for your DFI.",
-  }),
+  }) as CreateConfigParameters,
 );
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -68,22 +84,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider options={{ initialChainId: 0 }}>
           {mounted && (
-            <WhaleNetworkProvider api={SecuredStoreAPI} logger={Logging}>
-              <WhaleProvider>
-                <NetworkEnvironmentProvider>
-                  <ContractProvider>
-                    <div
-                      ref={contentRef}
-                      className="flex w-full min-h-screen flex-col items-center text-light-1000"
-                    >
-                      <AppHeader />
-                      <div className="w-full flex-grow">{children}</div>
-                      <AppFooter />
-                    </div>
-                  </ContractProvider>
-                </NetworkEnvironmentProvider>
-              </WhaleProvider>
-            </WhaleNetworkProvider>
+            <NetworkEnvironmentProvider>
+              <ContractProvider>
+                <div
+                  ref={contentRef}
+                  className="flex w-full min-h-screen flex-col items-center text-light-1000"
+                >
+                  <AppHeader />
+                  <div className="w-full flex-grow">{children}</div>
+                  <AppFooter />
+                </div>
+              </ContractProvider>
+            </NetworkEnvironmentProvider>
           )}
         </ConnectKitProvider>
       </QueryClientProvider>
