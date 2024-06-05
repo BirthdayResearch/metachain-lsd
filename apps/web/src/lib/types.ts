@@ -17,3 +17,7 @@ export interface AppNavigation {
   label: string;
   href: string;
 }
+
+export interface MarbleFiVersion {
+  v: string;
+}
