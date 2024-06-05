@@ -18,9 +18,3 @@ BridgeProxy Contract address: [0x0B52a71A03a47246BD9d9C556B6Df9C42e73462A](https
 ### ShareToken
 
 BridgeQueue Contract address: [0x960E9a07e36dC74302E707D84b5eB772daE726cC](https://meta.defiscan.live/address/0x960E9a07e36dC74302E707D84b5eB772daE726cC?network=TestNet)
-
-### Reward Distributer address
-- DVM address: `tf1qagmkjh9trcpu3r63q79kqj8l5lx0nq82sgtgrv`
-- EVM evmAddress: `0xC4Fc4D07E060dB406A45131Fb28c156e19BE8f63`
-
-
