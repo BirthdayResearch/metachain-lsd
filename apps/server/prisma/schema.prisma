@@ -21,3 +21,25 @@ model User {
   email  String             @unique
   status SubscriptionStatus @default(ACTIVE)
 }
+
+enum Network {
+  Local
+  Playground
+  MainNet
+  TestNet
+  DevNet
+  Changi
+}
+
+model Rewards {
+  id          Int       @id @default(autoincrement())
+  txnHash     String
+  network     Network
+  amount      String
+  fromAddress String
+  toAddress   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
