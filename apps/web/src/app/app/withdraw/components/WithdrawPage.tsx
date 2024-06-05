@@ -90,7 +90,7 @@ export default function WithdrawPage({
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
                     style="md:block hidden"
-                    isMdfi
+                    suffix=" mDFI"
                   />
                 </div>
               </div>
@@ -141,14 +141,15 @@ export default function WithdrawPage({
                         prefix: "$",
                       }}
                     />
-                    <NumericTransactionRow
-                      label="Annual rewards"
-                      value={{
-                        value: 3.34,
-                        suffix: "%",
-                        decimalScale: getDecimalPlace(3.34),
-                      }}
-                    />
+                    {/*TODO to update when api is ready*/}
+                    {/*<NumericTransactionRow*/}
+                    {/*  label="Annual rewards"*/}
+                    {/*  value={{*/}
+                    {/*    value: 3.34,*/}
+                    {/*    suffix: "%",*/}
+                    {/*    decimalScale: getDecimalPlace(3.34),*/}
+                    {/*  }}*/}
+                    {/*/>*/}
                   </div>
                 </>
               )}
