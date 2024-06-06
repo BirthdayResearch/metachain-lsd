@@ -16,6 +16,8 @@ import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
+import PausedWithdrawalsPage from "@/app/app/withdraw/components/PausedWithdrawalsPage";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
@@ -50,6 +52,19 @@ export default function Withdraw() {
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
 
+  const { data: isWithdrawalPausedData, isLoading } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "isWithdrawalPaused",
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const isWithdrawalPaused = useMemo(() => {
+    return (isWithdrawalPausedData as boolean) ?? false;
+  }, [isWithdrawalPausedData]);
+
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
@@ -57,15 +72,44 @@ export default function Withdraw() {
   return (
     <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none ">
       <div>
-        <div className="w-full gap-y-5">
-          <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
-          <div className="flex flex-col w-full justify-between gap-y-5">
-            <div className="mt-10 md:mt-7 lg:mt-10">
-              <div className="mb-5">
-                <div className="flex items-center justify-between gap-y-2 mb-2">
-                  <span className="text-xs md:text-sm py-1">
-                    How much do you want to withdraw?
-                  </span>
+        {!isWithdrawalPaused && !isLoading && (
+          <div className="w-full gap-y-5">
+            <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
+            <div className="flex flex-col w-full justify-between gap-y-5">
+              <div className="mt-10 md:mt-7 lg:mt-10">
+                <div className="mb-5">
+                  <div className="flex items-center justify-between gap-y-2 mb-2">
+                    <span className="text-xs md:text-sm py-1">
+                      How much do you want to withdraw?
+                    </span>
+                    <WalletDetails
+                      walletBalanceAmount={walletBalanceAmount}
+                      isWalletConnected={isConnected}
+                      style="md:block hidden"
+                      suffix=" mDFI"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-y-2">
+                  <InputCard
+                    isConnected={isConnected}
+                    maxAmount={new BigNumber(walletBalanceAmount)}
+                    minAmount={new BigNumber(minDepositAmount)}
+                    error={amountError}
+                    setError={setAmountError}
+                    value={withdrawAmount}
+                    setAmount={setWithdrawAmount}
+                  >
+                    <Image
+                      data-testid="mdfi-icon"
+                      src="/icons/mdfi-icon.svg"
+                      alt="MDFI icon"
+                      className="min-w-6"
+                      priority
+                      width={24}
+                      height={24}
+                    />
+                  </InputCard>
                   <WalletDetails
                     walletBalanceAmount={walletBalanceAmount}
                     isWalletConnected={isConnected}
@@ -134,19 +178,22 @@ export default function Withdraw() {
                   </div>
                 </>
               )}
+              <ConnectKitButton.Custom>
+                {({ show }) => (
+                  <CTAButton
+                    testId="instant-transfer-btn"
+                    label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
+                    customStyle="w-full md:py-5"
+                  />
+                )}
+              </ConnectKitButton.Custom>
             </div>
           </div>
-          <ConnectKitButton.Custom>
-            {({ show }) => (
-              <CTAButton
-                testId="instant-transfer-btn"
-                label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
-                customStyle="w-full md:py-5"
-              />
-            )}
-          </ConnectKitButton.Custom>
-        </div>
-        <ComplimentarySection />
+        )}
+
+        {isWithdrawalPaused && <PausedWithdrawalsPage />}
+        {/* TODO: Uncomment once data is not hardcoded */}
+        {/* <ComplimentarySection /> */}
       </div>
     </Panel>
   );

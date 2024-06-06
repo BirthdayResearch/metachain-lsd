@@ -16,9 +16,8 @@ describe("ShareToken", () => {
   let shareToken: ShareToken;
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult = await loadFixture(
-      deployContracts
-    );
+    const fixture: MarbleLsdDeploymentResult =
+      await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     shareToken = fixture.shareToken;
     accounts = await ethers.getSigners();
@@ -32,14 +31,14 @@ describe("ShareToken", () => {
   it("Should not able to mint token other than owner address", async () => {
     const signer = accounts[5];
     await expect(
-      shareToken.connect(signer).mint(signer.address, toWei("10"))
+      shareToken.connect(signer).mint(signer.address, toWei("10")),
     ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 
   it("Should not able to burn token other than owner address", async () => {
     const signer = accounts[5];
     await expect(
-      shareToken.connect(signer).burn(signer.address, toWei("10"))
+      shareToken.connect(signer).burn(signer.address, toWei("10")),
     ).to.be.revertedWith("Ownable: caller is not the owner");
   });
 });
