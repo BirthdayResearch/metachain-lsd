@@ -78,6 +78,7 @@ export default function StakePage({
                   walletBalanceAmount={walletBalanceAmount}
                   isWalletConnected={isConnected}
                   style="md:block hidden"
+                  suffix=" DFI"
                 />
               </div>
               <div className="pb-2 md:pb-0">
@@ -105,6 +106,7 @@ export default function StakePage({
                 walletBalanceAmount={walletBalanceAmount}
                 isWalletConnected={isConnected}
                 style="block md:hidden"
+                suffix=" DFI"
               />
             </div>
             <div className="grid gap-y-2">
@@ -151,7 +153,7 @@ export default function StakePage({
             </div>
           </div>
           <div className="mb-10 md:mb-7 lg:mb-10">
-            <TransactionRows previewDeposit={previewDeposit} />
+            <TransactionRows previewAmount={previewDeposit} />
           </div>
         </div>
         {isConnected ? (
@@ -159,7 +161,7 @@ export default function StakePage({
             isDisabled={isDisabled}
             isLoading={isPending}
             testId="instant-transfer-btn"
-            label={"Stake DFI"}
+            label="Stake DFI"
             customStyle="w-full md:py-5"
             onClick={submitStake}
           />
@@ -168,7 +170,7 @@ export default function StakePage({
             {({ show }) => (
               <CTAButton
                 testId="instant-transfer-btn"
-                label={"Connect wallet"}
+                label="Connect wallet"
                 customStyle="w-full md:py-5"
                 onClick={show}
               />

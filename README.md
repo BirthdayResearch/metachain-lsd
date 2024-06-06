@@ -18,4 +18,3 @@ BridgeProxy Contract address: [0x0B52a71A03a47246BD9d9C556B6Df9C42e73462A](https
 ### ShareToken
 
 BridgeQueue Contract address: [0x960E9a07e36dC74302E707D84b5eB772daE726cC](https://meta.defiscan.live/address/0x960E9a07e36dC74302E707D84b5eB772daE726cC?network=TestNet)
-

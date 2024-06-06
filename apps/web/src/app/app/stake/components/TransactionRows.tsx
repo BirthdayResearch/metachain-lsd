@@ -1,22 +1,23 @@
 import { useContractContext } from "@/context/ContractContext";
-import { Interface } from "ethers";
+import { Interface, InterfaceAbi } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 export default function TransactionRows({
-  previewDeposit,
+  previewAmount,
 }: {
-  previewDeposit: string;
+  previewAmount: string;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
 
   const { txnCost } = useGetTxnCost(
-    new Interface(MarbleLsdProxy.abi).encodeFunctionData("deposit", [
-      MarbleLsdProxy.address,
-    ]) as `0x${string}`,
+    new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
+      "deposit",
+      [MarbleLsdProxy.address],
+    ) as `0x${string}`,
   );
 
   return (
@@ -25,8 +26,8 @@ export default function TransactionRows({
         label="You will receive"
         comment="(after fees)"
         value={{
-          value: previewDeposit,
-          decimalScale: getDecimalPlace(previewDeposit),
+          value: previewAmount,
+          decimalScale: getDecimalPlace(previewAmount),
           suffix: ` mDFI`,
         }}
       />

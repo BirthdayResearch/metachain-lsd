@@ -24,7 +24,7 @@ export default function PausedStakingPage() {
             </span>
           </div>
           <span className="text-sm">
-            For any immediate concerns, you can report concerns{" "}
+            For any immediate concerns, you can report concerns
             <span className="font-semibold">
               <a href="mailto:frederick.chng@birthday.dev"> here.</a>
             </span>
