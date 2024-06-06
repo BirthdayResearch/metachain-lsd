@@ -146,7 +146,8 @@ export default function Withdraw() {
             )}
           </ConnectKitButton.Custom>
         </div>
-        <ComplimentarySection />
+        {/* TODO: Uncomment once data is not hardcoded */}
+        {/* <ComplimentarySection /> */}
       </div>
     </Panel>
   );
