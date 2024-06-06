@@ -32,13 +32,13 @@ export default function AppFooter() {
   const [version, setVersion] = useState("0.0.0");
   const [getVersion] = useGetVersionMutation();
 
-  const getVer = async () => {
+  const fetchVersion = async () => {
     const ver = await getVersion({}).unwrap();
     setVersion(ver?.v);
   };
 
   useEffect(() => {
-    getVer();
+    fetchVersion();
   }, []);
 
   return (
