@@ -1,7 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useAccount, useBalance, useReadContract } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -16,10 +21,12 @@ import { formatEther } from "ethers";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
+import { parseEther } from "viem";
 
 export default function Withdraw() {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
+  const { writeContract } = useWriteContract();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -49,6 +56,39 @@ export default function Withdraw() {
   }, [previewRedeemData]);
 
   const balance = formatEther(walletBalance?.value.toString() ?? "0");
+
+  const { data: allowanceData } = useReadContract({
+    address: mDFI.address,
+    abi: mDFI.abi,
+    functionName: "allowance",
+    args: [address, MarbleLsdProxy.address],
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const allowance = useMemo(() => {
+    return new BigNumber(formatEther((allowanceData as number) ?? 0));
+  }, [allowanceData]);
+
+  function handleClick() {
+    approve();
+  }
+
+  function approve() {
+    const withdrawAmtBigNum = new BigNumber(withdrawAmount);
+
+    if (allowance.lt(withdrawAmtBigNum)) {
+      const diff = withdrawAmtBigNum.minus(allowance);
+
+      writeContract({
+        abi: mDFI.abi,
+        address: mDFI.address,
+        functionName: "approve",
+        args: [MarbleLsdProxy.address, parseEther(diff.toString())],
+      });
+    }
+  }
 
   useEffect(() => {
     setWalletBalanceAmount(balance); // set wallet balance
@@ -142,6 +182,7 @@ export default function Withdraw() {
                 testId="instant-transfer-btn"
                 label={isConnected ? "Withdraw mDFI" : "Connect wallet"}
                 customStyle="w-full md:py-5"
+                onClick={handleClick}
               />
             )}
           </ConnectKitButton.Custom>
