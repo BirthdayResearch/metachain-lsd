@@ -5,12 +5,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
+import PausedWithdrawalsPage from "@/app/app/withdraw/components/PausedWithdrawalsPage";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
 import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
-import { parseEther } from "viem";
+import { Abi, parseEther } from "viem";
 
 /*
  * Withdrawal flow
@@ -63,6 +65,19 @@ export default function Withdraw() {
     }
   };
 
+  const { data: isWithdrawalPausedData, isLoading } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "isWithdrawalPaused",
+    query: {
+      enabled: isConnected,
+    },
+  });
+
+  const isWithdrawalPaused = useMemo(() => {
+    return (isWithdrawalPausedData as boolean) ?? false;
+  }, [isWithdrawalPausedData]);
+
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
@@ -72,7 +87,7 @@ export default function Withdraw() {
     if (!amountError) {
       writeContract(
         {
-          abi: MarbleLsdProxy.abi,
+          abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
           functionName: "requestRedeem",
           args: [parseEther(withdrawAmount), address as string],
@@ -105,34 +120,40 @@ export default function Withdraw() {
     return () => toast.remove("withdraw");
   }, [writeStatus]);
   return (
-    <div>
-      {currentStep === WithdrawStep.WithdrawPage ? (
-        <WithdrawPage
-          walletBalanceAmount={walletBalanceAmount}
-          amountError={amountError}
-          setAmountError={setAmountError}
-          withdrawAmount={withdrawAmount}
-          setWithdrawAmount={setWithdrawAmount}
-          setWalletBalanceAmount={setWalletBalanceAmount}
-          isPending={isPending}
-          submitWithdraw={submitWithdraw}
-          previewRedeem={previewRedeem}
-        />
-      ) : null}
-
-      {currentStep === WithdrawStep.PreviewWithdrawal
-        ? address &&
-          hash && (
-            <PreviewWithdrawal
+    <>
+      {!isWithdrawalPaused && !isLoading ? (
+        <div>
+          {currentStep === WithdrawStep.WithdrawPage ? (
+            <WithdrawPage
+              walletBalanceAmount={walletBalanceAmount}
+              amountError={amountError}
+              setAmountError={setAmountError}
               withdrawAmount={withdrawAmount}
-              previewWithdrawal={previewRedeem}
-              setCurrentStep={setCurrentStepAndScroll}
-              hash={hash}
-              receivingWalletAddress={address}
-              resetFields={resetFields}
+              setWithdrawAmount={setWithdrawAmount}
+              setWalletBalanceAmount={setWalletBalanceAmount}
+              isPending={isPending}
+              submitWithdraw={submitWithdraw}
+              previewRedeem={previewRedeem}
             />
-          )
-        : null}
-    </div>
+          ) : null}
+
+          {currentStep === WithdrawStep.PreviewWithdrawal
+            ? address &&
+              hash && (
+                <PreviewWithdrawal
+                  withdrawAmount={withdrawAmount}
+                  previewWithdrawal={previewRedeem}
+                  setCurrentStep={setCurrentStepAndScroll}
+                  hash={hash}
+                  receivingWalletAddress={address}
+                  resetFields={resetFields}
+                />
+              )
+            : null}
+        </div>
+      ) : (
+        <PausedWithdrawalsPage />
+      )}
+    </>
   );
 }

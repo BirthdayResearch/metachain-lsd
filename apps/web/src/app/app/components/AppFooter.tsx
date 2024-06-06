@@ -4,6 +4,8 @@ import clsx from "clsx";
 import { FaReddit } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
+import { useGetVersionMutation } from "@/store/marbleFiApi";
+import { useEffect, useState } from "react";
 
 const footerLinks = [
   // {
@@ -27,6 +29,18 @@ const footerLinks = [
 ];
 
 export default function AppFooter() {
+  const [version, setVersion] = useState("0.0.0");
+  const [getVersion] = useGetVersionMutation();
+
+  const fetchVersion = async () => {
+    const ver = await getVersion({}).unwrap();
+    setVersion(ver?.v);
+  };
+
+  useEffect(() => {
+    fetchVersion();
+  }, []);
+
   return (
     <footer className="py-10 md:py-0 max-w-5xl px-5 min-w-fit w-full bottom-0 grid gap-y-5">
       <section className="flex flex-row items-center w-full justify-between md:py-10 md:border-t md:border-light-1000/10">
@@ -38,9 +52,8 @@ export default function AppFooter() {
           </div>
         </div>
         <div className="ml-2 w-full md:w-fit md:justify-end">
-          {/* TODO fetch this from api */}
           <Tag
-            text="v1.0.0"
+            text={`V${version}`}
             testId="footer-version-tag"
             customStyle="bg-light-1000/[0.05] px-3 !py-1 mr-2 w-fit"
           />
