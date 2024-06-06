@@ -1,5 +1,5 @@
 import { useContractContext } from "@/context/ContractContext";
-import { Interface } from "ethers";
+import { Interface, InterfaceAbi } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
@@ -14,9 +14,10 @@ export default function TransactionRows({
   const { MarbleLsdProxy } = useContractContext();
 
   const { txnCost } = useGetTxnCost(
-    new Interface(MarbleLsdProxy.abi).encodeFunctionData("deposit", [
-      MarbleLsdProxy.address,
-    ]) as `0x${string}`,
+    new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
+      "deposit",
+      [MarbleLsdProxy.address],
+    ) as `0x${string}`,
   );
 
   return (
