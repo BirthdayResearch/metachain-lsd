@@ -131,7 +131,7 @@ export default function Withdraw() {
                   <Image
                     data-testid="mdfi-icon"
                     src="/icons/mdfi-icon.svg"
-                    alt="MDFI icon"
+                    alt="mDFI icon"
                     className="min-w-6"
                     priority
                     width={24}
