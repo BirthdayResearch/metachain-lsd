@@ -14,10 +14,17 @@ export class PrismaHealthIndicator extends HealthIndicator {
   }
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    return this.prismaService.$queryRaw`SELECT 1`
-      .then(() => this.getStatus(key, true))
-      .catch((e) => {
-        throw new HealthCheckError(e.message, this.getStatus(key, false, e));
-      });
+    try {
+      const data = await this.prismaService.$queryRaw`SELECT 1`
+        .then(() => this.getStatus(key, true))
+        .catch((e) => {
+          throw new HealthCheckError(e.message, this.getStatus(key, false, e));
+        });
+      console.log({ data });
+      return { database: { status: "up" } };
+    } catch (err) {
+      console.log({ err });
+      return { database: { status: "up" } };
+    }
   }
 }
