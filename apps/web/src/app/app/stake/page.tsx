@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useContractContext } from "@/context/ContractContext";
-import { parseEther } from "viem";
+import { Abi, parseEther } from "viem";
 import { formatEther } from "ethers";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
@@ -118,7 +118,7 @@ export default function Stake() {
     if (!amountError && !addressError) {
       writeContract(
         {
-          abi: MarbleLsdProxy.abi,
+          abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
           functionName: "deposit",
           value: parseEther(stakeAmount),
