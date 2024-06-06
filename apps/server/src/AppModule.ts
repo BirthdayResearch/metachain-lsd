@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { appConfig, ENV_VALIDATION_SCHEMA } from "./AppConfig";
-import { UserModule } from "./user/UserModule";
+// import { UserModule } from "./user/UserModule";
 import { ConfigModule } from "@nestjs/config";
 import { HealthModule } from "./health/PrismaHealthModule";
 import { VersionModule } from "./version/VersionModule";
-import { BotModule } from "./bot/BotModule";
+// import { BotModule } from "./bot/BotModule";
 import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
@@ -15,10 +15,10 @@ import { ScheduleModule } from "@nestjs/schedule";
       load: [appConfig],
       validationSchema: ENV_VALIDATION_SCHEMA,
     }),
-    UserModule,
+    // UserModule,
     VersionModule,
     HealthModule,
-    BotModule,
+    // BotModule,
   ],
 })
 export class AppModule {}
