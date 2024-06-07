@@ -147,7 +147,10 @@ export default function Withdraw() {
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewAmount={previewRedeem} />
+              <TransactionRows
+                previewAmount={previewRedeem}
+                withdrawAmount={withdrawAmount}
+              />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
