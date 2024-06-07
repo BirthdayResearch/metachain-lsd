@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useContractContext } from "@/context/ContractContext";
-import { parseEther } from "viem";
+import { Abi, parseEther } from "viem";
 import { formatEther } from "ethers";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
@@ -19,6 +19,7 @@ import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
 import StakePage from "@/app/app/stake/components/StakePage";
 import { StakeStep } from "@/types";
 import { watchAsset } from "viem/actions";
+import PausedStakingPage from "@/app/app/stake/components/PausedStakingPage";
 
 export default function Stake() {
   const mainContentRef = useRef(null);
@@ -93,6 +94,18 @@ export default function Stake() {
     return formatEther((previewDepositData as number) ?? 0).toString();
   }, [previewDepositData]);
 
+  const { data: isDepositPausedData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "isDepositPaused",
+    query: {
+      enabled: isConnected,
+    },
+  });
+  const isDepositPaused = useMemo(() => {
+    return (isDepositPausedData as boolean) ?? false;
+  }, [isDepositPausedData]);
+
   const resetFields = () => {
     setStakeAmount("");
     setReceivingWalletAddress(address ?? "");
@@ -105,7 +118,7 @@ export default function Stake() {
     if (!amountError && !addressError) {
       writeContract(
         {
-          abi: MarbleLsdProxy.abi,
+          abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
           functionName: "deposit",
           value: parseEther(stakeAmount),
@@ -165,57 +178,63 @@ export default function Stake() {
   };
 
   return (
-    <div className="relative" ref={mainContentRef}>
-      {/* First step: Stake poge */}
-      {currentStep === StakeStep.StakePage && (
-        <StakePage
-          stakeAmount={stakeAmount}
-          setStakeAmount={setStakeAmount}
-          enableConnectedWallet={enableConnectedWallet}
-          setEnableConnectedWallet={setEnableConnectedWallet}
-          receivingWalletAddress={receivingWalletAddress}
-          setReceivingWalletAddress={setReceivingWalletAddress}
-          addressError={addressError}
-          setAddressError={setAddressError}
-          previewDeposit={previewDeposit}
-          isPending={isPending}
-          submitStake={submitStake}
-          amountError={amountError}
-          setAmountError={setAmountError}
-        />
+    <>
+      {!isDepositPaused ? (
+        <div className="relative" ref={mainContentRef}>
+          {/* First step: Stake page */}
+          {currentStep === StakeStep.StakePage && (
+            <StakePage
+              stakeAmount={stakeAmount}
+              setStakeAmount={setStakeAmount}
+              enableConnectedWallet={enableConnectedWallet}
+              setEnableConnectedWallet={setEnableConnectedWallet}
+              receivingWalletAddress={receivingWalletAddress}
+              setReceivingWalletAddress={setReceivingWalletAddress}
+              addressError={addressError}
+              setAddressError={setAddressError}
+              previewDeposit={previewDeposit}
+              isPending={isPending}
+              submitStake={submitStake}
+              amountError={amountError}
+              setAmountError={setAmountError}
+            />
+          )}
+
+          {/* Second step: Confirming Stake page */}
+          {currentStep === StakeStep.StakeConfirmingPage &&
+            receivingWalletAddress &&
+            hash && (
+              <StakeConfirmingPage
+                addTokenToWallet={addTokenToWallet}
+                isAddTokenRequested={isAddTokenRequested}
+                stakeAmount={stakeAmount}
+                previewDeposit={previewDeposit}
+                receivingWalletAddress={receivingWalletAddress}
+                hash={hash}
+                setCurrentStep={setCurrentStepAndScroll}
+                resetFields={resetFields}
+              />
+            )}
+
+          {/* Last step: Confirmed Stake page */}
+          {currentStep === StakeStep.StakeConfirmationPage &&
+            receivingWalletAddress &&
+            hash && (
+              <StakeConfirmedPage
+                addTokenToWallet={addTokenToWallet}
+                isAddTokenRequested={isAddTokenRequested}
+                stakeAmount={stakeAmount}
+                previewDeposit={previewDeposit}
+                receivingWalletAddress={receivingWalletAddress}
+                hash={hash}
+                setCurrentStep={setCurrentStepAndScroll}
+                resetFields={resetFields}
+              />
+            )}
+        </div>
+      ) : (
+        <PausedStakingPage />
       )}
-
-      {/* Second step: Confirming Stake page */}
-      {currentStep === StakeStep.StakeConfirmingPage &&
-        receivingWalletAddress &&
-        hash && (
-          <StakeConfirmingPage
-            addTokenToWallet={addTokenToWallet}
-            isAddTokenRequested={isAddTokenRequested}
-            stakeAmount={stakeAmount}
-            previewDeposit={previewDeposit}
-            receivingWalletAddress={receivingWalletAddress}
-            hash={hash}
-            setCurrentStep={setCurrentStepAndScroll}
-            resetFields={resetFields}
-          />
-        )}
-
-      {/* Last step: Confirmed Stake page */}
-      {currentStep === StakeStep.StakeConfirmationPage &&
-        receivingWalletAddress &&
-        hash && (
-          <StakeConfirmedPage
-            addTokenToWallet={addTokenToWallet}
-            isAddTokenRequested={isAddTokenRequested}
-            stakeAmount={stakeAmount}
-            previewDeposit={previewDeposit}
-            receivingWalletAddress={receivingWalletAddress}
-            hash={hash}
-            setCurrentStep={setCurrentStepAndScroll}
-            resetFields={resetFields}
-          />
-        )}
-    </div>
+    </>
   );
 }
