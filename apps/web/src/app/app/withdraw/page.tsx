@@ -1,16 +1,10 @@
 "use client";
 
-import {
-  useAccount,
-  useReadContract,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
 import { useContractContext } from "@/context/ContractContext";
-import { useDfiPrice } from "@/hooks/useDfiPrice";
 import PausedWithdrawalsPage from "@/app/app/withdraw/components/PausedWithdrawalsPage";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
@@ -60,10 +54,6 @@ export default function Withdraw() {
     status: writeStatus,
   } = useWriteContract();
 
-  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash,
-  });
-
   const previewRedeem = useMemo(() => {
     return formatEther((previewRedeemData as number) ?? 0).toString();
   }, [previewRedeemData]);
@@ -107,9 +97,6 @@ export default function Withdraw() {
             if (hash) {
               setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
             }
-          },
-          onError: (error) => {
-            console.log({ error });
           },
         },
       );
