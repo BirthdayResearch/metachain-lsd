@@ -1,6 +1,11 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
@@ -13,6 +18,7 @@ import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { Abi, parseEther } from "viem";
+import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
 
 /*
  * Withdrawal flow
@@ -53,6 +59,10 @@ export default function Withdraw() {
     writeContract,
     status: writeStatus,
   } = useWriteContract();
+
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
 
   const previewRedeem = useMemo(() => {
     return formatEther((previewRedeemData as number) ?? 0).toString();
@@ -137,19 +147,31 @@ export default function Withdraw() {
             />
           ) : null}
 
-          {currentStep === WithdrawStep.PreviewWithdrawal
-            ? address &&
-              hash && (
-                <PreviewWithdrawal
-                  withdrawAmount={withdrawAmount}
-                  previewWithdrawal={previewRedeem}
-                  setCurrentStep={setCurrentStepAndScroll}
-                  hash={hash}
-                  receivingWalletAddress={address}
-                  resetFields={resetFields}
-                />
-              )
-            : null}
+          {currentStep === WithdrawStep.PreviewWithdrawal &&
+            address &&
+            hash && (
+              <PreviewWithdrawal
+                withdrawAmount={withdrawAmount}
+                previewWithdrawal={previewRedeem}
+                setCurrentStep={setCurrentStepAndScroll}
+                hash={hash}
+                receivingWalletAddress={address}
+                resetFields={resetFields}
+              />
+            )}
+
+          {currentStep === WithdrawStep.WithdrawConfirmationPage &&
+            address &&
+            hash && (
+              <WithdrawalConfirmation
+                withdrawAmount={withdrawAmount}
+                previewWithdrawal={previewRedeem}
+                setCurrentStep={setCurrentStepAndScroll}
+                hash={hash}
+                receivingWalletAddress={address}
+                resetFields={resetFields}
+              />
+            )}
         </div>
       ) : null}
 

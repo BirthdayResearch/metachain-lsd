@@ -46,7 +46,7 @@ export default function WithdrawPage({
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    token: mDFI.address,
+    // token: mDFI.address,
   });
 
   const { data: totalAssetsData } = useReadContract({
@@ -75,7 +75,7 @@ export default function WithdrawPage({
   }, [address, status, walletBalance]);
 
   return (
-    <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none ">
+    <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none">
       <div>
         <div className="w-full gap-y-5">
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
