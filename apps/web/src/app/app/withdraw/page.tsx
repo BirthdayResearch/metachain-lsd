@@ -151,9 +151,11 @@ export default function Withdraw() {
               )
             : null}
         </div>
-      ) : (
-        <PausedWithdrawalsPage />
-      )}
+      ) : null}
+
+      {isWithdrawalPaused && <PausedWithdrawalsPage />}
+      {/* TODO: Uncomment once data is not hardcoded */}
+      {/* <ComplimentarySection /> */}
     </>
   );
 }
