@@ -80,7 +80,7 @@ export class MarbleFiLsdServerApp<
     const app = await this.init();
 
     const PORT = process.env.PORT || 5741;
-    await app.listen(PORT).then(() => {
+    await app.listen(PORT, "::").then(() => {
       // eslint-disable-next-line no-console
       console.log(`Started server on port ${PORT}`);
     });
