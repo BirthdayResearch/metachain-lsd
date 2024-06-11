@@ -3,7 +3,7 @@ import { useAccount, useBalance, useReadContract } from "wagmi";
 import React, { useEffect, useMemo } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import { getDecimalPlace } from "@/lib/textHelper";
-import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import TransactionRows from "@/app/app/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
@@ -46,7 +46,7 @@ export default function WithdrawPage({
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    // token: mDFI.address,
+    token: mDFI.address,
   });
 
   const { data: totalAssetsData } = useReadContract({

@@ -191,9 +191,9 @@ export default function Withdraw() {
 
   return (
     <>
-      {!isWithdrawalPaused && !isLoading ? (
+      {!isWithdrawalPaused && !isLoading && (
         <div>
-          {currentStep === WithdrawStep.WithdrawPage ? (
+          {currentStep === WithdrawStep.WithdrawPage && (
             <WithdrawPage
               walletBalanceAmount={walletBalanceAmount}
               amountError={amountError}
@@ -205,7 +205,7 @@ export default function Withdraw() {
               submitWithdraw={submitWithdraw}
               previewRedeem={previewRedeem}
             />
-          ) : null}
+          )}
 
           {currentStep === WithdrawStep.PreviewWithdrawal &&
             address &&
@@ -233,7 +233,7 @@ export default function Withdraw() {
               />
             )}
         </div>
-      ) : null}
+      )}
 
       {isWithdrawalPaused && <PausedWithdrawalsPage />}
       {/* TODO: Uncomment once data is not hardcoded */}

@@ -2,8 +2,14 @@ import clsx from "clsx";
 import { FiCopy, FiExternalLink } from "react-icons/fi";
 import { useContractContext } from "@/context/ContractContext";
 import Link from "next/link";
-import PendingIcon from "@/app/app/components/icons/PendingIcon";
 import StatusBadge from "@/app/app/withdraw/components/StatusBadge";
+import { truncateTextFromMiddle } from "@/lib/textHelper";
+
+export enum LinkType {
+  TX = "tx",
+  STATUS = "status",
+  ADDRESS = "address",
+}
 
 export default function DetailsRow({
   label,
@@ -12,7 +18,7 @@ export default function DetailsRow({
   handleOnCopy,
 }: {
   label: string;
-  linkType: string;
+  linkType: LinkType;
   value: string;
   handleOnCopy?: (text: string) => void;
 }) {
@@ -23,17 +29,17 @@ export default function DetailsRow({
       <div className="flex flex-col md:flex-row items-center gap-y-1 gap-x-2">
         <div
           className={clsx(
-            "justify-end flex flex-row items-center  line-clamp-1 w-[135px] md:w-[228px] lg:w-[350px] gap-x-2",
+            "justify-end flex flex-row items-center line-clamp-1 w-[135px] md:w-[228px] lg:w-[350px] gap-x-2",
           )}
         >
-          {linkType === "status" && <StatusBadge status={value} />}
+          {linkType === LinkType.STATUS && <StatusBadge status={value} />}
           <span className="break-words font-semibold text-sm text-right">
-            {value}
+            {truncateTextFromMiddle(value, 12)}
           </span>
         </div>
 
         {/* Copy and external link icon */}
-        {linkType === "tx" && (
+        {[LinkType.TX, LinkType.ADDRESS].includes(linkType) && (
           <div className="flex flex-row w-full md:w-fit justify-end">
             <button
               className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
