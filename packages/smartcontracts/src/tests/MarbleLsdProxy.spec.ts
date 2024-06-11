@@ -213,7 +213,9 @@ describe("MarbleLsdProxy", () => {
   it("Should fail when request withdrawal before staking", async () => {
     const signer = accounts[5];
     const amount = toWei("10");
-    await expect(proxyMarbleLsd.requestWithdrawal(amount, signer.address))
+    await expect(
+      proxyMarbleLsd.connect(signer).requestWithdrawal(amount, signer.address),
+    )
       .to.be.revertedWithCustomError(proxyMarbleLsd, "ExceededMaxWithdrawal")
       .withArgs(signer.address, amount, 0);
   });
