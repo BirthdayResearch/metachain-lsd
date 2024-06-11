@@ -6,14 +6,14 @@ import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
-  previewWithdrawal,
+  amountToReceive,
   setCurrentStep,
   hash,
   receivingWalletAddress,
   resetFields,
 }: {
   withdrawAmount: string;
-  previewWithdrawal: string;
+  amountToReceive: string;
   setCurrentStep: (step: WithdrawStep) => void;
   hash: string;
   receivingWalletAddress: string;
@@ -36,9 +36,9 @@ export default function WithdrawalConfirmation({
         {
           label: "You will receive",
           value: {
-            value: previewWithdrawal,
+            value: amountToReceive,
             suffix: " DFI",
-            decimalScale: getDecimalPlace(previewWithdrawal),
+            decimalScale: getDecimalPlace(amountToReceive),
           },
         },
       ]}
