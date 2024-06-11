@@ -16,23 +16,27 @@ export default function NumericFormat({
   suffix = "",
   thousandSeparator,
   decimalScale = 8,
-  // trimTrailingZeros,
+  trimTrailingZeros,
   testId,
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
     prefix,
-    suffix,
+    suffix: ` ${suffix}`, // add space before suffix
     decimalSeparator: ".",
     groupSeparator: thousandSeparator ? "," : "",
     groupSize: thousandSeparator ? 3 : 0,
   };
 
   let formattedNumber = new BigNumber(value).toFormat(decimalScale, fmt);
-  // TODO incorrect logic Fix this
-  // if (trimTrailingZeros) {
-  //   const num = formattedNumber.split(" ")[0].replace(/\.?0+$/, "");
-  //   formattedNumber = `${num} ${suffix}`;
-  // }
+
+  if (trimTrailingZeros) {
+    // split the formatted # by space to separate the number and suffix
+    const parts = formattedNumber.split(" ");
+    // remove trailing zeros and decimal point if there are  no digits after it
+    const num = parts[0].replace(/\.?0+$/, "");
+    // join the number and suffix back together
+    formattedNumber = `${num} ${parts[1]}`;
+  }
 
   return (
     <span

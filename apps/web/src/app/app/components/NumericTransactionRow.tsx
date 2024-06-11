@@ -29,7 +29,10 @@ export function NumericTransactionRow({
           </span>
         )}
       </div>
-      <NumericFormat className="text-sm font-semibold text-right" {...value} />
+      <NumericFormat
+        className="text-sm font-semibold text-right bg-yellow-300"
+        {...value}
+      />
     </div>
   );
 }

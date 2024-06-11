@@ -188,7 +188,7 @@ function StatsCard({
             suffix={suffix}
             decimalScale={decimal}
             value={format ? format(value) : value}
-            className="font-medium text-dark-300/80 text-wrap	break-all"
+            className="font-medium text-dark-300/80 text-wrap break-all"
           />
         )}
         <span className="font-bold text-xs text-dark-300">{label}</span>
