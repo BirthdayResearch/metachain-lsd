@@ -1,14 +1,17 @@
-import { getDecimalPlace } from "@/lib/textHelper";
 import clsx from "clsx";
+import React from "react";
+import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import BigNumber from "bignumber.js";
 
 export default function WalletDetails({
   isWalletConnected,
+  suffix,
   style,
   walletBalanceAmount,
 }: {
   isWalletConnected: boolean;
+  suffix?: string;
   style?: string;
   walletBalanceAmount?: string;
 }) {
@@ -23,8 +26,8 @@ export default function WalletDetails({
           <span className="mr-1">Available:</span>
           <NumericFormat
             className="font-semibold"
-            suffix=" DFI"
-            value={new BigNumber(walletBalanceAmount ?? 0).toString()}
+            suffix={suffix}
+            value={new BigNumber(walletBalanceAmount ?? 0)}
             decimalScale={decimalScale}
           />
         </p>

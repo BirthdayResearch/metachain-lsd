@@ -1,33 +1,40 @@
 import { useContractContext } from "@/context/ContractContext";
 import { Interface, InterfaceAbi } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
-import { getDecimalPlace } from "@/lib/textHelper";
+import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 
 export default function TransactionRows({
-  previewDeposit,
+  previewAmount,
+  withdrawAmount,
 }: {
-  previewDeposit: string;
+  previewAmount: string;
+  withdrawAmount?: string;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
 
-  const { txnCost } = useGetTxnCost(
-    new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
-      "deposit",
-      [MarbleLsdProxy.address],
-    ) as `0x${string}`,
-  );
+  const data = withdrawAmount
+    ? (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
+        "requestRedeem",
+        [toWei(withdrawAmount), MarbleLsdProxy.address],
+      ) as `0x${string}`)
+    : (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
+        "deposit",
+        [MarbleLsdProxy.address],
+      ) as `0x${string}`);
+
+  const { txnCost } = useGetTxnCost(data);
 
   return (
-    <div className="mb-12 md:mb-9 lg:mb-12">
+    <div>
       <NumericTransactionRow
         label="You will receive"
         comment="(after fees)"
         value={{
-          value: previewDeposit,
-          decimalScale: getDecimalPlace(previewDeposit),
+          value: previewAmount,
+          decimalScale: getDecimalPlace(previewAmount),
           suffix: ` mDFI`,
         }}
       />

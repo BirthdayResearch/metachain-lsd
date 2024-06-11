@@ -5,17 +5,17 @@ export function Card({
   label,
   desc,
   Icon,
-  testID,
+  testId,
 }: {
   label: string;
   desc: string;
   Icon: IconType;
-  testID: string;
+  testId: string;
 }) {
   return (
     <div className="flex flex-col gap-6 items-center text-center rounded-[20px] border p-10 card-border card-gradient-background">
       <div>
-        <Tag text={label} testID={testID} />
+        <Tag text={label} testId={testId} />
       </div>
       <div>
         <Icon size={32} />
