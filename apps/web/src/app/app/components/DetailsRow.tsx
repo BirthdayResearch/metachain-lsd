@@ -3,6 +3,7 @@ import { FiCopy, FiExternalLink } from "react-icons/fi";
 import { useContractContext } from "@/context/ContractContext";
 import Link from "next/link";
 import PendingIcon from "@/app/app/components/icons/PendingIcon";
+import StatusBadge from "@/app/app/withdraw/components/StatusBadge";
 
 export default function DetailsRow({
   label,
@@ -25,7 +26,7 @@ export default function DetailsRow({
             "justify-end flex flex-row items-center  line-clamp-1 w-[135px] md:w-[228px] lg:w-[350px] gap-x-2",
           )}
         >
-          {linkType === "status" && <PendingIcon className="w-4 h-4" />}
+          {linkType === "status" && <StatusBadge status={value} />}
           <span className="break-words font-semibold text-sm text-right">
             {value}
           </span>

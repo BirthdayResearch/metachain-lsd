@@ -17,6 +17,8 @@ import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { Abi, parseEther } from "viem";
+import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
+
 import BigNumber from "bignumber.js";
 /*
  * Withdrawal flow
@@ -145,9 +147,6 @@ export default function Withdraw() {
                 setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
               }
             },
-            onError: (error) => {
-              console.log({ error });
-            },
           },
         );
       } else {
@@ -164,9 +163,6 @@ export default function Withdraw() {
                 if (hash) {
                   setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
                 }
-              },
-              onError: (error) => {
-                console.log({ error });
               },
             },
           );
@@ -190,7 +186,7 @@ export default function Withdraw() {
   }, [writeStatus]);
   return (
     <>
-      {isWithdrawalPaused && !isLoading ? (
+      {!isWithdrawalPaused && !isLoading ? (
         <div>
           {currentStep === WithdrawStep.WithdrawPage ? (
             <WithdrawPage
@@ -206,23 +202,37 @@ export default function Withdraw() {
             />
           ) : null}
 
-          {currentStep === WithdrawStep.PreviewWithdrawal
-            ? address &&
-              hash && (
-                <PreviewWithdrawal
-                  withdrawAmount={withdrawAmount}
-                  previewWithdrawal={previewRedeem}
-                  setCurrentStep={setCurrentStepAndScroll}
-                  hash={hash}
-                  receivingWalletAddress={address}
-                  resetFields={resetFields}
-                />
-              )
-            : null}
+          {currentStep === WithdrawStep.PreviewWithdrawal &&
+            address &&
+            hash && (
+              <PreviewWithdrawal
+                withdrawAmount={withdrawAmount}
+                previewWithdrawal={previewRedeem}
+                setCurrentStep={setCurrentStepAndScroll}
+                hash={hash}
+                receivingWalletAddress={address}
+                resetFields={resetFields}
+              />
+            )}
+
+          {currentStep === WithdrawStep.WithdrawConfirmationPage &&
+            address &&
+            hash && (
+              <WithdrawalConfirmation
+                withdrawAmount={withdrawAmount}
+                previewWithdrawal={previewRedeem}
+                setCurrentStep={setCurrentStepAndScroll}
+                hash={hash}
+                receivingWalletAddress={address}
+                resetFields={resetFields}
+              />
+            )}
         </div>
-      ) : (
-        <PausedWithdrawalsPage />
-      )}
+      ) : null}
+
+      {isWithdrawalPaused && <PausedWithdrawalsPage />}
+      {/* TODO: Uncomment once data is not hardcoded */}
+      {/* <ComplimentarySection /> */}
     </>
   );
 }

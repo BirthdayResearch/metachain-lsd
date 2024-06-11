@@ -18,6 +18,6 @@ EXPOSE 5741
 RUN pnpm fetch
 
 RUN pnpm install -r --offline
-RUN pnpm build
+RUN pnpm build --filter="server"
 
 CMD node apps/server/dist/main.js
