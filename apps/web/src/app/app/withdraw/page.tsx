@@ -139,7 +139,7 @@ export default function Withdraw() {
             hash && (
               <PreviewWithdrawal
                 withdrawAmount={withdrawAmount}
-                previewWithdrawal={previewRedeem}
+                amountToReceive={previewRedeem}
                 setCurrentStep={setCurrentStepAndScroll}
                 hash={hash}
                 receivingWalletAddress={address}
@@ -152,7 +152,7 @@ export default function Withdraw() {
             hash && (
               <WithdrawalConfirmation
                 withdrawAmount={withdrawAmount}
-                previewWithdrawal={previewRedeem}
+                amountToReceive={previewRedeem}
                 setCurrentStep={setCurrentStepAndScroll}
                 hash={hash}
                 receivingWalletAddress={address}
