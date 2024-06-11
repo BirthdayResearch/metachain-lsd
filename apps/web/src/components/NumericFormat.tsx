@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import clsx from "clsx";
 
 export interface NumericFormatProps extends BigNumber.Format {
   value: string | number | BigNumber;
@@ -41,7 +40,7 @@ export default function NumericFormat({
 
   return (
     <span
-      className={clsx("bg-yellow-300", className)}
+      className={className}
       data-testid={testId}
       title={value ? new BigNumber(value).toString() : ""}
     >
