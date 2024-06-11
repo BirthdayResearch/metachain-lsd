@@ -3,6 +3,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { StakeStep } from "@/types";
+import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function StakeConfirmedPage({
   stakeAmount,
@@ -50,12 +51,12 @@ export default function StakeConfirmedPage({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: "address",
+          linkType: LinkType.ADDRESS,
         },
         {
           label: "Transaction ID",
           value: hash,
-          linkType: "tx",
+          linkType: LinkType.ADDRESS,
         },
       ]}
       buttons={

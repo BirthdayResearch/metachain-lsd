@@ -2,6 +2,7 @@ import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { WithdrawStep } from "@/types";
+import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
@@ -45,17 +46,17 @@ export default function WithdrawalConfirmation({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: "tx",
+          linkType: LinkType.TX,
         },
         {
           label: "Transaction ID",
           value: hash,
-          linkType: "tx",
+          linkType: LinkType.TX,
         },
         {
           label: "Status",
           value: "Ready for claim",
-          linkType: "status",
+          linkType: LinkType.STATUS,
         },
       ]}
       buttons={
