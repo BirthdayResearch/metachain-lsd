@@ -81,7 +81,7 @@ export default function Withdraw() {
     },
   });
 
-  const { data: allowanceData } = useReadContract({
+  const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
     address: mDFI.address,
     abi: mDFI.abi,
     functionName: "allowance",
@@ -184,6 +184,11 @@ export default function Withdraw() {
     // cleanup
     return () => toast.remove("withdraw");
   }, [writeStatus]);
+
+  useEffect(() => {
+    refetchAllowance();
+  }, [requireApproval, isApproveTxnLoading, isApproveTxnSuccess]);
+
   return (
     <>
       {!isWithdrawalPaused && !isLoading ? (
@@ -196,7 +201,7 @@ export default function Withdraw() {
               withdrawAmount={withdrawAmount}
               setWithdrawAmount={setWithdrawAmount}
               setWalletBalanceAmount={setWalletBalanceAmount}
-              isPending={isPending}
+              isPending={isPending || (requireApproval && isApproveTxnLoading)}
               submitWithdraw={submitWithdraw}
               previewRedeem={previewRedeem}
             />
