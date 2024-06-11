@@ -46,7 +46,7 @@ export default function WithdrawalConfirmation({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: LinkType.TX,
+          linkType: LinkType.ADDRESS,
         },
         {
           label: "Transaction ID",

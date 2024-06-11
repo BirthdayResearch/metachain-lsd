@@ -56,7 +56,7 @@ export default function StakeConfirmedPage({
         {
           label: "Transaction ID",
           value: hash,
-          linkType: LinkType.ADDRESS,
+          linkType: LinkType.TX,
         },
       ]}
       buttons={
