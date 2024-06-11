@@ -4,9 +4,9 @@ on:
   release:
     types: [published]
   push:
-    branches: [main]
+    branches: [main, feature/*]
   pull_request:
-    branches: [main]
+    branches: [main, feature/*]
 
 permissions:
   id-token: write
