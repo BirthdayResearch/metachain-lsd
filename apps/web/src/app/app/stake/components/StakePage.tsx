@@ -7,7 +7,7 @@ import AddressInput from "@/app/app/components/AddressInput";
 import TransactionRows from "@/app/app/stake/components/TransactionRows";
 import { CTAButton } from "@/components/button/CTAButton";
 import { ConnectKitButton } from "connectkit";
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { formatEther } from "ethers";

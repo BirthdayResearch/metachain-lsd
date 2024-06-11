@@ -3,7 +3,7 @@ import { useAccount, useBalance, useReadContract } from "wagmi";
 import React, { useEffect, useMemo } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import { InputCard } from "@/app/app/components/InputCard";
 import WalletDetails from "@/app/app/components/WalletDetails";
 import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
@@ -46,7 +46,7 @@ export default function WithdrawPage({
   const { data: walletBalance } = useBalance({
     address,
     chainId,
-    // token: mDFI.address,
+    token: mDFI.address,
   });
 
   const { data: totalAssetsData } = useReadContract({

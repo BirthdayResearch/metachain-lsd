@@ -1,4 +1,4 @@
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
 import DetailsRow, { LinkType } from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
