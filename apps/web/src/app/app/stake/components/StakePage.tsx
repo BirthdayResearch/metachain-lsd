@@ -4,7 +4,7 @@ import { InputCard } from "@/app/app/components/InputCard";
 import BigNumber from "bignumber.js";
 import ConnectedWalletSwitch from "@/app/app/stake/components/ConnectedWalletSwitch";
 import AddressInput from "@/app/app/components/AddressInput";
-import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import TransactionRows from "@/app/app/components/TransactionRows";
 import { CTAButton } from "@/components/button/CTAButton";
 import { ConnectKitButton } from "connectkit";
 import Panel from "@/app/app/components/Panel";

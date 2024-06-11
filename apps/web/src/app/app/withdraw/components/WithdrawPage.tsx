@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 import { formatEther } from "ethers";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import { getDecimalPlace } from "@/lib/textHelper";
-import TransactionRows from "@/app/app/stake/components/TransactionRows";
+import TransactionRows from "@/app/app/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
