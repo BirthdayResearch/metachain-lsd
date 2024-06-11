@@ -1,6 +1,11 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
@@ -31,6 +36,7 @@ export default function Withdraw() {
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
   );
+  const [requireApproval, setRequireApproval] = useState(false);
 
   // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
@@ -94,14 +100,25 @@ export default function Withdraw() {
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
+    setRequireApproval(false);
   };
+
+  const { data: tokenContract, writeContract: writeApprove } =
+    useWriteContract();
+
+  const { isSuccess: isApproveTxnSuccess, isLoading: isApproveTxnLoading } =
+    useWaitForTransactionReceipt({
+      hash: tokenContract,
+    });
+
   function approve() {
+    setRequireApproval(true);
     const withdrawAmtBigNum = new BigNumber(withdrawAmount);
 
     if (allowance.lt(withdrawAmtBigNum)) {
       const diff = withdrawAmtBigNum.minus(allowance);
 
-      writeContract({
+      writeApprove({
         abi: mDFI.abi as Abi,
         address: mDFI.address,
         functionName: "approve",
@@ -113,24 +130,48 @@ export default function Withdraw() {
   function submitWithdraw() {
     if (!amountError) {
       approve();
-      writeContract(
-        {
-          abi: MarbleLsdProxy.abi as Abi,
-          address: MarbleLsdProxy.address,
-          functionName: "requestRedeem",
-          args: [parseEther(withdrawAmount), address as string],
-        },
-        {
-          onSuccess: (hash) => {
-            if (hash) {
-              setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
-            }
+
+      if (!requireApproval) {
+        writeContract(
+          {
+            abi: MarbleLsdProxy.abi as Abi,
+            address: MarbleLsdProxy.address,
+            functionName: "requestRedeem",
+            args: [parseEther(withdrawAmount), address as string],
           },
-          onError: (error) => {
-            console.log({ error });
+          {
+            onSuccess: (hash) => {
+              if (hash) {
+                setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
+              }
+            },
+            onError: (error) => {
+              console.log({ error });
+            },
           },
-        },
-      );
+        );
+      } else {
+        if (isApproveTxnSuccess) {
+          writeContract(
+            {
+              abi: MarbleLsdProxy.abi as Abi,
+              address: MarbleLsdProxy.address,
+              functionName: "requestRedeem",
+              args: [parseEther(withdrawAmount), address as string],
+            },
+            {
+              onSuccess: (hash) => {
+                if (hash) {
+                  setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
+                }
+              },
+              onError: (error) => {
+                console.log({ error });
+              },
+            },
+          );
+        }
+      }
     }
   }
   useEffect(() => {
