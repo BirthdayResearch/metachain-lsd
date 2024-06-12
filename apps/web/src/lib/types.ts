@@ -2,12 +2,12 @@ import { MarbleLsdV1__factory, ShareToken__factory } from "smartcontracts/src";
 
 interface MarbleFiContractConfigI {
   address: `0x${string}`;
-  abi?: typeof MarbleLsdV1__factory.abi;
+  abi: typeof MarbleLsdV1__factory.abi;
 }
 
 interface MDfiContractConfigI {
   address: `0x${string}`;
-  abi?: typeof ShareToken__factory.abi;
+  abi: typeof ShareToken__factory.abi;
 }
 export interface ContractContextI {
   EthereumRpcUrl: string;

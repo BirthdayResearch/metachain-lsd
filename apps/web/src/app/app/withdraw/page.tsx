@@ -48,7 +48,7 @@ export default function Withdraw() {
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewRedeem",
-    args: [toWei(withdrawAmountString)],
+    args: [BigInt(toWei(withdrawAmountString))],
     query: {
       enabled: isConnected,
     },
@@ -62,7 +62,7 @@ export default function Withdraw() {
   } = useWriteContract();
 
   const previewRedeem = useMemo(() => {
-    return formatEther((previewRedeemData as number) ?? 0).toString();
+    return formatEther((previewRedeemData as bigint) ?? 0).toString();
   }, [previewRedeemData]);
 
   const setCurrentStepAndScroll = (step: WithdrawStep) => {
@@ -85,14 +85,14 @@ export default function Withdraw() {
     address: mDFI.address,
     abi: mDFI.abi,
     functionName: "allowance",
-    args: [address, MarbleLsdProxy.address],
+    args: [address as `0x${string}`, MarbleLsdProxy.address],
     query: {
       enabled: isConnected,
     },
   });
 
   const allowance = useMemo(() => {
-    return new BigNumber(formatEther((allowanceData as number) ?? 0));
+    return new BigNumber(formatEther((allowanceData as bigint) ?? 0));
   }, [allowanceData]);
 
   const isWithdrawalPaused = useMemo(() => {
@@ -121,7 +121,7 @@ export default function Withdraw() {
       const diff = withdrawAmtBigNum.minus(allowance);
 
       writeApprove({
-        abi: mDFI.abi as Abi,
+        abi: mDFI.abi,
         address: mDFI.address,
         functionName: "approve",
         args: [MarbleLsdProxy.address, parseEther(diff.toString())],
@@ -130,16 +130,21 @@ export default function Withdraw() {
   }
 
   function submitWithdraw() {
+    console.log({
+      amountError,
+      args: [parseEther(withdrawAmount), address as `0x${string}`],
+    });
+    // TODO(Pierre): approval request should be depending on the allowance
     if (!amountError) {
       approve();
 
       if (!requireApproval) {
         writeContract(
           {
-            abi: MarbleLsdProxy.abi as Abi,
+            abi: MarbleLsdProxy.abi,
             address: MarbleLsdProxy.address,
             functionName: "requestRedeem",
-            args: [parseEther(withdrawAmount), address as string],
+            args: [parseEther(withdrawAmount), address as `0x${string}`],
           },
           {
             onSuccess: (hash) => {
@@ -153,10 +158,10 @@ export default function Withdraw() {
         if (isApproveTxnSuccess) {
           writeContract(
             {
-              abi: MarbleLsdProxy.abi as Abi,
+              abi: MarbleLsdProxy.abi,
               address: MarbleLsdProxy.address,
               functionName: "requestRedeem",
-              args: [parseEther(withdrawAmount), address as string],
+              args: [parseEther(withdrawAmount), address as `0x${string}`],
             },
             {
               onSuccess: (hash) => {
