@@ -64,7 +64,16 @@ export default function Withdraw() {
     isPending,
     writeContract,
     status: writeStatus,
+    error: writeRequestRedeemError,
   } = useWriteContract();
+
+  const {
+    isSuccess: isRequestRedeemTxnSuccess,
+    isLoading: isRequestRedeemTxnLoading,
+    error: requestRedeemTxnError,
+  } = useWaitForTransactionReceipt({
+    hash: hash,
+  });
 
   const previewRedeem = useMemo(() => {
     return formatEther((previewRedeemData as number) ?? 0).toString();
@@ -199,9 +208,16 @@ export default function Withdraw() {
   }, [writeStatus]);
 
   useEffect(() => {
-    if (writeApproveError || approveTxnError) {
+    if (
+      writeApproveError ||
+      approveTxnError ||
+      writeRequestRedeemError ||
+      requestRedeemTxnError
+    ) {
       setHasPendingTx(false);
-      if (writeApproveError?.message?.includes("User rejected the request")) {
+      const message =
+        writeApproveError?.message ?? writeRequestRedeemError?.message;
+      if (message?.includes("User rejected the request")) {
         toast(
           "The transaction was rejected in your wallet. No funds have been approved. Please retry your transaction.",
           {
@@ -212,7 +228,11 @@ export default function Withdraw() {
           },
         );
       } else {
-        const errorMsg = writeApproveError?.message ?? approveTxnError?.message;
+        const errorMsg =
+          writeApproveError?.message ??
+          approveTxnError?.message ??
+          writeRequestRedeemError?.message ??
+          requestRedeemTxnError?.message;
         if (errorMsg) {
           toast(errorMsg, {
             duration: 5000,
@@ -223,7 +243,12 @@ export default function Withdraw() {
         }
       }
     }
-  }, [writeApproveError, approveTxnError]);
+  }, [
+    writeApproveError,
+    approveTxnError,
+    writeRequestRedeemError,
+    requestRedeemTxnError,
+  ]);
 
   useEffect(() => {
     if (requireApproval && isApproveTxnSuccess) {
@@ -231,6 +256,18 @@ export default function Withdraw() {
       requestRedeem();
     }
   }, [requireApproval, isApproveTxnLoading, isApproveTxnSuccess]);
+
+  useEffect(() => {
+    if (
+      isRequestRedeemTxnSuccess &&
+      currentStep !== WithdrawStep.WithdrawConfirmationPage
+    ) {
+      // to schedule component change only after toast is removed
+      setTimeout(() => {
+        setCurrentStepAndScroll(WithdrawStep.WithdrawConfirmationPage);
+      }, 0);
+    }
+  }, [isRequestRedeemTxnSuccess]);
 
   return (
     <>
