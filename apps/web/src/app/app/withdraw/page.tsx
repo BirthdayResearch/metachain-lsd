@@ -60,6 +60,13 @@ export default function Withdraw() {
     return formatEther((previewRedeemData as number) ?? 0).toString();
   }, [previewRedeemData]);
 
+  const setCurrentStepAndScroll = (step: WithdrawStep) => {
+    setCurrentStep(step);
+    if (mainContentRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const { data: isWithdrawalPausedData, isLoading: isWithdrawalPausedLoading } =
     useReadContract({
       address: MarbleLsdProxy.address,
@@ -87,13 +94,6 @@ export default function Withdraw() {
   const allowance = useMemo(() => {
     return new BigNumber(formatEther((allowanceData as number) ?? 0));
   }, [allowanceData]);
-
-  const setCurrentStepAndScroll = (step: WithdrawStep) => {
-    setCurrentStep(step);
-    if (mainContentRef.current) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
 
   const resetFields = () => {
     setWithdrawAmount("");
