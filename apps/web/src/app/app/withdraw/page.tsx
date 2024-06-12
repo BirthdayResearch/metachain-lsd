@@ -59,6 +59,10 @@ export default function Withdraw() {
     },
   });
 
+  const previewRedeem = useMemo(() => {
+    return formatEther((previewRedeemData as number) ?? 0).toString();
+  }, [previewRedeemData]);
+
   const {
     data: hash,
     isPending,
@@ -75,17 +79,6 @@ export default function Withdraw() {
     hash: hash,
   });
 
-  const previewRedeem = useMemo(() => {
-    return formatEther((previewRedeemData as number) ?? 0).toString();
-  }, [previewRedeemData]);
-
-  const setCurrentStepAndScroll = (step: WithdrawStep) => {
-    setCurrentStep(step);
-    if (mainContentRef.current) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
   const { data: isWithdrawalPausedData, isLoading: isWithdrawalPausedLoading } =
     useReadContract({
       address: MarbleLsdProxy.address,
@@ -95,6 +88,10 @@ export default function Withdraw() {
         enabled: isConnected,
       },
     });
+
+  const isWithdrawalPaused = useMemo(() => {
+    return (isWithdrawalPausedData as boolean) ?? false;
+  }, [isWithdrawalPausedData]);
 
   const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
     address: mDFI.address,
@@ -124,19 +121,12 @@ export default function Withdraw() {
     hash: tokenContractData,
   });
 
-  useEffect(() => {
-    if (!isApproveTxnSuccess) {
-      if (allowance.lt(withdrawAmtBigNum)) {
-        setRequireApproval(true);
-      } else {
-        setRequireApproval(false);
-      }
+  const setCurrentStepAndScroll = (step: WithdrawStep) => {
+    setCurrentStep(step);
+    if (mainContentRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [allowance, withdrawAmtBigNum, isApproveTxnSuccess]);
-
-  const isWithdrawalPaused = useMemo(() => {
-    return (isWithdrawalPausedData as boolean) ?? false;
-  }, [isWithdrawalPausedData]);
+  };
 
   const resetFields = () => {
     setWithdrawAmount("");
@@ -192,6 +182,17 @@ export default function Withdraw() {
     // If no approval required, perform requestRedeem function directly
     requestRedeem();
   };
+
+  useEffect(() => {
+    if (!isApproveTxnSuccess) {
+      if (allowance.lt(withdrawAmtBigNum)) {
+        setRequireApproval(true);
+      } else {
+        setRequireApproval(false);
+      }
+    }
+  }, [allowance, withdrawAmtBigNum, isApproveTxnSuccess]);
+
   useEffect(() => {
     if (writeStatus === "pending") {
       toast("Confirm transaction on your wallet.", {
