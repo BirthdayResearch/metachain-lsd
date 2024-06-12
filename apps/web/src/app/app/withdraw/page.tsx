@@ -38,11 +38,16 @@ export default function Withdraw() {
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
   );
+  const [hasPendingTx, setHasPendingTx] = useState(false);
   const [requireApproval, setRequireApproval] = useState(false);
 
   // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
   const withdrawAmountString = validAmount ? withdrawAmount : "0";
+
+  const withdrawAmtBigNum = useMemo(() => {
+    return new BigNumber(withdrawAmount);
+  }, [withdrawAmount]);
 
   const { data: previewRedeemData } = useReadContract({
     address: MarbleLsdProxy.address,
@@ -72,14 +77,15 @@ export default function Withdraw() {
     }
   };
 
-  const { data: isWithdrawalPausedData, isLoading } = useReadContract({
-    address: MarbleLsdProxy.address,
-    abi: MarbleLsdProxy.abi,
-    functionName: "isWithdrawalPaused",
-    query: {
-      enabled: isConnected,
-    },
-  });
+  const { data: isWithdrawalPausedData, isLoading: isWithdrawalPausedLoading } =
+    useReadContract({
+      address: MarbleLsdProxy.address,
+      abi: MarbleLsdProxy.abi,
+      functionName: "isWithdrawalPaused",
+      query: {
+        enabled: isConnected,
+      },
+    });
 
   const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
     address: mDFI.address,
@@ -95,6 +101,24 @@ export default function Withdraw() {
     return new BigNumber(formatEther((allowanceData as number) ?? 0));
   }, [allowanceData]);
 
+  const { data: tokenContract, writeContract: writeApprove } =
+    useWriteContract();
+
+  const { isSuccess: isApproveTxnSuccess, isLoading: isApproveTxnLoading } =
+    useWaitForTransactionReceipt({
+      hash: tokenContract,
+    });
+
+  useEffect(() => {
+    if (!isApproveTxnSuccess) {
+      if (allowance.lt(withdrawAmtBigNum)) {
+        setRequireApproval(true);
+      } else {
+        setRequireApproval(false);
+      }
+    }
+  }, [allowance, withdrawAmtBigNum, isApproveTxnSuccess]);
+
   const isWithdrawalPaused = useMemo(() => {
     return (isWithdrawalPausedData as boolean) ?? false;
   }, [isWithdrawalPausedData]);
@@ -105,71 +129,54 @@ export default function Withdraw() {
     setRequireApproval(false);
   };
 
-  const { data: tokenContract, writeContract: writeApprove } =
-    useWriteContract();
-
-  const { isSuccess: isApproveTxnSuccess, isLoading: isApproveTxnLoading } =
-    useWaitForTransactionReceipt({
-      hash: tokenContract,
-    });
-
   function approve() {
-    setRequireApproval(true);
-    const withdrawAmtBigNum = new BigNumber(withdrawAmount);
-
-    if (allowance.lt(withdrawAmtBigNum)) {
-      const diff = withdrawAmtBigNum.minus(allowance);
-
-      writeApprove({
-        abi: mDFI.abi as Abi,
-        address: mDFI.address,
-        functionName: "approve",
-        args: [MarbleLsdProxy.address, parseEther(diff.toString())],
-      });
-    }
+    writeApprove({
+      abi: mDFI.abi as Abi,
+      address: mDFI.address,
+      functionName: "approve",
+      args: [MarbleLsdProxy.address, parseEther(withdrawAmount)],
+    });
   }
 
-  function submitWithdraw() {
-    if (!amountError) {
+  function requestRedeem() {
+    writeContract(
+      {
+        abi: MarbleLsdProxy.abi as Abi,
+        address: MarbleLsdProxy.address,
+        functionName: "requestRedeem",
+        args: [parseEther(withdrawAmount), address as string],
+      },
+      {
+        onSuccess: (hash) => {
+          if (hash) {
+            console.log(hash);
+            setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
+          }
+        },
+      },
+    );
+  }
+
+  const handleInitiateTransfer = async () => {
+    setHasPendingTx(true);
+
+    // Refetch token allowance
+    const { data: refetchedData } = await refetchAllowance();
+    const refetchedAllowance = new BigNumber(
+      formatEther((refetchedData as number) ?? 0),
+    );
+    console.log({ refetchedData: refetchedAllowance.toString() });
+    console.log(refetchedAllowance.lt(withdrawAmtBigNum));
+    if (refetchedAllowance.lt(withdrawAmtBigNum)) {
+      console.log("Here");
+      setRequireApproval(true);
       approve();
-
-      if (!requireApproval) {
-        writeContract(
-          {
-            abi: MarbleLsdProxy.abi as Abi,
-            address: MarbleLsdProxy.address,
-            functionName: "requestRedeem",
-            args: [parseEther(withdrawAmount), address as string],
-          },
-          {
-            onSuccess: (hash) => {
-              if (hash) {
-                setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
-              }
-            },
-          },
-        );
-      } else {
-        if (isApproveTxnSuccess) {
-          writeContract(
-            {
-              abi: MarbleLsdProxy.abi as Abi,
-              address: MarbleLsdProxy.address,
-              functionName: "requestRedeem",
-              args: [parseEther(withdrawAmount), address as string],
-            },
-            {
-              onSuccess: (hash) => {
-                if (hash) {
-                  setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
-                }
-              },
-            },
-          );
-        }
-      }
+      return;
     }
-  }
+
+    // If no approval required, perform requestRedeem function directly
+    requestRedeem();
+  };
   useEffect(() => {
     if (writeStatus === "pending") {
       toast("Confirm transaction on your wallet.", {
@@ -186,12 +193,15 @@ export default function Withdraw() {
   }, [writeStatus]);
 
   useEffect(() => {
-    refetchAllowance();
+    if (requireApproval && isApproveTxnSuccess) {
+      setRequireApproval(false);
+      requestRedeem();
+    }
   }, [requireApproval, isApproveTxnLoading, isApproveTxnSuccess]);
 
   return (
     <>
-      {!isWithdrawalPaused && !isLoading && (
+      {!isWithdrawalPaused && !isWithdrawalPausedLoading && (
         <div>
           {currentStep === WithdrawStep.WithdrawPage && (
             <WithdrawPage
@@ -201,8 +211,12 @@ export default function Withdraw() {
               withdrawAmount={withdrawAmount}
               setWithdrawAmount={setWithdrawAmount}
               setWalletBalanceAmount={setWalletBalanceAmount}
-              isPending={isPending || (requireApproval && isApproveTxnLoading)}
-              submitWithdraw={submitWithdraw}
+              isPending={
+                isPending ||
+                (requireApproval && isApproveTxnLoading) ||
+                hasPendingTx
+              }
+              submitWithdraw={handleInitiateTransfer}
               previewRedeem={previewRedeem}
             />
           )}
