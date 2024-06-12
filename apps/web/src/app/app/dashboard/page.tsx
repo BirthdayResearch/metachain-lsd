@@ -61,6 +61,19 @@ const stats = [
     label: "Withdrawal Req No",
   },
   {
+    functionName: "unfinalizedRequestNumber",
+    decimal: 0,
+    label: "Non finalized requests in the queue",
+  },
+  {
+    functionName: "unfinalizedAssets",
+    format: (values: string[]) => {
+      const [amount] = values;
+      return formatEther(amount).toString()
+    },
+    label: "DFI yet to be finalized",
+  },
+  {
     functionName: "lockedAssets",
     format: (value: string) => formatEther(value).toString(),
     decimal: 0,
