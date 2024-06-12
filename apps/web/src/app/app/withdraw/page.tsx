@@ -101,12 +101,12 @@ export default function Withdraw() {
     return new BigNumber(formatEther((allowanceData as number) ?? 0));
   }, [allowanceData]);
 
-  const { data: tokenContract, writeContract: writeApprove } =
+  const { data: tokenContractData, writeContract: writeApprove } =
     useWriteContract();
 
   const { isSuccess: isApproveTxnSuccess, isLoading: isApproveTxnLoading } =
     useWaitForTransactionReceipt({
-      hash: tokenContract,
+      hash: tokenContractData,
     });
 
   useEffect(() => {
