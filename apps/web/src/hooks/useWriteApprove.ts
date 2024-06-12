@@ -23,6 +23,7 @@ export default function useWriteApprove({
   // Write contract for `approve` function
   const {
     data: tokenContractData,
+    status: writeApproveStatus,
     writeContract: writeApprove,
     error: writeApproveError,
   } = useWriteContract();
@@ -50,6 +51,7 @@ export default function useWriteApprove({
   }, [writeApproveError, approveTxnError]);
 
   return {
+    writeApproveStatus,
     isApproveTxnLoading,
     isApproveTxnSuccess,
     writeApprove: () => {
