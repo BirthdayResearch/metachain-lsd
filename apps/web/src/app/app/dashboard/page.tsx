@@ -69,7 +69,7 @@ const stats = [
     functionName: "unfinalizedAssets",
     format: (values: string[]) => {
       const [amount] = values;
-      return formatEther(amount).toString()
+      return formatEther(amount).toString();
     },
     label: "DFI yet to be finalized",
   },
@@ -156,7 +156,7 @@ export default function Dashboard() {
                 <StatsCard
                   key={each.label}
                   label={each.label}
-                  format={each.format}
+                  format={each.format as (value: string | string[]) => string}
                   decimal={each.decimal}
                   suffix={each.suffix}
                   value={(response?.result as string) ?? "0"}
@@ -181,7 +181,7 @@ function StatsCard({
 }: {
   value: string | boolean;
   label: string;
-  format?: (value: string) => string;
+  format?: (value: string | string[]) => string;
   decimal?: number;
   suffix?: string;
 }) {
