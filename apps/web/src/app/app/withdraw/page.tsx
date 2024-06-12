@@ -101,13 +101,19 @@ export default function Withdraw() {
     return new BigNumber(formatEther((allowanceData as number) ?? 0));
   }, [allowanceData]);
 
-  const { data: tokenContractData, writeContract: writeApprove } =
-    useWriteContract();
+  const {
+    data: tokenContractData,
+    writeContract: writeApprove,
+    error: writeApproveError,
+  } = useWriteContract();
 
-  const { isSuccess: isApproveTxnSuccess, isLoading: isApproveTxnLoading } =
-    useWaitForTransactionReceipt({
-      hash: tokenContractData,
-    });
+  const {
+    isSuccess: isApproveTxnSuccess,
+    isLoading: isApproveTxnLoading,
+    error: approveTxnError,
+  } = useWaitForTransactionReceipt({
+    hash: tokenContractData,
+  });
 
   useEffect(() => {
     if (!isApproveTxnSuccess) {
@@ -191,6 +197,33 @@ export default function Withdraw() {
     // cleanup
     return () => toast.remove("withdraw");
   }, [writeStatus]);
+
+  useEffect(() => {
+    if (writeApproveError || approveTxnError) {
+      setHasPendingTx(false);
+      if (writeApproveError?.message?.includes("User rejected the request")) {
+        toast(
+          "The transaction was rejected in your wallet. No funds have been approved. Please retry your transaction.",
+          {
+            duration: 5000,
+            className:
+              "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+            id: "userRejected",
+          },
+        );
+      } else {
+        const errorMsg = writeApproveError?.message ?? approveTxnError?.message;
+        if (errorMsg) {
+          toast(errorMsg, {
+            duration: 5000,
+            className:
+              "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+            id: "errorMsg",
+          });
+        }
+      }
+    }
+  }, [writeApproveError, approveTxnError]);
 
   useEffect(() => {
     if (requireApproval && isApproveTxnSuccess) {
