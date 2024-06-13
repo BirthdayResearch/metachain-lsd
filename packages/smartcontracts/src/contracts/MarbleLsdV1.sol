@@ -402,7 +402,7 @@ contract MarbleLsdV1 is
     // check if balance of asset is less/equal to withdrawal amount
     uint256 maxAssets = maxWithdrawal(_msgSender());
     if (_assets > maxAssets)
-      revert ExceededMaxWithdrawal(_receiver, _assets, maxAssets);
+      revert ExceededMaxWithdrawal(_msgSender(), _assets, maxAssets);
     // calculate shares to burn for corresponding assets
     uint256 shares = previewWithdrawal(_assets);
     // calculate withdrawal fees
