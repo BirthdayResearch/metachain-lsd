@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
@@ -11,8 +11,11 @@ import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
 import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
-import { Abi, parseEther } from "viem";
 import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
+
+import BigNumber from "bignumber.js";
+import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
+import useApproveAllowance from "@/hooks/useApproveAllowance";
 
 /*
  * Withdrawal flow
@@ -23,19 +26,26 @@ import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConf
 export default function Withdraw() {
   const mainContentRef = React.useRef(null);
   const { address, isConnected } = useAccount();
-  const { MarbleLsdProxy } = useContractContext();
+  const { MarbleLsdProxy, mDFI } = useContractContext();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
   // To display /withdraw pages based on the current step
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasPendingTx, setHasPendingTx] = useState(false);
 
   // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
   const withdrawAmountString = validAmount ? withdrawAmount : "0";
+
+  const withdrawAmtBigNum = useMemo(() => {
+    return new BigNumber(withdrawAmount);
+  }, [withdrawAmount]);
 
   const { data: previewRedeemData } = useReadContract({
     address: MarbleLsdProxy.address,
@@ -46,13 +56,6 @@ export default function Withdraw() {
       enabled: isConnected,
     },
   });
-
-  const {
-    data: hash,
-    isPending,
-    writeContract,
-    status: writeStatus,
-  } = useWriteContract();
 
   const previewRedeem = useMemo(() => {
     return formatEther((previewRedeemData as number) ?? 0).toString();
@@ -65,14 +68,15 @@ export default function Withdraw() {
     }
   };
 
-  const { data: isWithdrawalPausedData, isLoading } = useReadContract({
-    address: MarbleLsdProxy.address,
-    abi: MarbleLsdProxy.abi,
-    functionName: "isWithdrawalPaused",
-    query: {
-      enabled: isConnected,
-    },
-  });
+  const { data: isWithdrawalPausedData, isLoading: isWithdrawalPausedLoading } =
+    useReadContract({
+      address: MarbleLsdProxy.address,
+      abi: MarbleLsdProxy.abi,
+      functionName: "isWithdrawalPaused",
+      query: {
+        enabled: isConnected,
+      },
+    });
 
   const isWithdrawalPaused = useMemo(() => {
     return (isWithdrawalPausedData as boolean) ?? false;
@@ -81,29 +85,65 @@ export default function Withdraw() {
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
+    setIsApprovalRequested(false);
   };
 
-  function submitWithdraw() {
-    if (!amountError) {
-      writeContract(
-        {
-          abi: MarbleLsdProxy.abi as Abi,
-          address: MarbleLsdProxy.address,
-          functionName: "requestRedeem",
-          args: [parseEther(withdrawAmount), address as string],
-        },
-        {
-          onSuccess: (hash) => {
-            if (hash) {
-              setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
-            }
-          },
-        },
-      );
+  const {
+    hash,
+    isRequestRedeemTxnLoading,
+    isRequestRedeemTxnSuccess,
+    writeRequestRedeem,
+  } = useWriteRequestRedeem({
+    address: address as string,
+    withdrawAmount: withdrawAmount,
+    setErrorMessage,
+    setHasPendingTx,
+    setCurrentStepAndScroll,
+  });
+
+  const {
+    writeApproveStatus,
+    isApproveTxnLoading,
+    isApproveTxnSuccess,
+    isApprovalRequested,
+    setIsApprovalRequested,
+    checkSufficientAllowance,
+    requestAllowance,
+  } = useApproveAllowance({
+    setErrorMessage,
+    setHasPendingTx,
+  });
+
+  const handleInitiateTransfer = async () => {
+    setHasPendingTx(true);
+
+    // If there's sufficient approved allowance, proceed with redeem
+    if (await checkSufficientAllowance(withdrawAmtBigNum)) {
+      writeRequestRedeem();
+      return;
     }
-  }
+
+    // Request for allowance for an Ethereum address to spend tokens on a contract
+    requestAllowance(withdrawAmtBigNum);
+  };
+
   useEffect(() => {
-    if (writeStatus === "pending") {
+    if (isApproveTxnLoading) {
+      toast("Approve transaction is loading", {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: Infinity,
+        className:
+          "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
+        id: "approve",
+      });
+    }
+
+    // cleanup
+    return () => toast.remove("approve");
+  }, [isApproveTxnLoading]);
+
+  useEffect(() => {
+    if (writeApproveStatus === "pending" && errorMessage == null) {
       toast("Confirm transaction on your wallet.", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
         duration: Infinity,
@@ -115,10 +155,49 @@ export default function Withdraw() {
 
     // cleanup
     return () => toast.remove("withdraw");
-  }, [writeStatus]);
+  }, [writeApproveStatus]);
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+        id: "errorMessage",
+      });
+      setHasPendingTx(false);
+    }
+  }, [errorMessage, hasPendingTx]);
+
+  useEffect(() => {
+    if (!hasPendingTx) {
+      setErrorMessage(null);
+    }
+  }, [hasPendingTx]);
+
+  useEffect(() => {
+    if (isApprovalRequested && isApproveTxnSuccess) {
+      setIsApprovalRequested(false);
+      writeRequestRedeem();
+    }
+  }, [isApprovalRequested, isApproveTxnLoading, isApproveTxnSuccess]);
+
+  useEffect(() => {
+    if (
+      isRequestRedeemTxnSuccess &&
+      currentStep !== WithdrawStep.WithdrawConfirmationPage
+    ) {
+      // to schedule component change only after toast is removed
+      setTimeout(() => {
+        setCurrentStepAndScroll(WithdrawStep.WithdrawConfirmationPage);
+        setHasPendingTx(false);
+      }, 0);
+    }
+  }, [isRequestRedeemTxnSuccess]);
+
   return (
     <>
-      {!isWithdrawalPaused && !isLoading && (
+      {!isWithdrawalPaused && !isWithdrawalPausedLoading && (
         <div>
           {currentStep === WithdrawStep.WithdrawPage && (
             <WithdrawPage
@@ -128,8 +207,12 @@ export default function Withdraw() {
               withdrawAmount={withdrawAmount}
               setWithdrawAmount={setWithdrawAmount}
               setWalletBalanceAmount={setWalletBalanceAmount}
-              isPending={isPending}
-              submitWithdraw={submitWithdraw}
+              isPending={
+                isRequestRedeemTxnLoading ||
+                (isApprovalRequested && isApproveTxnLoading) ||
+                hasPendingTx
+              }
+              submitWithdraw={handleInitiateTransfer}
               previewRedeem={previewRedeem}
             />
           )}

@@ -31,17 +31,17 @@ export async function deployContracts(): Promise<MarbleLsdDeploymentResult> {
       walletSigner.address,
       // default fees recipient address
       feesRecipientSigner.address,
-    ],
+    ]
   );
 
   const marbleLsdProxy = await MarbleLsdProxy.deploy(
     marbleLsdUpgradeableAddress,
-    encodedData,
+    encodedData
   );
   await marbleLsdProxy.waitForDeployment();
   const marbleLsdProxyAddress = await marbleLsdProxy.getAddress();
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(
-    marbleLsdProxyAddress,
+    marbleLsdProxyAddress
   ) as MarbleLsdV1;
 
   const shareTokenAddress = await proxyMarbleLsd.shareToken();
