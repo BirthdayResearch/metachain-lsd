@@ -9,11 +9,17 @@ export function appConfig() {
     botNetworks: process.env.BOT_RUNNING_NETWORKS,
     defichain: {
       [EnvironmentNetwork.MainNet]: {
-        key: process.env.DEFICHAIN_MAINNET_PRIVATE_KEY,
+        rewardDistributerKey:
+          process.env.DEFICHAIN_MAINNET_REWARD_DISTRIBUTER_PK,
+        withdrawFinalizerKey:
+          process.env.DEFICHAIN_MAINNET_WITHDRAW_FINALIZER_PK,
         ethRPCUrl: "https://eth.mainnet.ocean.jellyfishsdk.com",
       },
       [EnvironmentNetwork.TestNet]: {
-        key: process.env.DEFICHAIN_TESTNET_PRIVATE_KEY,
+        rewardDistributerKey:
+          process.env.DEFICHAIN_TESTNET_REWARD_DISTRIBUTER_PK,
+        withdrawFinalizerKey:
+          process.env.DEFICHAIN_TESTNET_WITHDRAW_FINALIZER_PK,
         marbleFiContractAddress: "0x0B52a71A03a47246BD9d9C556B6Df9C42e73462A",
         ethRPCUrl: "https://eth.testnet.ocean.jellyfishsdk.com",
       },

@@ -18,7 +18,7 @@ export class BotController {
   @Cron(CronExpression.EVERY_DAY_AT_11AM)
   async initBot(): Promise<void> {
     for (let i = 0; i < this.networks.length; i++) {
-      await this.botService.processTransfer(this.networks[i]);
+      await this.botService.processRewards(this.networks[i]);
     }
   }
 

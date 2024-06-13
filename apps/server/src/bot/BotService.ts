@@ -16,15 +16,18 @@ export class BotService {
     private prismaService: PrismaService,
   ) {}
 
-  async processTransfer(network: EnvironmentNetwork) {
+  async processRewards(network: EnvironmentNetwork) {
     console.log(`Initializing reward process: ${new Date().toISOString()}`);
-
+    const privateKey = this.configService.getOrThrow<EnvironmentNetwork>(
+      `defichain.${network}.rewardDistributerKey`,
+    );
     const walletProvider = new WalletProvider(
+      privateKey,
       network,
       this.whaleApiClient,
       this.configService,
     );
-
+    await walletProvider.initWallet();
     // Retrieve UTXO balance and keep 1 UTXO for txn cost
     const utxoBalance = await walletProvider.getUTXOBalance();
     const conversionAmount = new BigNumber(utxoBalance).minus(1);
@@ -76,5 +79,20 @@ export class BotService {
     }
 
     console.log(`Reward process completed: ${new Date().toISOString()}`);
+  }
+
+  async processWithdrawals(network: EnvironmentNetwork) {
+    console.log(`Initializing reward process: ${new Date().toISOString()}`);
+    const privateKey = this.configService.getOrThrow<EnvironmentNetwork>(
+      `defichain.${network}.withdrawFinalizerKey`,
+    );
+    const walletProvider = new WalletProvider(
+      privateKey,
+      network,
+      this.whaleApiClient,
+      this.configService,
+    );
+    await walletProvider.initWallet();
+    walletProvider.finalizeWithdrawalRequest(1, parseEther("1"));
   }
 }
