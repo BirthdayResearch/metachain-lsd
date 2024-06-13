@@ -89,7 +89,6 @@ export default function useApproveAllowance({
       }
     }
   }, [writeApproveError, approveTxnError]);
-  console.log({ allowance: allowance.toFixed(4) });
 
   return {
     writeApproveStatus,
