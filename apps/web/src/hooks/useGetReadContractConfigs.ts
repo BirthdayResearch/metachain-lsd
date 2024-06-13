@@ -1,5 +1,5 @@
 import { useContractContext } from "@/context/ContractContext";
-import { useAccount, useReadContracts } from "wagmi";
+import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { formatEther, parseEther } from "ethers";
 import { useMemo } from "react";
 import BigNumber from "bignumber.js";
@@ -16,18 +16,19 @@ export function useGetReadContractConfigs(): {
   const { MarbleLsdProxy } = useContractContext();
   const dfiPrice = useDfiPrice();
 
+  const { data: convertToAssetsData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "convertToAssets",
+    args: [parseEther("1")],
+  });
+
   const { data: contractResponse } = useReadContracts({
     contracts: [
       {
         address: MarbleLsdProxy.address,
         abi: MarbleLsdProxy.abi,
         functionName: "isDepositPaused",
-      },
-      {
-        address: MarbleLsdProxy.address,
-        abi: MarbleLsdProxy.abi,
-        functionName: "convertToAssets",
-        args: [parseEther("1")],
       },
       {
         address: MarbleLsdProxy.address,
@@ -46,14 +47,10 @@ export function useGetReadContractConfigs(): {
     },
   });
 
-  const [
-    depositPausedData,
-    convertToAssetsData,
-    minDepositData,
-    totalAssetsData,
-  ] = contractResponse ?? [];
+  const [depositPausedData, minDepositData, totalAssetsData] =
+    contractResponse ?? [];
   const mDfiToDfiConversion = formatEther(
-    (convertToAssetsData?.result as number) ?? 0,
+    (convertToAssetsData as number) ?? 0,
   ).toString();
   const isDepositPaused = !!depositPausedData?.result;
   const minDepositAmount = formatEther(
