@@ -1,6 +1,6 @@
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
-import DetailsRow from "@/app/app/components/DetailsRow";
+import DetailsRow, { LinkType } from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
 import { NumericFormatProps } from "@/components/NumericFormat";
@@ -24,7 +24,7 @@ export default function ConfirmScreen({
   details: {
     label: string;
     value: string;
-    linkType: string;
+    linkType: LinkType;
   }[];
   isLoading?: boolean;
   hasCompleted?: boolean;
@@ -60,7 +60,6 @@ export default function ConfirmScreen({
                 key={item.label}
                 label={item.label}
                 value={item.value}
-                customStyle="py-[18px]"
               />
             ))}
 

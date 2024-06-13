@@ -3,6 +3,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import { StakeStep } from "@/types";
+import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function StakeConfirmingPage({
   stakeAmount,
@@ -50,12 +51,12 @@ export default function StakeConfirmingPage({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: "address",
+          linkType: LinkType.ADDRESS,
         },
         {
           label: "Transaction ID",
           value: hash,
-          linkType: "tx",
+          linkType: LinkType.TX,
         },
       ]}
       buttons={

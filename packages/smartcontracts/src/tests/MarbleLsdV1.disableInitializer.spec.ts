@@ -19,8 +19,8 @@ describe("Disable the initialization for MarbleLsdV1", () => {
         rewardDistributerAndFinalizeSigner.address,
         rewardDistributerAndFinalizeSigner.address,
         walletSigner.address,
-        walletSigner.address,
-      ),
+        walletSigner.address
+      )
     ).to.be.revertedWith("Initializable: contract is already initialized");
   });
 });

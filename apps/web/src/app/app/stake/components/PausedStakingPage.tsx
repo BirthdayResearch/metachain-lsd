@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 
 export default function PausedStakingPage() {
   return (

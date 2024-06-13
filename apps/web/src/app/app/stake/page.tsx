@@ -80,11 +80,15 @@ export default function Stake() {
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
 
+  // To prevent calling contract with invalid number (too large or too small)
+  const validAmount = stakeAmount !== "" && !amountError;
+  const stakeAmountString = validAmount ? stakeAmount : "0";
+
   const { data: previewDepositData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewDeposit",
-    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
+    args: [toWei(stakeAmountString)],
     query: {
       enabled: isConnected,
     },
