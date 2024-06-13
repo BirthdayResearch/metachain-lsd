@@ -60,15 +60,26 @@ export default function WithdrawalConfirmation({
         },
       ]}
       buttons={
-        <CTAButton
-          label="Return to main page"
-          testId="stake-confirming-return-main"
-          customStyle="w-full"
-          onClick={() => {
-            resetFields();
-            setCurrentStep(WithdrawStep.WithdrawPage);
-          }}
-        />
+        <>
+          <CTAButton
+            label="Proceed to claim"
+            testId="proceed-to-claim-withdrawal"
+            customStyle="w-full"
+            onClick={() => {
+              resetFields();
+              setCurrentStep(WithdrawStep.WithdrawPage);
+            }}
+          />
+          <CTAButton
+            label="Return to main page"
+            testId="withdrawal-confirming-return-main"
+            customStyle="w-full"
+            onClick={() => {
+              resetFields();
+              setCurrentStep(WithdrawStep.WithdrawPage);
+            }}
+          />
+        </>
       }
     />
   );
