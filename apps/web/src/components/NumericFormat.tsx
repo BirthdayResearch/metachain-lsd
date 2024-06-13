@@ -16,7 +16,7 @@ export default function NumericFormat({
   suffix = "",
   thousandSeparator,
   decimalScale = 8,
-  trimTrailingZeros,
+  trimTrailingZeros = true,
   testId,
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
@@ -30,12 +30,17 @@ export default function NumericFormat({
   let formattedNumber = new BigNumber(value).toFormat(decimalScale, fmt);
 
   if (trimTrailingZeros) {
-    // split the formatted # by space to separate the number and suffix
-    const parts = formattedNumber.split(" ");
-    // remove trailing zeros and decimal point if there are  no digits after it
-    const num = parts[0].replace(/\.?0+$/, "");
-    // join the number and suffix back together
-    formattedNumber = `${num} ${parts[1]}`;
+    // If the value is 0, return '0.00'
+    if (new BigNumber(value).isEqualTo(0)) {
+      formattedNumber = "0.00";
+    } else {
+      // split the formatted # by space to separate the number and suffix
+      const parts = formattedNumber.split(" ");
+      // remove trailing zeros and decimal point if there are no digits after it
+      const num = parts[0].replace(/\.?0+$/, "");
+      // join the number and suffix back together
+      formattedNumber = `${num} ${parts[1]}`;
+    }
   }
 
   return (

@@ -231,17 +231,6 @@ export default function Stake() {
                 resetFields={resetFields}
               />
             )}
-
-          <StakeConfirmedPage
-            addTokenToWallet={addTokenToWallet}
-            isAddTokenRequested={isAddTokenRequested}
-            stakeAmount={"0.00"}
-            previewDeposit={"0.00"}
-            receivingWalletAddress={"97687696"}
-            hash={"97687696"}
-            setCurrentStep={setCurrentStepAndScroll}
-            resetFields={resetFields}
-          />
         </div>
       ) : (
         <PausedStakingPage />
