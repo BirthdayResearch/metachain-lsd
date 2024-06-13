@@ -24,6 +24,7 @@ export default function useApproveAllowance({
   const { address, isConnected } = useAccount();
 
   const [allowance, setAllowance] = useState(new BigNumber(0));
+  const [isApprovalRequested, setIsApprovalRequested] = useState(false);
 
   // Write contract for `approve` function
   const {
@@ -64,12 +65,12 @@ export default function useApproveAllowance({
     return allowance;
   };
 
-  const isApprovalRequired = async (withdrawAmount: BigNumber) => {
+  const checkSufficientAllowance = async (withdrawAmount: BigNumber) => {
     // Refetched to ensure latest value
     const allowance = await refetchAllowance();
     const allowanceForApproval = withdrawAmount.minus(allowance);
 
-    return allowanceForApproval.lte(0) ? false : true;
+    return allowanceForApproval.lte(0);
   };
 
   useEffect(() => {
@@ -94,8 +95,10 @@ export default function useApproveAllowance({
     writeApproveStatus,
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    isApprovalRequired,
-    writeApprove: (withdrawAmount: BigNumber) => {
+    isApprovalRequested,
+    checkSufficientAllowance,
+    setIsApprovalRequested,
+    requestAllowance: (withdrawAmount: BigNumber) => {
       const allowanceForApproval = withdrawAmount.minus(allowance);
 
       if (allowanceForApproval.lte(0)) {
@@ -105,16 +108,14 @@ export default function useApproveAllowance({
         return;
       }
 
+      setIsApprovalRequested(true);
+
       writeApprove({
         abi: mDFI.abi as Abi,
         address: mDFI.address,
         functionName: "approve",
-        args: [
-          MarbleLsdProxy.address,
-          parseEther(allowanceForApproval.toString()),
-        ],
+        args: [MarbleLsdProxy.address, parseEther(withdrawAmount.toString())],
       });
     },
-    allowance,
   };
 }

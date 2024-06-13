@@ -38,7 +38,6 @@ export default function Withdraw() {
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasPendingTx, setHasPendingTx] = useState(false);
-  const [requireApproval, setRequireApproval] = useState(false);
 
   // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
@@ -86,7 +85,7 @@ export default function Withdraw() {
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
-    setRequireApproval(false);
+    setIsApprovalRequested(false);
   };
 
   const {
@@ -103,12 +102,13 @@ export default function Withdraw() {
   });
 
   const {
-    allowance,
     writeApproveStatus,
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    isApprovalRequired,
-    writeApprove,
+    isApprovalRequested,
+    setIsApprovalRequested,
+    checkSufficientAllowance,
+    requestAllowance,
   } = useApproveAllowance({
     setErrorMessage,
     setHasPendingTx,
@@ -117,26 +117,15 @@ export default function Withdraw() {
   const handleInitiateTransfer = async () => {
     setHasPendingTx(true);
 
-    // Verify the approved allowance for an Ethereum address to spend tokens on a contract
-    if (await isApprovalRequired(withdrawAmtBigNum)) {
-      setRequireApproval(true);
-      writeApprove(withdrawAmtBigNum);
+    // If there's sufficient approved allowance, proceed with redeem
+    if (await checkSufficientAllowance(withdrawAmtBigNum)) {
+      writeRequestRedeem();
       return;
     }
 
-    // If there's sufficient approved allowance, proceed with redeem
-    writeRequestRedeem();
+    // Request for allowance for an Ethereum address to spend tokens on a contract
+    requestAllowance(withdrawAmtBigNum);
   };
-
-  useEffect(() => {
-    if (!isApproveTxnSuccess) {
-      if (allowance.lt(withdrawAmtBigNum)) {
-        setRequireApproval(true);
-      } else {
-        setRequireApproval(false);
-      }
-    }
-  }, [allowance, withdrawAmtBigNum, isApproveTxnSuccess]);
 
   useEffect(() => {
     if (isApproveTxnLoading) {
@@ -182,11 +171,11 @@ export default function Withdraw() {
   }, [errorMessage]);
 
   useEffect(() => {
-    if (requireApproval && isApproveTxnSuccess) {
-      setRequireApproval(false);
+    if (isApprovalRequested && isApproveTxnSuccess) {
+      setIsApprovalRequested(false);
       writeRequestRedeem();
     }
-  }, [requireApproval, isApproveTxnLoading, isApproveTxnSuccess]);
+  }, [isApprovalRequested, isApproveTxnLoading, isApproveTxnSuccess]);
 
   useEffect(() => {
     if (
@@ -215,7 +204,7 @@ export default function Withdraw() {
               setWalletBalanceAmount={setWalletBalanceAmount}
               isPending={
                 isRequestRedeemTxnLoading ||
-                (requireApproval && isApproveTxnLoading) ||
+                (isApprovalRequested && isApproveTxnLoading) ||
                 hasPendingTx
               }
               submitWithdraw={handleInitiateTransfer}
