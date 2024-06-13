@@ -14,8 +14,9 @@ import { CgSpinner } from "react-icons/cg";
 import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
 
 import BigNumber from "bignumber.js";
-import useWriteApprove from "@/hooks/useWriteApprove";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
+import useApproveAllowance from "@/hooks/useApproveAllowance";
+
 /*
  * Withdrawal flow
  * The term 'redeem' is used for withdrawing mDFI shares from the vault
@@ -30,6 +31,7 @@ export default function Withdraw() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
   // To display /withdraw pages based on the current step
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
@@ -81,20 +83,6 @@ export default function Withdraw() {
     return (isWithdrawalPausedData as boolean) ?? false;
   }, [isWithdrawalPausedData]);
 
-  const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
-    address: mDFI.address,
-    abi: mDFI.abi,
-    functionName: "allowance",
-    args: [address, MarbleLsdProxy.address],
-    query: {
-      enabled: isConnected,
-    },
-  });
-
-  const allowance = useMemo(() => {
-    return new BigNumber(formatEther((allowanceData as number) ?? 0));
-  }, [allowanceData]);
-
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
@@ -115,12 +103,13 @@ export default function Withdraw() {
   });
 
   const {
+    allowance,
     writeApproveStatus,
     isApproveTxnLoading,
     isApproveTxnSuccess,
+    isApprovalRequired,
     writeApprove,
-  } = useWriteApprove({
-    withdrawAmount: withdrawAmount,
+  } = useApproveAllowance({
     setErrorMessage,
     setHasPendingTx,
   });
@@ -128,18 +117,14 @@ export default function Withdraw() {
   const handleInitiateTransfer = async () => {
     setHasPendingTx(true);
 
-    // Refetch token allowance
-    const { data: refetchedData } = await refetchAllowance();
-    const refetchedAllowance = new BigNumber(
-      formatEther((refetchedData as number) ?? 0),
-    );
-    if (refetchedAllowance.lt(withdrawAmtBigNum)) {
+    // Verify the approved allowance for an Ethereum address to spend tokens on a contract
+    if (await isApprovalRequired(withdrawAmtBigNum)) {
       setRequireApproval(true);
-      writeApprove();
+      writeApprove(withdrawAmtBigNum);
       return;
     }
 
-    // If no approval required, perform requestRedeem function directly
+    // If there's sufficient approved allowance, proceed with redeem
     writeRequestRedeem();
   };
 
