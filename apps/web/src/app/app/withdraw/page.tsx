@@ -143,7 +143,7 @@ export default function Withdraw() {
   }, [isApproveTxnLoading]);
 
   useEffect(() => {
-    if (writeApproveStatus === "pending") {
+    if (writeApproveStatus === "pending" && errorMessage == null) {
       toast("Confirm transaction on your wallet.", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
         duration: Infinity,
@@ -158,17 +158,22 @@ export default function Withdraw() {
   }, [writeApproveStatus]);
 
   useEffect(() => {
-    if (errorMessage) {
+    if (errorMessage != null) {
       toast(errorMessage, {
         duration: 5000,
         className:
           "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
         id: "errorMessage",
       });
+      setHasPendingTx(false);
     }
-    // cleanup
-    return () => toast.remove("errorMessage");
-  }, [errorMessage]);
+  }, [errorMessage, hasPendingTx]);
+
+  useEffect(() => {
+    if (!hasPendingTx) {
+      setErrorMessage(null);
+    }
+  }, [hasPendingTx]);
 
   useEffect(() => {
     if (isApprovalRequested && isApproveTxnSuccess) {
