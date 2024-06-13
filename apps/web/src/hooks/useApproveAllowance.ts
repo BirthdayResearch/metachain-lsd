@@ -1,7 +1,3 @@
-/**
- * Hook to write `approve` function
- */
-
 import { useEffect, useState } from "react";
 import {
   useAccount,
