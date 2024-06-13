@@ -14,8 +14,9 @@ import { CgSpinner } from "react-icons/cg";
 import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
 
 import BigNumber from "bignumber.js";
-import useWriteApprove from "@/hooks/useWriteApprove";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
+import useApproveAllowance from "@/hooks/useApproveAllowance";
+
 /*
  * Withdrawal flow
  * The term 'redeem' is used for withdrawing mDFI shares from the vault
@@ -30,13 +31,13 @@ export default function Withdraw() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+
   // To display /withdraw pages based on the current step
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
     WithdrawStep.WithdrawPage,
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasPendingTx, setHasPendingTx] = useState(false);
-  const [requireApproval, setRequireApproval] = useState(false);
 
   // To prevent calling contract with invalid number (too large or too small)
   const validAmount = withdrawAmount !== "" && !amountError;
@@ -81,24 +82,10 @@ export default function Withdraw() {
     return (isWithdrawalPausedData as boolean) ?? false;
   }, [isWithdrawalPausedData]);
 
-  const { data: allowanceData, refetch: refetchAllowance } = useReadContract({
-    address: mDFI.address,
-    abi: mDFI.abi,
-    functionName: "allowance",
-    args: [address, MarbleLsdProxy.address],
-    query: {
-      enabled: isConnected,
-    },
-  });
-
-  const allowance = useMemo(() => {
-    return new BigNumber(formatEther((allowanceData as number) ?? 0));
-  }, [allowanceData]);
-
   const resetFields = () => {
     setWithdrawAmount("");
     setAmountError(null);
-    setRequireApproval(false);
+    setIsApprovalRequested(false);
   };
 
   const {
@@ -118,9 +105,11 @@ export default function Withdraw() {
     writeApproveStatus,
     isApproveTxnLoading,
     isApproveTxnSuccess,
-    writeApprove,
-  } = useWriteApprove({
-    withdrawAmount: withdrawAmount,
+    isApprovalRequested,
+    setIsApprovalRequested,
+    checkSufficientAllowance,
+    requestAllowance,
+  } = useApproveAllowance({
     setErrorMessage,
     setHasPendingTx,
   });
@@ -128,30 +117,15 @@ export default function Withdraw() {
   const handleInitiateTransfer = async () => {
     setHasPendingTx(true);
 
-    // Refetch token allowance
-    const { data: refetchedData } = await refetchAllowance();
-    const refetchedAllowance = new BigNumber(
-      formatEther((refetchedData as number) ?? 0),
-    );
-    if (refetchedAllowance.lt(withdrawAmtBigNum)) {
-      setRequireApproval(true);
-      writeApprove();
+    // If there's sufficient approved allowance, proceed with redeem
+    if (await checkSufficientAllowance(withdrawAmtBigNum)) {
+      writeRequestRedeem();
       return;
     }
 
-    // If no approval required, perform requestRedeem function directly
-    writeRequestRedeem();
+    // Request for allowance for an Ethereum address to spend tokens on a contract
+    requestAllowance(withdrawAmtBigNum);
   };
-
-  useEffect(() => {
-    if (!isApproveTxnSuccess) {
-      if (allowance.lt(withdrawAmtBigNum)) {
-        setRequireApproval(true);
-      } else {
-        setRequireApproval(false);
-      }
-    }
-  }, [allowance, withdrawAmtBigNum, isApproveTxnSuccess]);
 
   useEffect(() => {
     if (isApproveTxnLoading) {
@@ -202,11 +176,11 @@ export default function Withdraw() {
   }, [hasPendingTx]);
 
   useEffect(() => {
-    if (requireApproval && isApproveTxnSuccess) {
-      setRequireApproval(false);
+    if (isApprovalRequested && isApproveTxnSuccess) {
+      setIsApprovalRequested(false);
       writeRequestRedeem();
     }
-  }, [requireApproval, isApproveTxnLoading, isApproveTxnSuccess]);
+  }, [isApprovalRequested, isApproveTxnLoading, isApproveTxnSuccess]);
 
   useEffect(() => {
     if (
@@ -235,7 +209,7 @@ export default function Withdraw() {
               setWalletBalanceAmount={setWalletBalanceAmount}
               isPending={
                 isRequestRedeemTxnLoading ||
-                (requireApproval && isApproveTxnLoading) ||
+                (isApprovalRequested && isApproveTxnLoading) ||
                 hasPendingTx
               }
               submitWithdraw={handleInitiateTransfer}
