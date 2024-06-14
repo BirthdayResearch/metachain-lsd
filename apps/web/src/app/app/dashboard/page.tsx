@@ -61,6 +61,19 @@ const stats = [
     label: "Withdrawal Req No",
   },
   {
+    functionName: "unfinalizedRequestNumber",
+    decimal: 0,
+    label: "Non finalized requests in the queue",
+  },
+  {
+    functionName: "unfinalizedAssets",
+    format: (values: string[]) => {
+      const [amount] = values;
+      return formatEther(amount).toString();
+    },
+    label: "DFI yet to be finalized",
+  },
+  {
     functionName: "lockedAssets",
     format: (value: string) => formatEther(value).toString(),
     decimal: 0,
@@ -143,7 +156,7 @@ export default function Dashboard() {
                 <StatsCard
                   key={each.label}
                   label={each.label}
-                  format={each.format}
+                  format={each.format as (value: string | string[]) => string}
                   decimal={each.decimal}
                   suffix={each.suffix}
                   value={(response?.result as string) ?? "0"}
@@ -168,7 +181,7 @@ function StatsCard({
 }: {
   value: string | boolean;
   label: string;
-  format?: (value: string) => string;
+  format?: (value: string | string[]) => string;
   decimal?: number;
   suffix?: string;
 }) {
