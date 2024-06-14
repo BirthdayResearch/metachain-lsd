@@ -10,21 +10,19 @@ import {
   useAccount,
 } from "wagmi";
 import { useContractContext } from "@/context/ContractContext";
-import { Abi, parseEther } from "viem";
+import { Abi } from "viem";
 import BigNumber from "bignumber.js";
 
 interface proceedToClaimI {
-  withdrawAmount: string;
   setErrorMessage: any;
 }
 
 export default function useProceedToClaim({
-  withdrawAmount,
   setErrorMessage,
 }: proceedToClaimI) {
   const { address, isConnected } = useAccount();
-  const { MarbleLsdProxy, mDFI } = useContractContext();
-  const [withdrawalRequests, setWithdrawalRequests] = useState<BigNumber[]>();
+  const { MarbleLsdProxy } = useContractContext();
+  const [withdrawalRequests, setWithdrawalRequests] = useState<BigNumber[]>([]);
 
   const { data: withdrawalRequestsData } = useReadContract({
     abi: MarbleLsdProxy.abi as Abi,
@@ -37,12 +35,12 @@ export default function useProceedToClaim({
   });
 
   useEffect(() => {
-    // setWithdrawalRequests(withdrawalRequestsData);
+    setWithdrawalRequests(withdrawalRequestsData as BigNumber[]);
   }, [withdrawalRequestsData]);
 
   // Write contract for `claimWithdrawals` function
   const {
-    data: hash,
+    data: claimHash,
     writeContract: writeClaimWithdrawals,
     error: writeClaimWithdrawalsError,
   } = useWriteContract();
@@ -53,7 +51,7 @@ export default function useProceedToClaim({
     isLoading: isClaimWithdrawalsTxnLoading,
     error: ClaimWithdrawalsTxnError,
   } = useWaitForTransactionReceipt({
-    hash: hash,
+    hash: claimHash,
   });
 
   useEffect(() => {
@@ -76,7 +74,8 @@ export default function useProceedToClaim({
   }, [writeClaimWithdrawalsError, ClaimWithdrawalsTxnError]);
 
   return {
-    hash,
+    withdrawalRequests,
+    claimHash,
     isClaimWithdrawalsTxnLoading,
     isClaimWithdrawalsTxnSuccess,
     writeClaimWithdrawals: () => {
@@ -84,14 +83,13 @@ export default function useProceedToClaim({
         {
           abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
-          functionName: "claimWithdrawals",
-          args: [parseEther(withdrawAmount), address as string],
+          functionName: "claimWithdrawal",
+          args: [withdrawalRequests[0]],
         },
         {
           onSuccess: (hash) => {
             if (hash) {
               console.log(hash);
-              // setCurrentStepAndScroll(WithdrawStep.PreviewWithdrawal);
             }
           },
         },
