@@ -3,6 +3,9 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { WithdrawStep } from "@/types";
 import { LinkType } from "@/app/app/components/DetailsRow";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
@@ -19,6 +22,23 @@ export default function WithdrawalConfirmation({
   receivingWalletAddress: string;
   resetFields: () => void;
 }) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { writeClaimWithdrawals } = useProceedToClaim({
+    setErrorMessage,
+  });
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+        id: "errorMessage",
+      });
+    }
+  }, [errorMessage]);
+
   return (
     <ConfirmScreen
       isLoading={false}
@@ -65,10 +85,7 @@ export default function WithdrawalConfirmation({
             label="Proceed to claim"
             testId="proceed-to-claim-withdrawal"
             customStyle="w-full"
-            onClick={() => {
-              resetFields();
-              setCurrentStep(WithdrawStep.WithdrawPage);
-            }}
+            onClick={writeClaimWithdrawals}
           />
           <CTAButton
             label="Return to main page"
