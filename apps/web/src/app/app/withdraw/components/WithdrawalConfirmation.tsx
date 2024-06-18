@@ -1,6 +1,7 @@
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
+import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import { WithdrawStep } from "@/types";
 import { LinkType } from "@/app/app/components/DetailsRow";
 import useProceedToClaim from "@/hooks/useProceedToClaim";
@@ -87,7 +88,7 @@ export default function WithdrawalConfirmation({
             customStyle="w-full"
             onClick={writeClaimWithdrawals}
           />
-          <CTAButton
+          <CTAButtonOutline
             label="Return to main page"
             testId="withdrawal-confirming-return-main"
             customStyle="w-full"
