@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
 import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
+import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -46,6 +47,61 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
+  const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("0");
+  const [confirmedWithdrawalCount, setConfirmedWithdrawalCount] =
+    useState<string>("0");
+  const [totalAvailable, setTotalAvailable] = useState<string>("0");
+
+  const {
+    withdrawalRequestData,
+    withdrawalStatusData,
+    withdrawalRequestError,
+    withdrawalStatusError,
+  } = useGetWithdrawalDetails();
+
+  console.log({
+    pendingWithdrawCount,
+    confirmedWithdrawalCount,
+    totalAvailable,
+    withdrawalStatusData,
+  });
+
+  useEffect(() => {
+    console.log(
+      "condition",
+      Array.isArray(withdrawalStatusData),
+      withdrawalStatusData?.length > 0,
+    );
+    if (
+      Array.isArray(withdrawalStatusData) &&
+      withdrawalStatusData.length > 0
+    ) {
+      console.log("calculate");
+      let pendingCount = 0;
+      let confirmedCount = 0;
+      let totalAvailable = 0;
+      withdrawalStatusData.forEach((status) => {
+        if (!status.isClaimed) {
+          console.log(
+            "amountOfAssets",
+            status.amountOfAssets,
+            typeof status.amountOfAssets,
+          );
+          totalAvailable += status.amountOfAssets;
+
+          if (status.isFinalized) {
+            confirmedCount++;
+          } else {
+            pendingCount++;
+          }
+        }
+      });
+      setPendingWithdrawCount(pendingCount.toString());
+      setConfirmedWithdrawalCount(confirmedCount.toString());
+      setTotalAvailable(totalAvailable.toString());
+    }
+  }, [withdrawalStatusData]);
+
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
       <div
@@ -59,7 +115,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             <span className="text-xs text-light-1000/70">Withdrawals</span>
             <div className="flex mt-2 gap-x-2">
               <CTAButton
-                label="0"
+                label={pendingWithdrawCount}
                 testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
@@ -68,9 +124,9 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
               <CTAButton
-                label="0"
+                label={confirmedWithdrawalCount}
                 testId="confirmed-withdrawals-button"
-                customStyle="!px-3 !py-3 md:!py-1"
+                customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
                 customBgColor="withdraw-button-bg"
               >
