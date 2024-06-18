@@ -1,17 +1,13 @@
 /**
- * Hook to write `claimWithdrawals` function
+ * Hook to write `claimWithdrawal` function
  */
 
 import { useEffect, useState } from "react";
-import {
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useReadContract,
-  useAccount,
-} from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useContractContext } from "@/context/ContractContext";
 import { Abi } from "viem";
 import BigNumber from "bignumber.js";
+import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 
 interface proceedToClaimI {
   setErrorMessage: any;
@@ -20,29 +16,20 @@ interface proceedToClaimI {
 export default function useProceedToClaim({
   setErrorMessage,
 }: proceedToClaimI) {
-  const { address, isConnected } = useAccount();
   const { MarbleLsdProxy } = useContractContext();
   const [withdrawalRequests, setWithdrawalRequests] = useState<BigNumber[]>([]);
 
-  const { data: withdrawalRequestsData } = useReadContract({
-    abi: MarbleLsdProxy.abi as Abi,
-    address: MarbleLsdProxy.address,
-    functionName: "getWithdrawalRequests",
-    args: [address],
-    query: {
-      enabled: isConnected,
-    },
-  });
+  const { withdrawalRequestData } = useGetWithdrawalDetails();
 
   useEffect(() => {
-    setWithdrawalRequests(withdrawalRequestsData as BigNumber[]);
-  }, [withdrawalRequestsData]);
+    setWithdrawalRequests(withdrawalRequestData as BigNumber[]);
+  }, [withdrawalRequestData]);
 
   // Write contract for `claimWithdrawals` function
   const {
     data: claimHash,
-    writeContract: writeClaimWithdrawals,
-    error: writeClaimWithdrawalsError,
+    writeContract: writeClaimWithdrawal,
+    error: writeClaimWithdrawalError,
   } = useWriteContract();
 
   // Wait and get result from write contract for `claimWithdrawals` function
@@ -55,9 +42,9 @@ export default function useProceedToClaim({
   });
 
   useEffect(() => {
-    if (writeClaimWithdrawalsError || ClaimWithdrawalsTxnError) {
+    if (writeClaimWithdrawalError || ClaimWithdrawalsTxnError) {
       if (
-        writeClaimWithdrawalsError?.message?.includes(
+        writeClaimWithdrawalError?.message?.includes(
           "User rejected the request",
         )
       ) {
@@ -66,20 +53,20 @@ export default function useProceedToClaim({
         );
       } else {
         setErrorMessage(
-          writeClaimWithdrawalsError?.message ??
+          writeClaimWithdrawalError?.message ??
             ClaimWithdrawalsTxnError?.message,
         );
       }
     }
-  }, [writeClaimWithdrawalsError, ClaimWithdrawalsTxnError]);
+  }, [writeClaimWithdrawalError, ClaimWithdrawalsTxnError]);
 
   return {
     withdrawalRequests,
     claimHash,
     isClaimWithdrawalsTxnLoading,
     isClaimWithdrawalsTxnSuccess,
-    writeClaimWithdrawals: () => {
-      writeClaimWithdrawals(
+    writeClaimWithdrawal: () => {
+      writeClaimWithdrawal(
         {
           abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,

@@ -25,7 +25,7 @@ export default function WithdrawalConfirmation({
 }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { writeClaimWithdrawals } = useProceedToClaim({
+  const { writeClaimWithdrawal } = useProceedToClaim({
     setErrorMessage,
   });
 
@@ -86,7 +86,7 @@ export default function WithdrawalConfirmation({
             label="Proceed to claim"
             testId="proceed-to-claim-withdrawal"
             customStyle="w-full"
-            onClick={writeClaimWithdrawals}
+            onClick={writeClaimWithdrawal}
           />
           <CTAButtonOutline
             label="Return to main page"
