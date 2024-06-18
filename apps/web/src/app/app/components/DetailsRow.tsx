@@ -34,7 +34,9 @@ export default function DetailsRow({
         >
           {linkType === LinkType.STATUS && <StatusBadge status={value} />}
           <span className="break-words font-semibold text-sm text-right">
-            {truncateTextFromMiddle(value, 12)}
+            {[LinkType.ADDRESS, LinkType.TX].includes(linkType)
+              ? truncateTextFromMiddle(value, 12)
+              : value}
           </span>
         </div>
 
