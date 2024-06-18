@@ -84,7 +84,7 @@ export default function useProceedToClaim({
           abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
           functionName: "claimWithdrawal",
-          args: [withdrawalRequests[0]],
+          args: [withdrawalRequests[-1]],
         },
         {
           onSuccess: (hash) => {
