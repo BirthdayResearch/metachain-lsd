@@ -6,6 +6,10 @@ import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
 import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
+import { ethers, formatEther, parseEther } from "ethers";
+import { parseGwei } from "viem";
+import BigNumber from "bignumber.js";
+import { getDecimalPlace } from "@/lib/textHelper";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -50,44 +54,34 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("0");
   const [confirmedWithdrawalCount, setConfirmedWithdrawalCount] =
     useState<string>("0");
-  const [totalAvailable, setTotalAvailable] = useState<string>("0");
+  const [totalAssets, setTotalAssets] = useState<string>("0");
+  const [totalShares, setTotalShares] = useState<string>("0");
 
   const {
-    withdrawalRequestData,
+    // withdrawalRequestData,
     withdrawalStatusData,
-    withdrawalRequestError,
-    withdrawalStatusError,
+    // withdrawalRequestError,
+    // withdrawalStatusError,
   } = useGetWithdrawalDetails();
 
-  console.log({
-    pendingWithdrawCount,
-    confirmedWithdrawalCount,
-    totalAvailable,
-    withdrawalStatusData,
-  });
-
   useEffect(() => {
-    console.log(
-      "condition",
-      Array.isArray(withdrawalStatusData),
-      withdrawalStatusData?.length > 0,
-    );
     if (
       Array.isArray(withdrawalStatusData) &&
-      withdrawalStatusData.length > 0
+      Object.keys(withdrawalStatusData).length > 0
     ) {
-      console.log("calculate");
       let pendingCount = 0;
       let confirmedCount = 0;
-      let totalAvailable = 0;
+      let totalAvailableAssets: BigInt = BigInt(0);
+      let totalShares: BigInt = BigInt(0);
+
       withdrawalStatusData.forEach((status) => {
         if (!status.isClaimed) {
           console.log(
-            "amountOfAssets",
-            status.amountOfAssets,
             typeof status.amountOfAssets,
+            status.amountOfAssets as number,
           );
-          totalAvailable += status.amountOfAssets;
+          totalAvailableAssets += status.amountOfAssets;
+          totalShares += status.amountOfShares;
 
           if (status.isFinalized) {
             confirmedCount++;
@@ -96,9 +90,16 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           }
         }
       });
+      console.log(
+        "here",
+        totalAvailableAssets.toString(),
+        totalShares.toString(),
+      );
+
       setPendingWithdrawCount(pendingCount.toString());
       setConfirmedWithdrawalCount(confirmedCount.toString());
-      setTotalAvailable(totalAvailable.toString());
+      setTotalAssets(formatEther(totalAvailableAssets.toString())); // DFI
+      setTotalShares(formatEther(totalShares.toString())); // USD amount
     }
   }, [withdrawalStatusData]);
 
@@ -138,8 +139,12 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="flex flex-col">
             <span className="text-xs text-light-1000/70">Total available</span>
             <div className="flex gap-x-1 mt-3 items-end">
-              <span className="font-semibold leading-5 text-right">0 DFI</span>
-              <span className="text-xs text-right text-dark-00/70">$0.0</span>
+              <span className="font-semibold leading-5 text-right">
+                {totalAssets} DFI
+              </span>
+              <span className="text-xs text-right text-dark-00/70">
+                ${totalShares}
+              </span>
             </div>
           </div>
         </div>

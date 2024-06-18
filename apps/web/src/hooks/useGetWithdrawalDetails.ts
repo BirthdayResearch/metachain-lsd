@@ -1,10 +1,28 @@
 import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
 
-export default function useGetWithdrawalDetails() {
+interface WithdrawalStatusDataProps {
+  amountOfAssets: BigInt;
+  amountOfFees: BigInt;
+  amountOfShares: BigInt;
+  isClaimed: boolean;
+  isFinalized: boolean;
+  owner: string;
+  receiver: string;
+  timestamp: BigInt;
+}
+
+interface WithrawalDetailsProps {
+  withdrawalRequestData: unknown;
+  withdrawalStatusData: unknown | WithdrawalStatusDataProps[];
+  withdrawalRequestError: unknown;
+  withdrawalStatusError: unknown;
+}
+
+export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   const { MarbleLsdProxy, mDFI } = useContractContext();
   // const { address } = useAccount();
-  const address = "0xFB9DCeCBb49fA49cc2692A6A4A160fd6071b85b2";
+  const address = "0xFB9DCeCBb49fA49cc2692A6A4A160fd6071b85b2"; // TODO change back to account
 
   // read contract for 'getWithdrawalRequests' function
   const { data: withdrawalRequestData, error: withdrawalRequestError } =
