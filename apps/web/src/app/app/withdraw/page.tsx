@@ -16,6 +16,7 @@ import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConf
 import BigNumber from "bignumber.js";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
 import useApproveAllowance from "@/hooks/useApproveAllowance";
+import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 
 /*
  * Withdrawal flow
@@ -246,8 +247,6 @@ export default function Withdraw() {
       )}
 
       {isWithdrawalPaused && <PausedWithdrawalsPage />}
-      {/* TODO: Uncomment once data is not hardcoded */}
-      {/* <ComplimentarySection /> */}
     </>
   );
 }
