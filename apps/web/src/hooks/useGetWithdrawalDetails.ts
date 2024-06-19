@@ -1,7 +1,6 @@
 import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
 import { useEffect, useState } from "react";
-import { formatEther } from "ethers";
 
 interface WithdrawalStatusDataProps {
   amountOfAssets: BigInt;
@@ -15,14 +14,14 @@ interface WithdrawalStatusDataProps {
 }
 
 interface WithrawalDetailsProps {
+  withdrawalStatusData: WithdrawalStatusDataProps[] | undefined;
   pendingWithdrawalsArray: WithdrawalStatusDataProps[];
   confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
 }
 
 export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
-  const { MarbleLsdProxy, mDFI } = useContractContext();
-  const { ownAddress } = useAccount();
-  const address = "0xFB9DCeCBb49fA49cc2692A6A4A160fd6071b85b2"; // TODO change back to account
+  const { MarbleLsdProxy } = useContractContext();
+  const { address } = useAccount();
 
   const [pendingWithdrawalsArray, setPendingWithdrawalsArray] = useState<
     WithdrawalStatusDataProps[]
@@ -32,23 +31,26 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   >([]);
 
   // read contract for 'getWithdrawalRequests' function
-  const { data: withdrawalRequestData, error: withdrawalRequestError } =
-    useReadContract({
-      address: MarbleLsdProxy.address,
-      abi: MarbleLsdProxy.abi,
-      functionName: "getWithdrawalRequests",
-      args: [address],
-    });
+  const { data: withdrawalRequestData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "getWithdrawalRequests",
+    args: [address],
+  });
 
   // read contract for 'getWithdrawalStatus' function
-  const { data: withdrawalStatusData, error: withdrawalStatusError } =
-    useReadContract({
-      address: MarbleLsdProxy.address,
-      abi: MarbleLsdProxy.abi,
-      functionName: "getWithdrawalStatus",
-      args: [withdrawalRequestData],
-    });
+  const { data: withdrawalStatusDataRaw } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "getWithdrawalStatus",
+    args: [withdrawalRequestData],
+  });
 
+  const withdrawalStatusData = Array.isArray(withdrawalStatusDataRaw)
+    ? withdrawalStatusDataRaw
+    : undefined;
+
+  // To create pending and confirmed withdrawal arrays
   useEffect(() => {
     let pendingItems: WithdrawalStatusDataProps[] = [];
     let confirmedItems: WithdrawalStatusDataProps[] = [];
@@ -63,7 +65,6 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
           confirmedItems.push(item);
         }
       });
-
       setPendingWithdrawalsArray([...pendingWithdrawalsArray, ...pendingItems]);
       setConfirmedWithdrawalsArray([
         ...pendingWithdrawalsArray,
@@ -75,5 +76,6 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   return {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
+    withdrawalStatusData,
   };
 }
