@@ -6,10 +6,10 @@ import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
 import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
-import BigNumber from "bignumber.js";
 import NumericFormat from "@/components/NumericFormat";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { getDecimalPlace } from "@/lib/textHelper";
+import { formatEther } from "ethers";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -55,44 +55,25 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("1");
   const [confirmedWithdrawalCount, setConfirmedWithdrawalCount] =
     useState<string>("2");
-  const [totalAvailable, setTotalAvailable] = useState<string>("132.12");
+  const [totalAssets, setTotalAssets] = useState<string>("0");
+  const [totalShares, setTotalShares] = useState<string>("0");
 
-  const {
-    withdrawalRequestData,
-    withdrawalStatusData,
-    withdrawalRequestError,
-    withdrawalStatusError,
-  } = useGetWithdrawalDetails();
-
-  console.log({
-    pendingWithdrawCount,
-    confirmedWithdrawalCount,
-    totalAvailable,
-    withdrawalStatusData,
-  });
+  const { withdrawalStatusData } = useGetWithdrawalDetails();
 
   useEffect(() => {
-    console.log(
-      "condition",
-      Array.isArray(withdrawalStatusData),
-      withdrawalStatusData?.length > 0,
-    );
     if (
       Array.isArray(withdrawalStatusData) &&
-      withdrawalStatusData.length > 0
+      Object.keys(withdrawalStatusData).length > 0
     ) {
-      console.log("calculate");
       let pendingCount = 0;
       let confirmedCount = 0;
-      let totalAvailable = 0;
+      let totalAvailableAssets: BigInt = BigInt(0);
+      let totalShares: BigInt = BigInt(0);
+
       withdrawalStatusData.forEach((status) => {
         if (!status.isClaimed) {
-          console.log(
-            "amountOfAssets",
-            status.amountOfAssets,
-            typeof status.amountOfAssets,
-          );
-          totalAvailable += status.amountOfAssets;
+          totalAvailableAssets += status.amountOfAssets;
+          totalShares += status.amountOfShares;
 
           if (status.isFinalized) {
             confirmedCount++;
@@ -101,15 +82,13 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           }
         }
       });
+
       setPendingWithdrawCount(pendingCount.toString());
       setConfirmedWithdrawalCount(confirmedCount.toString());
-      setTotalAvailable(totalAvailable.toString());
+      setTotalAssets(formatEther(totalAvailableAssets.toString())); // DFI
+      setTotalShares(formatEther(totalShares.toString())); // USD amount
     }
   }, [withdrawalStatusData]);
-
-  const usdAmount = new BigNumber(totalAvailable).isNaN()
-    ? new BigNumber(0)
-    : new BigNumber(totalAvailable ?? 0).multipliedBy(dfiPrice);
 
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
@@ -149,15 +128,15 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             <div className="flex gap-x-1 mt-3 items-end">
               <NumericFormat
                 className="font-semibold leading-5 text-right"
-                suffix=" DFI"
-                value={totalAvailable}
-                decimalScale={getDecimalPlace(totalAvailable)}
+                suffix="DFI"
+                value={totalAssets}
+                decimalScale={getDecimalPlace(totalAssets)}
               />
               <NumericFormat
                 className="text-xs text-right text-dark-00/70"
                 prefix="$"
-                value={usdAmount}
-                decimalScale={getDecimalPlace(usdAmount)}
+                value={totalShares}
+                decimalScale={getDecimalPlace(totalShares)}
               />
             </div>
           </div>
@@ -188,15 +167,15 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <div className="flex flex-col gap-y-1">
                 <NumericFormat
                   className="font-semibold leading-5 text-right"
-                  suffix=" DFI"
-                  value={totalAvailable}
-                  decimalScale={getDecimalPlace(totalAvailable)}
+                  suffix="DFI"
+                  value={totalAssets}
+                  decimalScale={getDecimalPlace(totalAssets)}
                 />
                 <NumericFormat
                   className="text-xs text-right text-dark-00/70"
                   prefix="$"
-                  value={usdAmount}
-                  decimalScale={getDecimalPlace(usdAmount)}
+                  value={totalShares}
+                  decimalScale={getDecimalPlace(totalShares)}
                 />
               </div>
             </div>

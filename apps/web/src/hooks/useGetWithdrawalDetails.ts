@@ -1,10 +1,35 @@
 import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
+import { useEffect, useState } from "react";
+import { formatEther } from "ethers";
 
-export default function useGetWithdrawalDetails() {
+interface WithdrawalStatusDataProps {
+  amountOfAssets: BigInt;
+  amountOfFees: BigInt;
+  amountOfShares: BigInt;
+  isClaimed: boolean;
+  isFinalized: boolean;
+  owner: string;
+  receiver: string;
+  timestamp: BigInt;
+}
+
+interface WithrawalDetailsProps {
+  pendingWithdrawalsArray: WithdrawalStatusDataProps[];
+  confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
+}
+
+export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   const { MarbleLsdProxy, mDFI } = useContractContext();
-  // const { address } = useAccount();
-  const address = "0xFB9DCeCBb49fA49cc2692A6A4A160fd6071b85b2";
+  const { ownAddress } = useAccount();
+  const address = "0xFB9DCeCBb49fA49cc2692A6A4A160fd6071b85b2"; // TODO change back to account
+
+  const [pendingWithdrawalsArray, setPendingWithdrawalsArray] = useState<
+    WithdrawalStatusDataProps[]
+  >([]);
+  const [confirmedWithdrawalsArray, setConfirmedWithdrawalsArray] = useState<
+    WithdrawalStatusDataProps[]
+  >([]);
 
   // read contract for 'getWithdrawalRequests' function
   const { data: withdrawalRequestData, error: withdrawalRequestError } =
@@ -24,10 +49,31 @@ export default function useGetWithdrawalDetails() {
       args: [withdrawalRequestData],
     });
 
+  useEffect(() => {
+    let pendingItems: WithdrawalStatusDataProps[] = [];
+    let confirmedItems: WithdrawalStatusDataProps[] = [];
+    if (
+      Array.isArray(withdrawalStatusData) &&
+      Object.keys(withdrawalStatusData).length > 0
+    ) {
+      withdrawalStatusData.map((item) => {
+        if (!item.isClaimed && !item.isFinalized) {
+          pendingItems.push(item);
+        } else if (!item.isClaimed && item.isFinalized) {
+          confirmedItems.push(item);
+        }
+      });
+
+      setPendingWithdrawalsArray([...pendingWithdrawalsArray, ...pendingItems]);
+      setConfirmedWithdrawalsArray([
+        ...pendingWithdrawalsArray,
+        ...confirmedItems,
+      ]);
+    }
+  }, [withdrawalStatusData]);
+
   return {
-    withdrawalRequestData,
-    withdrawalStatusData,
-    withdrawalRequestError,
-    withdrawalStatusError,
+    pendingWithdrawalsArray,
+    confirmedWithdrawalsArray,
   };
 }
