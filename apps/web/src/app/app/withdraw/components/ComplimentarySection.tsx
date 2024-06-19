@@ -6,10 +6,9 @@ import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
 import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
-import { ethers, formatEther, parseEther } from "ethers";
-import { parseGwei } from "viem";
-import BigNumber from "bignumber.js";
+import { formatEther } from "ethers";
 import { getDecimalPlace } from "@/lib/textHelper";
+import NumericFormat from "@/components/NumericFormat";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -57,12 +56,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const [totalAssets, setTotalAssets] = useState<string>("0");
   const [totalShares, setTotalShares] = useState<string>("0");
 
-  const {
-    // withdrawalRequestData,
-    withdrawalStatusData,
-    // withdrawalRequestError,
-    // withdrawalStatusError,
-  } = useGetWithdrawalDetails();
+  const { withdrawalStatusData } = useGetWithdrawalDetails();
 
   useEffect(() => {
     if (
@@ -76,10 +70,6 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
 
       withdrawalStatusData.forEach((status) => {
         if (!status.isClaimed) {
-          console.log(
-            typeof status.amountOfAssets,
-            status.amountOfAssets as number,
-          );
           totalAvailableAssets += status.amountOfAssets;
           totalShares += status.amountOfShares;
 
@@ -90,11 +80,6 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           }
         }
       });
-      console.log(
-        "here",
-        totalAvailableAssets.toString(),
-        totalShares.toString(),
-      );
 
       setPendingWithdrawCount(pendingCount.toString());
       setConfirmedWithdrawalCount(confirmedCount.toString());
@@ -139,12 +124,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="flex flex-col">
             <span className="text-xs text-light-1000/70">Total available</span>
             <div className="flex gap-x-1 mt-3 items-end">
-              <span className="font-semibold leading-5 text-right">
-                {totalAssets} DFI
-              </span>
-              <span className="text-xs text-right text-dark-00/70">
-                ${totalShares}
-              </span>
+              <NumericFormat
+                className="font-semibold leading-5 text-right"
+                suffix="DFI"
+                value={totalAssets}
+                decimalScale={getDecimalPlace(totalAssets)}
+              />
+              <NumericFormat
+                className="text-xs text-right text-dark-00/70"
+                prefix="$"
+                value={totalShares}
+                decimalScale={getDecimalPlace(totalShares)}
+              />
             </div>
           </div>
         </div>
