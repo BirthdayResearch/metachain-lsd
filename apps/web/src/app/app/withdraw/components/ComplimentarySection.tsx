@@ -6,6 +6,10 @@ import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
 import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
+import BigNumber from "bignumber.js";
+import NumericFormat from "@/components/NumericFormat";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { getDecimalPlace } from "@/lib/textHelper";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -47,10 +51,11 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
-  const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("0");
+  const dfiPrice = useDfiPrice();
+  const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("1");
   const [confirmedWithdrawalCount, setConfirmedWithdrawalCount] =
-    useState<string>("0");
-  const [totalAvailable, setTotalAvailable] = useState<string>("0");
+    useState<string>("2");
+  const [totalAvailable, setTotalAvailable] = useState<string>("132.12");
 
   const {
     withdrawalRequestData,
@@ -102,6 +107,10 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
     }
   }, [withdrawalStatusData]);
 
+  const usdAmount = new BigNumber(totalAvailable).isNaN()
+    ? new BigNumber(0)
+    : new BigNumber(totalAvailable ?? 0).multipliedBy(dfiPrice);
+
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
       <div
@@ -138,8 +147,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="flex flex-col">
             <span className="text-xs text-light-1000/70">Total available</span>
             <div className="flex gap-x-1 mt-3 items-end">
-              <span className="font-semibold leading-5 text-right">0 DFI</span>
-              <span className="text-xs text-right text-dark-00/70">$0.0</span>
+              <NumericFormat
+                className="font-semibold leading-5 text-right"
+                suffix=" DFI"
+                value={totalAvailable}
+                decimalScale={getDecimalPlace(totalAvailable)}
+              />
+              <NumericFormat
+                className="text-xs text-right text-dark-00/70"
+                prefix="$"
+                value={usdAmount}
+                decimalScale={getDecimalPlace(usdAmount)}
+              />
             </div>
           </div>
         </div>
@@ -167,10 +186,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             <div className="flex py-2 justify-between">
               <span className="text-xs text-light-1000">Total available</span>
               <div className="flex flex-col gap-y-1">
-                <span className="font-semibold leading-5 text-right">
-                  0 DFI
-                </span>
-                <span className="text-xs text-right text-dark-00/70">$0.0</span>
+                <NumericFormat
+                  className="font-semibold leading-5 text-right"
+                  suffix=" DFI"
+                  value={totalAvailable}
+                  decimalScale={getDecimalPlace(totalAvailable)}
+                />
+                <NumericFormat
+                  className="text-xs text-right text-dark-00/70"
+                  prefix="$"
+                  value={usdAmount}
+                  decimalScale={getDecimalPlace(usdAmount)}
+                />
               </div>
             </div>
           </div>
