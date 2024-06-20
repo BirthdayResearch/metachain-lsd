@@ -25,7 +25,7 @@ export function WithdrawalsPopup({
       <div
         className={clsx(
           "bg-white rounded-[30px] flex flex-col p-8 gap-y-4 max-w-[468px]",
-          "absolute bottom-[110%] -translate-x-1/3",
+          "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
         )}
       >
         <div className="relative">
