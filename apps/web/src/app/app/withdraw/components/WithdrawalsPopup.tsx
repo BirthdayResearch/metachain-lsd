@@ -3,13 +3,13 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import clsx from "clsx";
 import { Tag } from "@/components/Tag";
 import { FaCircleCheck } from "react-icons/fa6";
-import { FiArrowUpRight } from "react-icons/fi";
 import { CTAButton } from "@/components/button/CTAButton";
 import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
 import { formatEther } from "ethers";
 import NumericFormat from "@/components/NumericFormat";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { IoMdClose } from "react-icons/io";
+import { formatTimestampToDate } from "@/lib/dateHelper";
 
 export function WithdrawalsPopup({
   pendingWithdrawalsArray,
@@ -63,6 +63,9 @@ export function WithdrawalsPopup({
                         formatEther(withdrawal.amountOfAssets.toString()),
                       )}
                     />
+                    <div className="text-xs">
+                      {formatTimestampToDate(withdrawal.timestamp)}
+                    </div>
                   </div>
                 ))}
               </>
