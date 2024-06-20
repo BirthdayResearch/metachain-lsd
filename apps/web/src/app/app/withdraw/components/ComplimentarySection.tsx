@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -100,7 +100,15 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               />
             )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
-            <div className="flex mt-2 gap-x-2" onClick={handleOnClick}>
+            <div
+              className="flex mt-2 gap-x-2"
+              onClick={
+                pendingWithdrawalsArray.length > 0 &&
+                confirmedWithdrawalsArray.length > 0
+                  ? handleOnClick
+                  : undefined
+              }
+            >
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
