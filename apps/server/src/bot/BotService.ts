@@ -93,6 +93,6 @@ export class BotService {
       this.configService,
     );
     await walletProvider.initWallet();
-    walletProvider.finalizeWithdrawalRequest(1, parseEther("1"));
+    walletProvider.finalizeWithdrawalRequest("1", parseEther("1"));
   }
 }
