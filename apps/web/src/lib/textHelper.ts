@@ -2,9 +2,7 @@ import BigNumber from "bignumber.js";
 import { parseEther } from "ethers";
 
 export function truncateTextFromMiddle(text: string, length = 5): string {
-  const maxLength = length * 2;
-
-  if (text.length <= length || text.length <= maxLength) {
+  if (text.length <= length) {
     return text;
   }
   return `${text.substring(0, length)}...${text.substring(
