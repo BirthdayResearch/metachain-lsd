@@ -100,7 +100,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               />
             )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
-            <div className="flex mt-2 gap-x-2">
+            <div className="flex mt-2 gap-x-2" onClick={handleOnClick}>
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
