@@ -61,18 +61,20 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
     confirmedWithdrawalsArray.length ?? 0
   ).toString();
 
-  const totalShares =
-    withdrawalStatusData?.reduce((acc: BigInt, item) => {
-      return BigInt(acc as bigint) + BigInt(item.amountOfShares as bigint);
-    }, BigInt(0)) ?? 0;
+  const { totalShares, totalAssets } = withdrawalStatusData?.reduce(
+    (acc, item) => {
+      return {
+        totalShares:
+          BigInt(acc.totalShares) + BigInt(item.amountOfShares as bigint),
+        totalAssets:
+          BigInt(acc.totalAssets) + BigInt(item.amountOfAssets as bigint),
+      };
+    },
+    { totalShares: BigInt(0), totalAssets: BigInt(0) },
+  ) ?? { totalShares: BigInt(0), totalAssets: BigInt(0) };
 
-  const totalAssets =
-    withdrawalStatusData?.reduce((acc: BigInt, item) => {
-      return BigInt(acc as bigint) + BigInt(item.amountOfAssets as bigint);
-    }, BigInt(0)) ?? 0;
-
-  const displayTotalShares = formatEther(totalShares.toString());
-  const displayTotalAssets = formatEther(totalAssets.toString());
+  const formattedTotalShares = formatEther(totalShares.toString());
+  const formattedTotalAssets = formatEther(totalAssets.toString());
 
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
@@ -114,14 +116,14 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <NumericFormat
                 className="font-semibold leading-5 text-right"
                 suffix="DFI"
-                value={displayTotalAssets}
-                decimalScale={getDecimalPlace(displayTotalAssets)}
+                value={formattedTotalAssets}
+                decimalScale={getDecimalPlace(formattedTotalAssets)}
               />
               <NumericFormat
                 className="text-xs text-right text-dark-00/70"
                 prefix="$"
-                value={displayTotalShares}
-                decimalScale={getDecimalPlace(displayTotalShares)}
+                value={formattedTotalShares}
+                decimalScale={getDecimalPlace(formattedTotalShares)}
               />
             </div>
           </div>
@@ -159,14 +161,14 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <NumericFormat
                   className="font-semibold leading-5 text-right"
                   suffix="DFI"
-                  value={displayTotalAssets}
-                  decimalScale={getDecimalPlace(displayTotalAssets)}
+                  value={formattedTotalAssets}
+                  decimalScale={getDecimalPlace(formattedTotalAssets)}
                 />
                 <NumericFormat
                   className="text-xs text-right text-dark-00/70"
                   prefix="$"
-                  value={displayTotalShares}
-                  decimalScale={getDecimalPlace(displayTotalShares)}
+                  value={formattedTotalShares}
+                  decimalScale={getDecimalPlace(formattedTotalShares)}
                 />
               </div>
             </div>
