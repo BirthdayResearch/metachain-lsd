@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -9,6 +9,7 @@ import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 import { formatEther } from "ethers";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
+import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -50,6 +51,12 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
+  const [isActive, setIsActive] = useState(false);
+
+  const handleOnClick = () => {
+    setIsActive(!isActive);
+  };
+
   const {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
@@ -84,7 +91,14 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
       >
         {/* Web view */}
         <div className="hidden md:flex gap-y-2">
-          <div className="flex flex-col min-w-[168px]">
+          <div className="relative flex flex-col min-w-[168px]">
+            {isActive && (
+              <WithdrawalsPopup
+                pendingWithdrawalsArray={pendingWithdrawalsArray}
+                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                onClose={handleOnClick}
+              />
+            )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
             <div className="flex mt-2 gap-x-2">
               <CTAButton

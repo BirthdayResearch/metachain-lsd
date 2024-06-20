@@ -3,18 +3,39 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import clsx from "clsx";
 import { Tag } from "@/components/Tag";
 import { FaCircleCheck } from "react-icons/fa6";
-import { FiExternalLink } from "react-icons/fi";
+import { FiArrowUpRight } from "react-icons/fi";
 import { CTAButton } from "@/components/button/CTAButton";
+import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
+import { formatEther } from "ethers";
+import NumericFormat from "@/components/NumericFormat";
+import { getDecimalPlace } from "@/lib/textHelper";
+import { IoMdClose } from "react-icons/io";
 
-export function WithdrawalsPopup() {
+export function WithdrawalsPopup({
+  pendingWithdrawalsArray,
+  confirmedWithdrawalsArray,
+  onClose,
+}: {
+  pendingWithdrawalsArray: WithdrawalStatusDataProps[];
+  confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
+  onClose: any;
+}) {
   return (
     <section>
       <div
         className={clsx(
-          "absolute bg-white rounded-[30px] flex flex-col p-8 gap-y-4",
+          "bg-white rounded-[30px] flex flex-col p-8 gap-y-4 max-w-[468px]",
+          "absolute bottom-[110%]",
         )}
       >
-        <span className="text-xl font-medium">Withdrawals</span>
+        <div className="relative">
+          <span className="text-xl font-medium">Withdrawals</span>
+          <IoMdClose
+            size={24}
+            onClick={onClose}
+            className="absolute right-0 top-0 text-light-1000 cursor-pointer"
+          />
+        </div>
         <div>
           <div className="flex items-center mb-2">
             <Tag
@@ -27,20 +48,33 @@ export function WithdrawalsPopup() {
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            <div className="flex justify-between items-center py-1.5">
-              <span className="text-sm font-semibold">12.12 DFI</span>
-              <div className="flex gap-x-2 items-center">
-                <span className="text-xs">1889saz12…89ms</span>
-                <FiExternalLink size={16} />
-              </div>
-            </div>
-            <div className="flex justify-between items-center py-1.5">
-              <span className="text-sm font-semibold">2.92 DFI</span>
-              <div className="flex gap-x-2 items-center">
-                <span className="text-xs">1889saz12…89ms</span>
-                <FiExternalLink size={16} />
-              </div>
-            </div>
+            {pendingWithdrawalsArray.length > 0 ? (
+              <>
+                {pendingWithdrawalsArray.map((withdrawal) => (
+                  <div
+                    key={`pending-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
+                    className="flex justify-between items-center py-1.5"
+                  >
+                    <NumericFormat
+                      className="text-sm font-semibold"
+                      value={formatEther(withdrawal.amountOfAssets.toString())}
+                      suffix=" DFI"
+                      decimalScale={getDecimalPlace(
+                        formatEther(withdrawal.amountOfAssets.toString()),
+                      )}
+                    />
+                    <div className="flex gap-x-2 items-center">
+                      <span className="text-xs">1889saz12…89ms</span>
+                      <FiArrowUpRight size={16} />
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <span className="text-xs text-light-1000/70">
+                No pending transaction.
+              </span>
+            )}
           </div>
         </div>
         <div>
@@ -55,26 +89,37 @@ export function WithdrawalsPopup() {
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold">12.12 DFI</span>
-              <CTAButton
-                customBgColor="button-bg-gradient-1"
-                customStyle="!px-3 !py-1"
-                customTextStyle="text-xs font-medium"
-                label="Claim"
-                testId="claim-btn"
-              />
-            </div>
-            <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold">11,121.13 DFI</span>
-              <CTAButton
-                customBgColor="button-bg-gradient-1"
-                customStyle="!px-3 !py-1"
-                customTextStyle="text-xs font-medium"
-                label="Claim"
-                testId="claim-btn"
-              />
-            </div>
+            {confirmedWithdrawalsArray.length > 0 ? (
+              <>
+                {confirmedWithdrawalsArray.map((withdrawal) => (
+                  <div
+                    key={`ready-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
+                    className="flex justify-between items-center py-1"
+                  >
+                    <NumericFormat
+                      className="text-sm font-semibold"
+                      value={formatEther(withdrawal.amountOfAssets.toString())}
+                      suffix=" DFI"
+                      decimalScale={getDecimalPlace(
+                        formatEther(withdrawal.amountOfAssets.toString()),
+                      )}
+                    />
+                    <CTAButton
+                      customBgColor="button-bg-gradient-1"
+                      customStyle="!px-3 !py-1"
+                      customTextStyle="text-xs font-medium"
+                      label="Claim"
+                      testId="claim-btn"
+                    />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <span className="text-xs text-light-1000/70">
+                No transactions available for claiming at the moment. Processing
+                usually takes 7-10 days, depending on network congestion.
+              </span>
+            )}
           </div>
         </div>
       </div>
