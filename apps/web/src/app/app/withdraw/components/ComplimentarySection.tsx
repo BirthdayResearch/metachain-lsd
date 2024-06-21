@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -10,6 +10,7 @@ import { formatEther } from "ethers";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
+import { WithdrawalsPopupMobile } from "@/app/app/withdraw/components/WithdrawalsPopupMobile";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -153,11 +154,27 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
 
         {/* Mobile view*/}
         <div className="flex w-full md:hidden">
-          <div className="flex flex-col w-full">
+          <div className="relative flex flex-col w-full">
+            {isActive && (
+              <WithdrawalsPopupMobile
+                pendingWithdrawalsArray={pendingWithdrawalsArray}
+                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                onClose={handleOnClick}
+                isActive={isActive}
+              />
+            )}
             <span className="font-semibold text-sm text-light-1000 mb-2">
               Withdrawals
             </span>
-            <div className="flex items-center py-2 justify-between">
+            <div
+              className="flex items-center py-2 justify-between"
+              onClick={
+                pendingWithdrawalsArray.length > 0 &&
+                confirmedWithdrawalsArray.length > 0
+                  ? handleOnClick
+                  : undefined
+              }
+            >
               <div className="flex gap-x-1">
                 <span className="text-xs text-light-1000">Pending</span>
                 <MdAccessTimeFilled className="text-warning" size={16} />
