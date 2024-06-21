@@ -66,6 +66,9 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
     withdrawalStatusData,
   } = useGetWithdrawalDetails();
 
+  const anyWithdrawalRequests =
+    pendingWithdrawalsArray.length > 0 && confirmedWithdrawalsArray.length > 0;
+
   const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
   const totalConfirmedCount = (
     confirmedWithdrawalsArray.length ?? 0
@@ -107,19 +110,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             <span className="text-xs text-light-1000/70">Withdrawals</span>
             <div
               className="flex mt-2 gap-x-2"
-              onClick={
-                pendingWithdrawalsArray.length > 0 &&
-                confirmedWithdrawalsArray.length > 0
-                  ? handleOnClick
-                  : undefined
-              }
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
             >
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  { "text-light-1000/30": pendingWithdrawalsArray.length <= 0 },
+                  { "text-light-1000/70": pendingWithdrawalsArray.length > 0 },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
@@ -127,8 +129,16 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 label={totalConfirmedCount}
                 testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  {
+                    "text-light-1000/30": confirmedWithdrawalsArray.length <= 0,
+                  },
+                  {
+                    "text-light-1000/70": confirmedWithdrawalsArray.length > 0,
+                  },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <FaCircleCheck className="text-green" size={10} />
               </CTAButton>
@@ -170,12 +180,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             </span>
             <div
               className="flex items-center py-2 justify-between"
-              onClick={
-                pendingWithdrawalsArray.length > 0 &&
-                confirmedWithdrawalsArray.length > 0
-                  ? handleOnClick
-                  : undefined
-              }
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
             >
               <div className="flex gap-x-1">
                 <span className="text-xs text-light-1000">Pending</span>
@@ -222,7 +227,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
             customTextStyle="whitespace-nowrap text-xs font-medium"
-            customBgColor="withdraw-button-bg"
+            customBgColor="button-bg-gradient-1"
           >
             <Image
               data-testid="dfi-icon"
