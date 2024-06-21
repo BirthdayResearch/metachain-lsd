@@ -11,6 +11,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
 import { WithdrawalsPopupMobile } from "@/app/app/withdraw/components/WithdrawalsPopupMobile";
+import useResponsive from "@/hooks/useResponsive";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -52,6 +53,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
+  const { isMobile } = useResponsive();
   const [isActive, setIsActive] = useState(false);
 
   const handleOnClick = () => {
@@ -155,7 +157,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
         {/* Mobile view*/}
         <div className="flex w-full md:hidden">
           <div className="relative flex flex-col w-full">
-            {isActive && (
+            {isActive && isMobile && (
               <WithdrawalsPopupMobile
                 pendingWithdrawalsArray={pendingWithdrawalsArray}
                 confirmedWithdrawalsArray={confirmedWithdrawalsArray}
