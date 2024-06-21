@@ -57,7 +57,6 @@ export default function WithdrawPage({
       enabled: isConnected,
     },
   });
-
   // To calculate and display the USD amount of total assets
   const totalAssets = useMemo(() => {
     return formatEther((totalAssetsData as number) ?? 0).toString();

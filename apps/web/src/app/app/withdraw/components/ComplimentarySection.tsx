@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -6,6 +6,9 @@ import { useAccount } from "wagmi";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { FaCircleCheck } from "react-icons/fa6";
 import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
+import { formatEther } from "ethers";
+import { getDecimalPlace } from "@/lib/textHelper";
+import NumericFormat from "@/components/NumericFormat";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -47,60 +50,31 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
-  const [pendingWithdrawCount, setPendingWithdrawCount] = useState<string>("0");
-  const [confirmedWithdrawalCount, setConfirmedWithdrawalCount] =
-    useState<string>("0");
-  const [totalAvailable, setTotalAvailable] = useState<string>("0");
-
   const {
-    withdrawalRequestData,
+    pendingWithdrawalsArray,
+    confirmedWithdrawalsArray,
     withdrawalStatusData,
-    withdrawalRequestError,
-    withdrawalStatusError,
   } = useGetWithdrawalDetails();
 
-  console.log({
-    pendingWithdrawCount,
-    confirmedWithdrawalCount,
-    totalAvailable,
-    withdrawalStatusData,
-  });
+  const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
+  const totalConfirmedCount = (
+    confirmedWithdrawalsArray.length ?? 0
+  ).toString();
 
-  useEffect(() => {
-    console.log(
-      "condition",
-      Array.isArray(withdrawalStatusData),
-      withdrawalStatusData?.length > 0,
-    );
-    if (
-      Array.isArray(withdrawalStatusData) &&
-      withdrawalStatusData.length > 0
-    ) {
-      console.log("calculate");
-      let pendingCount = 0;
-      let confirmedCount = 0;
-      let totalAvailable = 0;
-      withdrawalStatusData.forEach((status) => {
-        if (!status.isClaimed) {
-          console.log(
-            "amountOfAssets",
-            status.amountOfAssets,
-            typeof status.amountOfAssets,
-          );
-          totalAvailable += status.amountOfAssets;
+  const { totalShares, totalAssets } = withdrawalStatusData?.reduce(
+    (acc, item) => {
+      return {
+        totalShares:
+          BigInt(acc.totalShares) + BigInt(item.amountOfShares as bigint),
+        totalAssets:
+          BigInt(acc.totalAssets) + BigInt(item.amountOfAssets as bigint),
+      };
+    },
+    { totalShares: BigInt(0), totalAssets: BigInt(0) },
+  ) ?? { totalShares: BigInt(0), totalAssets: BigInt(0) };
 
-          if (status.isFinalized) {
-            confirmedCount++;
-          } else {
-            pendingCount++;
-          }
-        }
-      });
-      setPendingWithdrawCount(pendingCount.toString());
-      setConfirmedWithdrawalCount(confirmedCount.toString());
-      setTotalAvailable(totalAvailable.toString());
-    }
-  }, [withdrawalStatusData]);
+  const formattedTotalShares = formatEther(totalShares.toString());
+  const formattedTotalAssets = formatEther(totalAssets.toString());
 
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
@@ -110,12 +84,13 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           customStyle,
         )}
       >
+        {/* Web view */}
         <div className="hidden md:flex gap-y-2">
           <div className="flex flex-col min-w-[168px]">
             <span className="text-xs text-light-1000/70">Withdrawals</span>
             <div className="flex mt-2 gap-x-2">
               <CTAButton
-                label={pendingWithdrawCount}
+                label={totalPendingCount}
                 testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
@@ -124,7 +99,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
               <CTAButton
-                label={confirmedWithdrawalCount}
+                label={totalConfirmedCount}
                 testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
                 customTextStyle="font-semibold leading-5 text-light-1000/30"
@@ -138,11 +113,23 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="flex flex-col">
             <span className="text-xs text-light-1000/70">Total available</span>
             <div className="flex gap-x-1 mt-3 items-end">
-              <span className="font-semibold leading-5 text-right">0 DFI</span>
-              <span className="text-xs text-right text-dark-00/70">$0.0</span>
+              <NumericFormat
+                className="font-semibold leading-5 text-right"
+                suffix="DFI"
+                value={formattedTotalAssets}
+                decimalScale={getDecimalPlace(formattedTotalAssets)}
+              />
+              <NumericFormat
+                className="text-xs text-right text-dark-00/70"
+                prefix="$"
+                value={formattedTotalShares}
+                decimalScale={getDecimalPlace(formattedTotalShares)}
+              />
             </div>
           </div>
         </div>
+
+        {/* Mobile view*/}
         <div className="flex w-full md:hidden">
           <div className="flex flex-col w-full">
             <span className="font-semibold text-sm text-light-1000 mb-2">
@@ -153,7 +140,9 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <span className="text-xs text-light-1000">Pending</span>
                 <MdAccessTimeFilled className="text-warning" size={16} />
               </div>
-              <span className="font-semibold leading-5 text-right">0</span>
+              <span className="font-semibold leading-5 text-right">
+                {totalPendingCount}
+              </span>
             </div>
             <span className="block w-full my-1.5 border-dark-00/10 border-[0.5px]" />
             <div className="flex items-center py-2 justify-between">
@@ -161,16 +150,26 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <span className="text-xs text-light-1000">Available</span>
                 <FaCircleCheck className="text-green" size={14} />
               </div>
-              <span className="font-semibold leading-5 text-right">0</span>
+              <span className="font-semibold leading-5 text-right">
+                {totalConfirmedCount}
+              </span>
             </div>
             <span className="block w-full my-1.5 border-dark-00/10 border-[0.5px]" />
             <div className="flex py-2 justify-between">
               <span className="text-xs text-light-1000">Total available</span>
               <div className="flex flex-col gap-y-1">
-                <span className="font-semibold leading-5 text-right">
-                  0 DFI
-                </span>
-                <span className="text-xs text-right text-dark-00/70">$0.0</span>
+                <NumericFormat
+                  className="font-semibold leading-5 text-right"
+                  suffix="DFI"
+                  value={formattedTotalAssets}
+                  decimalScale={getDecimalPlace(formattedTotalAssets)}
+                />
+                <NumericFormat
+                  className="text-xs text-right text-dark-00/70"
+                  prefix="$"
+                  value={formattedTotalShares}
+                  decimalScale={getDecimalPlace(formattedTotalShares)}
+                />
               </div>
             </div>
           </div>
