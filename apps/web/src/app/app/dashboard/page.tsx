@@ -5,6 +5,7 @@ import { useContractContext } from "@/context/ContractContext";
 import Link from "next/link";
 import stats from "./stats";
 import StatsCard from "./components/StatusCard";
+import { DashboardWriteMethodI } from "@/lib/types";
 
 export default function Dashboard() {
   const { MarbleLsdProxy, ExplorerURL } = useContractContext();
@@ -54,7 +55,7 @@ export default function Dashboard() {
                   format={each.format as (value: string | string[]) => string}
                   decimal={each.decimal}
                   suffix={each.suffix}
-                  writeMethod={each.writeMethod}
+                  writeMethod={each.writeMethod as DashboardWriteMethodI}
                   value={(response?.result as string) ?? "0"}
                 />
               );
