@@ -38,6 +38,9 @@ export default function WithdrawalConfirmation({
         id: "errorMessage",
       });
     }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
   }, [errorMessage]);
 
   return (

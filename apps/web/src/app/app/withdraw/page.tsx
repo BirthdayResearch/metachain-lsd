@@ -16,7 +16,6 @@ import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConf
 import BigNumber from "bignumber.js";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
 import useApproveAllowance from "@/hooks/useApproveAllowance";
-import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySection";
 
 /*
  * Withdrawal flow
@@ -27,7 +26,7 @@ import ComplimentarySection from "@/app/app/withdraw/components/ComplimentarySec
 export default function Withdraw() {
   const mainContentRef = React.useRef(null);
   const { address, isConnected } = useAccount();
-  const { MarbleLsdProxy, mDFI } = useContractContext();
+  const { MarbleLsdProxy } = useContractContext();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -168,6 +167,9 @@ export default function Withdraw() {
       });
       setHasPendingTx(false);
     }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
   }, [errorMessage, hasPendingTx]);
 
   useEffect(() => {
