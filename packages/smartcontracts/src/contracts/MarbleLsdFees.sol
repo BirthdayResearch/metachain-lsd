@@ -91,7 +91,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
     // set initial fees
     mintingFees = 50; // 50 for 0.5%
     redemptionFees = 75; // 75 for 0.75%
-    performanceFees = 800; // 800 for 8%
+    performanceFees = 500; // 500 for 5%
     feesRecipientAddress = _feesRecipientAddress;
   }
 

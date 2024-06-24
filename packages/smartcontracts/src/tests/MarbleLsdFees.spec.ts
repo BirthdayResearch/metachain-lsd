@@ -36,9 +36,9 @@ describe("MarbleLsdFees", () => {
     expect(redemptionFees).to.be.equal("75");
   });
 
-  it("Should have default performance fees fee as 8%", async () => {
+  it("Should have default performance fees fee as 5%", async () => {
     const performanceFees = await proxyMarbleLsd.performanceFees();
-    expect(performanceFees).to.be.equal("800");
+    expect(performanceFees).to.be.equal("500");
   });
 
   it("Should not update Fees Recipient Address from non admin address", async () => {
