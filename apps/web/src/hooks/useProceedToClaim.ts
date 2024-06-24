@@ -2,28 +2,21 @@
  * Hook to write `claimWithdrawal` function
  */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useContractContext } from "@/context/ContractContext";
 import { Abi } from "viem";
-import BigNumber from "bignumber.js";
-import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 
 interface proceedToClaimI {
+  requestId: string;
   setErrorMessage: any;
 }
 
 export default function useProceedToClaim({
+  requestId,
   setErrorMessage,
 }: proceedToClaimI) {
   const { MarbleLsdProxy } = useContractContext();
-  const [withdrawalRequests, setWithdrawalRequests] = useState<BigNumber[]>([]);
-
-  const { withdrawalRequestData } = useGetWithdrawalDetails();
-
-  useEffect(() => {
-    setWithdrawalRequests(withdrawalRequestData as BigNumber[]);
-  }, [withdrawalRequestData]);
 
   // Write contract for `claimWithdrawals` function
   const {
@@ -61,7 +54,6 @@ export default function useProceedToClaim({
   }, [writeClaimWithdrawalError, ClaimWithdrawalsTxnError]);
 
   return {
-    withdrawalRequests,
     claimHash,
     isClaimWithdrawalsTxnLoading,
     isClaimWithdrawalsTxnSuccess,
@@ -71,7 +63,7 @@ export default function useProceedToClaim({
           abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
           functionName: "claimWithdrawal",
-          args: [withdrawalRequests[-1]],
+          args: [requestId],
         },
         {
           onSuccess: (hash) => {
