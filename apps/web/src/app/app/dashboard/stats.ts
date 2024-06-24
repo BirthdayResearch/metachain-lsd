@@ -70,6 +70,7 @@ const stats = [
         new BigNumber(amount ?? 0).plus(fees ?? 0).toString(),
       ).toString();
     },
+    decimal: 18,
     label: "DFI yet to be finalized",
     writeMethod: {
       name: "finalize",
