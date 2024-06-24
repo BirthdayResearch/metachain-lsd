@@ -16,6 +16,7 @@ import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConf
 import BigNumber from "bignumber.js";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
 import useApproveAllowance from "@/hooks/useApproveAllowance";
+import { MdCancel } from "react-icons/md";
 
 /*
  * Withdrawal flow
@@ -26,7 +27,7 @@ import useApproveAllowance from "@/hooks/useApproveAllowance";
 export default function Withdraw() {
   const mainContentRef = React.useRef(null);
   const { address, isConnected } = useAccount();
-  const { MarbleLsdProxy, mDFI } = useContractContext();
+  const { MarbleLsdProxy } = useContractContext();
 
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
@@ -160,6 +161,7 @@ export default function Withdraw() {
   useEffect(() => {
     if (errorMessage != null) {
       toast(errorMessage, {
+        icon: <MdCancel size={24} className="text-red" />,
         duration: 5000,
         className:
           "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
