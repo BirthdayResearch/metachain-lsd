@@ -18,7 +18,7 @@ export function WithdrawalsPopup({
 }: {
   pendingWithdrawalsArray: WithdrawalStatusDataProps[];
   confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
-  onClose: any;
+  onClose: () => void;
 }) {
   return (
     <section>
