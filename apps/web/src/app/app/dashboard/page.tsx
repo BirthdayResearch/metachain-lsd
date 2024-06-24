@@ -1,120 +1,14 @@
 "use client";
 
 import { useAccount, useReadContracts } from "wagmi";
-import NumericFormat from "@/components/NumericFormat";
 import { useContractContext } from "@/context/ContractContext";
-import { formatEther, parseEther } from "ethers";
-import { FiCheckCircle, FiSlash } from "react-icons/fi";
-import BigNumber from "bignumber.js";
 import Link from "next/link";
-
-const stats = [
-  {
-    functionName: "totalStakedAssets",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Total Staked Assets",
-  },
-  {
-    functionName: "totalShares",
-    format: (value: string) => formatEther(value).toString(),
-    label: "mDFI Total Supply",
-  },
-  {
-    functionName: "totalAssets",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Total Assets (Staked + Rewards)",
-  },
-  {
-    functionName: "totalRewardAssets",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Total Reward Assets",
-  },
-  {
-    functionName: "getAvailableFundsToFlush",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Available For Withdrawal",
-  },
-  {
-    functionName: "convertToAssets",
-    label: "mDFI-DFI Ratio",
-    format: (value: string) => formatEther(value).toString(),
-    args: [parseEther("1")],
-  },
-  {
-    functionName: "minDeposit",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Minimum Deposit",
-  },
-  {
-    functionName: "minWithdrawal",
-    format: (value: string) => formatEther(value).toString(),
-    label: "Minimum Withdrawal",
-  },
-  {
-    functionName: "lastFinalizedRequestId",
-    decimal: 0,
-    label: "Last Finalized Req No",
-  },
-  {
-    functionName: "lastRequestId",
-    decimal: 0,
-    label: "Withdrawal Req No",
-  },
-  {
-    functionName: "unfinalizedRequestNumber",
-    decimal: 0,
-    label: "Non finalized requests in the queue",
-  },
-  {
-    functionName: "unfinalizedAssets",
-    format: (values: string[]) => {
-      const [amount, fees] = values;
-      return formatEther(
-        new BigNumber(amount).plus(fees ?? 0).toString(),
-      ).toString();
-    },
-    label: "DFI Req to finalized all withdraw",
-  },
-  {
-    functionName: "lockedAssets",
-    format: (value: string) => formatEther(value).toString(),
-    decimal: 0,
-    label: "Locked Assets",
-  },
-  {
-    functionName: "mintingFees",
-    decimal: 2,
-    suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
-    label: "Minting Fees",
-  },
-  {
-    functionName: "performanceFees",
-    decimal: 2,
-    suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
-    label: "Performance Fees",
-  },
-  {
-    functionName: "redemptionFees",
-    decimal: 2,
-    suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
-    label: "Redemption Fees",
-  },
-  {
-    functionName: "isDepositPaused",
-    label: "Deposit Paused",
-  },
-  {
-    functionName: "isWithdrawalPaused",
-    label: "Withdrawal Paused",
-  },
-];
+import stats from "./stats";
+import StatsCard from "./components/StatusCard";
+import { DashboardWriteMethodI } from "@/lib/types";
 
 export default function Dashboard() {
   const { MarbleLsdProxy, ExplorerURL } = useContractContext();
-
   const { isConnected } = useAccount();
 
   const { data: contractResponse } = useReadContracts({
@@ -161,6 +55,7 @@ export default function Dashboard() {
                   format={each.format as (value: string | string[]) => string}
                   decimal={each.decimal}
                   suffix={each.suffix}
+                  writeMethod={each.writeMethod as DashboardWriteMethodI}
                   value={(response?.result as string) ?? "0"}
                 />
               );
@@ -169,44 +64,6 @@ export default function Dashboard() {
         ) : (
           <div className="my-4">Connect Wallet to get status</div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function StatsCard({
-  value,
-  label,
-  format,
-  decimal = 8,
-  suffix,
-}: {
-  value: string | boolean;
-  label: string;
-  format?: (value: string | string[]) => string;
-  decimal?: number;
-  suffix?: string;
-}) {
-  return (
-    <div className="panel-ui w-full border border-dark-700/40 rounded-md flex flex-col p-4 mx-auto !backdrop-blur-sm">
-      <div className="flex flex-col items-center space-y-4">
-        {typeof value === "boolean" ? (
-          <span className="font-medium text-dark-300/80 text-wrap	break-all">
-            {value ? (
-              <FiCheckCircle size={24} className="text-green" />
-            ) : (
-              <FiSlash size={24} className="text-red" />
-            )}
-          </span>
-        ) : (
-          <NumericFormat
-            suffix={suffix}
-            decimalScale={decimal}
-            value={format ? format(value) : value}
-            className="font-medium text-dark-300/80 text-wrap	break-all"
-          />
-        )}
-        <span className="font-bold text-xs text-dark-300">{label}</span>
       </div>
     </div>
   );
