@@ -83,7 +83,7 @@ export default function useApproveAllowance({
 
       if (writeApproveError?.message?.includes("User rejected the request")) {
         setErrorMessage(
-          "The transaction was rejected in your wallet. No funds have been approved. Please retry your transaction.",
+          "Transaction was rejected from wallet. No funds have been approved.",
         );
       } else {
         setErrorMessage(writeApproveError?.message ?? approveTxnError?.message);
