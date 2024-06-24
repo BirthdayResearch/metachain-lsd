@@ -68,10 +68,12 @@ const stats = [
   {
     functionName: "unfinalizedAssets",
     format: (values: string[]) => {
-      const [amount] = values;
-      return formatEther(amount).toString();
+      const [amount, fees] = values;
+      return formatEther(
+        new BigNumber(amount).plus(fees ?? 0).toString(),
+      ).toString();
     },
-    label: "DFI yet to be finalized",
+    label: "DFI Req to finalized all withdraw",
   },
   {
     functionName: "lockedAssets",
