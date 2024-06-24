@@ -90,6 +90,12 @@ const stats = [
     suffix: "%",
     format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Minting Fees",
+    writeMethod: {
+      name: "updateMintingFees",
+      role: ["ADMINISTRATOR_ROLE"],
+      description:
+        "Amount to be set as minting fees. This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).",
+    },
   },
   {
     functionName: "performanceFees",
@@ -97,6 +103,12 @@ const stats = [
     suffix: "%",
     format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Performance Fees",
+    writeMethod: {
+      name: "updatePerformanceFees",
+      role: ["ADMINISTRATOR_ROLE"],
+      description:
+        "Amount to be set as performance fees. This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).",
+    },
   },
   {
     functionName: "redemptionFees",
@@ -104,6 +116,12 @@ const stats = [
     suffix: "%",
     format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
     label: "Redemption Fees",
+    writeMethod: {
+      name: "updateRedemptionFees",
+      role: ["ADMINISTRATOR_ROLE"],
+      description:
+        "Amount to be set as redemption fees. This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).",
+    },
   },
   {
     functionName: "isDepositPaused",
