@@ -1,8 +1,9 @@
 import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface WithdrawalStatusDataProps {
+  requestId: string;
   amountOfAssets: BigInt;
   amountOfFees: BigInt;
   amountOfShares: BigInt;
@@ -50,6 +51,19 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     ? withdrawalStatusDataRaw
     : undefined;
 
+  let withdrawalStatusDataWithReqId: WithdrawalStatusDataProps[];
+
+  const withdrawalRequest = useMemo(() => {
+    return withdrawalRequestData as string[];
+  }, [withdrawalRequestData]);
+
+  if (withdrawalStatusData) {
+    withdrawalStatusDataWithReqId = withdrawalRequest.map((key, index) => ({
+      requestId: key,
+      ...withdrawalStatusData[index],
+    }));
+  }
+
   // To create pending and confirmed withdrawal arrays
   useEffect(() => {
     let pendingItems: WithdrawalStatusDataProps[] = [];
@@ -58,7 +72,7 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
       Array.isArray(withdrawalStatusData) &&
       Object.keys(withdrawalStatusData).length > 0
     ) {
-      withdrawalStatusData.map((item) => {
+      withdrawalStatusDataWithReqId.map((item) => {
         if (!item.isClaimed && !item.isFinalized) {
           pendingItems.push(item);
         } else if (!item.isClaimed && item.isFinalized) {
