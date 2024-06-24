@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -9,6 +9,9 @@ import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 import { formatEther } from "ethers";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
+import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
+import { WithdrawalsPopupMobile } from "@/app/app/withdraw/components/WithdrawalsPopupMobile";
+import useResponsive from "@/hooks/useResponsive";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -50,11 +53,21 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
+  const { isMobile } = useResponsive();
+  const [isActive, setIsActive] = useState(false);
+
+  const handleOnClick = () => {
+    setIsActive(!isActive);
+  };
+
   const {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
     withdrawalStatusData,
   } = useGetWithdrawalDetails();
+
+  const anyWithdrawalRequests =
+    pendingWithdrawalsArray.length > 0 && confirmedWithdrawalsArray.length > 0;
 
   const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
   const totalConfirmedCount = (
@@ -86,15 +99,29 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
       >
         {/* Web view */}
         <div className="hidden md:flex gap-y-2">
-          <div className="flex flex-col min-w-[168px]">
+          <div className="relative flex flex-col min-w-[168px]">
+            {isActive && (
+              <WithdrawalsPopup
+                pendingWithdrawalsArray={pendingWithdrawalsArray}
+                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                onClose={handleOnClick}
+              />
+            )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
-            <div className="flex mt-2 gap-x-2">
+            <div
+              className="flex mt-2 gap-x-2"
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
+            >
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  { "text-light-1000/30": pendingWithdrawalsArray.length <= 0 },
+                  { "text-light-1000/70": pendingWithdrawalsArray.length > 0 },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
@@ -102,8 +129,16 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 label={totalConfirmedCount}
                 testId="confirmed-withdrawals-button"
                 customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  {
+                    "text-light-1000/30": confirmedWithdrawalsArray.length <= 0,
+                  },
+                  {
+                    "text-light-1000/70": confirmedWithdrawalsArray.length > 0,
+                  },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <FaCircleCheck className="text-green" size={10} />
               </CTAButton>
@@ -131,11 +166,22 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
 
         {/* Mobile view*/}
         <div className="flex w-full md:hidden">
-          <div className="flex flex-col w-full">
+          <div className="relative flex flex-col w-full">
+            {isActive && isMobile && (
+              <WithdrawalsPopupMobile
+                pendingWithdrawalsArray={pendingWithdrawalsArray}
+                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                onClose={handleOnClick}
+                isActive={isActive}
+              />
+            )}
             <span className="font-semibold text-sm text-light-1000 mb-2">
               Withdrawals
             </span>
-            <div className="flex items-center py-2 justify-between">
+            <div
+              className="flex items-center py-2 justify-between"
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
+            >
               <div className="flex gap-x-1">
                 <span className="text-xs text-light-1000">Pending</span>
                 <MdAccessTimeFilled className="text-warning" size={16} />
@@ -181,7 +227,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
             customTextStyle="whitespace-nowrap text-xs font-medium"
-            customBgColor="withdraw-button-bg"
+            customBgColor="button-bg-gradient-1"
           >
             <Image
               data-testid="dfi-icon"

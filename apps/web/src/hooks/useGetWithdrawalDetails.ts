@@ -2,7 +2,7 @@ import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
 import { useEffect, useState } from "react";
 
-interface WithdrawalStatusDataProps {
+export interface WithdrawalStatusDataProps {
   amountOfAssets: BigInt;
   amountOfFees: BigInt;
   amountOfShares: BigInt;
