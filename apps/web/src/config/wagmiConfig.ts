@@ -31,27 +31,15 @@ const config = createConfig(
           }),
         ]
       : [],
-    chains:
-      process.env.NODE_ENV === "development"
-        ? [sepolia, DefichainEvmMainnet, DefichainEvmTestnet]
-        : [DefichainEvmTestnet],
-    transports:
-      process.env.NODE_ENV === "development"
-        ? {
-            [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-            [DefichainEvmMainnet.id]: http(
-              DefichainEvmMainnet.rpcUrls.default.http[0],
-            ),
-            [DefichainEvmTestnet.id]: http(
-              DefichainEvmTestnet.rpcUrls.default.http[0],
-            ),
-          }
-        : {
-            [DefichainEvmTestnet.id]: http(
-              DefichainEvmTestnet.rpcUrls.default.http[0],
-            ),
-          },
-
+    chains: [DefichainEvmMainnet, DefichainEvmTestnet],
+    transports: {
+      [DefichainEvmMainnet.id]: http(
+        DefichainEvmMainnet.rpcUrls.default.http[0],
+      ),
+      [DefichainEvmTestnet.id]: http(
+        DefichainEvmTestnet.rpcUrls.default.http[0],
+      ),
+    },
     // Required API Keys
     walletConnectProjectId: process.env
       .NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string,
