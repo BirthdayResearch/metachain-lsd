@@ -5,7 +5,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { PrismaService } from "../PrismaService";
-import { User } from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 import { CreateUserDTO } from "./model/User";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
@@ -13,15 +13,21 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createUser(user: CreateUserDTO): Promise<User> {
+  async createUser(
+    user: CreateUserDTO,
+  ): Promise<{ email: string; status: SubscriptionStatus }> {
     const { email, status } = user;
     try {
-      return await this.prismaService.user.create({
+      const data = await this.prismaService.user.create({
         data: {
           email: email,
           status: status,
         },
       });
+      return {
+        email: data.email,
+        status: data.status,
+      };
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
         throw new BadRequestException(

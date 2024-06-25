@@ -2,31 +2,15 @@ import { ContractContextI } from "@/lib/types";
 import { MarbleLsdV1__factory, ShareToken__factory } from "smartcontracts/src";
 
 // TO CHANGE once deployed on mainnet
-export const SEPOLIA_CONFIG: ContractContextI = {
-  EthereumRpcUrl: "https://rpc.ankr.com/eth_sepolia",
-  ExplorerURL: "https://sepolia.etherscan.io",
-  MarbleLsdProxy: {
-    address: "0x49A3e882B8Ca7BA93CD412D8dbF8b5f0C9f8FD94",
-    abi: MarbleLsdV1__factory.abi,
-  },
-  mDFI: {
-    address: "0x1F1BCfbF082e274D0eeE0ED62C28CE51B6A33330",
-    abi: ShareToken__factory.abi,
-    decimal: 18,
-    symbol: "mDFI",
-  },
-};
-
-// TO CHANGE once deployed on mainnet
 export const MAINNET_CONFIG: ContractContextI = {
-  EthereumRpcUrl: "https://rpc.ankr.com/eth_sepolia",
-  ExplorerURL: "https://sepolia.etherscan.io",
+  EthereumRpcUrl: "https://eth.mainnet.ocean.jellyfishsdk.com",
+  ExplorerURL: "https://blockscout.mainnet.ocean.jellyfishsdk.com",
   MarbleLsdProxy: {
-    address: "0x49A3e882B8Ca7BA93CD412D8dbF8b5f0C9f8FD94",
+    address: "0x7625924EFb4835E9459a4Ea6bA17ea99FBb7883B",
     abi: MarbleLsdV1__factory.abi,
   },
   mDFI: {
-    address: "0x1F1BCfbF082e274D0eeE0ED62C28CE51B6A33330",
+    address: "0xDB9d6fbF5b971Ae3C3a333cc31DB7105e1534998",
     abi: ShareToken__factory.abi,
     decimal: 18,
     symbol: "mDFI",
