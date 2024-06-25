@@ -26,20 +26,20 @@ task("deployContract", "Deploys a contract based on the name of the contract")
     "The contract name. If the contract is Foo.sol, the contract name is Foo.",
     // no default value
     undefined,
-    types.string
+    types.string,
   )
   .addOptionalParam(
     "deployargs",
     "Comma-delimited contract deployment arguments. If empty, there are no necessary deployment args.",
     // no default value
     undefined,
-    types.string
+    types.string,
   )
   .addOptionalParam(
     "libraries",
     "Link a contract to a deployed library. Expects a JSON of library name to address.",
     undefined,
-    types.json
+    types.json,
   )
   .setAction(async (taskArgs: DeployContractArgs, hre) => {
     try {
@@ -49,13 +49,13 @@ task("deployContract", "Deploys a contract based on the name of the contract")
         libraries,
       });
       const contract = await contractFactory.deploy(
-        ...(deployargs === undefined ? [] : deployargs.split(","))
+        ...(deployargs === undefined ? [] : deployargs.split(",")),
       );
 
       // Logs the contract address as the output of this task
       // Can be picked up by the task executor to create a contract instance with the outputted contract address
       console.log(
-        `${await contract.getAddress()} ${await contract.deploymentTransaction()}`
+        `${await contract.getAddress()} ${await contract.deploymentTransaction()}`,
       );
     } catch (e) {
       // Logs the error message to be picked up by the caller. Errors start with 'Error: ...'
@@ -112,8 +112,13 @@ const config: HardhatUserConfig = {
       url: "https://eth.testnet.ocean.jellyfishsdk.com",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      // ledgerAccounts: ['first EVM address of your ledger'],
       chainId: 1131,
+    },
+    DMCMainnet: {
+      url: "https://eth.mainnet.ocean.jellyfishsdk.com",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 1130,
     },
     sepolia: {
       url: process.env.SEPOLIA_URL || "",
@@ -130,7 +135,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      DMCTestnet: process.env.ETHERSCAN_API_KEY || "",
+      DMCTestnet: "DMCTestnet",
+      DMCMainnet: "DMCMainnet",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
     },
     customChains: [
@@ -140,6 +146,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://blockscout.testnet.ocean.jellyfishsdk.com/api",
           browserURL: "https://blockscout.testnet.ocean.jellyfishsdk.com",
+        },
+      },
+      {
+        network: "DMCMainnet",
+        chainId: 1130,
+        urls: {
+          apiURL: "https://blockscout.mainnet.ocean.jellyfishsdk.com/api",
+          browserURL: "https://blockscout.mainnet.ocean.jellyfishsdk.com",
         },
       },
     ],
