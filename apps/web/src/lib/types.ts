@@ -9,6 +9,11 @@ interface MDfiContractConfigI {
   address: `0x${string}`;
   abi?: typeof ShareToken__factory.abi;
 }
+
+export interface MarbleFiVersion {
+  v: string;
+}
+
 export interface ContractContextI {
   EthereumRpcUrl: string;
   ExplorerURL: string;
