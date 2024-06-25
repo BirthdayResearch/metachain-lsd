@@ -118,7 +118,7 @@ export default function ContractMethodForm({
         <ConnectKitButton.Custom>
           {({ show }) => (
             <CTAButton
-              testID={`${method.name}-button`}
+              testId={`${method.name}-button`}
               label="Write"
               onClick={!isConnected ? show : () => handleSubmit()}
               isDisabled={
@@ -130,7 +130,7 @@ export default function ContractMethodForm({
         {/* Write result is always hash */}
         {writeResult && (
           <CTAButtonOutline
-            testID={`${method.name}-result-button`}
+            testId={`${method.name}-result-button`}
             label="View your transaction"
             onClick={() =>
               window.open(`${ExplorerURL}/tx/${writeResult}`, "_blank")
