@@ -78,28 +78,29 @@ export function WithdrawalsPopupMobile({
                     <div className="ml-2">
                       {pendingWithdrawalsArray.length > 0 ? (
                         <>
-                          {pendingWithdrawalsArray.map((withdrawal) => (
-                            <div
-                              key={`pending-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
-                              className="flex justify-between items-center py-1.5"
-                            >
-                              <NumericFormat
-                                className="text-sm font-semibold"
-                                value={formatEther(
-                                  withdrawal.amountOfAssets.toString(),
-                                )}
-                                suffix=" DFI"
-                                decimalScale={getDecimalPlace(
-                                  formatEther(
-                                    withdrawal.amountOfAssets.toString(),
-                                  ),
-                                )}
-                              />
-                              <div className="text-xs">
-                                {formatTimestampToDate(withdrawal.timestamp)}
-                              </div>
-                            </div>
-                          ))}
+                          {pendingWithdrawalsArray.map(
+                            ({ amountOfAssets, timestamp }) => {
+                              const formatAsset = formatEther(
+                                amountOfAssets.toString(),
+                              );
+                              return (
+                                <div
+                                  key={`pending-withdrawal-${formatAsset}`}
+                                  className="flex justify-between items-center py-1.5"
+                                >
+                                  <NumericFormat
+                                    className="text-sm font-semibold"
+                                    value={formatAsset}
+                                    suffix=" DFI"
+                                    decimalScale={getDecimalPlace(formatAsset)}
+                                  />
+                                  <div className="text-xs">
+                                    {formatTimestampToDate(timestamp)}
+                                  </div>
+                                </div>
+                              );
+                            },
+                          )}
                         </>
                       ) : (
                         <span className="text-xs text-light-1000/70">
@@ -124,32 +125,33 @@ export function WithdrawalsPopupMobile({
                     <div className="ml-2">
                       {confirmedWithdrawalsArray.length > 0 ? (
                         <>
-                          {confirmedWithdrawalsArray.map((withdrawal) => (
-                            <div
-                              key={`ready-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
-                              className="flex justify-between items-center py-1"
-                            >
-                              <NumericFormat
-                                className="text-sm font-semibold"
-                                value={formatEther(
-                                  withdrawal.amountOfAssets.toString(),
-                                )}
-                                suffix=" DFI"
-                                decimalScale={getDecimalPlace(
-                                  formatEther(
-                                    withdrawal.amountOfAssets.toString(),
-                                  ),
-                                )}
-                              />
-                              <CTAButton
-                                customBgColor="button-bg-gradient-1"
-                                customStyle="!px-3 !py-1"
-                                customTextStyle="text-xs font-medium"
-                                label="Claim"
-                                testId="claim-btn"
-                              />
-                            </div>
-                          ))}
+                          {confirmedWithdrawalsArray.map(
+                            ({ amountOfAssets }) => {
+                              const formatAsset = formatEther(
+                                amountOfAssets.toString(),
+                              );
+                              return (
+                                <div
+                                  key={`ready-withdrawal-${formatAsset}`}
+                                  className="flex justify-between items-center py-1"
+                                >
+                                  <NumericFormat
+                                    className="text-sm font-semibold"
+                                    value={formatAsset}
+                                    suffix=" DFI"
+                                    decimalScale={getDecimalPlace(formatAsset)}
+                                  />
+                                  <CTAButton
+                                    customBgColor="button-bg-gradient-1"
+                                    customStyle="!px-3 !py-1"
+                                    customTextStyle="text-xs font-medium"
+                                    label="Claim"
+                                    testId="claim-btn"
+                                  />
+                                </div>
+                              );
+                            },
+                          )}
                         </>
                       ) : (
                         <span className="text-xs text-light-1000/70">
