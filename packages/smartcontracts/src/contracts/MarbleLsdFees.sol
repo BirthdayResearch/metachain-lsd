@@ -8,32 +8,32 @@ import "./MarbleLsdAccessControl.sol";
  * @notice @dev
  * This error occurs when `_fees` is invalid
  */
-  error INVALID_FEES();
+error INVALID_FEES();
 
 contract MarbleLsdFees is MarbleLsdAccessControl {
   using Math for uint256;
 
   /**
-  * @dev Basis point scale used for fee calculations, set to 10,000.
-  * This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).
-  */
+   * @dev Basis point scale used for fee calculations, set to 10,000.
+   * This is used to represent percentages with two decimal precision (e.g., 1% is represented as 100 basis points).
+   */
   uint256 private constant _BASIS_POINT_SCALE = 1e4;
 
   /**
-  * @dev Address where the fees will be sent.
-  */
+   * @dev Address where the fees will be sent.
+   */
   address public feesRecipientAddress;
   /**
-  * @dev Fee applied during the deposit process, represented in basis points.
-  */
+   * @dev Fee applied during the deposit process, represented in basis points.
+   */
   uint16 public mintingFees;
   /**
-  * @dev Fee applied during the redemption or withdrawal process, represented in basis points.
-  */
+   * @dev Fee applied during the redemption or withdrawal process, represented in basis points.
+   */
   uint16 public redemptionFees;
   /**
-  * @dev Fee applied during rewards allocation, represented in basis points.
-  */
+   * @dev Fee applied during rewards allocation, represented in basis points.
+   */
   uint16 public performanceFees;
 
   /**
@@ -91,7 +91,7 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
     // set initial fees
     mintingFees = 50; // 50 for 0.5%
     redemptionFees = 75; // 75 for 0.75%
-    performanceFees = 800; // 800 for 8%
+    performanceFees = 500; // 500 for 5%
     feesRecipientAddress = _feesRecipientAddress;
   }
 
@@ -136,8 +136,8 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   }
 
   /**
-   * @notice Used by addresses with adminstarator roles to set the new minting fees
-   * @param _fees New amount to be set as minting fees
+   * @notice Used by addresses with adminstarator roles to set the new redemption fees
+   * @param _fees New amount to be set as redemption fees
    */
   function updateRedemptionFees(
     uint16 _fees
@@ -189,9 +189,9 @@ contract MarbleLsdFees is MarbleLsdAccessControl {
   ) internal pure returns (uint256) {
     return
       assets.mulDiv(
-      feeBasisPoints,
-      feeBasisPoints + _BASIS_POINT_SCALE,
-      Math.Rounding.Up
-    );
+        feeBasisPoints,
+        feeBasisPoints + _BASIS_POINT_SCALE,
+        Math.Rounding.Up
+      );
   }
 }
