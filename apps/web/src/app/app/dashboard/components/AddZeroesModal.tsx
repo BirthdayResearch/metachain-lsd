@@ -89,7 +89,7 @@ export default function AddZeroesModal({
       <div className="mt-5 text-center">
         <CTAButton
           label="Add"
-          testID="add-zeroes-button"
+          testId="add-zeroes-button"
           onClick={() => handleAddButton()}
           isDisabled={!!error}
         />
