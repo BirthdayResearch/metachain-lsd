@@ -64,7 +64,7 @@ export function WithdrawalsPopupMobile({
                       <Tag
                         text="PENDING"
                         testId="pending-tag"
-                        customStyle="w-fit !px-1 !py-1"
+                        customStyle="w-fit !pl-1 !pr-2 !py-1"
                         customTextStyle="text-light-1000/50"
                         Icon={
                           <MdAccessTimeFilled
@@ -113,7 +113,7 @@ export function WithdrawalsPopupMobile({
                       <Tag
                         text="READY"
                         testId="ready-tag"
-                        customStyle="w-fit !px-1 py-1"
+                        customStyle="w-fit !pl-1 !pr-2 !py-1"
                         customTextStyle="text-light-1000/50"
                         Icon={
                           <FaCircleCheck className="text-green" size={14} />
