@@ -67,7 +67,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   } = useGetWithdrawalDetails();
 
   const anyWithdrawalRequests =
-    pendingWithdrawalsArray.length > 0 && confirmedWithdrawalsArray.length > 0;
+    pendingWithdrawalsArray.length > 0 || confirmedWithdrawalsArray.length > 0;
 
   const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
   const totalConfirmedCount = (

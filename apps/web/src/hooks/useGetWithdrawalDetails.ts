@@ -51,27 +51,25 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     ? withdrawalStatusDataRaw
     : undefined;
 
-  let withdrawalStatusDataWithReqId: WithdrawalStatusDataProps[];
-
-  const withdrawalRequest = useMemo(() => {
-    return withdrawalRequestData as string[];
-  }, [withdrawalRequestData]);
-
-  if (withdrawalStatusData) {
-    withdrawalStatusDataWithReqId = withdrawalRequest.map((key, index) => ({
-      requestId: key,
-      ...withdrawalStatusData[index],
-    }));
-  }
+  const withdrawalStatusDataWithReqId: WithdrawalStatusDataProps[] =
+    useMemo(() => {
+      if (
+        Array.isArray(withdrawalStatusData) &&
+        Array.isArray(withdrawalRequestData)
+      ) {
+        return withdrawalStatusData.map((item, index) => ({
+          ...item,
+          requestId: withdrawalRequestData[index],
+        }));
+      }
+      return [];
+    }, [withdrawalStatusData, withdrawalRequestData]);
 
   // To create pending and confirmed withdrawal arrays
   useEffect(() => {
     let pendingItems: WithdrawalStatusDataProps[] = [];
     let confirmedItems: WithdrawalStatusDataProps[] = [];
-    if (
-      Array.isArray(withdrawalStatusData) &&
-      Object.keys(withdrawalStatusData).length > 0
-    ) {
+    if (Object.keys(withdrawalStatusDataWithReqId).length > 0) {
       withdrawalStatusDataWithReqId.map((item) => {
         if (!item.isClaimed && !item.isFinalized) {
           pendingItems.push(item);
@@ -85,7 +83,7 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
         ...confirmedItems,
       ]);
     }
-  }, [withdrawalStatusData]);
+  }, [withdrawalStatusDataWithReqId]);
 
   return {
     pendingWithdrawalsArray,
