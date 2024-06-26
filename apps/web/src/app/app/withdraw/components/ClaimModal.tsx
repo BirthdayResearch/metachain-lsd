@@ -1,33 +1,25 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import { CTAButton } from "@/components/button/CTAButton";
-import { getDecimalPlace, toWei } from "@/lib/textHelper";
+import { getDecimalPlace } from "@/lib/textHelper";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
-import { Interface, InterfaceAbi } from "ethers";
-import { useGetTxnCost } from "@/hooks/useGetTxnCost";
-import { useContractContext } from "@/context/ContractContext";
+import Image from "next/image";
+import { MdAccessTimeFilled } from "react-icons/md";
+import { Tag } from "@/components/Tag";
+import Checkbox from "@/components/Checkbox";
 
 export default function ClaimModal({
   withdrawAmount,
 }: {
   withdrawAmount: string;
 }) {
-  const { MarbleLsdProxy } = useContractContext();
   const [isOpen, setIsOpen] = useState(true);
+  const ref = useRef<HTMLButtonElement>(null);
 
   function handleOnClick() {
     setIsOpen(!isOpen);
   }
-
-  const data = new Interface(
-    MarbleLsdProxy.abi as InterfaceAbi,
-  ).encodeFunctionData("requestRedeem", [
-    toWei(withdrawAmount),
-    MarbleLsdProxy.address,
-  ]) as `0x${string}`;
-
-  const { txnCost } = useGetTxnCost(data);
 
   return (
     <>
@@ -66,7 +58,7 @@ export default function ClaimModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-12 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-[768px] transform overflow-hidden rounded-2xl bg-white p-12 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title className="text-2xl font-semibold leading-7">
                     Claim DFI
                   </Dialog.Title>
@@ -82,19 +74,63 @@ export default function ClaimModal({
                       withdrawal request that is ready for claiming.
                     </p>
                   </div>
-                  <div>
+                  <div className="rounded-[10px] border border-light-1000/10 p-5 mt-5">
+                    <div className="flex justify-between">
+                      <div className="flex">
+                        <Checkbox
+                          ref={ref}
+                          isChecked={!isOpen}
+                          onClick={() => console.log("clicked")}
+                        />
+                        <div className="ml-4 mr-2 text-light-1000/70 font-semibold">
+                          2 DFI
+                        </div>
+                        <Image
+                          data-testid="dfi-icon"
+                          src="/icons/dfi-icon.svg"
+                          alt="DFI icon"
+                          className="min-w-4"
+                          priority
+                          width={16}
+                          height={16}
+                        />
+                      </div>
+                      <Tag
+                        text="PENDING"
+                        testId="pending-tag"
+                        customStyle="w-fit !pl-1 !pr-2 !py-1"
+                        customTextStyle="text-light-1000/50"
+                        Icon={
+                          <MdAccessTimeFilled
+                            className="text-warning"
+                            size={16}
+                          />
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col px-5 gap-y-5 py-2 mt-3">
                     <NumericTransactionRow
                       label="Max transaction cost"
                       value={{
-                        value: txnCost,
+                        value: "0.0",
                         suffix: " DFI",
-                        decimalScale: getDecimalPlace(txnCost),
-                        prefix: "$",
+                        decimalScale: getDecimalPlace("0.0"),
                       }}
+                      customStyle="!py-0"
+                    />
+                    <NumericTransactionRow
+                      label="Total to claim"
+                      value={{
+                        value: "14",
+                        suffix: " DFI",
+                        decimalScale: getDecimalPlace("0.0"),
+                      }}
+                      customStyle="!py-0"
                     />
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-10">
                     <CTAButton
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
