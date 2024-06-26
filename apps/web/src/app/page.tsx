@@ -51,7 +51,7 @@ export default function LandingPage() {
 
         <meta name="og:locale" content="en_SG" />
         <meta name="og:title" content={siteTitle} />
-        <meta name="og:image" content="/marblefi_share.png" />
+        <meta name="og:image" content="/marblefi_share.jpg" />
         <meta name="og:site_name" content={appName} />
         <meta name="og:url" content={website} />
         <meta name="og:description" content={shortDescription} />
@@ -63,7 +63,7 @@ export default function LandingPage() {
         <meta name="twitter:description" content={shortDescription} />
         <meta
           name="twitter:image"
-          content="https://marblefi.xyz/marblefi_share.png"
+          content="https://marblefi.xyz/marblefi_share.jpg"
         />
         <meta name="twitter:image:alt" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
