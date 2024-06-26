@@ -1,6 +1,6 @@
 import { useContractContext } from "@/context/ContractContext";
 import { useAccount, useReadContract } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface WithdrawalStatusDataProps {
   amountOfAssets: BigInt;
@@ -11,12 +11,13 @@ interface WithdrawalStatusDataProps {
   owner: string;
   receiver: string;
   timestamp: BigInt;
+  id: number;
 }
 
 interface WithrawalDetailsProps {
-  withdrawalStatusData: WithdrawalStatusDataProps[] | undefined;
   pendingWithdrawalsArray: WithdrawalStatusDataProps[];
   confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
+  withdrawalStatusWithReqId: WithdrawalStatusDataProps[];
 }
 
 export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
@@ -30,7 +31,7 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     WithdrawalStatusDataProps[]
   >([]);
 
-  // read contract for 'getWithdrawalRequests' function
+  // read contract for 'getWithdrawalRequests' function to get list of reqyest IDs
   const { data: withdrawalRequestData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
@@ -39,26 +40,38 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   });
 
   // read contract for 'getWithdrawalStatus' function
-  const { data: withdrawalStatusDataRaw } = useReadContract({
+  const { data: withdrawalStatusData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "getWithdrawalStatus",
     args: [withdrawalRequestData],
   });
 
-  const withdrawalStatusData = Array.isArray(withdrawalStatusDataRaw)
-    ? withdrawalStatusDataRaw
-    : undefined;
+  const withdrawalStatusWithReqId: WithdrawalStatusDataProps[] = useMemo(() => {
+    let withdrawalStatusWithReqId: WithdrawalStatusDataProps[] = [];
+    if (
+      Array.isArray(withdrawalStatusData) &&
+      Array.isArray(withdrawalRequestData)
+    ) {
+      withdrawalStatusData.map((item, index) => {
+        withdrawalStatusWithReqId.push({
+          ...item,
+          id: withdrawalRequestData[index], // id
+        });
+      });
+    }
+    return withdrawalStatusWithReqId;
+  }, [withdrawalStatusData, withdrawalRequestData]);
 
   // To create pending and confirmed withdrawal arrays
   useEffect(() => {
     let pendingItems: WithdrawalStatusDataProps[] = [];
     let confirmedItems: WithdrawalStatusDataProps[] = [];
     if (
-      Array.isArray(withdrawalStatusData) &&
-      Object.keys(withdrawalStatusData).length > 0
+      Array.isArray(withdrawalStatusWithReqId) &&
+      Object.keys(withdrawalStatusWithReqId).length > 0
     ) {
-      withdrawalStatusData.map((item) => {
+      withdrawalStatusWithReqId.map((item) => {
         if (!item.isClaimed && !item.isFinalized) {
           pendingItems.push(item);
         } else if (!item.isClaimed && item.isFinalized) {
@@ -71,11 +84,11 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
         ...confirmedItems,
       ]);
     }
-  }, [withdrawalStatusData]);
+  }, [withdrawalStatusWithReqId]);
 
   return {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
-    withdrawalStatusData,
+    withdrawalStatusWithReqId,
   };
 }
