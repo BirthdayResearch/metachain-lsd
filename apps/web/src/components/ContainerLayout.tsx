@@ -11,6 +11,13 @@ import Head from "next/head";
 
 const inter = Montserrat({ subsets: ["latin"] });
 
+export const metadata: Metadata = {
+  title: "MarbleFI",
+  description:
+    "MarbleFi is a Liquid Staking Derivative product by Birthday Research on DeFiChain.",
+  openGraph: {},
+};
+
 export default function ContainerLayout({
   children,
 }: {
