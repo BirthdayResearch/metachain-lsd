@@ -8,6 +8,7 @@ import Image from "next/image";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
+import { FaCircleCheck } from "react-icons/fa6";
 
 export default function ClaimModal({
   withdrawAmount,
@@ -74,12 +75,12 @@ export default function ClaimModal({
                       withdrawal request that is ready for claiming.
                     </p>
                   </div>
-                  <div className="rounded-[10px] border border-light-1000/10 p-5 mt-5">
+                  <div className="flex flex-col rounded-[10px] border border-light-1000/10 p-5 mt-5 gap-y-5">
                     <div className="flex justify-between">
                       <div className="flex">
                         <Checkbox
                           ref={ref}
-                          isChecked={!isOpen}
+                          isChecked={false}
                           onClick={() => console.log("clicked")}
                         />
                         <div className="ml-4 mr-2 text-light-1000/70 font-semibold">
@@ -105,6 +106,37 @@ export default function ClaimModal({
                             className="text-warning"
                             size={16}
                           />
+                        }
+                      />
+                    </div>
+
+                    <div className="flex justify-between">
+                      <div className="flex">
+                        <Checkbox
+                          ref={ref}
+                          isChecked={true}
+                          onClick={() => console.log("clicked")}
+                        />
+                        <div className="ml-4 mr-2 text-light-1000/70 font-semibold">
+                          2 DFI
+                        </div>
+                        <Image
+                          data-testid="dfi-icon"
+                          src="/icons/dfi-icon.svg"
+                          alt="DFI icon"
+                          className="min-w-4"
+                          priority
+                          width={16}
+                          height={16}
+                        />
+                      </div>
+                      <Tag
+                        text="READY"
+                        testId="ready-tag"
+                        customStyle="w-fit !pl-1 !pr-2 !py-1"
+                        customTextStyle="text-light-1000/50"
+                        Icon={
+                          <FaCircleCheck className="text-green" size={14} />
                         }
                       />
                     </div>
@@ -145,5 +177,38 @@ export default function ClaimModal({
         </Dialog>
       </Transition>
     </>
+  );
+}
+
+function ClaimDfiRow() {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  return (
+    <div className="flex justify-between">
+      <div className="flex">
+        <Checkbox
+          ref={ref}
+          isChecked={false}
+          onClick={() => console.log("clicked")}
+        />
+        <div className="ml-4 mr-2 text-light-1000/70 font-semibold">2 DFI</div>
+        <Image
+          data-testid="dfi-icon"
+          src="/icons/dfi-icon.svg"
+          alt="DFI icon"
+          className="min-w-4"
+          priority
+          width={16}
+          height={16}
+        />
+      </div>
+      <Tag
+        text="PENDING"
+        testId="pending-tag"
+        customStyle="w-fit !pl-1 !pr-2 !py-1"
+        customTextStyle="text-light-1000/50"
+        Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
+      />
+    </div>
   );
 }

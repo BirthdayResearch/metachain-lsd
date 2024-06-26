@@ -15,6 +15,7 @@ import TransactionRows from "@/app/app/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import ClaimModal from "@/app/app/withdraw/components/ClaimModal";
 
 export default function WithdrawPage({
   walletBalanceAmount,
@@ -77,6 +78,7 @@ export default function WithdrawPage({
     <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none">
       <div>
         <div className="w-full gap-y-5">
+          <ClaimModal withdrawAmount={withdrawAmount} />
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
           <div className="flex flex-col w-full justify-between gap-y-5">
             <div className="mt-10 md:mt-7 lg:mt-10">
