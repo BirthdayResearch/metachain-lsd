@@ -20,9 +20,7 @@ export const metadata: Metadata = {
   applicationName: appName,
   openGraph: {
     description: shortDescription,
-    images: [
-      "https://deploy-preview-98--marblefi.netlify.app/marblefi_share.png",
-    ],
+    images: ["https://marblefi.xyz/marblefi_share.png"],
     title: "MarbleFi",
     siteName: siteTitle,
     locale: "en_SG",
@@ -33,10 +31,9 @@ export const metadata: Metadata = {
     creator: "@birthdaydev",
     title: "MarbleFI",
     description: shortDescription,
-    images: [
-      "https://deploy-preview-98--marblefi.netlify.app/marblefi_share.png",
-    ],
+    images: ["https://marblefi.xyz/marblefi_share.png"],
   },
+
   icons: {
     icon: "/favicon.svg",
   },
