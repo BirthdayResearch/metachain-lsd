@@ -53,7 +53,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
-    withdrawalStatusData,
+    withdrawalStatusWithReqId,
   } = useGetWithdrawalDetails();
 
   const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
@@ -61,7 +61,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
     confirmedWithdrawalsArray.length ?? 0
   ).toString();
 
-  const { totalShares, totalAssets } = withdrawalStatusData?.reduce(
+  const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
     (acc, item) => {
       return {
         totalShares:
