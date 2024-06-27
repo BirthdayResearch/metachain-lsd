@@ -51,15 +51,13 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const {
-    pendingWithdrawalsArray,
-    confirmedWithdrawalsArray,
+    pendingWithdrawals,
+    confirmedWithdrawals,
     withdrawalStatusWithReqId,
   } = useGetWithdrawalDetails();
 
-  const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
-  const totalConfirmedCount = (
-    confirmedWithdrawalsArray.length ?? 0
-  ).toString();
+  const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
+  const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
 
   const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
     (acc, item) => {
