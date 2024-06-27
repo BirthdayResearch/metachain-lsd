@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -10,6 +10,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { IoMdClose } from "react-icons/io";
 import { formatTimestampToDate } from "@/lib/dateHelper";
 import { Dialog, Transition } from "@headlessui/react";
+import ClaimModal from "@/app/app/withdraw/components/ClaimModal";
 
 export function WithdrawalsPopupMobile({
   pendingWithdrawalsArray,
@@ -22,8 +23,13 @@ export function WithdrawalsPopupMobile({
   onClose: any;
   isActive: boolean;
 }) {
+  const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);
+  const handleOnClick = () => {
+    setIsConfirmModalActive(!isConfirmModalActive);
+  };
   return (
     <section>
+      <ClaimModal isActive={isConfirmModalActive} onClose={handleOnClick} />
       <Transition appear show={isActive} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={onClose}>
           <Transition.Child

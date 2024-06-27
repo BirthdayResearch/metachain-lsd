@@ -45,7 +45,7 @@ export default function ClaimModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-[768px] transform overflow-hidden rounded-2xl bg-white p-12 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-[672px] lg:max-w-[768px] transform overflow-hidden rounded-2xl bg-white p-12 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title className="text-2xl font-semibold leading-7">
                   Claim DFI
                 </Dialog.Title>
