@@ -32,7 +32,8 @@ export default function DFIOpportunities() {
             height={224}
             className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
           />
-          <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
+          {/* TODO enable it when we have actual data */}
+          {/* <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Market Cap</span>
               <h4 className="h4-text flex-1 text-end">$X.XX</h4>
@@ -47,7 +48,7 @@ export default function DFIOpportunities() {
               </span>
               <h4 className="h4-text flex-1 text-end">$X.XX</h4>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </SectionContainer>
