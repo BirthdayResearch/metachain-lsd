@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { StatsModel } from "./StatsInterface";
 import { EnvironmentNetwork } from "@waveshq/walletkit-core";
-import { Contract, JsonRpcProvider, formatEther } from "ethers";
+import { Contract, JsonRpcProvider, formatEther, parseEther } from "ethers";
 import { MarbleLsdV1__factory } from "smartcontracts";
 
 @Injectable()
@@ -27,10 +27,12 @@ export class StatsService {
       const shares = await marbleFiProxy.totalShares();
       const totalAssets = await marbleFiProxy.totalStakedAssets();
       const totalRewardAssets = await marbleFiProxy.totalRewardAssets();
+      const mDfiDfiRatio = await marbleFiProxy.convertToAssets(parseEther("1"));
       return {
         totalShares: formatEther(shares ?? 0),
         totalAssets: formatEther(totalAssets ?? 0),
         totalRewards: formatEther(totalRewardAssets ?? 0),
+        mDfiDfiRatio: formatEther(mDfiDfiRatio ?? 0),
       };
     } catch (e) {
       throw new BadRequestException(e.message);
