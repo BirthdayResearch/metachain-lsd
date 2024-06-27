@@ -79,13 +79,13 @@ export function WithdrawalsPopupMobile({
                       {pendingWithdrawalsArray.length > 0 ? (
                         <>
                           {pendingWithdrawalsArray.map(
-                            ({ amountOfAssets, timestamp }) => {
+                            ({ amountOfAssets, timestamp, requestId }) => {
                               const formatAsset = formatEther(
                                 amountOfAssets.toString(),
                               );
                               return (
                                 <div
-                                  key={`pending-withdrawal-${formatAsset}`}
+                                  key={`pending-withdrawal-${requestId}`}
                                   className="flex justify-between items-center py-1.5"
                                 >
                                   <NumericFormat
@@ -126,13 +126,13 @@ export function WithdrawalsPopupMobile({
                       {confirmedWithdrawalsArray.length > 0 ? (
                         <>
                           {confirmedWithdrawalsArray.map(
-                            ({ amountOfAssets }) => {
+                            ({ amountOfAssets, requestId }) => {
                               const formatAsset = formatEther(
                                 amountOfAssets.toString(),
                               );
                               return (
                                 <div
-                                  key={`ready-withdrawal-${formatAsset}`}
+                                  key={`ready-withdrawal-${requestId}`}
                                   className="flex justify-between items-center py-1"
                                 >
                                   <NumericFormat
