@@ -63,7 +63,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const {
     pendingWithdrawalsArray,
     confirmedWithdrawalsArray,
-    withdrawalStatusData,
+    withdrawalStatusDataWithReqId,
   } = useGetWithdrawalDetails();
 
   const anyWithdrawalRequests =
@@ -74,7 +74,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
     confirmedWithdrawalsArray.length ?? 0
   ).toString();
 
-  const { totalShares, totalAssets } = withdrawalStatusData?.reduce(
+  const { totalShares, totalAssets } = withdrawalStatusDataWithReqId?.reduce(
     (acc, item) => {
       return {
         totalShares:
