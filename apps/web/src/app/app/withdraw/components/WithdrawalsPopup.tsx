@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdAccessTimeFilled } from "react-icons/md";
 import clsx from "clsx";
 import { Tag } from "@/components/Tag";
@@ -10,6 +10,7 @@ import NumericFormat from "@/components/NumericFormat";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { IoMdClose } from "react-icons/io";
 import { formatTimestampToDate } from "@/lib/dateHelper";
+import ClaimModal from "@/app/app/withdraw/components/ClaimModal";
 
 export function WithdrawalsPopup({
   pendingWithdrawalsArray,
@@ -20,6 +21,10 @@ export function WithdrawalsPopup({
   confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
   onClose: () => void;
 }) {
+  const [isActive, setIsActive] = useState(false);
+  const handleOnClick = () => {
+    setIsActive(!isActive);
+  };
   return (
     <section>
       <div
@@ -28,6 +33,7 @@ export function WithdrawalsPopup({
           "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
         )}
       >
+        <ClaimModal isActive={isActive} onClose={handleOnClick} />
         <div className="relative">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
@@ -112,6 +118,7 @@ export function WithdrawalsPopup({
                         customTextStyle="text-xs font-medium"
                         label="Claim"
                         testId="claim-btn"
+                        onClick={handleOnClick}
                       />
                     </div>
                   );
