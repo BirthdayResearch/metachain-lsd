@@ -67,7 +67,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   } = useGetWithdrawalDetails();
 
   const anyWithdrawalRequests =
-    pendingWithdrawalsArray.length > 0 || confirmedWithdrawalsArray.length > 0;
+    pendingWithdrawals.length > 0 || confirmedWithdrawals.length > 0;
 
   const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
   const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
@@ -100,8 +100,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="relative flex flex-col min-w-[168px]">
             {isActive && (
               <WithdrawalsPopup
-                pendingWithdrawalsArray={pendingWithdrawalsArray}
-                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
               />
             )}
@@ -116,8 +116,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle={clsx(
                   "font-semibold leading-5",
-                  { "text-light-1000/30": pendingWithdrawalsArray.length <= 0 },
-                  { "text-light-1000/70": pendingWithdrawalsArray.length > 0 },
+                  { "text-light-1000/30": pendingWithdrawals.length <= 0 },
+                  { "text-light-1000/70": pendingWithdrawals.length > 0 },
                 )}
                 customBgColor="button-bg-gradient-1"
               >
@@ -130,10 +130,10 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 customTextStyle={clsx(
                   "font-semibold leading-5",
                   {
-                    "text-light-1000/30": confirmedWithdrawalsArray.length <= 0,
+                    "text-light-1000/30": confirmedWithdrawals.length <= 0,
                   },
                   {
-                    "text-light-1000/70": confirmedWithdrawalsArray.length > 0,
+                    "text-light-1000/70": confirmedWithdrawals.length > 0,
                   },
                 )}
                 customBgColor="button-bg-gradient-1"
@@ -167,8 +167,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="relative flex flex-col w-full">
             {isActive && isMobile && (
               <WithdrawalsPopupMobile
-                pendingWithdrawalsArray={pendingWithdrawalsArray}
-                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
                 isActive={isActive}
               />

@@ -12,13 +12,13 @@ import { formatTimestampToDate } from "@/lib/dateHelper";
 import { Dialog, Transition } from "@headlessui/react";
 
 export function WithdrawalsPopupMobile({
-  pendingWithdrawalsArray,
-  confirmedWithdrawalsArray,
+  pendingWithdrawals,
+  confirmedWithdrawals,
   onClose,
   isActive,
 }: {
-  pendingWithdrawalsArray: WithdrawalStatusDataProps[];
-  confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
+  pendingWithdrawals: WithdrawalStatusDataProps[];
+  confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: any;
   isActive: boolean;
 }) {
@@ -76,9 +76,9 @@ export function WithdrawalsPopupMobile({
                       <span className="block min-w-[226px] w-full border-dark-00/10 border-t-[0.5px]" />
                     </div>
                     <div className="ml-2">
-                      {pendingWithdrawalsArray.length > 0 ? (
+                      {pendingWithdrawals.length > 0 ? (
                         <>
-                          {pendingWithdrawalsArray.map(
+                          {pendingWithdrawals.map(
                             ({ amountOfAssets, timestamp, requestId }) => {
                               const formatAsset = formatEther(
                                 amountOfAssets.toString(),
@@ -123,9 +123,9 @@ export function WithdrawalsPopupMobile({
                       <span className="block min-w-[226px] w-full border-dark-00/10 border-t-[0.5px]" />
                     </div>
                     <div className="ml-2">
-                      {confirmedWithdrawalsArray.length > 0 ? (
+                      {confirmedWithdrawals.length > 0 ? (
                         <>
-                          {confirmedWithdrawalsArray.map(
+                          {confirmedWithdrawals.map(
                             ({ amountOfAssets, requestId }) => {
                               const formatAsset = formatEther(
                                 amountOfAssets.toString(),

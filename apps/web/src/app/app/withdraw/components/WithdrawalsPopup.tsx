@@ -12,12 +12,12 @@ import { IoMdClose } from "react-icons/io";
 import { formatTimestampToDate } from "@/lib/dateHelper";
 
 export function WithdrawalsPopup({
-  pendingWithdrawalsArray,
-  confirmedWithdrawalsArray,
+  pendingWithdrawals,
+  confirmedWithdrawals,
   onClose,
 }: {
-  pendingWithdrawalsArray: WithdrawalStatusDataProps[];
-  confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
+  pendingWithdrawals: WithdrawalStatusDataProps[];
+  confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
 }) {
   return (
@@ -48,9 +48,9 @@ export function WithdrawalsPopup({
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            {pendingWithdrawalsArray.length > 0 ? (
+            {pendingWithdrawals.length > 0 ? (
               <>
-                {pendingWithdrawalsArray.map(
+                {pendingWithdrawals.map(
                   ({ amountOfAssets, timestamp, requestId }) => {
                     const formatAsset = formatEther(amountOfAssets.toString());
                     return (
@@ -91,33 +91,31 @@ export function WithdrawalsPopup({
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            {confirmedWithdrawalsArray.length > 0 ? (
+            {confirmedWithdrawals.length > 0 ? (
               <>
-                {confirmedWithdrawalsArray.map(
-                  ({ amountOfAssets, requestId }) => {
-                    const formatAsset = formatEther(amountOfAssets.toString());
-                    return (
-                      <div
-                        key={`ready-withdrawal-${requestId}`}
-                        className="flex justify-between items-center py-1"
-                      >
-                        <NumericFormat
-                          className="text-sm font-semibold"
-                          value={formatAsset}
-                          suffix=" DFI"
-                          decimalScale={getDecimalPlace(formatAsset)}
-                        />
-                        <CTAButton
-                          customBgColor="button-bg-gradient-1"
-                          customStyle="!px-3 !py-1"
-                          customTextStyle="text-xs font-medium"
-                          label="Claim"
-                          testId="claim-btn"
-                        />
-                      </div>
-                    );
-                  },
-                )}
+                {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {
+                  const formatAsset = formatEther(amountOfAssets.toString());
+                  return (
+                    <div
+                      key={`ready-withdrawal-${requestId}`}
+                      className="flex justify-between items-center py-1"
+                    >
+                      <NumericFormat
+                        className="text-sm font-semibold"
+                        value={formatAsset}
+                        suffix=" DFI"
+                        decimalScale={getDecimalPlace(formatAsset)}
+                      />
+                      <CTAButton
+                        customBgColor="button-bg-gradient-1"
+                        customStyle="!px-3 !py-1"
+                        customTextStyle="text-xs font-medium"
+                        label="Claim"
+                        testId="claim-btn"
+                      />
+                    </div>
+                  );
+                })}
               </>
             ) : (
               <span className="text-xs text-light-1000/70">
