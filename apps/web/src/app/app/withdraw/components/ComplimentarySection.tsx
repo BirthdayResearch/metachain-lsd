@@ -61,18 +61,16 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   };
 
   const {
-    pendingWithdrawalsArray,
-    confirmedWithdrawalsArray,
+    pendingWithdrawals,
+    confirmedWithdrawals,
     withdrawalStatusWithReqId,
   } = useGetWithdrawalDetails();
 
   const anyWithdrawalRequests =
     pendingWithdrawalsArray.length > 0 || confirmedWithdrawalsArray.length > 0;
 
-  const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
-  const totalConfirmedCount = (
-    confirmedWithdrawalsArray.length ?? 0
-  ).toString();
+  const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
+  const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
 
   const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
     (acc, item) => {
