@@ -1,17 +1,11 @@
 "use client";
 
-import type { Metadata } from "next";
 import "../globals.css";
 import { Montserrat } from "next/font/google";
 import { Next13ProgressBar } from "next13-progressbar";
 import React, { useRef, useState, useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
-
-export const metadata: Metadata = {
-  title: "MarbleFI",
-  description: "LSD protocol",
-};
 
 const inter = Montserrat({ subsets: ["latin"] });
 
