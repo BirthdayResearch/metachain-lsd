@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { StatsModel } from "./StatsInterface";
 import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { Contract, JsonRpcProvider, formatEther, parseEther } from "ethers";
-import { MarbleLsdV1__factory } from "smartcontracts";
+import { MarbleLsdV1__factory } from "smartcontracts/src";
 
 @Injectable()
 export class StatsService {
