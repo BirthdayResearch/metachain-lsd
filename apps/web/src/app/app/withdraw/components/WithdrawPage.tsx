@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useAccount, useBalance, useReadContract } from "wagmi";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { CTAButton } from "@/components/button/CTAButton";
 import Panel from "@/app/app/components/Panel";
@@ -74,11 +74,16 @@ export default function WithdrawPage({
     setWalletBalanceAmount(balance); // set wallet balance
   }, [address, status, walletBalance]);
 
+  const [isActive, setIsActive] = useState(false);
+  const handleOnClick = () => {
+    setIsActive(!isActive);
+  };
+
   return (
     <Panel customStyle="!pb-12 md:!pb-10 lg:!pb-16 mb-[392px] md:mb-[128px] lg:mb-[164px] rounded-b-none">
       <div>
         <div className="w-full gap-y-5">
-          <ClaimModal withdrawAmount={withdrawAmount} />
+          <ClaimModal isActive={isActive} onClose={handleOnClick} />
           <h3 className="text-2xl font-semibold">Withdraw DFI</h3>
           <div className="flex flex-col w-full justify-between gap-y-5">
             <div className="mt-10 md:mt-7 lg:mt-10">

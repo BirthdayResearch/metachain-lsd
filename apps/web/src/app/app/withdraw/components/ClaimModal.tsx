@@ -45,7 +45,7 @@ export default function ClaimModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-[672px] lg:max-w-[768px] transform overflow-hidden rounded-2xl bg-white p-12 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="absolute md:relative bottom-0 flex flex-col w-full md:max-w-[672px] min-h-[632px] md:min-h-[480px] lg:max-w-[768px] transform overflow-hidden rounded-2xl bg-white px-5 pt-10 pb-16 md:p-12 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title className="text-2xl font-semibold leading-7">
                   Claim DFI
                 </Dialog.Title>
@@ -61,15 +61,15 @@ export default function ClaimModal({
                     request that is ready for claiming.
                   </p>
                 </div>
-                <div className="flex flex-col rounded-[10px] border border-light-1000/10 p-5 mt-5 gap-y-5">
+                <div className="flex flex-col rounded-[10px] border border-light-1000/10 px-3 py-5 md:p-5 mt-8 md:mt-5 gap-y-5">
                   <div className="flex justify-between">
-                    <div className="flex">
+                    <div className="flex items-center">
                       <Checkbox
                         ref={ref}
                         isChecked={false}
                         onClick={() => console.log("clicked")}
                       />
-                      <div className="ml-4 mr-2 text-light-1000/70 font-semibold">
+                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
                         2 DFI
                       </div>
                       <Image
@@ -103,7 +103,7 @@ export default function ClaimModal({
                         isChecked={true}
                         onClick={() => console.log("clicked")}
                       />
-                      <div className="ml-4 mr-2 text-light-1000/70 font-semibold">
+                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
                         2 DFI
                       </div>
                       <Image
@@ -125,34 +125,36 @@ export default function ClaimModal({
                     />
                   </div>
                 </div>
-                <div className="flex flex-col px-5 gap-y-5 py-2 mt-3">
-                  <NumericTransactionRow
-                    label="Max transaction cost"
-                    value={{
-                      value: "0.0",
-                      suffix: " DFI",
-                      decimalScale: getDecimalPlace("0.0"),
-                    }}
-                    customStyle="!py-0"
-                  />
-                  <NumericTransactionRow
-                    label="Total to claim"
-                    value={{
-                      value: "14",
-                      suffix: " DFI",
-                      decimalScale: getDecimalPlace("0.0"),
-                    }}
-                    customStyle="!py-0"
-                  />
-                </div>
+                <div className="mt-auto md:mt-0">
+                  <div className="flex flex-col px-2 md:px-5 gap-y-4 md:gap-y-5 py-2 md:mt-3">
+                    <NumericTransactionRow
+                      label="Max transaction cost"
+                      value={{
+                        value: "0.0",
+                        suffix: " DFI",
+                        decimalScale: getDecimalPlace("0.0"),
+                      }}
+                      customStyle="!py-0"
+                    />
+                    <NumericTransactionRow
+                      label="Total to claim"
+                      value={{
+                        value: "14",
+                        suffix: " DFI",
+                        decimalScale: getDecimalPlace("0.0"),
+                      }}
+                      customStyle="!py-0"
+                    />
+                  </div>
 
-                <div className="mt-10">
-                  <CTAButton
-                    testId="withdraw-mdfi-btn"
-                    label="Claim DFI"
-                    customStyle="w-full md:py-5"
-                    onClick={onClose}
-                  />
+                  <div className="mt-4 md:mt-10">
+                    <CTAButton
+                      testId="withdraw-mdfi-btn"
+                      label="Claim DFI"
+                      customStyle="w-full md:py-5"
+                      onClick={onClose}
+                    />
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
