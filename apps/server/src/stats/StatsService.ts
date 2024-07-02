@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { StatsModel } from "./StatsInterface";
 import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { Contract, JsonRpcProvider, formatEther, parseEther } from "ethers";
-import { MarbleLsdV1__factory } from "smartcontracts/src";
+import MarbleLsdV1 from "src/bot/abi/MarbleLsdV1";
 
 @Injectable()
 export class StatsService {
@@ -21,7 +21,7 @@ export class StatsService {
       const evmProvider = new JsonRpcProvider(ethRPCUrl);
       const marbleFiProxy = new Contract(
         marbleFiContractAddress,
-        MarbleLsdV1__factory.abi,
+        MarbleLsdV1.abi,
         evmProvider,
       );
       const shares = await marbleFiProxy.totalShares();
