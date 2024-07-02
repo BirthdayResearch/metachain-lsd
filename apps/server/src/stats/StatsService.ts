@@ -13,16 +13,16 @@ export class StatsService {
     try {
       const marbleFiContractAddress =
         this.configService.getOrThrow<EnvironmentNetwork>(
-          `defichain.${network}.marbleFiContractAddress`
+          `defichain.${network}.marbleFiContractAddress`,
         );
       const ethRPCUrl = this.configService.getOrThrow<EnvironmentNetwork>(
-        `defichain.${network}.ethRPCUrl`
+        `defichain.${network}.ethRPCUrl`,
       );
       const evmProvider = new JsonRpcProvider(ethRPCUrl);
       const marbleFiProxy = new Contract(
         marbleFiContractAddress,
         MarbleLsdV1__factory.abi,
-        evmProvider
+        evmProvider,
       );
       const shares = await marbleFiProxy.totalShares();
       const totalAssets = await marbleFiProxy.totalStakedAssets();
