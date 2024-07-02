@@ -2,8 +2,22 @@ import SectionContainer from "@/components/SectionContainer";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
 import clsx from "clsx";
+import { useGetStatsQuery } from "@/store/marbleFiApi";
+import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { getDecimalPlace } from "@/lib/textHelper";
+import NumericFormat from "@/components/NumericFormat";
+import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
 
 export default function DFIOpportunities() {
+  const { data } = useGetStatsQuery();
+  const { mDfiToDfiConversion } = useGetReadContractConfigs();
+
+  const marketCap = data
+    ? parseFloat(data.totalShares) *
+      parseFloat(data.mDfiDfiRatio) *
+      parseFloat(mDfiToDfiConversion)
+    : 0;
+
   return (
     <SectionContainer id="about-section">
       <div className="w-full flex flex-col md:flex-row md:gap-x-10 gap-y-12 items-center justify-center scroll-mt-40">
@@ -32,23 +46,32 @@ export default function DFIOpportunities() {
             height={224}
             className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
           />
-          {/* TODO enable it when we have actual data */}
-          {/* <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
+          <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Market Cap</span>
-              <h4 className="h4-text flex-1 text-end">$X.XX</h4>
+              <h4 className="h4-text flex-1 text-end">
+                ${formatNumberWithSuffix(marketCap)}
+              </h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Price</span>
-              <h4 className="h4-text w-full text-end">X.XX DFI</h4>
+              <NumericFormat
+                className="h4-text flex-1 text-end"
+                value={mDfiToDfiConversion}
+                suffix=" DFI"
+                decimalScale={getDecimalPlace(mDfiToDfiConversion)}
+                trimTrailingZeros={false}
+              />
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">
                 Total value locked
               </span>
-              <h4 className="h4-text flex-1 text-end">$X.XX</h4>
+              <h4 className="h4-text flex-1 text-end">
+                ${formatNumberWithSuffix(marketCap)}
+              </h4>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </SectionContainer>
