@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import { CTAButton } from "@/components/button/CTAButton";
 import { getDecimalPlace } from "@/lib/textHelper";
@@ -9,16 +9,23 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
+import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
+import { formatEther } from "ethers";
+import NumericFormat from "@/components/NumericFormat";
 
 export default function ClaimModal({
   isActive,
   onClose,
+  selectedReqId,
+  pendingWithdrawals,
+  confirmedWithdrawals,
 }: {
   isActive: boolean;
   onClose: any;
+  selectedReqId?: string;
+  pendingWithdrawals: WithdrawalStatusDataProps[];
+  confirmedWithdrawals: WithdrawalStatusDataProps[];
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
-
   return (
     <Transition appear show={isActive} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -61,69 +68,54 @@ export default function ClaimModal({
                     request that is ready for claiming.
                   </p>
                 </div>
-                <div className="flex flex-col rounded-[10px] border border-light-1000/10 px-3 py-5 md:p-5 mt-8 md:mt-5 gap-y-5">
-                  <div className="flex justify-between">
-                    <div className="flex items-center">
-                      <Checkbox
-                        ref={ref}
-                        isChecked={false}
-                        onClick={() => console.log("clicked")}
-                      />
-                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
-                        2 DFI
-                      </div>
-                      <Image
-                        data-testid="dfi-icon"
-                        src="/icons/dfi-icon.svg"
-                        alt="DFI icon"
-                        className="min-w-4"
-                        priority
-                        width={16}
-                        height={16}
-                      />
-                    </div>
-                    <Tag
-                      text="PENDING"
-                      testId="pending-tag"
-                      customStyle="w-fit !pl-1 !pr-2 !py-1"
-                      customTextStyle="text-light-1000/50"
-                      Icon={
-                        <MdAccessTimeFilled
-                          className="text-warning"
-                          size={16}
-                        />
-                      }
-                    />
-                  </div>
+                <div className="flex flex-col rounded-[10px] border border-light-1000/10 px-3 py-5 md:p-5 mt-8 md:mt-5 gap-y-5 max-h-48 overflow-auto">
+                  {pendingWithdrawals && (
+                    <>
+                      {pendingWithdrawals.map(
+                        ({ amountOfAssets, requestId, isFinalized }) => {
+                          const formatAsset = formatEther(
+                            amountOfAssets.toString(),
+                          );
+                          const isSelectedReqId = requestId === selectedReqId;
+                          return (
+                            <div
+                              key={`pending-withdrawal-claim-modal-${requestId}`}
+                            >
+                              <ClaimRow
+                                formatAsset={formatAsset}
+                                isSelectedReqId={isSelectedReqId}
+                                isFinalized={isFinalized}
+                              />
+                            </div>
+                          );
+                        },
+                      )}
+                    </>
+                  )}
 
-                  <div className="flex justify-between">
-                    <div className="flex">
-                      <Checkbox
-                        ref={ref}
-                        isChecked={true}
-                        onClick={() => console.log("clicked")}
-                      />
-                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
-                        2 DFI
-                      </div>
-                      <Image
-                        data-testid="dfi-icon"
-                        src="/icons/dfi-icon.svg"
-                        alt="DFI icon"
-                        className="min-w-4"
-                        priority
-                        width={16}
-                        height={16}
-                      />
-                    </div>
-                    <Tag
-                      text="READY"
-                      testId="ready-tag"
-                      customStyle="w-fit !pl-1 !pr-2 !py-1"
-                      customTextStyle="text-light-1000/50"
-                      Icon={<FaCircleCheck className="text-green" size={14} />}
-                    />
-                  </div>
+                  {confirmedWithdrawals && (
+                    <>
+                      {confirmedWithdrawals.map(
+                        ({ amountOfAssets, requestId, isFinalized }) => {
+                          const formatAsset = formatEther(
+                            amountOfAssets.toString(),
+                          );
+                          const isSelectedReqId = requestId === selectedReqId;
+                          return (
+                            <div
+                              key={`confirmed-withdrawal-claim-modal-${requestId}`}
+                            >
+                              <ClaimRow
+                                formatAsset={formatAsset}
+                                isSelectedReqId={isSelectedReqId}
+                                isFinalized={isFinalized}
+                              />
+                            </div>
+                          );
+                        },
+                      )}
+                    </>
+                  )}
                 </div>
                 <div className="mt-auto md:mt-0">
                   <div className="flex flex-col px-2 md:px-5 gap-y-4 md:gap-y-5 py-2 md:mt-3">
@@ -162,5 +154,66 @@ export default function ClaimModal({
         </div>
       </Dialog>
     </Transition>
+  );
+}
+
+function ClaimRow({
+  formatAsset,
+  isSelectedReqId,
+  isFinalized,
+}: {
+  formatAsset: string;
+  isSelectedReqId: boolean;
+  isFinalized: boolean;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    console.log("isSelectedReqId", isSelectedReqId);
+  }, [isSelectedReqId]);
+  return (
+    <div className="flex justify-between">
+      <div className="flex">
+        <Checkbox
+          ref={ref}
+          isChecked={isSelectedReqId}
+          onClick={() => console.log("clicked")}
+        />
+        <div className="">
+          <NumericFormat
+            className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold"
+            value={formatAsset}
+            suffix=" DFI"
+            decimalScale={getDecimalPlace(formatAsset)}
+          />
+        </div>
+        <Image
+          data-testid="dfi-icon"
+          src="/icons/dfi-icon.svg"
+          alt="DFI icon"
+          className="min-w-4"
+          priority
+          width={16}
+          height={16}
+        />
+      </div>
+      {isFinalized ? (
+        <Tag
+          text="READY"
+          testId="ready-tag"
+          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customTextStyle="text-light-1000/50"
+          Icon={<FaCircleCheck className="text-green" size={14} />}
+        />
+      ) : (
+        <Tag
+          text="PENDING"
+          testId="pending-tag"
+          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customTextStyle="text-light-1000/50"
+          Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
+        />
+      )}
+    </div>
   );
 }
