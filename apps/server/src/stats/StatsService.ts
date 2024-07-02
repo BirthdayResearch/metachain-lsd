@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { StatsModel } from "./StatsInterface";
 import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { Contract, JsonRpcProvider, formatEther, parseEther } from "ethers";
-import { MarbleLsdV1__factory } from "smartcontracts/src";
+import { MarbleLsdV1__factory } from "smartcontracts";
 
 @Injectable()
 export class StatsService {
@@ -13,16 +13,16 @@ export class StatsService {
     try {
       const marbleFiContractAddress =
         this.configService.getOrThrow<EnvironmentNetwork>(
-          `defichain.${network}.marbleFiContractAddress`
+          `defichain.${network}.marbleFiContractAddress`,
         );
       const ethRPCUrl = this.configService.getOrThrow<EnvironmentNetwork>(
-        `defichain.${network}.ethRPCUrl`
+        `defichain.${network}.ethRPCUrl`,
       );
       const evmProvider = new JsonRpcProvider(ethRPCUrl);
       const marbleFiProxy = new Contract(
         marbleFiContractAddress,
         MarbleLsdV1__factory.abi,
-        evmProvider
+        evmProvider,
       );
       const shares = await marbleFiProxy.totalShares();
       const totalAssets = await marbleFiProxy.totalStakedAssets();

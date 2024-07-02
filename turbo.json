@@ -27,9 +27,23 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "generate:schema": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "generate:client": {
+      "outputs": ["generated/**"],
+      "dependsOn": ["^build", "^generate:schema"]
+    },
     "build": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**"],
+      "dependsOn": [
+        "^build",
+        "generate:client",
+        "generate:schema",
+        "generate:prisma"
+      ]
     },
     "generate:prisma": {
       "inputs": ["prisma/schema.prisma"],
