@@ -35,6 +35,11 @@
       "inputs": ["prisma/schema.prisma"],
       "outputs": ["node_modules/@prisma/client"]
     },
+    "generate:contract-types": {
+      "inputs": ["packages/smartcontracts/**/*.sol"],
+      "outputs": ["artifacts", "cache", "generated"],
+      "dependsOn": ["^build"]
+    },
     "lint": {
       "outputs": []
     },
