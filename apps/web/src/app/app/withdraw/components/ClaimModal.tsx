@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { CTAButton } from "@/components/button/CTAButton";
 import { getDecimalPlace } from "@/lib/textHelper";
@@ -12,6 +12,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
 import { formatEther } from "ethers";
 import NumericFormat from "@/components/NumericFormat";
+import BigNumber from "bignumber.js";
 
 export default function ClaimModal({
   isActive,
@@ -26,6 +27,17 @@ export default function ClaimModal({
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
 }) {
+  const [totalClaimAmt, setTotalClaimAmt] = useState<BigNumber>(
+    new BigNumber(0),
+  );
+
+  function calculateTotal(input: BigNumber, checked: boolean) {
+    if (checked) {
+      setTotalClaimAmt((prevTotalSum) => prevTotalSum.plus(input));
+    } else {
+      setTotalClaimAmt((prevTotalSum) => prevTotalSum.minus(input));
+    }
+  }
   return (
     <Transition appear show={isActive} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -76,15 +88,16 @@ export default function ClaimModal({
                           const formatAsset = formatEther(
                             amountOfAssets.toString(),
                           );
-                          const isSelectedReqId = requestId === selectedReqId;
                           return (
                             <div
                               key={`pending-withdrawal-claim-modal-${requestId}`}
                             >
                               <ClaimRow
                                 formatAsset={formatAsset}
-                                isSelectedReqId={isSelectedReqId}
+                                setTotalClaimAmt={setTotalClaimAmt}
+                                isSelectedReqId={requestId === selectedReqId}
                                 isFinalized={isFinalized}
+                                calculateTotal={calculateTotal}
                               />
                             </div>
                           );
@@ -100,15 +113,16 @@ export default function ClaimModal({
                           const formatAsset = formatEther(
                             amountOfAssets.toString(),
                           );
-                          const isSelectedReqId = requestId === selectedReqId;
                           return (
                             <div
                               key={`confirmed-withdrawal-claim-modal-${requestId}`}
                             >
                               <ClaimRow
                                 formatAsset={formatAsset}
-                                isSelectedReqId={isSelectedReqId}
+                                setTotalClaimAmt={setTotalClaimAmt}
+                                isSelectedReqId={requestId === selectedReqId}
                                 isFinalized={isFinalized}
+                                calculateTotal={calculateTotal}
                               />
                             </div>
                           );
@@ -131,9 +145,9 @@ export default function ClaimModal({
                     <NumericTransactionRow
                       label="Total to claim"
                       value={{
-                        value: "14",
+                        value: totalClaimAmt.toString(),
                         suffix: " DFI",
-                        decimalScale: getDecimalPlace("0.0"),
+                        decimalScale: getDecimalPlace(totalClaimAmt),
                       }}
                       customStyle="!py-0"
                     />
@@ -161,23 +175,34 @@ function ClaimRow({
   formatAsset,
   isSelectedReqId,
   isFinalized,
+  setTotalClaimAmt,
+  calculateTotal,
 }: {
   formatAsset: string;
   isSelectedReqId: boolean;
   isFinalized: boolean;
+  setTotalClaimAmt: (totalClaimAmt: BigNumber) => void;
+  calculateTotal: (input: BigNumber, checked: boolean) => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
+  const [isSelected, setIsSelected] = useState(isSelectedReqId);
 
   useEffect(() => {
-    console.log("isSelectedReqId", isSelectedReqId);
-  }, [isSelectedReqId]);
+    if (isSelectedReqId) {
+      setTotalClaimAmt(new BigNumber(formatAsset));
+    }
+  }, []);
+
   return (
     <div className="flex justify-between">
       <div className="flex">
         <Checkbox
           ref={ref}
-          isChecked={isSelectedReqId}
-          onClick={() => console.log("clicked")}
+          isChecked={isSelected}
+          onClick={() => {
+            setIsSelected(!isSelected);
+            calculateTotal(new BigNumber(formatAsset), !isSelected);
+          }}
         />
         <div className="">
           <NumericFormat
