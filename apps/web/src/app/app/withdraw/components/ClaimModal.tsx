@@ -10,9 +10,11 @@ import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
 import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
-import { formatEther } from "ethers";
+import { formatEther, Interface, InterfaceAbi } from "ethers";
 import NumericFormat from "@/components/NumericFormat";
 import BigNumber from "bignumber.js";
+import { useContractContext } from "@/context/ContractContext";
+import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 
 export default function ClaimModal({
   isActive,
@@ -27,17 +29,42 @@ export default function ClaimModal({
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
 }) {
+  const { MarbleLsdProxy } = useContractContext();
   const [totalClaimAmt, setTotalClaimAmt] = useState<BigNumber>(
     new BigNumber(0),
   );
+  const [selectedReqIds, setSelectedReqIds] = useState<string[]>([]);
 
-  function calculateTotal(input: BigNumber, checked: boolean) {
+  function calculateTotal(
+    input: BigNumber,
+    checked: boolean,
+    requestId: string,
+  ) {
     if (checked) {
       setTotalClaimAmt((prevTotalSum) => prevTotalSum.plus(input));
     } else {
       setTotalClaimAmt((prevTotalSum) => prevTotalSum.minus(input));
     }
+
+    setSelectedReqIds(
+      checked
+        ? [...selectedReqIds, requestId]
+        : selectedReqIds.filter((_requestId) => _requestId !== requestId),
+    );
   }
+
+  const data = new Interface(
+    MarbleLsdProxy.abi as InterfaceAbi,
+  ).encodeFunctionData("claimWithdrawal", ["20"]) as `0x${string}`;
+
+  const { txnCost } = useGetTxnCost(data);
+
+  useEffect(() => {
+    if (selectedReqId) {
+      setSelectedReqIds([...selectedReqIds, selectedReqId]);
+    }
+  }, [selectedReqId]);
+
   return (
     <Transition appear show={isActive} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -70,7 +97,10 @@ export default function ClaimModal({
                 </Dialog.Title>
                 <IoMdClose
                   size={24}
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    setSelectedReqIds([]);
+                  }}
                   className="absolute right-8 top-8 text-light-1000 cursor-pointer"
                 />
                 <div className="mt-2">
@@ -94,6 +124,7 @@ export default function ClaimModal({
                             >
                               <ClaimRow
                                 formatAsset={formatAsset}
+                                requestId={requestId}
                                 setTotalClaimAmt={setTotalClaimAmt}
                                 isSelectedReqId={requestId === selectedReqId}
                                 isFinalized={isFinalized}
@@ -119,6 +150,7 @@ export default function ClaimModal({
                             >
                               <ClaimRow
                                 formatAsset={formatAsset}
+                                requestId={requestId}
                                 setTotalClaimAmt={setTotalClaimAmt}
                                 isSelectedReqId={requestId === selectedReqId}
                                 isFinalized={isFinalized}
@@ -136,9 +168,9 @@ export default function ClaimModal({
                     <NumericTransactionRow
                       label="Max transaction cost"
                       value={{
-                        value: "0.0",
+                        value: txnCost,
                         suffix: " DFI",
-                        decimalScale: getDecimalPlace("0.0"),
+                        decimalScale: getDecimalPlace(txnCost),
                       }}
                       customStyle="!py-0"
                     />
@@ -173,16 +205,22 @@ export default function ClaimModal({
 
 function ClaimRow({
   formatAsset,
+  requestId,
   isSelectedReqId,
   isFinalized,
   setTotalClaimAmt,
   calculateTotal,
 }: {
   formatAsset: string;
+  requestId: string;
   isSelectedReqId: boolean;
   isFinalized: boolean;
   setTotalClaimAmt: (totalClaimAmt: BigNumber) => void;
-  calculateTotal: (input: BigNumber, checked: boolean) => void;
+  calculateTotal: (
+    input: BigNumber,
+    checked: boolean,
+    requestId: string,
+  ) => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const [isSelected, setIsSelected] = useState(isSelectedReqId);
@@ -201,7 +239,7 @@ function ClaimRow({
           isChecked={isSelected}
           onClick={() => {
             setIsSelected(!isSelected);
-            calculateTotal(new BigNumber(formatAsset), !isSelected);
+            calculateTotal(new BigNumber(formatAsset), !isSelected, requestId);
           }}
         />
         <div className="">
