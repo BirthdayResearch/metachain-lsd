@@ -3,15 +3,13 @@ import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
 import clsx from "clsx";
 import { useGetStatsQuery } from "@/store/marbleFiApi";
-import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
 import BigNumber from "bignumber.js";
-import { useWhaleApiClient } from "@/context/WhaleProvider";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useMemo } from "react";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
@@ -20,12 +18,17 @@ export default function DFIOpportunities() {
   );
   const dfiPriceUsdValue = dfiPriceUsd ?? "0";
 
-  const marketCap: BigNumber = data
-    ? new BigNumber(data.totalShares)
-        .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-        .multipliedBy(new BigNumber(dfiPriceUsdValue))
-    : new BigNumber(0);
-  const marketCapValue = marketCap.toNumber();
+  const marketCap = useMemo(() => {
+    if (!data) return new BigNumber(0);
+    return new BigNumber(data.totalShares)
+      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
+      .multipliedBy(new BigNumber(dfiPriceUsdValue));
+  }, [data, dfiPriceUsdValue]);
+
+  const marketCapValue = useMemo(() => {
+    return formatNumberWithSuffix(marketCap.toNumber());
+  }, [marketCap]);
+  console.log({ marketCapValue });
 
   return (
     <SectionContainer id="about-section">
@@ -54,13 +57,12 @@ export default function DFIOpportunities() {
             width={224}
             height={224}
             className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
+            loading="lazy"
           />
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Market Cap</span>
-              <h4 className="h4-text flex-1 text-end">
-                ${formatNumberWithSuffix(marketCapValue)}
-              </h4>
+              <h4 className="h4-text flex-1 text-end">${marketCapValue}</h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Price</span>
@@ -76,9 +78,7 @@ export default function DFIOpportunities() {
               <span className="body-2-regular-text flex-1">
                 Total value locked
               </span>
-              <h4 className="h4-text flex-1 text-end">
-                ${formatNumberWithSuffix(marketCapValue)}
-              </h4>
+              <h4 className="h4-text flex-1 text-end">${marketCapValue}</h4>
             </div>
           </div>
         </div>
