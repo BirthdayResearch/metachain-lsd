@@ -48,14 +48,16 @@ export default function ClaimModal({
 
     setSelectedReqIds(
       checked
-        ? [...selectedReqIds, requestId]
-        : selectedReqIds.filter((_requestId) => _requestId !== requestId),
+        ? [...selectedReqIds, requestId.toString()]
+        : selectedReqIds.filter(
+            (_requestId) => _requestId !== requestId.toString(),
+          ),
     );
   }
 
   const data = new Interface(
     MarbleLsdProxy.abi as InterfaceAbi,
-  ).encodeFunctionData("claimWithdrawal", ["20"]) as `0x${string}`;
+  ).encodeFunctionData("claimWithdrawals", [selectedReqIds]) as `0x${string}`;
 
   const { txnCost } = useGetTxnCost(data);
 
@@ -126,7 +128,9 @@ export default function ClaimModal({
                                 formatAsset={formatAsset}
                                 requestId={requestId}
                                 setTotalClaimAmt={setTotalClaimAmt}
-                                isSelectedReqId={requestId === selectedReqId}
+                                isSelectedReqId={
+                                  requestId.toString() === selectedReqId
+                                }
                                 isFinalized={isFinalized}
                                 calculateTotal={calculateTotal}
                               />
@@ -152,7 +156,9 @@ export default function ClaimModal({
                                 formatAsset={formatAsset}
                                 requestId={requestId}
                                 setTotalClaimAmt={setTotalClaimAmt}
-                                isSelectedReqId={requestId === selectedReqId}
+                                isSelectedReqId={
+                                  requestId.toString() === selectedReqId
+                                }
                                 isFinalized={isFinalized}
                                 calculateTotal={calculateTotal}
                               />

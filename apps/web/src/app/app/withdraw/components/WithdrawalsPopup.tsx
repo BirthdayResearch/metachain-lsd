@@ -126,7 +126,7 @@ export function WithdrawalsPopup({
                         customTextStyle="text-xs font-medium"
                         label="Claim"
                         testId="claim-btn"
-                        onClick={() => handleOnClick(requestId)}
+                        onClick={() => handleOnClick(requestId.toString())}
                       />
                     </div>
                   );
