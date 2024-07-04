@@ -28,7 +28,6 @@ export default function DFIOpportunities() {
   const marketCapValue = useMemo(() => {
     return formatNumberWithSuffix(marketCap.toNumber());
   }, [marketCap]);
-  console.log({ marketCapValue });
 
   return (
     <SectionContainer id="about-section">
