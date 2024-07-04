@@ -10,13 +10,13 @@ import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useMemo } from "react";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
-  const { usd: dfiPriceUsd } = useSelector(
-    (state: RootState) => state.stats.price,
-  );
-  const dfiPriceUsdValue = dfiPriceUsd ?? "0";
+
+  const dfiPrice = useDfiPrice();
+  const dfiPriceUsdValue = dfiPrice ?? "0";
 
   const marketCap = useMemo(() => {
     if (!data) return new BigNumber(0);

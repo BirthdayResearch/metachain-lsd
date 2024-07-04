@@ -1,10 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { marbleFiApi } from "@/store/marbleFiApi";
-import { stats } from "@/store/stats";
 
 export const store = configureStore({
   reducer: {
-    stats: stats.reducer,
     [marbleFiApi.reducerPath]: marbleFiApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
