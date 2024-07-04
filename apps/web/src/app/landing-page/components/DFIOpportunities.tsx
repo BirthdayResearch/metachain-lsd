@@ -12,7 +12,6 @@ import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
-
   const dfiPriceUsdValue = useDfiPrice();
 
   const marketCapValue = useMemo(() => {
