@@ -8,15 +8,22 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
 import BigNumber from "bignumber.js";
+import { useWhaleApiClient } from "@/context/WhaleProvider";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
-  const { mDfiToDfiConversion } = useGetReadContractConfigs();
+  const { usd: dfiPriceUsd } = useSelector(
+    (state: RootState) => state.stats.price,
+  );
+  const dfiPriceUsdValue = dfiPriceUsd ?? "0";
 
   const marketCap: BigNumber = data
     ? new BigNumber(data.totalShares)
         .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-        .multipliedBy(new BigNumber(mDfiToDfiConversion))
+        .multipliedBy(new BigNumber(dfiPriceUsdValue))
     : new BigNumber(0);
   const marketCapValue = marketCap.toNumber();
 
@@ -59,9 +66,9 @@ export default function DFIOpportunities() {
               <span className="body-2-regular-text flex-1">Price</span>
               <NumericFormat
                 className="h4-text flex-1 text-end"
-                value={mDfiToDfiConversion}
+                value={dfiPriceUsdValue}
                 suffix=" DFI"
-                decimalScale={getDecimalPlace(mDfiToDfiConversion)}
+                decimalScale={getDecimalPlace(dfiPriceUsdValue)}
                 trimTrailingZeros={false}
               />
             </div>
