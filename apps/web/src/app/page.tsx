@@ -15,7 +15,7 @@ export default function LandingPage() {
   return (
     <div ref={contentRef} className="pb-8 text-light-1000 relative">
       <Header parentReference={contentRef} />
-      <div className="flex flex-col justify-center items-center my-12 md:my-24 gap-y-24 md:gap-y-60 max-w-5xl mx-auto w-full px-5 md:px-12">
+      <div className="flex flex-col justify-center items-center my-12 md:my-24 gap-y-24 md:gap-y-60 max-w-5xl mx-auto w-full px-5 md:px-0">
         <UnlockPower />
         <MarbleOpportunitiesSection />
         <HowItWorksSection />
