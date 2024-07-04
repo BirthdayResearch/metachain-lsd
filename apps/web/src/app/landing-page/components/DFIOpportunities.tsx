@@ -7,27 +7,21 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
 import BigNumber from "bignumber.js";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { useMemo } from "react";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
 
-  const dfiPrice = useDfiPrice();
-  const dfiPriceUsdValue = dfiPrice ?? "0";
-
-  const marketCap = useMemo(() => {
-    if (!data) return new BigNumber(0);
-    return new BigNumber(data.totalShares)
-      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-      .multipliedBy(new BigNumber(dfiPriceUsdValue));
-  }, [data, dfiPriceUsdValue]);
+  const dfiPriceUsdValue = useDfiPrice();
 
   const marketCapValue = useMemo(() => {
+    if (!data) return "0";
+    const marketCap = new BigNumber(data.totalShares)
+      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
+      .multipliedBy(dfiPriceUsdValue);
     return formatNumberWithSuffix(marketCap.toNumber());
-  }, [marketCap]);
+  }, [data, dfiPriceUsdValue]);
 
   return (
     <SectionContainer id="about-section">
