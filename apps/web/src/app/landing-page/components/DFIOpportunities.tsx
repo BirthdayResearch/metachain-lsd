@@ -7,16 +7,18 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
 import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
+import BigNumber from "bignumber.js";
 
 export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
 
-  const marketCap = data
-    ? parseFloat(data.totalShares) *
-      parseFloat(data.mDfiDfiRatio) *
-      parseFloat(mDfiToDfiConversion)
-    : 0;
+  const marketCap: BigNumber = data
+    ? new BigNumber(data.totalShares)
+        .multipliedBy(new BigNumber(data.mDfiDfiRatio))
+        .multipliedBy(new BigNumber(mDfiToDfiConversion))
+    : new BigNumber(0);
+  const marketCapValue = marketCap.toNumber();
 
   return (
     <SectionContainer id="about-section">
@@ -50,7 +52,7 @@ export default function DFIOpportunities() {
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Market Cap</span>
               <h4 className="h4-text flex-1 text-end">
-                ${formatNumberWithSuffix(marketCap)}
+                ${formatNumberWithSuffix(marketCapValue)}
               </h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
@@ -68,7 +70,7 @@ export default function DFIOpportunities() {
                 Total value locked
               </span>
               <h4 className="h4-text flex-1 text-end">
-                ${formatNumberWithSuffix(marketCap)}
+                ${formatNumberWithSuffix(marketCapValue)}
               </h4>
             </div>
           </div>
