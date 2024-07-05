@@ -253,6 +253,7 @@ function ClaimRow({
         <Checkbox
           ref={ref}
           isChecked={isSelected}
+          isDisabled={!isFinalized}
           onClick={() => {
             setIsSelected(!isSelected);
             calculateTotal(new BigNumber(formatAsset), !isSelected, requestId);
