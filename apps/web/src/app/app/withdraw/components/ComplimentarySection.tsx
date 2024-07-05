@@ -220,12 +220,13 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
         </div>
         <div className="w-full md:w-fit">
           <CTAButton
-            isDisabled={true}
+            isDisabled={!anyWithdrawalRequests}
             label="Claim DFI"
             testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="button-bg-gradient-1"
+            onClick={handleOnClick}
           >
             <Image
               data-testid="dfi-icon"
