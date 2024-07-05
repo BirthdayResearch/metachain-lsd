@@ -40,7 +40,14 @@ export function WithdrawalsPopupMobile({
         confirmedWithdrawals={confirmedWithdrawals}
       />
       <Transition appear show={isActive} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          open
+          onClose={() => {
+            /* Does not allow closing when click on backdrop */
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -162,7 +169,9 @@ export function WithdrawalsPopupMobile({
                                     customTextStyle="text-xs font-medium"
                                     label="Claim"
                                     testId="claim-btn"
-                                    onClick={() => handleOnClick(requestId)}
+                                    onClick={() =>
+                                      handleOnClick(requestId.toString())
+                                    }
                                   />
                                 </div>
                               );

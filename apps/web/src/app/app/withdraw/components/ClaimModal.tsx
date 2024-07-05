@@ -69,7 +69,14 @@ export default function ClaimModal({
 
   return (
     <Transition appear show={isActive} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        open
+        onClose={() => {
+          /* Does not allow closing when click on backdrop */
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -196,7 +203,10 @@ export default function ClaimModal({
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={onClose}
+                      onClick={() => {
+                        onClose();
+                        setSelectedReqIds([]);
+                      }}
                     />
                   </div>
                 </div>
