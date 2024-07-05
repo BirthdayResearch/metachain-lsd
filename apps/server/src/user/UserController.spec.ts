@@ -38,14 +38,14 @@ describe.only("UserController", () => {
       });
       expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
       const response = JSON.parse(initialResponse.body);
-      expect(response).toEqual({
-        id: 1,
-        ...userData,
-      });
+      expect(response).toEqual(userData);
       const savedData = await prismaService.user.findFirst({
-        where: { id: response.id },
+        where: { email: userData.email },
       });
-      expect(response).toEqual(savedData);
+      expect(response).toEqual({
+        email: savedData.email,
+        status: savedData.status,
+      });
     });
 
     it("should create an inactive user", async () => {
@@ -60,14 +60,14 @@ describe.only("UserController", () => {
       });
       expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
       const response = JSON.parse(initialResponse.body);
-      expect(response).toEqual({
-        id: 2,
-        ...userData,
-      });
+      expect(response).toEqual(userData);
       const savedData = await prismaService.user.findFirst({
-        where: { id: response.id },
+        where: { email: userData.email },
       });
-      expect(response).toEqual(savedData);
+      expect(response).toEqual({
+        email: savedData.email,
+        status: savedData.status,
+      });
     });
 
     it("should create an active user by default", async () => {
@@ -82,14 +82,16 @@ describe.only("UserController", () => {
       expect(initialResponse.statusCode).toStrictEqual(HttpStatus.CREATED);
       const response = JSON.parse(initialResponse.body);
       expect(response).toEqual({
-        id: 3,
         status: SubscriptionStatus.ACTIVE,
         ...userData,
       });
       const savedData = await prismaService.user.findFirst({
-        where: { id: response.id },
+        where: { email: userData.email },
       });
-      expect(response).toEqual(savedData);
+      expect(response).toEqual({
+        email: savedData.email,
+        status: savedData.status,
+      });
     });
 
     it("should not create a user with same email", async () => {

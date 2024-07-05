@@ -61,20 +61,18 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   };
 
   const {
-    pendingWithdrawalsArray,
-    confirmedWithdrawalsArray,
-    withdrawalStatusData,
+    pendingWithdrawals,
+    confirmedWithdrawals,
+    withdrawalStatusWithReqId,
   } = useGetWithdrawalDetails();
 
   const anyWithdrawalRequests =
-    pendingWithdrawalsArray.length > 0 || confirmedWithdrawalsArray.length > 0;
+    pendingWithdrawals.length > 0 || confirmedWithdrawals.length > 0;
 
-  const totalPendingCount = (pendingWithdrawalsArray.length ?? 0).toString();
-  const totalConfirmedCount = (
-    confirmedWithdrawalsArray.length ?? 0
-  ).toString();
+  const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
+  const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
 
-  const { totalShares, totalAssets } = withdrawalStatusData?.reduce(
+  const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
     (acc, item) => {
       return {
         totalShares:
@@ -102,8 +100,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="relative flex flex-col min-w-[168px]">
             {isActive && (
               <WithdrawalsPopup
-                pendingWithdrawalsArray={pendingWithdrawalsArray}
-                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
               />
             )}
@@ -118,8 +116,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 customStyle="!px-3 !py-3 md:!py-1"
                 customTextStyle={clsx(
                   "font-semibold leading-5",
-                  { "text-light-1000/30": pendingWithdrawalsArray.length <= 0 },
-                  { "text-light-1000/70": pendingWithdrawalsArray.length > 0 },
+                  { "text-light-1000/30": pendingWithdrawals.length <= 0 },
+                  { "text-light-1000/70": pendingWithdrawals.length > 0 },
                 )}
                 customBgColor="button-bg-gradient-1"
               >
@@ -132,10 +130,10 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 customTextStyle={clsx(
                   "font-semibold leading-5",
                   {
-                    "text-light-1000/30": confirmedWithdrawalsArray.length <= 0,
+                    "text-light-1000/30": confirmedWithdrawals.length <= 0,
                   },
                   {
-                    "text-light-1000/70": confirmedWithdrawalsArray.length > 0,
+                    "text-light-1000/70": confirmedWithdrawals.length > 0,
                   },
                 )}
                 customBgColor="button-bg-gradient-1"
@@ -169,8 +167,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
           <div className="relative flex flex-col w-full">
             {isActive && isMobile && (
               <WithdrawalsPopupMobile
-                pendingWithdrawalsArray={pendingWithdrawalsArray}
-                confirmedWithdrawalsArray={confirmedWithdrawalsArray}
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
                 isActive={isActive}
               />
@@ -222,12 +220,13 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
         </div>
         <div className="w-full md:w-fit">
           <CTAButton
-            isDisabled={true}
+            isDisabled={!anyWithdrawalRequests}
             label="Claim DFI"
             testId="claim-dfi-button"
             customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="button-bg-gradient-1"
+            onClick={handleOnClick}
           >
             <Image
               data-testid="dfi-icon"

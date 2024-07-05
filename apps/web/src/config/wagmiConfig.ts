@@ -1,6 +1,7 @@
 import { CreateConfigParameters, createConfig, http } from "wagmi";
 import { getDefaultConfig } from "connectkit";
-import { sepolia, defichainEvm, defichainEvmTestnet } from "wagmi/chains";
+import { defichainEvm, defichainEvmTestnet } from "wagmi/chains";
+import { walletConnect } from "wagmi/connectors";
 
 const DefichainEvmMainnet = {
   ...defichainEvm,
@@ -21,27 +22,24 @@ const config = createConfig(
   // TODO remove this on mainnet Prod launch
   getDefaultConfig({
     // Your dApps chains
-    chains:
-      process.env.NODE_ENV === "development"
-        ? [sepolia, DefichainEvmMainnet, DefichainEvmTestnet]
-        : [DefichainEvmTestnet],
-    transports:
-      process.env.NODE_ENV === "development"
-        ? {
-            [sepolia.id]: http(sepolia.rpcUrls.default.http[0]),
-            [DefichainEvmMainnet.id]: http(
-              DefichainEvmMainnet.rpcUrls.default.http[0],
-            ),
-            [DefichainEvmTestnet.id]: http(
-              DefichainEvmTestnet.rpcUrls.default.http[0],
-            ),
-          }
-        : {
-            [DefichainEvmTestnet.id]: http(
-              DefichainEvmTestnet.rpcUrls.default.http[0],
-            ),
-          },
-
+    connectors: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+      ? [
+          walletConnect({
+            projectId: process.env
+              .NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string,
+            showQrModal: false,
+          }),
+        ]
+      : [],
+    chains: [DefichainEvmMainnet, DefichainEvmTestnet],
+    transports: {
+      [DefichainEvmMainnet.id]: http(
+        DefichainEvmMainnet.rpcUrls.default.http[0],
+      ),
+      [DefichainEvmTestnet.id]: http(
+        DefichainEvmTestnet.rpcUrls.default.http[0],
+      ),
+    },
     // Required API Keys
     walletConnectProjectId: process.env
       .NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string,

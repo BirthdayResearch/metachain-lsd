@@ -4,10 +4,10 @@ const securityHeaders = [
     value:
       `default-src 'none';` +
       `base-uri 'self';` +
-      `child-src 'self' app.netlify.com;` +
+      `child-src 'self' *.walletconnect.org *.walletconnect.com app.netlify.com;` +
       `form-action 'self';` +
       `frame-ancestors 'none';` +
-      `img-src 'self' data:;` +
+      `img-src 'self' *.walletconnect.org *.walletconnect.com data:;` +
       `media-src 'self';` +
       `object-src 'none';` +
       `script-src 'self' app.netlify.com netlify-cdp-loader.netlify.app 'unsafe-inline' ${
@@ -15,7 +15,7 @@ const securityHeaders = [
       };` +
       `style-src 'self' fonts.googleapis.com 'unsafe-inline';` +
       `font-src 'self' fonts.gstatic.com;` +
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_SERVER_URL} wss://www.walletlink.org/rpc rpc.ankr.com rpc.sepolia.org mainnet.infura.io cloudflare-eth.com *.ocean.jellyfishsdk.com ${
+      `connect-src 'self' ${process.env.NEXT_PUBLIC_SERVER_URL} rpc.ankr.com rpc.sepolia.org mainnet.infura.io cloudflare-eth.com *.ocean.jellyfishsdk.com *.walletconnect.com *.walletconnect.org wss://relay.walletconnect.org wss://relay.walletconnect.com ${
         process.env.NODE_ENV === "development"
           ? `localhost:* 127.0.0.1:* ws://localhost:3000/_next/webpack-hmr`
           : ""

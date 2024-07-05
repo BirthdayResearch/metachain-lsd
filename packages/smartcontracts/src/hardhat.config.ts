@@ -112,8 +112,13 @@ const config: HardhatUserConfig = {
       url: "https://eth.testnet.ocean.jellyfishsdk.com",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      // ledgerAccounts: ['first EVM address of your ledger'],
       chainId: 1131,
+    },
+    DMCMainnet: {
+      url: "https://eth.mainnet.ocean.jellyfishsdk.com",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 1130,
     },
     sepolia: {
       url: process.env.SEPOLIA_URL || "",
@@ -130,7 +135,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      DMCTestnet: process.env.ETHERSCAN_API_KEY || "",
+      DMCTestnet: "DMCTestnet",
+      DMCMainnet: "DMCMainnet",
       sepolia: process.env.ETHERSCAN_API_KEY || "",
     },
     customChains: [
@@ -140,6 +146,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://blockscout.testnet.ocean.jellyfishsdk.com/api",
           browserURL: "https://blockscout.testnet.ocean.jellyfishsdk.com",
+        },
+      },
+      {
+        network: "DMCMainnet",
+        chainId: 1130,
+        urls: {
+          apiURL: "https://blockscout.mainnet.ocean.jellyfishsdk.com/api",
+          browserURL: "https://blockscout.mainnet.ocean.jellyfishsdk.com",
         },
       },
     ],

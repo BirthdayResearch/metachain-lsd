@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdAccessTimeFilled } from "react-icons/md";
 import clsx from "clsx";
 import { Tag } from "@/components/Tag";
@@ -10,16 +10,23 @@ import NumericFormat from "@/components/NumericFormat";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { IoMdClose } from "react-icons/io";
 import { formatTimestampToDate } from "@/lib/dateHelper";
+import ClaimModal from "@/app/app/withdraw/components/ClaimModal";
 
 export function WithdrawalsPopup({
-  pendingWithdrawalsArray,
-  confirmedWithdrawalsArray,
+  pendingWithdrawals,
+  confirmedWithdrawals,
   onClose,
 }: {
-  pendingWithdrawalsArray: WithdrawalStatusDataProps[];
-  confirmedWithdrawalsArray: WithdrawalStatusDataProps[];
-  onClose: any;
+  pendingWithdrawals: WithdrawalStatusDataProps[];
+  confirmedWithdrawals: WithdrawalStatusDataProps[];
+  onClose: () => void;
 }) {
+  const [isActive, setIsActive] = useState(false);
+  const [selectedReqId, setSelectedReqId] = useState<string>();
+  const handleOnClick = (requestId: string) => {
+    setIsActive(!isActive);
+    setSelectedReqId(requestId);
+  };
   return (
     <section>
       <div
@@ -28,6 +35,13 @@ export function WithdrawalsPopup({
           "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
         )}
       >
+        <ClaimModal
+          isActive={isActive}
+          onClose={handleOnClick}
+          selectedReqId={selectedReqId}
+          pendingWithdrawals={pendingWithdrawals}
+          confirmedWithdrawals={confirmedWithdrawals}
+        />
         <div className="relative">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
@@ -41,33 +55,36 @@ export function WithdrawalsPopup({
             <Tag
               text="PENDING"
               testId="pending-tag"
-              customStyle="w-fit px-1 !py-1"
+              customStyle="w-fit !pl-1 !pr-2 !py-1"
               customTextStyle="text-light-1000/50"
               Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
             />
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            {pendingWithdrawalsArray.length > 0 ? (
+            {pendingWithdrawals.length > 0 ? (
               <>
-                {pendingWithdrawalsArray.map((withdrawal) => (
-                  <div
-                    key={`pending-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
-                    className="flex justify-between items-center py-1.5"
-                  >
-                    <NumericFormat
-                      className="text-sm font-semibold"
-                      value={formatEther(withdrawal.amountOfAssets.toString())}
-                      suffix=" DFI"
-                      decimalScale={getDecimalPlace(
-                        formatEther(withdrawal.amountOfAssets.toString()),
-                      )}
-                    />
-                    <div className="text-xs">
-                      {formatTimestampToDate(withdrawal.timestamp)}
-                    </div>
-                  </div>
-                ))}
+                {pendingWithdrawals.map(
+                  ({ amountOfAssets, timestamp, requestId }) => {
+                    const formatAsset = formatEther(amountOfAssets.toString());
+                    return (
+                      <div
+                        key={`pending-withdrawal-${requestId}`}
+                        className="flex justify-between items-center py-1.5"
+                      >
+                        <NumericFormat
+                          className="text-sm font-semibold"
+                          value={formatAsset}
+                          suffix=" DFI"
+                          decimalScale={getDecimalPlace(formatAsset)}
+                        />
+                        <div className="text-xs">
+                          {formatTimestampToDate(timestamp)}
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
               </>
             ) : (
               <span className="text-xs text-light-1000/70">
@@ -81,37 +98,39 @@ export function WithdrawalsPopup({
             <Tag
               text="READY"
               testId="ready-tag"
-              customStyle="w-fit px-1 py-1"
+              customStyle="w-fit !pl-1 !pr-2 !py-1"
               customTextStyle="text-light-1000/50"
               Icon={<FaCircleCheck className="text-green" size={14} />}
             />
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
           <div className="ml-2">
-            {confirmedWithdrawalsArray.length > 0 ? (
+            {confirmedWithdrawals.length > 0 ? (
               <>
-                {confirmedWithdrawalsArray.map((withdrawal) => (
-                  <div
-                    key={`ready-withdrawal-${formatEther(withdrawal.amountOfAssets.toString())}`}
-                    className="flex justify-between items-center py-1"
-                  >
-                    <NumericFormat
-                      className="text-sm font-semibold"
-                      value={formatEther(withdrawal.amountOfAssets.toString())}
-                      suffix=" DFI"
-                      decimalScale={getDecimalPlace(
-                        formatEther(withdrawal.amountOfAssets.toString()),
-                      )}
-                    />
-                    <CTAButton
-                      customBgColor="button-bg-gradient-1"
-                      customStyle="!px-3 !py-1"
-                      customTextStyle="text-xs font-medium"
-                      label="Claim"
-                      testId="claim-btn"
-                    />
-                  </div>
-                ))}
+                {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {
+                  const formatAsset = formatEther(amountOfAssets.toString());
+                  return (
+                    <div
+                      key={`ready-withdrawal-${requestId}`}
+                      className="flex justify-between items-center py-1"
+                    >
+                      <NumericFormat
+                        className="text-sm font-semibold"
+                        value={formatAsset}
+                        suffix=" DFI"
+                        decimalScale={getDecimalPlace(formatAsset)}
+                      />
+                      <CTAButton
+                        customBgColor="button-bg-gradient-1"
+                        customStyle="!px-3 !py-1"
+                        customTextStyle="text-xs font-medium"
+                        label="Claim"
+                        testId="claim-btn"
+                        onClick={() => handleOnClick(requestId.toString())}
+                      />
+                    </div>
+                  );
+                })}
               </>
             ) : (
               <span className="text-xs text-light-1000/70">
