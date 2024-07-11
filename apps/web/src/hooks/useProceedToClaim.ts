@@ -8,12 +8,12 @@ import { useContractContext } from "@/context/ContractContext";
 import { Abi } from "viem";
 
 interface proceedToClaimI {
-  requestId: string;
+  requestIds: string[];
   setErrorMessage: any;
 }
 
 export default function useProceedToClaim({
-  requestId,
+  requestIds,
   setErrorMessage,
 }: proceedToClaimI) {
   const { MarbleLsdProxy } = useContractContext();
@@ -62,8 +62,8 @@ export default function useProceedToClaim({
         {
           abi: MarbleLsdProxy.abi as Abi,
           address: MarbleLsdProxy.address,
-          functionName: "claimWithdrawal",
-          args: [requestId],
+          functionName: "claimWithdrawals",
+          args: [requestIds],
         },
         {
           onSuccess: (hash) => {
