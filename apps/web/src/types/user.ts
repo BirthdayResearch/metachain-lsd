@@ -8,7 +8,7 @@ export interface CreateUserI {
   status?: SubscriptionStatus;
 }
 
-export interface GetStats {
+export interface StatsDataI {
   totalShares: string;
   totalAssets: string;
   totalRewards: string;
