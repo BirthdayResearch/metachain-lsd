@@ -248,8 +248,6 @@ export default function Withdraw() {
       )}
 
       {isWithdrawalPaused && <PausedWithdrawalsPage />}
-      {/* TODO: Uncomment once data is not hardcoded */}
-      {/* <ComplimentarySection /> */}
     </>
   );
 }
