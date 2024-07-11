@@ -73,7 +73,7 @@ export function InputCard({
             </div>
             <div className="flex flex-col w-full">
               <input
-                data-testid={`input-card-amount`}
+                data-testid="input-card-amount"
                 value={value}
                 type="number"
                 min="0"
