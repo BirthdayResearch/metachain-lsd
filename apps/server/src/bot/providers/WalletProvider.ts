@@ -5,7 +5,7 @@ import {
   EnvironmentNetwork,
   getJellyfishNetwork,
 } from "@waveshq/walletkit-core";
-import { MarbleLsdV1__factory } from "smartcontracts/src";
+import { MarbleLsdV1__factory } from "smartcontracts";
 import { Injectable } from "@nestjs/common";
 import { WhaleWalletAccount } from "@defichain/whale-api-wallet";
 import { WhaleApiClient } from "@defichain/whale-api-client";

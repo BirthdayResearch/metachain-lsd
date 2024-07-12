@@ -19,6 +19,7 @@ export class BotController {
   async initBot(): Promise<void> {
     for (let i = 0; i < this.networks.length; i++) {
       await this.botService.processRewards(this.networks[i]);
+      await this.botService.processSmartContractLogs(this.networks[i]);
     }
   }
 
