@@ -3,8 +3,8 @@ import { EnvironmentNetwork } from "@waveshq/walletkit-core";
 import { MarbleLsdV1__factory } from "smartcontracts";
 import { Injectable } from "@nestjs/common";
 import { JsonRpcProvider, Interface, Log } from "ethers";
-import { PrismaService } from "src/PrismaService";
 import BigNumber from "bignumber.js";
+import { PrismaService } from "../../PrismaService";
 
 @Injectable()
 export class SmartContractLogsProvider {
