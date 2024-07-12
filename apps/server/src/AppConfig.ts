@@ -12,6 +12,7 @@ export function appConfig() {
         rewardDistributerKey: process.env.DEFICHAIN_MAINNET_PRIVATE_KEY,
         marbleFiContractDeploymentHash:
           "0xfb6913340f29733a14917879dc1e2ed9572a28f6b69f8c80d7ec2b2472cc5342",
+        marbleFiContractAddress: "0x7625924EFb4835E9459a4Ea6bA17ea99FBb7883B",
         ethRPCUrl: "https://eth.mainnet.ocean.jellyfishsdk.com",
       },
       [EnvironmentNetwork.TestNet]: {

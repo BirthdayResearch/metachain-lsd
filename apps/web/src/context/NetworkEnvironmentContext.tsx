@@ -35,15 +35,10 @@ export function NetworkEnvironmentProvider({
 
   const env = getEnvironment(process.env.NODE_ENV);
   const networkQuery = searchParams.get("network");
-  // TODO set defaultNetwork to mainnet
-  const defaultNetwork = EnvironmentNetwork.TestNet;
+  const defaultNetwork = EnvironmentNetwork.MainNet;
   const { chain } = useAccount();
 
   function getInitialNetwork(n: EnvironmentNetwork): EnvironmentNetwork {
-    // TODO remove this on mainnet Prod launch
-    if (process.env.NODE_ENV !== "development") {
-      return EnvironmentNetwork.TestNet;
-    }
     if (chain === undefined) {
       return env.networks.includes(n) ? n : defaultNetwork;
     }
