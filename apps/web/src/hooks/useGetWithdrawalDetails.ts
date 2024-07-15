@@ -52,6 +52,8 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
       Array.isArray(withdrawalStatusData) &&
       Array.isArray(withdrawalRequestData)
     ) {
+      setConfirmedWithdrawals([]);
+      setPendingWithdrawals([]);
       return withdrawalStatusData.map((item, index) => ({
         ...item,
         requestId: withdrawalRequestData[index],

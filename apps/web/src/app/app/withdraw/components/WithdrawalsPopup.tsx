@@ -58,7 +58,9 @@ export function WithdrawalsPopup({
               <>
                 {pendingWithdrawals.map(
                   ({ amountOfAssets, timestamp, requestId }) => {
-                    const formatAsset = formatEther(amountOfAssets.toString());
+                    const formattedAsset = formatEther(
+                      amountOfAssets.toString(),
+                    );
                     return (
                       <div
                         key={`pending-withdrawal-${requestId}`}
@@ -66,9 +68,9 @@ export function WithdrawalsPopup({
                       >
                         <NumericFormat
                           className="text-sm font-semibold"
-                          value={formatAsset}
+                          value={formattedAsset}
                           suffix=" DFI"
-                          decimalScale={getDecimalPlace(formatAsset)}
+                          decimalScale={getDecimalPlace(formattedAsset)}
                         />
                         <div className="text-xs">
                           {formatTimestampToDate(timestamp)}
@@ -100,7 +102,7 @@ export function WithdrawalsPopup({
             {confirmedWithdrawals.length > 0 ? (
               <>
                 {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {
-                  const formatAsset = formatEther(amountOfAssets.toString());
+                  const formattedAsset = formatEther(amountOfAssets.toString());
                   return (
                     <div
                       key={`ready-withdrawal-${requestId}`}
@@ -108,9 +110,9 @@ export function WithdrawalsPopup({
                     >
                       <NumericFormat
                         className="text-sm font-semibold"
-                        value={formatAsset}
+                        value={formattedAsset}
                         suffix=" DFI"
-                        decimalScale={getDecimalPlace(formatAsset)}
+                        decimalScale={getDecimalPlace(formattedAsset)}
                       />
                       <CTAButton
                         customBgColor="button-bg-gradient-1"
