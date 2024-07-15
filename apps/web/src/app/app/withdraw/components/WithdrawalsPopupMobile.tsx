@@ -80,7 +80,7 @@ export function WithdrawalsPopupMobile({
                         <>
                           {pendingWithdrawals.map(
                             ({ amountOfAssets, timestamp, requestId }) => {
-                              const formatAsset = formatEther(
+                              const formattedAsset = formatEther(
                                 amountOfAssets.toString(),
                               );
                               return (
@@ -90,9 +90,11 @@ export function WithdrawalsPopupMobile({
                                 >
                                   <NumericFormat
                                     className="text-sm font-semibold"
-                                    value={formatAsset}
+                                    value={formattedAsset}
                                     suffix=" DFI"
-                                    decimalScale={getDecimalPlace(formatAsset)}
+                                    decimalScale={getDecimalPlace(
+                                      formattedAsset,
+                                    )}
                                   />
                                   <div className="text-xs">
                                     {formatTimestampToDate(timestamp)}
@@ -127,7 +129,7 @@ export function WithdrawalsPopupMobile({
                         <>
                           {confirmedWithdrawals.map(
                             ({ amountOfAssets, requestId }) => {
-                              const formatAsset = formatEther(
+                              const formattedAsset = formatEther(
                                 amountOfAssets.toString(),
                               );
                               return (
@@ -137,9 +139,11 @@ export function WithdrawalsPopupMobile({
                                 >
                                   <NumericFormat
                                     className="text-sm font-semibold"
-                                    value={formatAsset}
+                                    value={formattedAsset}
                                     suffix=" DFI"
-                                    decimalScale={getDecimalPlace(formatAsset)}
+                                    decimalScale={getDecimalPlace(
+                                      formattedAsset,
+                                    )}
                                   />
                                   <CTAButton
                                     customBgColor="button-bg-gradient-1"
