@@ -14,13 +14,26 @@ export default function DFIOpportunities() {
   const { data } = useGetStatsQuery();
   const dfiPriceUsdValue = useDfiPrice();
 
-  const marketCapValue = useMemo(() => {
-    if (!data) return "0";
-    const marketCap = new BigNumber(data.totalShares)
-      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-      .multipliedBy(dfiPriceUsdValue);
-    return formatNumberWithSuffix(marketCap.toNumber());
-  }, [data, dfiPriceUsdValue]);
+  function getStatValues() {
+    if (data) {
+      const marketCap = new BigNumber(data.totalShares)
+        .multipliedBy(new BigNumber(data.mDfiDfiRatio))
+        .multipliedBy(dfiPriceUsdValue);
+      return {
+        marketCap: formatNumberWithSuffix(marketCap.toNumber()),
+        tvl: data.totalAssets,
+      };
+    }
+    return {
+      marketCap: "0",
+      tvl: "0",
+    };
+  }
+
+  const { marketCap, tvl } = useMemo(
+    () => getStatValues(),
+    [data, dfiPriceUsdValue],
+  );
 
   return (
     <SectionContainer id="about-section">
@@ -54,7 +67,7 @@ export default function DFIOpportunities() {
           <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Market Cap</span>
-              <h4 className="h4-text flex-1 text-end">${marketCapValue}</h4>
+              <h4 className="h4-text flex-1 text-end">${marketCap}</h4>
             </div>
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Price</span>
@@ -70,7 +83,7 @@ export default function DFIOpportunities() {
               <span className="body-2-regular-text flex-1">
                 Total value locked
               </span>
-              <h4 className="h4-text flex-1 text-end">${marketCapValue}</h4>
+              <h4 className="h4-text flex-1 text-end">${tvl}</h4>
             </div>
           </div>
         </div>
