@@ -68,7 +68,6 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     let confirmedItems: WithdrawalStatusDataProps[] = [];
     if (Object.keys(withdrawalStatusWithReqId).length > 0) {
       withdrawalStatusWithReqId.map((item) => {
-        console.log({ item });
         if (!item.isClaimed && !item.isFinalized) {
           pendingItems.push(item);
         } else if (!item.isClaimed && item.isFinalized) {
