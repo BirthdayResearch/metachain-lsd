@@ -115,7 +115,14 @@ export default function AddressInput({
           </div>
         </form>
       </div>
-      {error && <p className="text-left mt-2 text-sm text-red">{error}</p>}
+      {error && (
+        <p
+          data-testId="input-error-msg"
+          className="text-left mt-2 text-sm text-red"
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }

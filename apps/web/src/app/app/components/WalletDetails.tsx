@@ -25,6 +25,7 @@ export default function WalletDetails({
         <p className="text-xs text-light-1000/50">
           <span className="mr-1">Available:</span>
           <NumericFormat
+            testId="wallet-balance"
             className="font-semibold"
             suffix={suffix}
             value={new BigNumber(walletBalanceAmount ?? 0)}
