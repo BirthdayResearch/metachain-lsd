@@ -22,7 +22,7 @@ describe("InputCard component", () => {
     });
   });
 
-  it.only("should render input card component and available DFI amount", () => {
+  it("should render input card component and available DFI amount", () => {
     cy.findByTestId("input-card-amount").should("exist");
     cy.findByTestId("wallet-balance").should("have.value", "2.64"); // based on personal wallet - max amount
   });
