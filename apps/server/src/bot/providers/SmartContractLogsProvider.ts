@@ -33,7 +33,6 @@ export class SmartContractLogsProvider {
   }
 
   async getLogs(fromBlock, toBlock): Promise<Log[]> {
-    console.log({ fromBlock, toBlock });
     try {
       const filter = {
         fromBlock,
