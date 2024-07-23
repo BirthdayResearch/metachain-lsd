@@ -21,7 +21,7 @@ export default function NumericFormat({
 }: NumericFormatProps): JSX.Element {
   const fmt: BigNumber.Format = {
     prefix,
-    suffix: ` ${suffix}`, // add space before suffix
+    suffix: ` ${suffix?.trim()}`, // add space before suffix
     decimalSeparator: ".",
     groupSeparator: thousandSeparator ? "," : "",
     groupSize: thousandSeparator ? 3 : 0,
@@ -32,14 +32,14 @@ export default function NumericFormat({
   if (trimTrailingZeros) {
     // If the value is 0, return '0.00'
     if (new BigNumber(value).isEqualTo(0)) {
-      formattedNumber = "0.00";
+      formattedNumber = `0.00 ${suffix}`;
     } else {
       // split the formatted # by space to separate the number and suffix
       const parts = formattedNumber.split(" ");
       // remove trailing zeros and decimal point if there are no digits after it
       const num = parts[0].replace(/\.?0+$/, "");
       // join the number and suffix back together
-      formattedNumber = `${num} ${parts[1]}`;
+      formattedNumber = `${num} ${parts?.splice(1, parts.length)?.join(" ")}`;
     }
   }
 
