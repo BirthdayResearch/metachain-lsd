@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { CTAButton } from "@/components/button/CTAButton";
 import { getDecimalPlace } from "@/lib/textHelper";
@@ -9,19 +9,74 @@ import { MdAccessTimeFilled } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
+import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
+import { formatEther, Interface, InterfaceAbi } from "ethers";
+import NumericFormat from "@/components/NumericFormat";
+import BigNumber from "bignumber.js";
+import { useContractContext } from "@/context/ContractContext";
+import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 
 export default function ClaimModal({
   isActive,
   onClose,
+  selectedReqId,
+  pendingWithdrawals,
+  confirmedWithdrawals,
 }: {
   isActive: boolean;
   onClose: any;
+  selectedReqId?: string;
+  pendingWithdrawals: WithdrawalStatusDataProps[];
+  confirmedWithdrawals: WithdrawalStatusDataProps[];
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
+  const { MarbleLsdProxy } = useContractContext();
+  const [totalClaimAmt, setTotalClaimAmt] = useState<BigNumber>(
+    new BigNumber(0),
+  );
+  const [selectedReqIds, setSelectedReqIds] = useState<string[]>([]);
+
+  function calculateTotal(
+    input: BigNumber,
+    checked: boolean,
+    requestId: string,
+  ) {
+    if (checked) {
+      setTotalClaimAmt((prevTotalSum) => prevTotalSum.plus(input));
+    } else {
+      setTotalClaimAmt((prevTotalSum) => prevTotalSum.minus(input));
+    }
+
+    setSelectedReqIds(
+      checked
+        ? [...selectedReqIds, requestId.toString()]
+        : selectedReqIds.filter(
+            (_requestId) => _requestId !== requestId.toString(),
+          ),
+    );
+  }
+
+  const data = new Interface(
+    MarbleLsdProxy.abi as InterfaceAbi,
+  ).encodeFunctionData("claimWithdrawals", [selectedReqIds]) as `0x${string}`;
+
+  const { txnCost } = useGetTxnCost(data);
+
+  useEffect(() => {
+    if (selectedReqId) {
+      setSelectedReqIds([...selectedReqIds, selectedReqId]);
+    }
+  }, [selectedReqId]);
 
   return (
     <Transition appear show={isActive} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        open
+        onClose={() => {
+          /* Does not allow closing when click on backdrop */
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -51,7 +106,10 @@ export default function ClaimModal({
                 </Dialog.Title>
                 <IoMdClose
                   size={24}
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose();
+                    setSelectedReqIds([]);
+                  }}
                   className="absolute right-8 top-8 text-light-1000 cursor-pointer"
                 />
                 <div className="mt-2">
@@ -61,87 +119,80 @@ export default function ClaimModal({
                     request that is ready for claiming.
                   </p>
                 </div>
-                <div className="flex flex-col rounded-[10px] border border-light-1000/10 px-3 py-5 md:p-5 mt-8 md:mt-5 gap-y-5">
-                  <div className="flex justify-between">
-                    <div className="flex items-center">
-                      <Checkbox
-                        ref={ref}
-                        isChecked={false}
-                        onClick={() => console.log("clicked")}
-                      />
-                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
-                        2 DFI
-                      </div>
-                      <Image
-                        data-testid="dfi-icon"
-                        src="/icons/dfi-icon.svg"
-                        alt="DFI icon"
-                        className="min-w-4"
-                        priority
-                        width={16}
-                        height={16}
-                      />
-                    </div>
-                    <Tag
-                      text="PENDING"
-                      testId="pending-tag"
-                      customStyle="w-fit !pl-1 !pr-2 !py-1"
-                      customTextStyle="text-light-1000/50"
-                      Icon={
-                        <MdAccessTimeFilled
-                          className="text-warning"
-                          size={16}
-                        />
-                      }
-                    />
-                  </div>
+                <div className="flex flex-col rounded-[10px] border border-light-1000/10 px-3 py-5 md:p-5 mt-8 md:mt-5 gap-y-5 max-h-48 overflow-auto">
+                  {pendingWithdrawals && (
+                    <>
+                      {pendingWithdrawals.map(
+                        ({ amountOfAssets, requestId, isFinalized }) => {
+                          const formatAsset = formatEther(
+                            amountOfAssets.toString(),
+                          );
+                          return (
+                            <div
+                              key={`pending-withdrawal-claim-modal-${requestId}`}
+                            >
+                              <ClaimRow
+                                formatAsset={formatAsset}
+                                requestId={requestId}
+                                setTotalClaimAmt={setTotalClaimAmt}
+                                isSelectedReqId={
+                                  requestId.toString() === selectedReqId
+                                }
+                                isFinalized={isFinalized}
+                                calculateTotal={calculateTotal}
+                              />
+                            </div>
+                          );
+                        },
+                      )}
+                    </>
+                  )}
 
-                  <div className="flex justify-between">
-                    <div className="flex">
-                      <Checkbox
-                        ref={ref}
-                        isChecked={true}
-                        onClick={() => console.log("clicked")}
-                      />
-                      <div className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold">
-                        2 DFI
-                      </div>
-                      <Image
-                        data-testid="dfi-icon"
-                        src="/icons/dfi-icon.svg"
-                        alt="DFI icon"
-                        className="min-w-4"
-                        priority
-                        width={16}
-                        height={16}
-                      />
-                    </div>
-                    <Tag
-                      text="READY"
-                      testId="ready-tag"
-                      customStyle="w-fit !pl-1 !pr-2 !py-1"
-                      customTextStyle="text-light-1000/50"
-                      Icon={<FaCircleCheck className="text-green" size={14} />}
-                    />
-                  </div>
+                  {confirmedWithdrawals && (
+                    <>
+                      {confirmedWithdrawals.map(
+                        ({ amountOfAssets, requestId, isFinalized }) => {
+                          const formatAsset = formatEther(
+                            amountOfAssets.toString(),
+                          );
+                          return (
+                            <div
+                              key={`confirmed-withdrawal-claim-modal-${requestId}`}
+                            >
+                              <ClaimRow
+                                formatAsset={formatAsset}
+                                requestId={requestId}
+                                setTotalClaimAmt={setTotalClaimAmt}
+                                isSelectedReqId={
+                                  requestId.toString() === selectedReqId
+                                }
+                                isFinalized={isFinalized}
+                                calculateTotal={calculateTotal}
+                              />
+                            </div>
+                          );
+                        },
+                      )}
+                    </>
+                  )}
                 </div>
                 <div className="mt-auto md:mt-0">
                   <div className="flex flex-col px-2 md:px-5 gap-y-4 md:gap-y-5 py-2 md:mt-3">
                     <NumericTransactionRow
                       label="Max transaction cost"
                       value={{
-                        value: "0.0",
+                        value: txnCost,
                         suffix: " DFI",
-                        decimalScale: getDecimalPlace("0.0"),
+                        decimalScale: getDecimalPlace(txnCost),
                       }}
                       customStyle="!py-0"
                     />
                     <NumericTransactionRow
                       label="Total to claim"
                       value={{
-                        value: "14",
+                        value: totalClaimAmt.toString(),
                         suffix: " DFI",
-                        decimalScale: getDecimalPlace("0.0"),
+                        decimalScale: getDecimalPlace(totalClaimAmt),
                       }}
                       customStyle="!py-0"
                     />
@@ -152,7 +203,10 @@ export default function ClaimModal({
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={onClose}
+                      onClick={() => {
+                        onClose();
+                        setSelectedReqIds([]);
+                      }}
                     />
                   </div>
                 </div>
@@ -162,5 +216,84 @@ export default function ClaimModal({
         </div>
       </Dialog>
     </Transition>
+  );
+}
+
+function ClaimRow({
+  formatAsset,
+  requestId,
+  isSelectedReqId,
+  isFinalized,
+  setTotalClaimAmt,
+  calculateTotal,
+}: {
+  formatAsset: string;
+  requestId: string;
+  isSelectedReqId: boolean;
+  isFinalized: boolean;
+  setTotalClaimAmt: (totalClaimAmt: BigNumber) => void;
+  calculateTotal: (
+    input: BigNumber,
+    checked: boolean,
+    requestId: string,
+  ) => void;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [isSelected, setIsSelected] = useState(isSelectedReqId);
+
+  useEffect(() => {
+    if (isSelectedReqId) {
+      setTotalClaimAmt(new BigNumber(formatAsset));
+    }
+  }, []);
+
+  return (
+    <div className="flex justify-between">
+      <div className="flex">
+        <Checkbox
+          ref={ref}
+          isChecked={isSelected}
+          isDisabled={!isFinalized}
+          onClick={() => {
+            setIsSelected(!isSelected);
+            calculateTotal(new BigNumber(formatAsset), !isSelected, requestId);
+          }}
+        />
+        <div className="">
+          <NumericFormat
+            className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold"
+            value={formatAsset}
+            suffix=" DFI"
+            decimalScale={getDecimalPlace(formatAsset)}
+          />
+        </div>
+        <Image
+          data-testid="dfi-icon"
+          src="/icons/dfi-icon.svg"
+          alt="DFI icon"
+          className="min-w-4"
+          priority
+          width={16}
+          height={16}
+        />
+      </div>
+      {isFinalized ? (
+        <Tag
+          text="READY"
+          testId="ready-tag"
+          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customTextStyle="text-light-1000/50"
+          Icon={<FaCircleCheck className="text-green" size={14} />}
+        />
+      ) : (
+        <Tag
+          text="PENDING"
+          testId="pending-tag"
+          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customTextStyle="text-light-1000/50"
+          Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
+        />
+      )}
+    </div>
   );
 }

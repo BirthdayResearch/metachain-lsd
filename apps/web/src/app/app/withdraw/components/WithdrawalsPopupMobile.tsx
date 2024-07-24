@@ -24,14 +24,30 @@ export function WithdrawalsPopupMobile({
   isActive: boolean;
 }) {
   const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);
-  const handleOnClick = () => {
+  const [selectedReqId, setSelectedReqId] = useState<string>();
+
+  const handleOnClick = (requestId: string) => {
     setIsConfirmModalActive(!isConfirmModalActive);
+    setSelectedReqId(requestId);
   };
   return (
     <section>
-      <ClaimModal isActive={isConfirmModalActive} onClose={handleOnClick} />
+      <ClaimModal
+        isActive={isConfirmModalActive}
+        onClose={handleOnClick}
+        selectedReqId={selectedReqId}
+        pendingWithdrawals={pendingWithdrawals}
+        confirmedWithdrawals={confirmedWithdrawals}
+      />
       <Transition appear show={isActive} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          open
+          onClose={() => {
+            /* Does not allow closing when click on backdrop */
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -157,7 +173,9 @@ export function WithdrawalsPopupMobile({
                                     customTextStyle="text-xs font-medium"
                                     label="Claim"
                                     testId="claim-btn"
-                                    onClick={handleOnClick}
+                                    onClick={() =>
+                                      handleOnClick(requestId.toString())
+                                    }
                                   />
                                 </div>
                               );

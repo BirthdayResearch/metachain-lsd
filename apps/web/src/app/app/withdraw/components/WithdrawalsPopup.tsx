@@ -22,8 +22,10 @@ export function WithdrawalsPopup({
   onClose: () => void;
 }) {
   const [isActive, setIsActive] = useState(false);
-  const handleOnClick = () => {
+  const [selectedReqId, setSelectedReqId] = useState<string>();
+  const handleOnClick = (requestId: string) => {
     setIsActive(!isActive);
+    setSelectedReqId(requestId);
   };
   return (
     <section>
@@ -33,7 +35,13 @@ export function WithdrawalsPopup({
           "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
         )}
       >
-        <ClaimModal isActive={isActive} onClose={handleOnClick} />
+        <ClaimModal
+          isActive={isActive}
+          onClose={handleOnClick}
+          selectedReqId={selectedReqId}
+          pendingWithdrawals={pendingWithdrawals}
+          confirmedWithdrawals={confirmedWithdrawals}
+        />
         <div className="relative">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
@@ -120,7 +128,7 @@ export function WithdrawalsPopup({
                         customTextStyle="text-xs font-medium"
                         label="Claim"
                         testId="claim-btn"
-                        onClick={handleOnClick}
+                        onClick={() => handleOnClick(requestId.toString())}
                       />
                     </div>
                   );
