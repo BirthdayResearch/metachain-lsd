@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import ContainerLayout from "@/components/ContainerLayout";
 import React from "react";
+import AppProviders from "@/provider/AppProviders";
 
 const appName = "marblefi.xyz/app/stake";
 const shortDescription =
@@ -44,5 +45,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ContainerLayout>{children}</ContainerLayout>;
+  return (
+    <AppProviders>
+      <ContainerLayout>{children}</ContainerLayout>
+    </AppProviders>
+  );
 }
