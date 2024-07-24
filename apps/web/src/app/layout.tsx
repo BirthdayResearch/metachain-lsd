@@ -3,6 +3,7 @@ import "../globals.css";
 import ContainerLayout from "@/components/ContainerLayout";
 import React from "react";
 import AppProviders from "@/provider/AppProviders";
+import { Suspense } from "react";
 
 const appName = "marblefi.xyz/app/stake";
 const shortDescription =
@@ -46,8 +47,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AppProviders>
-      <ContainerLayout>{children}</ContainerLayout>
-    </AppProviders>
+    <Suspense>
+      <AppProviders>
+        <ContainerLayout>{children}</ContainerLayout>
+      </AppProviders>
+    </Suspense>
   );
 }
