@@ -33,7 +33,7 @@ export default function StakeConfirmedPage({
           label: "Amount staked",
           value: {
             value: stakeAmount,
-            suffix: " DFI",
+            suffix: "DFI",
             decimalScale: getDecimalPlace(stakeAmount),
           },
         },
@@ -41,7 +41,7 @@ export default function StakeConfirmedPage({
           label: "Amount to receive",
           value: {
             value: previewDeposit,
-            suffix: " mDFI",
+            suffix: "mDFI",
             decimalScale: getDecimalPlace(previewDeposit),
           },
         },
