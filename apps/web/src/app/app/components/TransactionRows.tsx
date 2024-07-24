@@ -1,5 +1,5 @@
 import { useContractContext } from "@/context/ContractContext";
-import { Interface, InterfaceAbi } from "ethers";
+import { Interface, InterfaceAbi, parseEther } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
@@ -15,17 +15,26 @@ export default function TransactionRows({
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
 
-  const data = withdrawAmount
-    ? (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
-        "requestRedeem",
-        [toWei(withdrawAmount), MarbleLsdProxy.address],
-      ) as `0x${string}`)
-    : (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
-        "deposit",
-        [MarbleLsdProxy.address],
-      ) as `0x${string}`);
+  const txnData = withdrawAmount
+    ? {
+        data: new Interface(
+          MarbleLsdProxy.abi as InterfaceAbi,
+        ).encodeFunctionData("requestRedeem", [
+          toWei(withdrawAmount),
+          MarbleLsdProxy.address,
+        ]) as `0x${string}`,
+        value: parseEther("0"),
+      }
+    : {
+        data: new Interface(
+          MarbleLsdProxy.abi as InterfaceAbi,
+        ).encodeFunctionData("deposit", [
+          MarbleLsdProxy.address,
+        ]) as `0x${string}`,
+        value: parseEther("1"),
+      };
 
-  const { txnCost } = useGetTxnCost(data);
+  const { txnCost } = useGetTxnCost(txnData.data, txnData.value);
 
   return (
     <div>
@@ -52,7 +61,6 @@ export default function TransactionRows({
         label="Max transaction cost"
         value={{
           value: txnCost,
-          suffix: " DFI",
           decimalScale: getDecimalPlace(txnCost),
           prefix: "$",
         }}

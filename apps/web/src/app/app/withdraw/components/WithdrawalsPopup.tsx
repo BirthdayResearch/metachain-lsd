@@ -33,6 +33,7 @@ export function WithdrawalsPopup({
         className={clsx(
           "bg-white rounded-[30px] flex flex-col p-8 gap-y-4 max-w-[468px]",
           "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
+          "border-[0.5px] border-light-1000/50",
         )}
       >
         <ClaimModal
@@ -106,7 +107,7 @@ export function WithdrawalsPopup({
             />
             <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
           </div>
-          <div className="ml-2">
+          <div className="ml-2 flex flex-col space-y-1">
             {confirmedWithdrawals.length > 0 ? (
               <>
                 {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {

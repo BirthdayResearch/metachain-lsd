@@ -41,7 +41,7 @@ export default function WithdrawPage({
   const { MarbleLsdProxy, mDFI } = useContractContext();
   const dfiPrice = useDfiPrice();
 
-  const { minDepositAmount } = useGetReadContractConfigs();
+  const { minDepositAmount, mDfiToDfiConversion } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -101,6 +101,13 @@ export default function WithdrawPage({
                   error={amountError}
                   setError={setAmountError}
                   value={withdrawAmount}
+                  usdAmount={
+                    new BigNumber(withdrawAmount).isNaN()
+                      ? new BigNumber(0)
+                      : new BigNumber(withdrawAmount ?? 0)
+                          .multipliedBy(mDfiToDfiConversion ?? 0)
+                          .multipliedBy(dfiPrice ?? 0)
+                  }
                   setAmount={setWithdrawAmount}
                 >
                   <Image

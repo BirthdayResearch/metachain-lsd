@@ -10,7 +10,7 @@ import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
 import { WithdrawalStatusDataProps } from "@/hooks/useGetWithdrawalDetails";
-import { formatEther, Interface, InterfaceAbi } from "ethers";
+import { formatEther, Interface, InterfaceAbi, parseEther } from "ethers";
 import NumericFormat from "@/components/NumericFormat";
 import BigNumber from "bignumber.js";
 import { useContractContext } from "@/context/ContractContext";
@@ -63,7 +63,7 @@ export default function ClaimModal({
     MarbleLsdProxy.abi as InterfaceAbi,
   ).encodeFunctionData("claimWithdrawals", [selectedReqIds]) as `0x${string}`;
 
-  const { txnCost } = useGetTxnCost(data);
+  const { txnCost } = useGetTxnCost(data, parseEther("0"));
 
   const handleInitiateTransfer = async () => {
     if (selectedReqIds) {
@@ -207,7 +207,6 @@ export default function ClaimModal({
                       label="Max transaction cost"
                       value={{
                         value: txnCost,
-                        suffix: " DFI",
                         decimalScale: getDecimalPlace(txnCost),
                       }}
                       customStyle="!py-0"

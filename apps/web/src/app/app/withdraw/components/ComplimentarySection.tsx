@@ -12,6 +12,8 @@ import NumericFormat from "@/components/NumericFormat";
 import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
 import { WithdrawalsPopupMobile } from "@/app/app/withdraw/components/WithdrawalsPopupMobile";
 import useResponsive from "@/hooks/useResponsive";
+import BigNumber from "bignumber.js";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -55,6 +57,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const { isMobile } = useResponsive();
   const [isActive, setIsActive] = useState(false);
+  const dfiPrice = useDfiPrice();
 
   const handleOnClick = () => {
     setIsActive(!isActive);
@@ -155,7 +158,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <NumericFormat
                 className="text-xs text-right text-dark-00/70"
                 prefix="$"
-                value={formattedTotalShares}
+                value={new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice)}
                 decimalScale={getDecimalPlace(formattedTotalShares)}
               />
             </div>

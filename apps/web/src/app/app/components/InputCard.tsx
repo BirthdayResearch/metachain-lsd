@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { PercentageButton } from "@/app/app/components/PercentageButton";
-import { useDfiPrice } from "@/hooks/useDfiPrice";
 import NumericFormat from "@/components/NumericFormat";
 import { getDecimalPlace } from "@/lib/textHelper";
 import clsx from "clsx";
@@ -10,6 +9,7 @@ export function InputCard({
   maxAmount,
   minAmount,
   value,
+  usdAmount,
   setAmount,
   error,
   setError,
@@ -19,14 +19,13 @@ export function InputCard({
   maxAmount: BigNumber; // to calculate amount
   minAmount: BigNumber;
   value: string; // to display amount in UI
+  usdAmount: BigNumber;
   setAmount: (amount: string) => void;
   error: string | null;
   setError: (msg: string | null) => void;
   isConnected: boolean;
   children: JSX.Element;
 }) {
-  const dfiPrice = useDfiPrice();
-
   useEffect(() => {
     if (value !== "") {
       if (isNaN(Number(value)) || new BigNumber(value).lte(0)) {
@@ -48,10 +47,6 @@ export function InputCard({
     }
     setError(null);
   }, [value]);
-
-  const usdAmount = new BigNumber(value).isNaN()
-    ? new BigNumber(0)
-    : new BigNumber(value ?? 0).multipliedBy(dfiPrice);
 
   return (
     <section>

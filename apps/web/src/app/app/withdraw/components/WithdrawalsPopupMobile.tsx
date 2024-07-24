@@ -146,7 +146,7 @@ export function WithdrawalsPopupMobile({
                       />
                       <span className="block min-w-[226px] w-full border-dark-00/10 border-t-[0.5px]" />
                     </div>
-                    <div className="ml-2">
+                    <div className="ml-2 flex flex-col space-y-1">
                       {confirmedWithdrawals.length > 0 ? (
                         <>
                           {confirmedWithdrawals.map(
