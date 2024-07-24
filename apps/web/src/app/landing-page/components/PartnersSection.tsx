@@ -1,15 +1,15 @@
-import SectionContainer from "@/app/ui/components/SectionContainer";
-import { Tag } from "@/app/ui/components/Tag";
 import Image from "next/image";
-import jellyverse from "@/app/ui/icons/partners/jellyverse.svg";
-import javsphere from "@/app/ui/icons/partners/javsphere.svg";
-import cryptofactor from "@/app/ui/icons/partners/cryptofactor.svg";
-import vanillaswap from "@/app/ui/icons/partners/vanillaswap.svg";
-import defichain from "@/app/ui/icons/partners/defichain.svg";
-import opendapps from "@/app/ui/icons/partners/opendapps.svg";
+import jellyverse from "@/icons/partners/jellyverse.svg";
+import javsphere from "@/icons/partners/javsphere.svg";
+import cryptofactor from "@/icons/partners/cryptofactor.svg";
+import vanillaswap from "@/icons/partners/vanillaswap.svg";
+import defichain from "@/icons/partners/defichain.svg";
+import opendapps from "@/icons/partners/opendapps.svg";
 
 import React from "react";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import SectionContainer from "@/components/SectionContainer";
+import { Tag } from "@/components/Tag";
 
 interface Partner {
   name: string;
