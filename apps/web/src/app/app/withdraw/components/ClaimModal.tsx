@@ -207,6 +207,7 @@ export default function ClaimModal({
                       label="Max transaction cost"
                       value={{
                         value: txnCost,
+                        prefix: "$",
                         decimalScale: getDecimalPlace(txnCost),
                       }}
                       customStyle="!py-0"
