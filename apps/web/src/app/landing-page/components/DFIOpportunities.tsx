@@ -9,31 +9,33 @@ import { formatNumberWithSuffix } from "@/lib/formatNumberWithSuffix";
 import BigNumber from "bignumber.js";
 import { useMemo } from "react";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { useNetworkEnvironmentContext } from "@/context/NetworkEnvironmentContext";
 
 export default function DFIOpportunities() {
-  const { data } = useGetStatsQuery();
+  const { networkEnv } = useNetworkEnvironmentContext();
+  const { data } = useGetStatsQuery({ network: networkEnv });
   const dfiPriceUsdValue = useDfiPrice();
 
-  function getStatValues() {
-    if (data) {
-      const marketCap = new BigNumber(data.totalShares)
-        .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-        .multipliedBy(dfiPriceUsdValue);
+  // Retrieve API data and calculate and format market cap and TVL
+  const statValues = useMemo(() => {
+    if (!data) {
       return {
-        marketCap: formatNumberWithSuffix(marketCap.toNumber()),
-        tvl: data.totalAssets,
+        marketCap: "0",
+        tvl: "0",
+        mdfiToDfiRatio: "0",
       };
     }
+    const marketCap = new BigNumber(data.totalShares)
+      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
+      .multipliedBy(dfiPriceUsdValue);
     return {
-      marketCap: "0",
-      tvl: "0",
+      marketCap: formatNumberWithSuffix(marketCap.toNumber()),
+      tvl: formatNumberWithSuffix(new BigNumber(data.totalAssets).toNumber()),
+      mdfiToDfiRatio: data.mDfiDfiRatio,
     };
-  }
+  }, [data, dfiPriceUsdValue]);
 
-  const { marketCap, tvl } = useMemo(
-    () => getStatValues(),
-    [data, dfiPriceUsdValue],
-  );
+  const { marketCap, tvl, mdfiToDfiRatio } = statValues;
 
   return (
     <SectionContainer id="about-section">
@@ -73,9 +75,9 @@ export default function DFIOpportunities() {
               <span className="body-2-regular-text flex-1">Price</span>
               <NumericFormat
                 className="h4-text flex-1 text-end"
-                value={dfiPriceUsdValue}
+                value={mdfiToDfiRatio}
                 suffix=" DFI"
-                decimalScale={getDecimalPlace(dfiPriceUsdValue)}
+                decimalScale={getDecimalPlace(mdfiToDfiRatio)}
                 trimTrailingZeros={false}
               />
             </div>
