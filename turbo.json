@@ -11,13 +11,48 @@
     "dev": {
       "cache": false
     },
+    "docker:pull": {
+      "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
+      "dependsOn": ["^build"]
+    },
+    "test:hardhat": {
+      "inputs": ["src/**", "tests/**"],
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "inputs": ["src/**", "test/**"],
+      "dependsOn": ["^build", "docker:pull"]
+    },
     "generate": {
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "generate:schema": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "generate:client": {
+      "outputs": ["generated/**"],
+      "dependsOn": ["^build", "^generate:schema"]
+    },
     "build": {
       "inputs": ["tsconfig.json", "tsconfig.build.json", "src/**"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**"],
+      "dependsOn": [
+        "^build",
+        "generate:client",
+        "generate:schema",
+        "generate:prisma"
+      ]
+    },
+    "generate:prisma": {
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["node_modules/@prisma/client"]
+    },
+    "generate:contract-types": {
+      "inputs": ["packages/smartcontracts/**/*.sol"],
+      "outputs": ["artifacts", "cache", "generated"],
+      "dependsOn": ["^build"]
     },
     "lint": {
       "outputs": []

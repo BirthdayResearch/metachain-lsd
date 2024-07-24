@@ -4,12 +4,13 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {
     fontFamily: {
       sans: ['"Space Grotesk"', "sans-serif"],
+      mono: ['"Montserrat"', "sans-serif"],
     },
     screens: {
       xs: "390px", // Mobile - Large
@@ -48,10 +49,17 @@ const config: Config = {
         brand: {
           100: "#69FF23",
         },
-
+        red: "#FF4F4F",
         error: "#E54545",
-        warning: "#D97B01",
+        warning: "#F27909",
         valid: "#0CC72C",
+        green: "#4DE22C",
+      },
+      borderRadius: {
+        DEFAULT: "5px",
+        md: "10px",
+        lg: "15px",
+        xl: "20px",
       },
     },
   },

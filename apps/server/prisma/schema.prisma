@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id     Int                @id @default(autoincrement())
+  email  String             @unique
+  status SubscriptionStatus @default(ACTIVE)
+}
+
+enum Network {
+  Local
+  Playground
+  MainNet
+  TestNet
+  DevNet
+  Changi
+}
+
+model Rewards {
+  id          Int       @id @default(autoincrement())
+  txnHash     String
+  network     Network
+  amount      String
+  fromAddress String
+  toAddress   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
