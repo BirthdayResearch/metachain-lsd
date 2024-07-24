@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { CreateUserI, StatsDataI } from "@/types";
+import { CreateUserI, NetworkI, StatsDataI } from "@/types";
 import process from "process";
 
 // eslint-disable-next-line import/prefer-default-export
@@ -17,10 +17,11 @@ export const marbleFiApi = createApi({
         method: "POST",
       }),
     }),
-    getStats: builder.query<StatsDataI, void>({
-      query: () => ({
+    getStats: builder.query<StatsDataI, NetworkI>({
+      query: ({ network }) => ({
         url: "/stats",
         method: "GET",
+        params: { network },
       }),
     }),
   }),

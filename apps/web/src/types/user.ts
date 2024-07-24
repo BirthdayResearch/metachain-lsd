@@ -14,3 +14,7 @@ export interface StatsDataI {
   totalRewards: string;
   mDfiDfiRatio: string;
 }
+
+export interface NetworkI {
+  network: string;
+}
