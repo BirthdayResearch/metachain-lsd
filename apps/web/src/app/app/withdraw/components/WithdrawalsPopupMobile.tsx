@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -10,6 +10,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { IoMdClose } from "react-icons/io";
 import { formatTimestampToDate } from "@/lib/dateHelper";
 import { Dialog, Transition } from "@headlessui/react";
+import ClaimModal from "@/app/app/withdraw/components/ClaimModal";
 
 export function WithdrawalsPopupMobile({
   pendingWithdrawals,
@@ -22,10 +23,31 @@ export function WithdrawalsPopupMobile({
   onClose: any;
   isActive: boolean;
 }) {
+  const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);
+  const [selectedReqId, setSelectedReqId] = useState<string>();
+
+  const handleOnClick = (requestId: string) => {
+    setIsConfirmModalActive(!isConfirmModalActive);
+    setSelectedReqId(requestId);
+  };
   return (
     <section>
+      <ClaimModal
+        isActive={isConfirmModalActive}
+        onClose={handleOnClick}
+        selectedReqId={selectedReqId}
+        pendingWithdrawals={pendingWithdrawals}
+        confirmedWithdrawals={confirmedWithdrawals}
+      />
       <Transition appear show={isActive} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          open
+          onClose={() => {
+            /* Does not allow closing when click on backdrop */
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -151,6 +173,9 @@ export function WithdrawalsPopupMobile({
                                     customTextStyle="text-xs font-medium"
                                     label="Claim"
                                     testId="claim-btn"
+                                    onClick={() =>
+                                      handleOnClick(requestId.toString())
+                                    }
                                   />
                                 </div>
                               );
