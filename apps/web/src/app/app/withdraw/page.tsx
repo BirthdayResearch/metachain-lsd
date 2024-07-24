@@ -169,6 +169,9 @@ export default function Withdraw() {
       });
       setHasPendingTx(false);
     }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
   }, [errorMessage, hasPendingTx]);
 
   useEffect(() => {

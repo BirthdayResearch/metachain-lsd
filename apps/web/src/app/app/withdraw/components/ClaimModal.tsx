@@ -5,7 +5,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import Image from "next/image";
-import { MdAccessTimeFilled } from "react-icons/md";
+import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -15,6 +15,8 @@ import NumericFormat from "@/components/NumericFormat";
 import BigNumber from "bignumber.js";
 import { useContractContext } from "@/context/ContractContext";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import toast from "react-hot-toast";
 
 export default function ClaimModal({
   isActive,
@@ -34,7 +36,9 @@ export default function ClaimModal({
     new BigNumber(0),
   );
   const [selectedReqIds, setSelectedReqIds] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const { writeClaimWithdrawal } = useProceedToClaim({ setErrorMessage });
   function calculateTotal(
     input: BigNumber,
     checked: boolean,
@@ -61,11 +65,32 @@ export default function ClaimModal({
 
   const { txnCost } = useGetTxnCost(data);
 
+  const handleInitiateTransfer = async () => {
+    if (selectedReqIds) {
+      writeClaimWithdrawal(selectedReqIds);
+    }
+  };
+
   useEffect(() => {
     if (selectedReqId) {
       setSelectedReqIds([...selectedReqIds, selectedReqId]);
     }
   }, [selectedReqId]);
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        icon: <MdCancel size={24} className="text-red" />,
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+        id: "errorMessage",
+      });
+    }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
+  }, [errorMessage]);
 
   return (
     <Transition appear show={isActive} as={Fragment}>
@@ -203,10 +228,7 @@ export default function ClaimModal({
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={() => {
-                        onClose();
-                        setSelectedReqIds([]);
-                      }}
+                      onClick={handleInitiateTransfer}
                     />
                   </div>
                 </div>

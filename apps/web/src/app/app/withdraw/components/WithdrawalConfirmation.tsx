@@ -1,8 +1,12 @@
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
+import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import { WithdrawStep } from "@/types";
 import { LinkType } from "@/app/app/components/DetailsRow";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
@@ -19,6 +23,26 @@ export default function WithdrawalConfirmation({
   receivingWalletAddress: string;
   resetFields: () => void;
 }) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { writeClaimWithdrawal } = useProceedToClaim({
+    setErrorMessage,
+  });
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+        id: "errorMessage",
+      });
+    }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
+  }, [errorMessage]);
+
   return (
     <ConfirmScreen
       isLoading={false}
@@ -60,15 +84,23 @@ export default function WithdrawalConfirmation({
         },
       ]}
       buttons={
-        <CTAButton
-          label="Return to main page"
-          testId="stake-confirming-return-main"
-          customStyle="w-full"
-          onClick={() => {
-            resetFields();
-            setCurrentStep(WithdrawStep.WithdrawPage);
-          }}
-        />
+        <>
+          <CTAButton
+            label="Proceed to claim"
+            testId="proceed-to-claim-withdrawal"
+            customStyle="w-full"
+            onClick={writeClaimWithdrawal}
+          />
+          <CTAButtonOutline
+            label="Return to main page"
+            testId="withdrawal-confirming-return-main"
+            customStyle="w-full"
+            onClick={() => {
+              resetFields();
+              setCurrentStep(WithdrawStep.WithdrawPage);
+            }}
+          />
+        </>
       }
     />
   );
