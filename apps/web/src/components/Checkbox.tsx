@@ -25,6 +25,10 @@ const Checkbox = forwardRef(
       })}
       type="button"
       onClick={onClick}
+      onTouchStart={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       disabled={isDisabled}
     >
       <Image
