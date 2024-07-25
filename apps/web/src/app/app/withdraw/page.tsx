@@ -184,7 +184,7 @@ export default function Withdraw() {
         icon: <MdCancel size={24} className="text-red" />,
         duration: 5000,
         className:
-          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
         id: "errorMessage",
       });
       setHasPendingTx(false);

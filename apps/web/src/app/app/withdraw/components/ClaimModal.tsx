@@ -95,7 +95,7 @@ export default function ClaimModal({
         icon: <MdCancel size={24} className="text-red" />,
         duration: 5000,
         className:
-          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
         id: "errorMessage",
       });
     }
@@ -222,7 +222,7 @@ export default function ClaimModal({
                         prefix: "$",
                         decimalScale: getDecimalPlace(txnCost),
                       }}
-                      customStyle="!py-0"
+                      customStyle="py-0"
                     />
                     <NumericTransactionRow
                       label="Total to claim"
@@ -231,7 +231,7 @@ export default function ClaimModal({
                         suffix: " DFI",
                         decimalScale: getDecimalPlace(totalClaimAmt),
                       }}
-                      customStyle="!py-0"
+                      customStyle="py-0"
                     />
                   </div>
 
@@ -319,7 +319,7 @@ function ClaimRow({
         <Tag
           text="READY"
           testId="ready-tag"
-          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customStyle="w-fit pl-1 pr-2 py-1"
           customTextStyle="text-light-1000/50"
           Icon={<FaCircleCheck className="text-green" size={14} />}
         />
@@ -327,7 +327,7 @@ function ClaimRow({
         <Tag
           text="PENDING"
           testId="pending-tag"
-          customStyle="w-fit !pl-1 !pr-2 !py-1"
+          customStyle="w-fit pl-1 pr-2 py-1"
           customTextStyle="text-light-1000/50"
           Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
         />

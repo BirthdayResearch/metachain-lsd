@@ -110,7 +110,7 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
-                customStyle="!px-3 !py-3 md:!py-1"
+                customPadding="px-3 py-3 md:py-1"
                 customTextStyle={clsx(
                   "font-semibold leading-5",
                   { "text-light-1000/30": pendingWithdrawals.length <= 0 },
@@ -123,7 +123,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <CTAButton
                 label={totalConfirmedCount}
                 testId="confirmed-withdrawals-button"
-                customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
+                customStyle="bg-red-200"
+                customPadding="px-3 py-3 md:py-1"
                 customTextStyle={clsx(
                   "font-semibold leading-5",
                   {
@@ -226,7 +227,8 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
             isDisabled={!anyWithdrawalRequests}
             label="Claim DFI"
             testId="claim-dfi-button"
-            customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
+            customStyle="w-full disabled:opacity-50"
+            customPadding="px-9 py-5 md:px-3 md:py-2 "
             customTextStyle="whitespace-nowrap text-xs font-medium"
             customBgColor="button-bg-gradient-1"
             onClick={handleOnClick}
