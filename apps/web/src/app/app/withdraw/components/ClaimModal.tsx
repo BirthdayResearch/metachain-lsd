@@ -206,7 +206,7 @@ export default function ClaimModal({
                     <NumericTransactionRow
                       label="Max transaction cost"
                       value={{
-                        value: txnCost,
+                        value: totalClaimAmt.eq(0) ? "0" : txnCost,
                         prefix: "$",
                         decimalScale: getDecimalPlace(txnCost),
                       }}
@@ -281,7 +281,7 @@ function ClaimRow({
             calculateTotal(new BigNumber(formatAsset), !isSelected, requestId);
           }}
         />
-        <div className="">
+        <div>
           <NumericFormat
             className="ml-2 md:ml-4 mr-2 text-sm md:text-base text-light-1000/70 font-semibold"
             value={formatAsset}
