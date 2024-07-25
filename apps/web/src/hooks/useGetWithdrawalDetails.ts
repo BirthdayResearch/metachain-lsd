@@ -22,7 +22,7 @@ interface WithrawalDetailsProps {
 
 export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
   const { MarbleLsdProxy } = useContractContext();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const [pendingWithdrawals, setPendingWithdrawals] = useState<
     WithdrawalStatusDataProps[]
@@ -37,6 +37,9 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     abi: MarbleLsdProxy.abi,
     functionName: "getWithdrawalRequests",
     args: [address],
+    query: {
+      enabled: isConnected,
+    },
   });
 
   // read contract for 'getWithdrawalStatus' function
@@ -45,6 +48,9 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     abi: MarbleLsdProxy.abi,
     functionName: "getWithdrawalStatus",
     args: [withdrawalRequestData],
+    query: {
+      enabled: isConnected,
+    },
   });
 
   const withdrawalStatusWithReqId: WithdrawalStatusDataProps[] = useMemo(() => {

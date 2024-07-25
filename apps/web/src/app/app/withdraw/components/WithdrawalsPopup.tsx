@@ -31,7 +31,7 @@ export function WithdrawalsPopup({
     <section>
       <div
         className={clsx(
-          "bg-white rounded-[30px] flex flex-col p-8 gap-y-4 max-w-[468px]",
+          "bg-white rounded-[30px] flex flex-col py-8 gap-y-4 max-w-[468px]",
           "absolute bottom-[110%] md:-translate-x-16 lg:-translate-x-1/3",
           "border-[0.5px] border-light-1000/50",
         )}
@@ -43,37 +43,82 @@ export function WithdrawalsPopup({
           pendingWithdrawals={pendingWithdrawals}
           confirmedWithdrawals={confirmedWithdrawals}
         />
-        <div className="relative">
+        <div className="relative px-8">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
             size={24}
             onClick={onClose}
-            className="absolute right-0 top-0 text-light-1000 cursor-pointer"
+            className="absolute right-8 top-0 text-light-1000 cursor-pointer"
           />
         </div>
-        <div>
-          <div className="flex items-center mb-2">
-            <Tag
-              text="PENDING"
-              testId="pending-tag"
-              customStyle="w-fit pl-1 pr-2 py-1"
-              customTextStyle="text-light-1000/50"
-              Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
-            />
-            <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
+        <div className="max-h-80 overflow-y-scroll">
+          <div className="px-8">
+            <div className="flex items-center mb-2">
+              <Tag
+                text="PENDING"
+                testId="pending-tag"
+                customStyle="w-fit pl-1 pr-2 py-1"
+                customTextStyle="text-light-1000/50"
+                Icon={<MdAccessTimeFilled className="text-warning" size={16} />}
+              />
+              <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
+            </div>
+            <div className="ml-2 flex flex-col space-y-1">
+              {pendingWithdrawals.length > 0 ? (
+                <>
+                  {pendingWithdrawals.map(
+                    ({ amountOfAssets, timestamp, requestId }) => {
+                      const formattedAsset = formatEther(
+                        amountOfAssets.toString(),
+                      );
+                      return (
+                        <div
+                          key={`pending-withdrawal-${requestId}`}
+                          className="flex justify-between items-center py-1.5"
+                        >
+                          <NumericFormat
+                            className="text-sm font-semibold"
+                            value={formattedAsset}
+                            suffix=" DFI"
+                            decimalScale={getDecimalPlace(formattedAsset)}
+                          />
+                          <div className="text-xs">
+                            {formatTimestampToDate(timestamp)}
+                          </div>
+                        </div>
+                      );
+                    },
+                  )}
+                </>
+              ) : (
+                <span className="text-xs text-light-1000/70">
+                  No pending transaction.
+                </span>
+              )}
+            </div>
           </div>
-          <div className="ml-2">
-            {pendingWithdrawals.length > 0 ? (
-              <>
-                {pendingWithdrawals.map(
-                  ({ amountOfAssets, timestamp, requestId }) => {
+          <div className="px-8">
+            <div className="flex items-center mb-2">
+              <Tag
+                text="READY"
+                testId="ready-tag"
+                customStyle="w-fit pl-1 pr-2 py-1"
+                customTextStyle="text-light-1000/50"
+                Icon={<FaCircleCheck className="text-green" size={14} />}
+              />
+              <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
+            </div>
+            <div className="ml-2 flex flex-col space-y-1">
+              {confirmedWithdrawals.length > 0 ? (
+                <>
+                  {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {
                     const formattedAsset = formatEther(
                       amountOfAssets.toString(),
                     );
                     return (
                       <div
-                        key={`pending-withdrawal-${requestId}`}
-                        className="flex justify-between items-center py-1.5"
+                        key={`ready-withdrawal-${requestId}`}
+                        className="flex justify-between items-center py-1"
                       >
                         <NumericFormat
                           className="text-sm font-semibold"
@@ -81,66 +126,26 @@ export function WithdrawalsPopup({
                           suffix=" DFI"
                           decimalScale={getDecimalPlace(formattedAsset)}
                         />
-                        <div className="text-xs">
-                          {formatTimestampToDate(timestamp)}
-                        </div>
+                        <CTAButton
+                          customBgColor="button-bg-gradient-1"
+                          customStyle="!px-3 !py-1"
+                          customTextStyle="text-xs font-medium"
+                          label="Claim"
+                          testId="claim-btn"
+                          onClick={() => handleOnClick(requestId.toString())}
+                        />
                       </div>
                     );
-                  },
-                )}
-              </>
-            ) : (
-              <span className="text-xs text-light-1000/70">
-                No pending transaction.
-              </span>
-            )}
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center mb-2">
-            <Tag
-              text="READY"
-              testId="ready-tag"
-              customStyle="w-fit pl-1 pr-2 py-1"
-              customTextStyle="text-light-1000/50"
-              Icon={<FaCircleCheck className="text-green" size={14} />}
-            />
-            <span className="block min-w-[319px] w-full border-dark-00/10 border-t-[0.5px]" />
-          </div>
-          <div className="ml-2 flex flex-col space-y-1">
-            {confirmedWithdrawals.length > 0 ? (
-              <>
-                {confirmedWithdrawals.map(({ amountOfAssets, requestId }) => {
-                  const formattedAsset = formatEther(amountOfAssets.toString());
-                  return (
-                    <div
-                      key={`ready-withdrawal-${requestId}`}
-                      className="flex justify-between items-center py-1"
-                    >
-                      <NumericFormat
-                        className="text-sm font-semibold"
-                        value={formattedAsset}
-                        suffix=" DFI"
-                        decimalScale={getDecimalPlace(formattedAsset)}
-                      />
-                      <CTAButton
-                        customBgColor="button-bg-gradient-1"
-                        customStyle="!px-3 !py-1"
-                        customTextStyle="text-xs font-medium"
-                        label="Claim"
-                        testId="claim-btn"
-                        onClick={() => handleOnClick(requestId.toString())}
-                      />
-                    </div>
-                  );
-                })}
-              </>
-            ) : (
-              <span className="text-xs text-light-1000/70">
-                No transactions available for claiming at the moment. Processing
-                usually takes 7-10 days, depending on network congestion.
-              </span>
-            )}
+                  })}
+                </>
+              ) : (
+                <span className="text-xs text-light-1000/70">
+                  No transactions available for claiming at the moment.
+                  Processing usually takes 7-10 days, depending on network
+                  congestion.
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
