@@ -170,7 +170,7 @@ export function WithdrawalsPopupMobile({
                                     />
                                     <CTAButton
                                       customBgColor="button-bg-gradient-1"
-                                      customStyle="!px-3 !py-1"
+                                      customPadding="px-3 py-1"
                                       customTextStyle="text-xs font-medium"
                                       label="Claim"
                                       testId="claim-btn"

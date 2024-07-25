@@ -54,7 +54,7 @@ export default function WithdrawalConfirmation({
       toast(errorMessage, {
         duration: 5000,
         className:
-          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
         id: "errorMessage",
       });
     }
