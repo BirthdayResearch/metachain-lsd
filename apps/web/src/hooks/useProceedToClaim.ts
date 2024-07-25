@@ -8,11 +8,13 @@ import { useContractContext } from "@/context/ContractContext";
 import { Abi } from "viem";
 
 interface proceedToClaimI {
-  setErrorMessage: any;
+  setErrorMessage: (message: string | null) => void;
+  onSuccess: (hash: string) => void;
 }
 
 export default function useProceedToClaim({
   setErrorMessage,
+  onSuccess,
 }: proceedToClaimI) {
   const { MarbleLsdProxy } = useContractContext();
 
@@ -44,8 +46,8 @@ export default function useProceedToClaim({
         );
       } else {
         setErrorMessage(
-          writeClaimWithdrawalError?.message ??
-            ClaimWithdrawalsTxnError?.message,
+          (writeClaimWithdrawalError?.message as string) ??
+            (ClaimWithdrawalsTxnError?.message as string),
         );
       }
     }
@@ -66,7 +68,7 @@ export default function useProceedToClaim({
         {
           onSuccess: (hash) => {
             if (hash) {
-              console.log(hash);
+              onSuccess(hash);
             }
           },
         },

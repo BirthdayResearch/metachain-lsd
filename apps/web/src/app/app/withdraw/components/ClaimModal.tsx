@@ -38,7 +38,15 @@ export default function ClaimModal({
   const [selectedReqIds, setSelectedReqIds] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { writeClaimWithdrawal } = useProceedToClaim({ setErrorMessage });
+  const onSuccess = () => {
+    onClose();
+    setSelectedReqIds([]);
+  };
+
+  const { writeClaimWithdrawal } = useProceedToClaim({
+    setErrorMessage,
+    onSuccess,
+  });
   function calculateTotal(
     input: BigNumber,
     checked: boolean,

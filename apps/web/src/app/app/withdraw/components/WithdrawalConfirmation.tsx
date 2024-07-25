@@ -1,4 +1,5 @@
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
+import { useReadContract } from "wagmi";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
@@ -7,26 +8,45 @@ import { LinkType } from "@/app/app/components/DetailsRow";
 import useProceedToClaim from "@/hooks/useProceedToClaim";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useContractContext } from "@/context/ContractContext";
+import BigNumber from "bignumber.js";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
   amountToReceive,
   setCurrentStep,
+  withdrawRequestId,
   hash,
   receivingWalletAddress,
   resetFields,
 }: {
   withdrawAmount: string;
   amountToReceive: string;
+  withdrawRequestId: string | null;
   setCurrentStep: (step: WithdrawStep) => void;
   hash: string;
   receivingWalletAddress: string;
   resetFields: () => void;
 }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { MarbleLsdProxy } = useContractContext();
 
+  const { data: lastFinalizedRequestData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "lastFinalizedRequestId",
+    query: {
+      enabled: !!withdrawRequestId,
+    },
+  });
+
+  const onSuccess = () => {
+    resetFields();
+    setCurrentStep(WithdrawStep.WithdrawPage);
+  };
   const { writeClaimWithdrawal } = useProceedToClaim({
     setErrorMessage,
+    onSuccess,
   });
 
   useEffect(() => {
@@ -42,6 +62,12 @@ export default function WithdrawalConfirmation({
     // cleanup
     return () => toast.remove("errorMessage");
   }, [errorMessage]);
+
+  const isFinalized =
+    withdrawRequestId &&
+    new BigNumber(lastFinalizedRequestData?.toString() ?? 0).gte(
+      withdrawRequestId,
+    );
 
   return (
     <ConfirmScreen
@@ -79,18 +105,22 @@ export default function WithdrawalConfirmation({
         },
         {
           label: "Status",
-          value: "Ready for claim",
+          value: isFinalized ? "Ready for claim" : "Withdrawal Requested",
           linkType: LinkType.STATUS,
         },
       ]}
       buttons={
         <>
-          <CTAButton
-            label="Proceed to claim"
-            testId="proceed-to-claim-withdrawal"
-            customStyle="w-full"
-            onClick={writeClaimWithdrawal}
-          />
+          {isFinalized && (
+            <CTAButton
+              label="Proceed to claim"
+              testId="proceed-to-claim-withdrawal"
+              customStyle="w-full"
+              onClick={() => {
+                writeClaimWithdrawal([withdrawRequestId]);
+              }}
+            />
+          )}
           <CTAButtonOutline
             label="Return to main page"
             testId="withdrawal-confirming-return-main"

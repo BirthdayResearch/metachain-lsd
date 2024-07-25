@@ -64,3 +64,12 @@ export interface DashboardWriteMethodI {
   role?: string[]; // not using this param yet, will add role check in next release
   description: string;
 }
+
+export interface WithdrawalRequestedEventI {
+  requestId: bigint;
+  owner: string;
+  receiver: string;
+  assets: bigint;
+  shares: bigint;
+  fees: bigint;
+}
