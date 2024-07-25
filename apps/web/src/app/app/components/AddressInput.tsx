@@ -41,7 +41,7 @@ export default function AddressInput({
       toast("Copied to clipboard", {
         duration: 1000,
         className:
-          "bg-green px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
         id: "copy",
       });
     }

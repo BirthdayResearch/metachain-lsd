@@ -17,6 +17,7 @@ import { useContractContext } from "@/context/ContractContext";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import useProceedToClaim from "@/hooks/useProceedToClaim";
 import toast from "react-hot-toast";
+import { CgSpinner } from "react-icons/cg";
 
 export default function ClaimModal({
   isActive,
@@ -41,6 +42,16 @@ export default function ClaimModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSuccess = () => {
+    toast(
+      "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
+      {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: 1000,
+        className:
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+        id: "claimed",
+      },
+    );
     onClose();
     closeParent();
     setSelectedReqIds([]);
