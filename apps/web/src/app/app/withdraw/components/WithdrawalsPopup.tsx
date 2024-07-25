@@ -23,9 +23,11 @@ export function WithdrawalsPopup({
 }) {
   const [isActive, setIsActive] = useState(false);
   const [selectedReqId, setSelectedReqId] = useState<string>();
-  const handleOnClick = (requestId: string) => {
+  const handleOnClick = (requestId?: string) => {
     setIsActive(!isActive);
-    setSelectedReqId(requestId);
+    if (!!requestId) {
+      setSelectedReqId(requestId);
+    }
   };
   return (
     <section>
@@ -39,6 +41,7 @@ export function WithdrawalsPopup({
         <ClaimModal
           isActive={isActive}
           onClose={handleOnClick}
+          closeParent={onClose}
           selectedReqId={selectedReqId}
           pendingWithdrawals={pendingWithdrawals}
           confirmedWithdrawals={confirmedWithdrawals}

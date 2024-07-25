@@ -39,6 +39,7 @@ export default function useGetWithdrawalDetails(): WithrawalDetailsProps {
     args: [address],
     query: {
       enabled: isConnected,
+      refetchInterval: 10_000,
     },
   });
 

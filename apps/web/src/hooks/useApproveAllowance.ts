@@ -51,6 +51,7 @@ export default function useApproveAllowance({
       args: [address, MarbleLsdProxy.address],
       query: {
         enabled: isConnected,
+        refetchInterval: 10_000,
       },
     });
 

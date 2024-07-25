@@ -21,12 +21,14 @@ import toast from "react-hot-toast";
 export default function ClaimModal({
   isActive,
   onClose,
+  closeParent,
   selectedReqId,
   pendingWithdrawals,
   confirmedWithdrawals,
 }: {
   isActive: boolean;
-  onClose: any;
+  onClose: (requestId?: string) => void;
+  closeParent: () => void;
   selectedReqId?: string;
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
@@ -40,13 +42,15 @@ export default function ClaimModal({
 
   const onSuccess = () => {
     onClose();
+    closeParent();
     setSelectedReqIds([]);
   };
 
-  const { writeClaimWithdrawal } = useProceedToClaim({
+  const { writeClaimWithdrawal, isClaimRequestPending } = useProceedToClaim({
     setErrorMessage,
     onSuccess,
   });
+
   function calculateTotal(
     input: BigNumber,
     checked: boolean,
@@ -73,8 +77,8 @@ export default function ClaimModal({
 
   const { txnCost } = useGetTxnCost(data, parseEther("0"));
 
-  const handleInitiateTransfer = async () => {
-    if (selectedReqIds) {
+  const handleInitiateClaim = async () => {
+    if (selectedReqIds?.length) {
       writeClaimWithdrawal(selectedReqIds);
     }
   };
@@ -233,10 +237,14 @@ export default function ClaimModal({
 
                   <div className="mt-4 md:mt-10">
                     <CTAButton
+                      isDisabled={
+                        isClaimRequestPending || selectedReqIds?.length === 0
+                      }
+                      isLoading={isClaimRequestPending}
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={handleInitiateTransfer}
+                      onClick={handleInitiateClaim}
                     />
                   </div>
                 </div>

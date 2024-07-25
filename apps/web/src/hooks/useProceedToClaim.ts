@@ -22,6 +22,7 @@ export default function useProceedToClaim({
   const {
     data: claimHash,
     writeContract: writeClaimWithdrawal,
+    isPending: isClaimRequestPending,
     error: writeClaimWithdrawalError,
   } = useWriteContract();
 
@@ -55,9 +56,11 @@ export default function useProceedToClaim({
 
   return {
     claimHash,
+    isClaimRequestPending,
     isClaimWithdrawalsTxnLoading,
     isClaimWithdrawalsTxnSuccess,
     writeClaimWithdrawal: (requestIds: string[]) => {
+      console.log({ requestIds });
       writeClaimWithdrawal(
         {
           abi: MarbleLsdProxy.abi as Abi,
