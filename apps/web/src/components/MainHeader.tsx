@@ -31,7 +31,7 @@ export default function MainHeader({
 
       <NavigationBar isHeader parentReference={parentReference} />
 
-      <div className="items-end justify-center md:flex hidden">
+      <div className="items-end justify-center md:flex hidden pl-2">
         <CTAButton
           href="/app/stake"
           label="Launch app"

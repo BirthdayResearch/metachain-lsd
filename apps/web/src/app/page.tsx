@@ -11,11 +11,11 @@ import React, { useRef } from "react";
 import Footer from "@/components/Footer";
 
 export default function LandingPage() {
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   return (
     <div ref={contentRef} className="pb-8 text-light-1000 relative">
       <Header parentReference={contentRef} />
-      <div className="flex flex-col justify-center items-center my-12 md:my-24 gap-y-24 md:gap-y-60 max-w-5xl mx-auto w-full px-5">
+      <div className="flex flex-col justify-center items-center my-12 md:my-24 gap-y-24 md:gap-y-60 max-w-6xl mx-auto w-full px-5">
         <UnlockPower />
         <MarbleOpportunitiesSection />
         <HowItWorksSection />
