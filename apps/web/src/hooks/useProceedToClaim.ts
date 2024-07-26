@@ -60,7 +60,6 @@ export default function useProceedToClaim({
     isClaimWithdrawalsTxnLoading,
     isClaimWithdrawalsTxnSuccess,
     writeClaimWithdrawal: (requestIds: string[]) => {
-      console.log({ requestIds });
       writeClaimWithdrawal(
         {
           abi: MarbleLsdProxy.abi as Abi,
