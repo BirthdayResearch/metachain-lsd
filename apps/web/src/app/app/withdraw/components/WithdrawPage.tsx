@@ -15,6 +15,7 @@ import TransactionRows from "@/app/app/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { ActionType } from "@/lib/types";
 
 export default function WithdrawPage({
   walletBalanceAmount,
@@ -128,7 +129,11 @@ export default function WithdrawPage({
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewAmount={previewRedeem} />
+              <TransactionRows
+                previewAmount={previewRedeem}
+                type={ActionType.Withdraw}
+                inputAmount={withdrawAmount}
+              />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
