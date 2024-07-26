@@ -46,7 +46,7 @@ export default function WithdrawalConfirmation({
       "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
       {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: 5000,
+        duration: 1000,
         className:
           "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
         id: "claimed",
