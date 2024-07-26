@@ -26,9 +26,7 @@ export default function WithdrawPage({
   setWalletBalanceAmount,
   isPending,
   submitWithdraw,
-  isClaimPending,
   previewRedeem,
-  submitClaim,
 }: {
   walletBalanceAmount: string;
   amountError: string | null;
@@ -38,9 +36,7 @@ export default function WithdrawPage({
   setWalletBalanceAmount: React.Dispatch<React.SetStateAction<string>>;
   isPending: boolean;
   submitWithdraw: () => void;
-  isClaimPending: boolean;
   previewRedeem: string;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
@@ -192,10 +188,7 @@ export default function WithdrawPage({
             </ConnectKitButton.Custom>
           )}
         </div>
-        <ComplimentarySection
-          submitClaim={submitClaim}
-          isClaimPending={isClaimPending}
-        />
+        <ComplimentarySection />
       </div>
     </Panel>
   );

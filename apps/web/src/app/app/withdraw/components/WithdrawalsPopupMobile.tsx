@@ -17,15 +17,11 @@ export function WithdrawalsPopupMobile({
   confirmedWithdrawals,
   onClose,
   isActive,
-  submitClaim,
-  isClaimPending,
 }: {
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
   isActive: boolean;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
-  isClaimPending: boolean;
 }) {
   const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);
   const [selectedReqId, setSelectedReqId] = useState<string>();
@@ -41,11 +37,10 @@ export function WithdrawalsPopupMobile({
       <ClaimModal
         isActive={isConfirmModalActive}
         onClose={handleOnClick}
+        closeParent={onClose}
         selectedReqId={selectedReqId}
         pendingWithdrawals={pendingWithdrawals}
         confirmedWithdrawals={confirmedWithdrawals}
-        submitClaim={submitClaim}
-        isClaimPending={isClaimPending}
       />
       <Transition appear show={isActive} as={Fragment}>
         <Dialog

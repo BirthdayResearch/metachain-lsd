@@ -6,16 +6,15 @@ import { useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useContractContext } from "@/context/ContractContext";
 import { Abi } from "viem";
-import { WithdrawStep } from "@/types";
 
 interface proceedToClaimI {
   setErrorMessage: (message: string | null) => void;
-  setCurrentStepAndScroll: (step: WithdrawStep) => void;
+  onSuccess: (hash: string) => void;
 }
 
 export default function useProceedToClaim({
   setErrorMessage,
-  setCurrentStepAndScroll,
+  onSuccess,
 }: proceedToClaimI) {
   const { MarbleLsdProxy } = useContractContext();
 
@@ -71,7 +70,7 @@ export default function useProceedToClaim({
         {
           onSuccess: (hash) => {
             if (hash) {
-              setCurrentStepAndScroll(WithdrawStep.ClaimConfirmationPage);
+              onSuccess(hash);
             }
           },
         },

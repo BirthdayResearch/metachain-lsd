@@ -19,7 +19,7 @@ export default function ClaimConfirmation({
 }) {
   return (
     <ConfirmScreen
-      hasCompleted={true}
+      isLoading={false}
       title="Claimed DFI"
       description="Your request for withdrawal is now being processed. Your claim for withdrawal is automatically sent to your wallet once it is ready."
       dfiAmounts={[

@@ -18,8 +18,6 @@ import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
 import useApproveAllowance from "@/hooks/useApproveAllowance";
 import { MdCancel } from "react-icons/md";
 import { WithdrawalRequestedEventI } from "@/lib/types";
-import useProceedToClaim from "@/hooks/useProceedToClaim";
-import ClaimConfirmation from "@/app/app/withdraw/components/ClaimConfirmation";
 
 /*
  * Withdrawal flow
@@ -150,24 +148,6 @@ export default function Withdraw() {
     requestAllowance(withdrawAmtBigNum);
   };
 
-  const { claimHash, writeClaimWithdrawal, isClaimRequestPending } =
-    useProceedToClaim({
-      setErrorMessage,
-      setCurrentStepAndScroll,
-    });
-
-  const [totalClaimAmt, setTotalClaimAmt] = useState<string>("0");
-
-  const handleInitiateClaim = async (
-    selectedReqIds: string[],
-    totalClaimAmt: string,
-  ) => {
-    if (selectedReqIds?.length) {
-      writeClaimWithdrawal(selectedReqIds);
-      setTotalClaimAmt(totalClaimAmt);
-    }
-  };
-
   useEffect(() => {
     if (isApproveTxnLoading) {
       toast("Approve transaction is loading", {
@@ -258,8 +238,6 @@ export default function Withdraw() {
                 hasPendingTx
               }
               submitWithdraw={handleInitiateTransfer}
-              isClaimPending={isClaimRequestPending}
-              submitClaim={handleInitiateClaim}
               previewRedeem={previewRedeem}
             />
           )}
@@ -286,18 +264,6 @@ export default function Withdraw() {
                 withdrawRequestId={withdrawRequestId}
                 setCurrentStep={setCurrentStepAndScroll}
                 hash={hash}
-                receivingWalletAddress={address}
-                resetFields={resetFields}
-              />
-            )}
-
-          {currentStep === WithdrawStep.ClaimConfirmationPage &&
-            address &&
-            claimHash && (
-              <ClaimConfirmation
-                claimAmount={totalClaimAmt}
-                setCurrentStep={setCurrentStepAndScroll}
-                claimHash={claimHash}
                 receivingWalletAddress={address}
                 resetFields={resetFields}
               />

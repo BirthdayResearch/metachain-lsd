@@ -15,25 +15,12 @@ import useResponsive from "@/hooks/useResponsive";
 import BigNumber from "bignumber.js";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 
-export default function ComplimentarySection({
-  submitClaim,
-  isClaimPending,
-}: {
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
-  isClaimPending: boolean;
-}) {
+export default function ComplimentarySection() {
   const { isConnected } = useAccount();
 
   return (
     <div className="absolute left-0 py-5 md:py-8 lg:py-10 px-5 md:px-10 lg:px-[120px] mt-12 md:mt-10 lg:mt-16 rounded-b-[30px] complimentary-bg">
-      {isConnected ? (
-        <WithdrawalDetails
-          submitClaim={submitClaim}
-          isClaimPending={isClaimPending}
-        />
-      ) : (
-        <WithdrawalsFaq />
-      )}
+      {isConnected ? <WithdrawalDetails /> : <WithdrawalsFaq />}
     </div>
   );
 }
@@ -67,15 +54,7 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
   );
 }
 
-function WithdrawalDetails({
-  customStyle,
-  submitClaim,
-  isClaimPending,
-}: {
-  customStyle?: string;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
-  isClaimPending: boolean;
-}) {
+function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const { isMobile } = useResponsive();
   const [isActive, setIsActive] = useState(false);
   const dfiPrice = useDfiPrice();
@@ -121,8 +100,6 @@ function WithdrawalDetails({
                 pendingWithdrawals={pendingWithdrawals}
                 confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
-                submitClaim={submitClaim}
-                isClaimPending={isClaimPending}
               />
             )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
@@ -194,8 +171,6 @@ function WithdrawalDetails({
                 confirmedWithdrawals={confirmedWithdrawals}
                 onClose={handleOnClick}
                 isActive={isActive}
-                submitClaim={submitClaim}
-                isClaimPending={isClaimPending}
               />
             )}
             <span className="font-semibold text-sm text-light-1000 mb-2">

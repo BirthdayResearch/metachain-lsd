@@ -16,14 +16,10 @@ export function WithdrawalsPopup({
   pendingWithdrawals,
   confirmedWithdrawals,
   onClose,
-  submitClaim,
-  isClaimPending,
 }: {
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
-  isClaimPending: boolean;
 }) {
   const [isActive, setIsActive] = useState(false);
   const [selectedReqId, setSelectedReqId] = useState<string>();
@@ -45,11 +41,10 @@ export function WithdrawalsPopup({
         <ClaimModal
           isActive={isActive}
           onClose={handleOnClick}
+          closeParent={onClose}
           selectedReqId={selectedReqId}
           pendingWithdrawals={pendingWithdrawals}
           confirmedWithdrawals={confirmedWithdrawals}
-          submitClaim={submitClaim}
-          isClaimPending={isClaimPending}
         />
         <div className="relative px-8">
           <span className="text-xl font-medium">Withdrawals</span>

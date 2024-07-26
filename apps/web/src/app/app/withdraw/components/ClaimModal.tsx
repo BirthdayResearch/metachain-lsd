@@ -5,7 +5,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
 import Image from "next/image";
-import { MdAccessTimeFilled } from "react-icons/md";
+import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
 import { Tag } from "@/components/Tag";
 import Checkbox from "@/components/Checkbox";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -15,29 +15,52 @@ import NumericFormat from "@/components/NumericFormat";
 import BigNumber from "bignumber.js";
 import { useContractContext } from "@/context/ContractContext";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import toast from "react-hot-toast";
+import { CgSpinner } from "react-icons/cg";
 
 export default function ClaimModal({
   isActive,
   onClose,
+  closeParent,
   selectedReqId,
   pendingWithdrawals,
   confirmedWithdrawals,
-  submitClaim,
-  isClaimPending,
 }: {
   isActive: boolean;
   onClose: (requestId?: string) => void;
+  closeParent: () => void;
   selectedReqId?: string;
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
-  isClaimPending: boolean;
 }) {
   const { MarbleLsdProxy } = useContractContext();
   const [totalClaimAmt, setTotalClaimAmt] = useState<BigNumber>(
     new BigNumber(0),
   );
   const [selectedReqIds, setSelectedReqIds] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const onSuccess = () => {
+    toast(
+      "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
+      {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: 1000,
+        className:
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+        id: "claimed",
+      },
+    );
+    onClose();
+    closeParent();
+    setSelectedReqIds([]);
+  };
+
+  const { writeClaimWithdrawal, isClaimRequestPending } = useProceedToClaim({
+    setErrorMessage,
+    onSuccess,
+  });
 
   function calculateTotal(
     input: BigNumber,
@@ -65,11 +88,32 @@ export default function ClaimModal({
 
   const { txnCost } = useGetTxnCost(data, parseEther("0"));
 
+  const handleInitiateClaim = async () => {
+    if (selectedReqIds?.length) {
+      writeClaimWithdrawal(selectedReqIds);
+    }
+  };
+
   useEffect(() => {
     if (selectedReqId) {
       setSelectedReqIds([...selectedReqIds, selectedReqId]);
     }
   }, [selectedReqId]);
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        icon: <MdCancel size={24} className="text-red" />,
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
+        id: "errorMessage",
+      });
+    }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
+  }, [errorMessage]);
 
   return (
     <Transition appear show={isActive} as={Fragment}>
@@ -205,15 +249,13 @@ export default function ClaimModal({
                   <div className="mt-4 md:mt-10">
                     <CTAButton
                       isDisabled={
-                        isClaimPending || selectedReqIds?.length === 0
+                        isClaimRequestPending || selectedReqIds?.length === 0
                       }
-                      isLoading={isClaimPending}
+                      isLoading={isClaimRequestPending}
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={() =>
-                        submitClaim(selectedReqIds, totalClaimAmt.toString())
-                      }
+                      onClick={handleInitiateClaim}
                     />
                   </div>
                 </div>
