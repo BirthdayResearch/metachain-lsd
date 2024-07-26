@@ -13,6 +13,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { formatEther } from "ethers";
 import { useAccount, useBalance } from "wagmi";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { ActionType } from "@/lib/types";
 
 export default function StakePage({
   stakeAmount,
@@ -160,7 +161,11 @@ export default function StakePage({
             </div>
           </div>
           <div className="mb-10 md:mb-7 lg:mb-10">
-            <TransactionRows previewAmount={previewDeposit} />
+            <TransactionRows
+              previewAmount={previewDeposit}
+              type={ActionType.Deposit}
+              inputAmount={stakeAmount}
+            />
           </div>
         </div>
         {isConnected ? (

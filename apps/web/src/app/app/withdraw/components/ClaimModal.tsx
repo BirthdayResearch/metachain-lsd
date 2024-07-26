@@ -17,16 +17,19 @@ import { useContractContext } from "@/context/ContractContext";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import useProceedToClaim from "@/hooks/useProceedToClaim";
 import toast from "react-hot-toast";
+import { CgSpinner } from "react-icons/cg";
 
 export default function ClaimModal({
   isActive,
   onClose,
+  closeParent,
   selectedReqId,
   pendingWithdrawals,
   confirmedWithdrawals,
 }: {
   isActive: boolean;
-  onClose: any;
+  onClose: (requestId?: string) => void;
+  closeParent: () => void;
   selectedReqId?: string;
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
@@ -39,14 +42,26 @@ export default function ClaimModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSuccess = () => {
+    toast(
+      "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
+      {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: 1000,
+        className:
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+        id: "claimed",
+      },
+    );
     onClose();
+    closeParent();
     setSelectedReqIds([]);
   };
 
-  const { writeClaimWithdrawal } = useProceedToClaim({
+  const { writeClaimWithdrawal, isClaimRequestPending } = useProceedToClaim({
     setErrorMessage,
     onSuccess,
   });
+
   function calculateTotal(
     input: BigNumber,
     checked: boolean,
@@ -73,8 +88,8 @@ export default function ClaimModal({
 
   const { txnCost } = useGetTxnCost(data, parseEther("0"));
 
-  const handleInitiateTransfer = async () => {
-    if (selectedReqIds) {
+  const handleInitiateClaim = async () => {
+    if (selectedReqIds?.length) {
       writeClaimWithdrawal(selectedReqIds);
     }
   };
@@ -233,10 +248,14 @@ export default function ClaimModal({
 
                   <div className="mt-4 md:mt-10">
                     <CTAButton
+                      isDisabled={
+                        isClaimRequestPending || selectedReqIds?.length === 0
+                      }
+                      isLoading={isClaimRequestPending}
                       testId="withdraw-mdfi-btn"
                       label="Claim DFI"
                       customStyle="w-full md:py-5"
-                      onClick={handleInitiateTransfer}
+                      onClick={handleInitiateClaim}
                     />
                   </div>
                 </div>

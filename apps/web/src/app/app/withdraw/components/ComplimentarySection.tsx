@@ -75,19 +75,13 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
   const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
   const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
 
-  const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
-    (acc, item) => {
-      return {
-        totalShares:
-          BigInt(acc.totalShares) + BigInt(item.amountOfShares as bigint),
-        totalAssets:
-          BigInt(acc.totalAssets) + BigInt(item.amountOfAssets as bigint),
-      };
-    },
-    { totalShares: BigInt(0), totalAssets: BigInt(0) },
-  ) ?? { totalShares: BigInt(0), totalAssets: BigInt(0) };
+  const totalAssets =
+    withdrawalStatusWithReqId?.reduce((acc, item) => {
+      return item.isFinalized && !item.isClaimed
+        ? new BigNumber(acc?.toString()).plus(item.amountOfAssets?.toString())
+        : acc;
+    }, new BigNumber(0)) ?? new BigNumber(0);
 
-  const formattedTotalShares = formatEther(totalShares.toString());
   const formattedTotalAssets = formatEther(totalAssets.toString());
 
   return (
@@ -160,7 +154,9 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 className="text-xs text-right text-dark-00/70"
                 prefix="$"
                 value={new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice)}
-                decimalScale={getDecimalPlace(formattedTotalShares)}
+                decimalScale={getDecimalPlace(
+                  new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice),
+                )}
               />
             </div>
           </div>
@@ -215,8 +211,12 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <NumericFormat
                   className="text-xs text-right text-dark-00/70"
                   prefix="$"
-                  value={formattedTotalShares}
-                  decimalScale={getDecimalPlace(formattedTotalShares)}
+                  value={new BigNumber(formattedTotalAssets ?? 0).times(
+                    dfiPrice,
+                  )}
+                  decimalScale={getDecimalPlace(
+                    new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice),
+                  )}
                 />
               </div>
             </div>

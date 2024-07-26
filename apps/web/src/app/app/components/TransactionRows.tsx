@@ -4,35 +4,41 @@ import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import { ActionType } from "@/lib/types";
+import BigNumber from "bignumber.js";
 
 export default function TransactionRows({
+  inputAmount,
   previewAmount,
-  withdrawAmount,
+  type,
 }: {
+  inputAmount: string;
   previewAmount: string;
-  withdrawAmount?: string;
+  type: ActionType;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
+  const estTxnAmount = new BigNumber(inputAmount).isNaN() ? "1" : inputAmount;
 
-  const txnData = withdrawAmount
-    ? {
-        data: new Interface(
-          MarbleLsdProxy.abi as InterfaceAbi,
-        ).encodeFunctionData("requestRedeem", [
-          toWei(withdrawAmount),
-          MarbleLsdProxy.address,
-        ]) as `0x${string}`,
-        value: parseEther("0"),
-      }
-    : {
-        data: new Interface(
-          MarbleLsdProxy.abi as InterfaceAbi,
-        ).encodeFunctionData("deposit", [
-          MarbleLsdProxy.address,
-        ]) as `0x${string}`,
-        value: parseEther("1"),
-      };
+  const txnData =
+    type === ActionType.Withdraw
+      ? {
+          data: new Interface(
+            MarbleLsdProxy.abi as InterfaceAbi,
+          ).encodeFunctionData("requestRedeem", [
+            toWei(estTxnAmount),
+            MarbleLsdProxy.address,
+          ]) as `0x${string}`,
+          value: parseEther("0"),
+        }
+      : {
+          data: new Interface(
+            MarbleLsdProxy.abi as InterfaceAbi,
+          ).encodeFunctionData("deposit", [
+            MarbleLsdProxy.address,
+          ]) as `0x${string}`,
+          value: parseEther(estTxnAmount),
+        };
 
   const { txnCost } = useGetTxnCost(txnData.data, txnData.value);
 

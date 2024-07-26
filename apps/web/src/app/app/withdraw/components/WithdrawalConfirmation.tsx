@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useContractContext } from "@/context/ContractContext";
 import BigNumber from "bignumber.js";
+import { CgSpinner } from "react-icons/cg";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
@@ -41,9 +42,20 @@ export default function WithdrawalConfirmation({
   });
 
   const onSuccess = () => {
+    toast(
+      "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
+      {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: 1000,
+        className:
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+        id: "claimed",
+      },
+    );
     resetFields();
     setCurrentStep(WithdrawStep.WithdrawPage);
   };
+
   const { writeClaimWithdrawal } = useProceedToClaim({
     setErrorMessage,
     onSuccess,

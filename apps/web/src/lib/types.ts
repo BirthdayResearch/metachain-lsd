@@ -73,3 +73,8 @@ export interface WithdrawalRequestedEventI {
   shares: bigint;
   fees: bigint;
 }
+
+export enum ActionType {
+  Deposit = "DEPOSIT",
+  Withdraw = "WITHDRAW",
+}

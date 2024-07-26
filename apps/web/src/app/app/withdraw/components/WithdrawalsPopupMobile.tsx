@@ -20,21 +20,24 @@ export function WithdrawalsPopupMobile({
 }: {
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
-  onClose: any;
+  onClose: () => void;
   isActive: boolean;
 }) {
   const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);
   const [selectedReqId, setSelectedReqId] = useState<string>();
 
-  const handleOnClick = (requestId: string) => {
+  const handleOnClick = (requestId?: string) => {
     setIsConfirmModalActive(!isConfirmModalActive);
-    setSelectedReqId(requestId);
+    if (!!requestId) {
+      setSelectedReqId(requestId);
+    }
   };
   return (
     <section>
       <ClaimModal
         isActive={isConfirmModalActive}
         onClose={handleOnClick}
+        closeParent={onClose}
         selectedReqId={selectedReqId}
         pendingWithdrawals={pendingWithdrawals}
         confirmedWithdrawals={confirmedWithdrawals}
