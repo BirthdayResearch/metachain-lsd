@@ -10,7 +10,7 @@ import { WithdrawStep } from "@/types";
 
 interface proceedToClaimI {
   setErrorMessage: (message: string | null) => void;
-  setCurrentStepAndScroll: (step: WithdrawStep) => void;
+  setCurrentStepAndScroll?: (step: WithdrawStep) => void;
   onSuccess?: (hash: string) => void;
 }
 
