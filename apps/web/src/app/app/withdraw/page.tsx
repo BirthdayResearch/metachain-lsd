@@ -176,30 +176,24 @@ export default function Withdraw() {
     if (isApproveTxnLoading) {
       toast("Approve transaction is loading", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: Infinity,
+        duration: 5000,
         className:
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "approve",
       });
     }
-
-    // cleanup
-    return () => toast.remove("approve");
   }, [isApproveTxnLoading]);
 
   useEffect(() => {
     if (writeApproveStatus === "pending" && errorMessage == null) {
       toast("Confirm transaction on your wallet.", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: Infinity,
+        duration: 5000,
         className:
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "withdraw",
       });
     }
-
-    // cleanup
-    return () => toast.remove("withdraw");
   }, [writeApproveStatus]);
 
   useEffect(() => {
@@ -290,6 +284,7 @@ export default function Withdraw() {
                 withdrawRequestId={withdrawRequestId}
                 setCurrentStep={setCurrentStepAndScroll}
                 hash={hash}
+                submitClaim={handleInitiateClaim}
                 receivingWalletAddress={address}
                 resetFields={resetFields}
               />

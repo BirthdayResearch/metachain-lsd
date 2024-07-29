@@ -22,7 +22,7 @@ export function WithdrawalsPopup({
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   isClaimPending: boolean;
 }) {
   const [isActive, setIsActive] = useState(false);

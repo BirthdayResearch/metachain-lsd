@@ -29,6 +29,7 @@ export function CTAButton({
 }) {
   const Button = (
     <button
+      type="button"
       disabled={isDisabled}
       onClick={onClick}
       data-testid={`cta-button-${testId}`}

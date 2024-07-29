@@ -19,7 +19,7 @@ export default function ComplimentarySection({
   submitClaim,
   isClaimPending,
 }: {
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   isClaimPending: boolean;
 }) {
   const { isConnected } = useAccount();
@@ -73,7 +73,7 @@ function WithdrawalDetails({
   isClaimPending,
 }: {
   customStyle?: string;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   isClaimPending: boolean;
 }) {
   const { isMobile } = useResponsive();

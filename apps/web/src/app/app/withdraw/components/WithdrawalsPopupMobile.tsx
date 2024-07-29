@@ -24,7 +24,7 @@ export function WithdrawalsPopupMobile({
   confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
   isActive: boolean;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   isClaimPending: boolean;
 }) {
   const [isConfirmModalActive, setIsConfirmModalActive] = useState(false);

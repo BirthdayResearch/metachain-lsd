@@ -40,7 +40,7 @@ export default function WithdrawPage({
   submitWithdraw: () => void;
   isClaimPending: boolean;
   previewRedeem: string;
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();

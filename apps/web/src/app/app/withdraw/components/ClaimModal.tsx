@@ -30,7 +30,7 @@ export default function ClaimModal({
   selectedReqId?: string;
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
-  submitClaim: (selectedReqIds: any, totalClaimAmt: string) => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   isClaimPending: boolean;
 }) {
   const { MarbleLsdProxy } = useContractContext();
