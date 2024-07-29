@@ -28,9 +28,7 @@ export default function ClaimConfirmation({
           ? "Claim confirmed"
           : "Confirming your claim…"
       }
-      description={
-        "Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
-      }
+      description="Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
       dfiAmounts={[
         {
           label: "Amount to receive",
