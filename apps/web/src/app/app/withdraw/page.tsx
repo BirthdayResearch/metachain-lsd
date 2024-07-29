@@ -166,6 +166,7 @@ export default function Withdraw() {
     selectedReqIds: string[],
     totalClaimAmt: string,
   ) => {
+    setErrorMessage(null);
     if (selectedReqIds?.length) {
       writeClaimWithdrawal(selectedReqIds);
       setTotalClaimAmt(totalClaimAmt);
