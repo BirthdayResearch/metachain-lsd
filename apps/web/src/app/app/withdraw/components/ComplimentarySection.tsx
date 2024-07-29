@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { CTAButton } from "@/components/button/CTAButton";
@@ -9,6 +9,11 @@ import useGetWithdrawalDetails from "@/hooks/useGetWithdrawalDetails";
 import { formatEther } from "ethers";
 import { getDecimalPlace } from "@/lib/textHelper";
 import NumericFormat from "@/components/NumericFormat";
+import { WithdrawalsPopup } from "@/app/app/withdraw/components/WithdrawalsPopup";
+import { WithdrawalsPopupMobile } from "@/app/app/withdraw/components/WithdrawalsPopupMobile";
+import useResponsive from "@/hooks/useResponsive";
+import BigNumber from "bignumber.js";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export default function ComplimentarySection() {
   const { isConnected } = useAccount();
@@ -50,28 +55,33 @@ function WithdrawalsFaq({ customStyle }: { customStyle?: string }) {
 }
 
 function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
+  const { isMobile } = useResponsive();
+  const [isActive, setIsActive] = useState(false);
+  const dfiPrice = useDfiPrice();
+
+  const handleOnClick = () => {
+    setIsActive(!isActive);
+  };
+
   const {
     pendingWithdrawals,
     confirmedWithdrawals,
     withdrawalStatusWithReqId,
   } = useGetWithdrawalDetails();
 
+  const anyWithdrawalRequests =
+    pendingWithdrawals.length > 0 || confirmedWithdrawals.length > 0;
+
   const totalPendingCount = (pendingWithdrawals.length ?? 0).toString();
   const totalConfirmedCount = (confirmedWithdrawals.length ?? 0).toString();
 
-  const { totalShares, totalAssets } = withdrawalStatusWithReqId?.reduce(
-    (acc, item) => {
-      return {
-        totalShares:
-          BigInt(acc.totalShares) + BigInt(item.amountOfShares as bigint),
-        totalAssets:
-          BigInt(acc.totalAssets) + BigInt(item.amountOfAssets as bigint),
-      };
-    },
-    { totalShares: BigInt(0), totalAssets: BigInt(0) },
-  ) ?? { totalShares: BigInt(0), totalAssets: BigInt(0) };
+  const totalAssets =
+    withdrawalStatusWithReqId?.reduce((acc, item) => {
+      return item.isFinalized && !item.isClaimed
+        ? new BigNumber(acc?.toString()).plus(item.amountOfAssets?.toString())
+        : acc;
+    }, new BigNumber(0)) ?? new BigNumber(0);
 
-  const formattedTotalShares = formatEther(totalShares.toString());
   const formattedTotalAssets = formatEther(totalAssets.toString());
 
   return (
@@ -84,24 +94,47 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
       >
         {/* Web view */}
         <div className="hidden md:flex gap-y-2">
-          <div className="flex flex-col min-w-[168px]">
+          <div className="relative flex flex-col min-w-[168px]">
+            {isActive && (
+              <WithdrawalsPopup
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
+                onClose={handleOnClick}
+              />
+            )}
             <span className="text-xs text-light-1000/70">Withdrawals</span>
-            <div className="flex mt-2 gap-x-2">
+            <div
+              className="flex mt-2 gap-x-2"
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
+            >
               <CTAButton
                 label={totalPendingCount}
                 testId="pending-withdrawals-button"
-                customStyle="!px-3 !py-3 md:!py-1"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customPadding="px-3 py-3 md:py-1"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  { "text-light-1000/30": pendingWithdrawals.length <= 0 },
+                  { "text-light-1000/70": pendingWithdrawals.length > 0 },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <MdAccessTimeFilled className="text-warning" size={12} />
               </CTAButton>
               <CTAButton
                 label={totalConfirmedCount}
                 testId="confirmed-withdrawals-button"
-                customStyle="!px-3 !py-3 md:!py-1 bg-red-200"
-                customTextStyle="font-semibold leading-5 text-light-1000/30"
-                customBgColor="withdraw-button-bg"
+                customStyle="bg-red-200"
+                customPadding="px-3 py-3 md:py-1"
+                customTextStyle={clsx(
+                  "font-semibold leading-5",
+                  {
+                    "text-light-1000/30": confirmedWithdrawals.length <= 0,
+                  },
+                  {
+                    "text-light-1000/70": confirmedWithdrawals.length > 0,
+                  },
+                )}
+                customBgColor="button-bg-gradient-1"
               >
                 <FaCircleCheck className="text-green" size={10} />
               </CTAButton>
@@ -120,8 +153,10 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
               <NumericFormat
                 className="text-xs text-right text-dark-00/70"
                 prefix="$"
-                value={formattedTotalShares}
-                decimalScale={getDecimalPlace(formattedTotalShares)}
+                value={new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice)}
+                decimalScale={getDecimalPlace(
+                  new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice),
+                )}
               />
             </div>
           </div>
@@ -129,11 +164,22 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
 
         {/* Mobile view*/}
         <div className="flex w-full md:hidden">
-          <div className="flex flex-col w-full">
+          <div className="relative flex flex-col w-full">
+            {isActive && isMobile && (
+              <WithdrawalsPopupMobile
+                pendingWithdrawals={pendingWithdrawals}
+                confirmedWithdrawals={confirmedWithdrawals}
+                onClose={handleOnClick}
+                isActive={isActive}
+              />
+            )}
             <span className="font-semibold text-sm text-light-1000 mb-2">
               Withdrawals
             </span>
-            <div className="flex items-center py-2 justify-between">
+            <div
+              className="flex items-center py-2 justify-between"
+              onClick={anyWithdrawalRequests ? handleOnClick : undefined}
+            >
               <div className="flex gap-x-1">
                 <span className="text-xs text-light-1000">Pending</span>
                 <MdAccessTimeFilled className="text-warning" size={16} />
@@ -165,8 +211,12 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
                 <NumericFormat
                   className="text-xs text-right text-dark-00/70"
                   prefix="$"
-                  value={formattedTotalShares}
-                  decimalScale={getDecimalPlace(formattedTotalShares)}
+                  value={new BigNumber(formattedTotalAssets ?? 0).times(
+                    dfiPrice,
+                  )}
+                  decimalScale={getDecimalPlace(
+                    new BigNumber(formattedTotalAssets ?? 0).times(dfiPrice),
+                  )}
                 />
               </div>
             </div>
@@ -174,12 +224,14 @@ function WithdrawalDetails({ customStyle }: { customStyle?: string }) {
         </div>
         <div className="w-full md:w-fit">
           <CTAButton
-            isDisabled={true}
+            isDisabled={!anyWithdrawalRequests}
             label="Claim DFI"
             testId="claim-dfi-button"
-            customStyle="w-full md:!px-3 md:!py-2 disabled:opacity-50"
+            customStyle="w-full disabled:opacity-50"
+            customPadding="px-9 py-5 md:px-3 md:py-2 "
             customTextStyle="whitespace-nowrap text-xs font-medium"
-            customBgColor="withdraw-button-bg"
+            customBgColor="button-bg-gradient-1"
+            onClick={handleOnClick}
           >
             <Image
               data-testid="dfi-icon"

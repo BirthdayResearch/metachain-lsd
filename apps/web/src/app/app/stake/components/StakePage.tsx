@@ -12,6 +12,8 @@ import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { formatEther } from "ethers";
 import { useAccount, useBalance } from "wagmi";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
+import { ActionType } from "@/lib/types";
 
 export default function StakePage({
   stakeAmount,
@@ -43,6 +45,7 @@ export default function StakePage({
   setAmountError: Dispatch<SetStateAction<string | null>>;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
+  const dfiPrice = useDfiPrice();
 
   const { minDepositAmount } = useGetReadContractConfigs();
   const { data: walletBalance } = useBalance({
@@ -87,6 +90,11 @@ export default function StakePage({
                   maxAmount={new BigNumber(walletBalanceAmount)}
                   minAmount={new BigNumber(minDepositAmount)}
                   value={stakeAmount}
+                  usdAmount={
+                    new BigNumber(stakeAmount).isNaN()
+                      ? new BigNumber(0)
+                      : new BigNumber(stakeAmount ?? 0).multipliedBy(dfiPrice)
+                  }
                   setAmount={setStakeAmount}
                   error={amountError}
                   setError={setAmountError}
@@ -153,7 +161,11 @@ export default function StakePage({
             </div>
           </div>
           <div className="mb-10 md:mb-7 lg:mb-10">
-            <TransactionRows previewAmount={previewDeposit} />
+            <TransactionRows
+              previewAmount={previewDeposit}
+              type={ActionType.Deposit}
+              inputAmount={stakeAmount}
+            />
           </div>
         </div>
         {isConnected ? (

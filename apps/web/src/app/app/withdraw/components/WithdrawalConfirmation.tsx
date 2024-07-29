@@ -1,24 +1,86 @@
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
+import { useReadContract } from "wagmi";
 import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
+import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import { WithdrawStep } from "@/types";
 import { LinkType } from "@/app/app/components/DetailsRow";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useContractContext } from "@/context/ContractContext";
+import BigNumber from "bignumber.js";
+import { CgSpinner } from "react-icons/cg";
 
 export default function WithdrawalConfirmation({
   withdrawAmount,
   amountToReceive,
   setCurrentStep,
+  withdrawRequestId,
   hash,
   receivingWalletAddress,
   resetFields,
 }: {
   withdrawAmount: string;
   amountToReceive: string;
+  withdrawRequestId: string | null;
   setCurrentStep: (step: WithdrawStep) => void;
   hash: string;
   receivingWalletAddress: string;
   resetFields: () => void;
 }) {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { MarbleLsdProxy } = useContractContext();
+
+  const { data: lastFinalizedRequestData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "lastFinalizedRequestId",
+    query: {
+      enabled: !!withdrawRequestId,
+    },
+  });
+
+  const onSuccess = () => {
+    toast(
+      "Redemption completed, please wait a moment for your redeemed amount to be reflected in your wallet.",
+      {
+        icon: <CgSpinner size={24} className="animate-spin text-green" />,
+        duration: 1000,
+        className:
+          "px-2 py-1 !text-xs !text-dark-00 !bg-green mt-10 !rounded-md",
+        id: "claimed",
+      },
+    );
+    resetFields();
+    setCurrentStep(WithdrawStep.WithdrawPage);
+  };
+
+  const { writeClaimWithdrawal } = useProceedToClaim({
+    setErrorMessage,
+    onSuccess,
+  });
+
+  useEffect(() => {
+    if (errorMessage != null) {
+      toast(errorMessage, {
+        duration: 5000,
+        className:
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
+        id: "errorMessage",
+      });
+    }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
+  }, [errorMessage]);
+
+  const isFinalized =
+    withdrawRequestId &&
+    new BigNumber(lastFinalizedRequestData?.toString() ?? 0).gte(
+      withdrawRequestId,
+    );
+
   return (
     <ConfirmScreen
       isLoading={false}
@@ -55,20 +117,32 @@ export default function WithdrawalConfirmation({
         },
         {
           label: "Status",
-          value: "Ready for claim",
+          value: isFinalized ? "Ready for claim" : "Withdrawal Requested",
           linkType: LinkType.STATUS,
         },
       ]}
       buttons={
-        <CTAButton
-          label="Return to main page"
-          testId="stake-confirming-return-main"
-          customStyle="w-full"
-          onClick={() => {
-            resetFields();
-            setCurrentStep(WithdrawStep.WithdrawPage);
-          }}
-        />
+        <>
+          {isFinalized && (
+            <CTAButton
+              label="Proceed to claim"
+              testId="proceed-to-claim-withdrawal"
+              customStyle="w-full"
+              onClick={() => {
+                writeClaimWithdrawal([withdrawRequestId]);
+              }}
+            />
+          )}
+          <CTAButtonOutline
+            label="Return to main page"
+            testId="withdrawal-confirming-return-main"
+            customStyle="w-full"
+            onClick={() => {
+              resetFields();
+              setCurrentStep(WithdrawStep.WithdrawPage);
+            }}
+          />
+        </>
       }
     />
   );

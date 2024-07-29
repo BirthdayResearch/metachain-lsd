@@ -2,7 +2,6 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import clsx from "clsx";
 import { CTAButton } from "@/components/button/CTAButton";
-import { SubscriptionStatus } from "@/types";
 import { useCreateUserMutation } from "@/store/marbleFiApi";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";

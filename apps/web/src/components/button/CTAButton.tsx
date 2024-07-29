@@ -5,6 +5,7 @@ import Spinner from "../../components/Spinner";
 export function CTAButton({
   label,
   testId,
+  customPadding,
   customStyle,
   customTextStyle,
   customBgColor,
@@ -18,6 +19,7 @@ export function CTAButton({
   testId: string;
   isDisabled?: boolean;
   onClick?: (e: any) => void;
+  customPadding?: string;
   customStyle?: string;
   customTextStyle?: string;
   customBgColor?: string;
@@ -31,11 +33,12 @@ export function CTAButton({
       onClick={onClick}
       data-testid={`cta-button-${testId}`}
       className={clsx(
-        "rounded-[30px] px-9 py-5 md:py-4",
+        "rounded-[30px]",
         customBgColor ?? "accent-1",
         !isDisabled && "hover:bg-opacity-60",
         isDisabled ? "opacity-30" : "",
         customStyle ?? "w-fit",
+        customPadding ?? "px-9 py-5 md:py-4",
       )}
     >
       <div className="items-center justify-center flex flex-row gap-x-2">
