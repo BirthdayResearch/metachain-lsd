@@ -150,11 +150,15 @@ export default function Withdraw() {
     requestAllowance(withdrawAmtBigNum);
   };
 
-  const { claimHash, writeClaimWithdrawal, isClaimRequestPending } =
-    useProceedToClaim({
-      setErrorMessage,
-      setCurrentStepAndScroll,
-    });
+  const {
+    claimHash,
+    writeClaimWithdrawal,
+    isClaimRequestPending,
+    isClaimWithdrawalsTxnSuccess,
+  } = useProceedToClaim({
+    setErrorMessage,
+    setCurrentStepAndScroll,
+  });
 
   const [totalClaimAmt, setTotalClaimAmt] = useState<string>("0");
 
@@ -295,6 +299,7 @@ export default function Withdraw() {
             address &&
             claimHash && (
               <ClaimConfirmation
+                isClaimWithdrawalsTxnSuccess={isClaimWithdrawalsTxnSuccess}
                 claimAmount={totalClaimAmt}
                 setCurrentStep={setCurrentStepAndScroll}
                 claimHash={claimHash}

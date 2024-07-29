@@ -38,15 +38,17 @@ export function WithdrawalsPopupMobile({
   };
   return (
     <section>
-      <ClaimModal
-        isActive={isConfirmModalActive}
-        onClose={handleOnClick}
-        selectedReqId={selectedReqId}
-        pendingWithdrawals={pendingWithdrawals}
-        confirmedWithdrawals={confirmedWithdrawals}
-        submitClaim={submitClaim}
-        isClaimPending={isClaimPending}
-      />
+      {isActive && (
+        <ClaimModal
+          isActive={isConfirmModalActive}
+          onClose={handleOnClick}
+          selectedReqId={selectedReqId}
+          pendingWithdrawals={pendingWithdrawals}
+          confirmedWithdrawals={confirmedWithdrawals}
+          submitClaim={submitClaim}
+          isClaimPending={isClaimPending}
+        />
+      )}
       <Transition appear show={isActive} as={Fragment}>
         <Dialog
           as="div"

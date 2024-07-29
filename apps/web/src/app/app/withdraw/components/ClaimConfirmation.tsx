@@ -10,8 +10,10 @@ export default function ClaimConfirmation({
   receivingWalletAddress,
   setCurrentStep,
   resetFields,
+  isClaimWithdrawalsTxnSuccess,
 }: {
   claimHash: string;
+  isClaimWithdrawalsTxnSuccess: boolean;
   claimAmount: string;
   receivingWalletAddress: string;
   setCurrentStep: (step: WithdrawStep) => void;
@@ -19,9 +21,16 @@ export default function ClaimConfirmation({
 }) {
   return (
     <ConfirmScreen
-      hasCompleted={true}
-      title="Claimed DFI"
-      description="Your request for withdrawal is now being processed. Your claim for withdrawal is automatically sent to your wallet once it is ready."
+      isComplete={isClaimWithdrawalsTxnSuccess}
+      isLoading={!isClaimWithdrawalsTxnSuccess}
+      title={
+        isClaimWithdrawalsTxnSuccess
+          ? "Claim confirmed"
+          : "Confirming your claim…"
+      }
+      description={
+        "Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+      }
       dfiAmounts={[
         {
           label: "Amount to receive",

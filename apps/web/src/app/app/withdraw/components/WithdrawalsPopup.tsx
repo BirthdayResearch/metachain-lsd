@@ -42,15 +42,17 @@ export function WithdrawalsPopup({
           "border-[0.5px] border-light-1000/50",
         )}
       >
-        <ClaimModal
-          isActive={isActive}
-          onClose={handleOnClick}
-          selectedReqId={selectedReqId}
-          pendingWithdrawals={pendingWithdrawals}
-          confirmedWithdrawals={confirmedWithdrawals}
-          submitClaim={submitClaim}
-          isClaimPending={isClaimPending}
-        />
+        {isActive && (
+          <ClaimModal
+            isActive={isActive}
+            onClose={handleOnClick}
+            selectedReqId={selectedReqId}
+            pendingWithdrawals={pendingWithdrawals}
+            confirmedWithdrawals={confirmedWithdrawals}
+            submitClaim={submitClaim}
+            isClaimPending={isClaimPending}
+          />
+        )}
         <div className="relative px-8">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
