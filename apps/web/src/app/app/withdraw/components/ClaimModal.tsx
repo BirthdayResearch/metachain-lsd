@@ -104,7 +104,7 @@ export default function ClaimModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="absolute md:relative bottom-0 flex flex-col w-full md:max-w-[672px] min-h-[632px] md:min-h-[480px] lg:max-w-[768px] transform overflow-hidden rounded-2xl bg-white px-5 pt-10 pb-16 md:p-12 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="absolute md:relative bottom-0 flex flex-col w-full md:max-w-[672px] min-h-[432px] md:min-h-[480px] lg:max-w-[768px] transform overflow-hidden rounded-2xl bg-white px-5 pt-10 pb-16 md:p-12 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title className="text-2xl font-semibold leading-7">
                   Claim DFI
                 </Dialog.Title>
