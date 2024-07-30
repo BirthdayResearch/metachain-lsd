@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { AppNavigation } from "@/lib/types";
 
 export const appNavigationTabs: AppNavigation[] = [
-  // { label: "Stake", href: "/stake" },
-  // { label: "Withdraw", href: "/withdraw" },
+  { label: "Stake", href: "/stake" },
+  { label: "Withdraw", href: "/withdraw" },
   // { label: "Pool", href: "/pool" },
 ];
 
