@@ -75,10 +75,8 @@ export default function useProceedToClaim({
             if (hash) {
               if (onSuccess) {
                 onSuccess(hash);
-              } else {
-                if (setCurrentStepAndScroll) {
-                  setCurrentStepAndScroll(WithdrawStep.ClaimConfirmationPage);
-                }
+              } else if (setCurrentStepAndScroll) {
+                setCurrentStepAndScroll(WithdrawStep.ClaimConfirmationPage);
               }
             }
           },
