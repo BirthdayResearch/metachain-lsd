@@ -11,13 +11,11 @@ import { WithdrawStep } from "@/types";
 interface proceedToClaimI {
   setErrorMessage: (message: string | null) => void;
   setCurrentStepAndScroll?: (step: WithdrawStep) => void;
-  onSuccess?: (hash: string) => void;
 }
 
 export default function useProceedToClaim({
   setErrorMessage,
   setCurrentStepAndScroll,
-  onSuccess,
 }: proceedToClaimI) {
   const { MarbleLsdProxy } = useContractContext();
 
@@ -73,9 +71,7 @@ export default function useProceedToClaim({
         {
           onSuccess: (hash) => {
             if (hash) {
-              if (onSuccess) {
-                onSuccess(hash);
-              } else if (setCurrentStepAndScroll) {
+              if (setCurrentStepAndScroll) {
                 setCurrentStepAndScroll(WithdrawStep.ClaimConfirmationPage);
               }
             }
