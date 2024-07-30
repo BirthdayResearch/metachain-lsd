@@ -16,10 +16,14 @@ export function WithdrawalsPopup({
   pendingWithdrawals,
   confirmedWithdrawals,
   onClose,
+  submitClaim,
+  isClaimPending,
 }: {
   pendingWithdrawals: WithdrawalStatusDataProps[];
   confirmedWithdrawals: WithdrawalStatusDataProps[];
   onClose: () => void;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
+  isClaimPending: boolean;
 }) {
   const [isActive, setIsActive] = useState(false);
   const [selectedReqId, setSelectedReqId] = useState<string>();
@@ -38,14 +42,17 @@ export function WithdrawalsPopup({
           "border-[0.5px] border-light-1000/50",
         )}
       >
-        <ClaimModal
-          isActive={isActive}
-          onClose={handleOnClick}
-          closeParent={onClose}
-          selectedReqId={selectedReqId}
-          pendingWithdrawals={pendingWithdrawals}
-          confirmedWithdrawals={confirmedWithdrawals}
-        />
+        {isActive && (
+          <ClaimModal
+            isActive={isActive}
+            onClose={handleOnClick}
+            selectedReqId={selectedReqId}
+            pendingWithdrawals={pendingWithdrawals}
+            confirmedWithdrawals={confirmedWithdrawals}
+            submitClaim={submitClaim}
+            isClaimPending={isClaimPending}
+          />
+        )}
         <div className="relative px-8">
           <span className="text-xl font-medium">Withdrawals</span>
           <IoMdClose
@@ -94,7 +101,7 @@ export function WithdrawalsPopup({
                   )}
                 </>
               ) : (
-                <span className="text-xs text-light-1000/70">
+                <span className="text-xs text-light-1000/70 mb-3">
                   No pending transaction.
                 </span>
               )}
