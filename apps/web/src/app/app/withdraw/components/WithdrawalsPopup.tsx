@@ -101,7 +101,7 @@ export function WithdrawalsPopup({
                   )}
                 </>
               ) : (
-                <span className="text-xs text-light-1000/70">
+                <span className="text-xs text-light-1000/70 mb-3">
                   No pending transaction.
                 </span>
               )}
