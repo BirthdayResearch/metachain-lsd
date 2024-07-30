@@ -1,9 +1,8 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useNetworkEnvironmentContext } from "@/context/NetworkEnvironmentContext";
 import { AppNavigation } from "@/lib/types";
+import Link from "@/components/Link";
 
 export const appNavigationTabs: AppNavigation[] = [
   { label: "Stake", href: "/stake" },
@@ -13,7 +12,6 @@ export const appNavigationTabs: AppNavigation[] = [
 
 export default function AppNavigationBarWeb() {
   const pathname = usePathname();
-  const { networkEnv } = useNetworkEnvironmentContext();
 
   const [isActive, setIsActive] = useState("/stake");
 
@@ -34,7 +32,7 @@ export default function AppNavigationBarWeb() {
               { "font-bold": isActive === `/app${link.href}` },
               "text-sm text-light-1000 py-3 px-4 rounded-[30px] cursor-pointer",
             )}
-            href={`/app${link.href}?network=${networkEnv}`}
+            href={{ pathname: `/app${link.href}` }}
           >
             {link.label}
           </Link>
