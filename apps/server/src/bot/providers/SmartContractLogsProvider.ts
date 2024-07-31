@@ -41,7 +41,9 @@ export class SmartContractLogsProvider {
       };
       return await this.evmProvider.getLogs(filter);
     } catch (err) {
-      console.error(`Error occurred while finalize withdrawal: ${err.message}`);
+      console.error(
+        `Error occurred while getting SC logs, blocks: ${fromBlock} - ${toBlock} for ${this.network}: ${err.message}`,
+      );
     }
   }
 
