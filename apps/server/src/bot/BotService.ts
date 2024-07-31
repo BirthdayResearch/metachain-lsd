@@ -103,15 +103,16 @@ export class BotService {
       this.configService,
       this.prismaService,
     );
-    let fromBlock = await scLogsProvider.getLastSyncBlockNumber();
+    let fromBlockNumber = await scLogsProvider.getLastSyncBlockNumber();
     const latestBlock = await scLogsProvider.getLatestBlock();
     do {
+      const fromBlock = new BigNumber(fromBlockNumber).minus(1);
       const toBlock = Math.min(
         new BigNumber(fromBlock).plus(2000).toNumber(),
         latestBlock,
       );
       const logs = await scLogsProvider.getLogs(
-        new BigNumber(fromBlock).minus(1).toNumber(),
+        new BigNumber(fromBlock).toNumber(),
         new BigNumber(toBlock).toNumber(),
       );
       const saveLogsPromise = (logs ?? []).map((each) =>
@@ -119,7 +120,7 @@ export class BotService {
       );
       await Promise.all(saveLogsPromise);
       await scLogsProvider.updateLastSyncBlockNumber(toBlock.toString());
-      fromBlock = toBlock;
-    } while (new BigNumber(fromBlock).lt(latestBlock));
+      fromBlockNumber = toBlock;
+    } while (new BigNumber(fromBlockNumber).lt(latestBlock));
   }
 }
