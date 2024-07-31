@@ -19,7 +19,7 @@ export default function DFIOpportunities() {
           <CTAButton
             href="/app/stake"
             label="Launch app"
-            testID="launch-app"
+            testId="launch-app"
             customStyle="w-full md:w-fit"
           />
         </div>

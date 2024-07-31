@@ -80,11 +80,15 @@ export default function Stake() {
   const [enableConnectedWallet, setEnableConnectedWallet] =
     useState(isConnected);
 
+  // To prevent calling contract with invalid number (too large or too small)
+  const validAmount = stakeAmount !== "" && !amountError;
+  const stakeAmountString = validAmount ? stakeAmount : "0";
+
   const { data: previewDepositData } = useReadContract({
     address: MarbleLsdProxy.address,
     abi: MarbleLsdProxy.abi,
     functionName: "previewDeposit",
-    args: [toWei(stakeAmount !== "" ? stakeAmount : "0")],
+    args: [toWei(stakeAmountString)],
     query: {
       enabled: isConnected,
     },
@@ -139,15 +143,12 @@ export default function Stake() {
     if (writeStatus === "pending") {
       toast("Confirm transaction on your wallet.", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: Infinity,
+        duration: 5000,
         className:
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "deposit",
       });
     }
-
-    // cleanup
-    return () => toast.remove("deposit");
   }, [writeStatus]);
 
   // Display Confirmed stake page when transaction is confirmed on the block

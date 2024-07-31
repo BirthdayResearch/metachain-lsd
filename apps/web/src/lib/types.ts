@@ -9,6 +9,11 @@ interface MDfiContractConfigI {
   address: `0x${string}`;
   abi?: typeof ShareToken__factory.abi;
 }
+
+export interface MarbleFiVersion {
+  v: string;
+}
+
 export interface ContractContextI {
   EthereumRpcUrl: string;
   ExplorerURL: string;
@@ -58,4 +63,18 @@ export interface DashboardWriteMethodI {
   name: string;
   role?: string[]; // not using this param yet, will add role check in next release
   description: string;
+}
+
+export interface WithdrawalRequestedEventI {
+  requestId: bigint;
+  owner: string;
+  receiver: string;
+  assets: bigint;
+  shares: bigint;
+  fees: bigint;
+}
+
+export enum ActionType {
+  Deposit = "DEPOSIT",
+  Withdraw = "WITHDRAW",
 }

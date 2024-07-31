@@ -1,17 +1,18 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppNavigation } from "@/lib/types";
+import Link from "@/components/Link";
 
 export const appNavigationTabs: AppNavigation[] = [
-  // { label: "Stake", href: "/stake" },
-  // { label: "Withdraw", href: "/withdraw" },
+  { label: "Stake", href: "/stake" },
+  { label: "Withdraw", href: "/withdraw" },
   // { label: "Pool", href: "/pool" },
 ];
 
 export default function AppNavigationBarWeb() {
   const pathname = usePathname();
+
   const [isActive, setIsActive] = useState("/stake");
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function AppNavigationBarWeb() {
               { "font-bold": isActive === `/app${link.href}` },
               "text-sm text-light-1000 py-3 px-4 rounded-[30px] cursor-pointer",
             )}
-            href={`/app${link.href}`}
+            href={{ pathname: `/app${link.href}` }}
           >
             {link.label}
           </Link>

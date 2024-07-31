@@ -17,8 +17,9 @@ describe("MarbleLsdRoles", () => {
   let rewardDistributerAndFinalizeSigner: SignerWithAddress;
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult =
-      await loadFixture(deployContracts);
+    const fixture: MarbleLsdDeploymentResult = await loadFixture(
+      deployContracts
+    );
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     administratorSigner = fixture.administratorSigner;
     defaultAdminSigner = fixture.defaultAdminSigner;
@@ -30,10 +31,10 @@ describe("MarbleLsdRoles", () => {
   it("Should have admin role to default admin address", async () => {
     const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
     expect(adminRoleHash).to.equal(
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "0x0000000000000000000000000000000000000000000000000000000000000000"
     );
     expect(
-      await proxyMarbleLsd.hasRole(adminRoleHash, defaultAdminSigner.address),
+      await proxyMarbleLsd.hasRole(adminRoleHash, defaultAdminSigner.address)
     ).to.equal(true);
   });
 
@@ -41,11 +42,11 @@ describe("MarbleLsdRoles", () => {
     const signer = accounts[5];
     const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
     await expect(
-      proxyMarbleLsd.connect(signer).grantRole(adminRoleHash, signer.address),
+      proxyMarbleLsd.connect(signer).grantRole(adminRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
   });
 
@@ -55,20 +56,20 @@ describe("MarbleLsdRoles", () => {
     await expect(
       proxyMarbleLsd
         .connect(signer)
-        .grantRole(administratorRoleHash, signer.address),
+        .grantRole(administratorRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
     await expect(
       proxyMarbleLsd
         .connect(administratorSigner)
-        .grantRole(administratorRoleHash, signer.address),
+        .grantRole(administratorRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${administratorSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
   });
 
@@ -76,22 +77,20 @@ describe("MarbleLsdRoles", () => {
     const signer = accounts[5];
     const finalizeRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
     await expect(
-      proxyMarbleLsd
-        .connect(signer)
-        .grantRole(finalizeRoleHash, signer.address),
+      proxyMarbleLsd.connect(signer).grantRole(finalizeRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
     await expect(
       proxyMarbleLsd
         .connect(rewardDistributerAndFinalizeSigner)
-        .grantRole(finalizeRoleHash, signer.address),
+        .grantRole(finalizeRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
   });
 
@@ -102,20 +101,20 @@ describe("MarbleLsdRoles", () => {
     await expect(
       proxyMarbleLsd
         .connect(signer)
-        .grantRole(rewardDistributerRoleHash, signer.address),
+        .grantRole(rewardDistributerRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${signer.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
     await expect(
       proxyMarbleLsd
         .connect(rewardDistributerAndFinalizeSigner)
-        .grantRole(rewardDistributerRoleHash, signer.address),
+        .grantRole(rewardDistributerRoleHash, signer.address)
     ).to.be.revertedWith(
       `AccessControl: account ${rewardDistributerAndFinalizeSigner.address.toLowerCase()} is missing role 0x${"0".repeat(
-        64,
-      )}`,
+        64
+      )}`
     );
   });
 
@@ -124,8 +123,8 @@ describe("MarbleLsdRoles", () => {
     expect(
       await proxyMarbleLsd.hasRole(
         administratorRoleHash,
-        administratorSigner.address,
-      ),
+        administratorSigner.address
+      )
     ).to.equal(true);
   });
 
@@ -135,8 +134,8 @@ describe("MarbleLsdRoles", () => {
     expect(
       await proxyMarbleLsd.hasRole(
         rewardDistributerRoleHash,
-        rewardDistributerAndFinalizeSigner.address,
-      ),
+        rewardDistributerAndFinalizeSigner.address
+      )
     ).to.equal(true);
   });
 
@@ -145,28 +144,28 @@ describe("MarbleLsdRoles", () => {
     expect(
       await proxyMarbleLsd.hasRole(
         finalizerRoleHash,
-        rewardDistributerAndFinalizeSigner.address,
-      ),
+        rewardDistributerAndFinalizeSigner.address
+      )
     ).to.equal(true);
   });
 
   it("Should have DEFAULT_ADMIN_ROLE as role admin", async () => {
     const adminRoleHash = await proxyMarbleLsd.DEFAULT_ADMIN_ROLE();
     expect(await proxyMarbleLsd.getRoleAdmin(adminRoleHash)).to.equal(
-      adminRoleHash,
+      adminRoleHash
     );
     const administratorRoleHash = await proxyMarbleLsd.ADMINISTRATOR_ROLE();
     expect(await proxyMarbleLsd.getRoleAdmin(administratorRoleHash)).to.equal(
-      adminRoleHash,
+      adminRoleHash
     );
     const rewardDistributerRoleHash =
       await proxyMarbleLsd.REWARDS_DISTRIBUTER_ROLE();
     expect(
-      await proxyMarbleLsd.getRoleAdmin(rewardDistributerRoleHash),
+      await proxyMarbleLsd.getRoleAdmin(rewardDistributerRoleHash)
     ).to.equal(adminRoleHash);
     const finalizerRoleHash = await proxyMarbleLsd.FINALIZE_ROLE();
     expect(await proxyMarbleLsd.getRoleAdmin(finalizerRoleHash)).to.equal(
-      adminRoleHash,
+      adminRoleHash
     );
   });
 
@@ -177,7 +176,7 @@ describe("MarbleLsdRoles", () => {
       .connect(defaultAdminSigner)
       .grantRole(adminRoleHash, signer.address);
     expect(
-      await proxyMarbleLsd.hasRole(adminRoleHash, signer.address),
+      await proxyMarbleLsd.hasRole(adminRoleHash, signer.address)
     ).to.equal(true);
   });
 
@@ -188,7 +187,7 @@ describe("MarbleLsdRoles", () => {
       .connect(defaultAdminSigner)
       .grantRole(administratorRoleHash, signer.address);
     expect(
-      await proxyMarbleLsd.hasRole(administratorRoleHash, signer.address),
+      await proxyMarbleLsd.hasRole(administratorRoleHash, signer.address)
     ).to.equal(true);
   });
 
@@ -199,7 +198,7 @@ describe("MarbleLsdRoles", () => {
       .connect(defaultAdminSigner)
       .grantRole(finalizeRoleHash, signer.address);
     expect(
-      await proxyMarbleLsd.hasRole(finalizeRoleHash, signer.address),
+      await proxyMarbleLsd.hasRole(finalizeRoleHash, signer.address)
     ).to.equal(true);
   });
 
@@ -211,7 +210,7 @@ describe("MarbleLsdRoles", () => {
       .connect(defaultAdminSigner)
       .grantRole(rewardDistributerRoleHash, signer.address);
     expect(
-      await proxyMarbleLsd.hasRole(rewardDistributerRoleHash, signer.address),
+      await proxyMarbleLsd.hasRole(rewardDistributerRoleHash, signer.address)
     ).to.equal(true);
   });
 });

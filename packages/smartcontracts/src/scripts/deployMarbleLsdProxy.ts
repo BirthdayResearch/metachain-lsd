@@ -33,7 +33,7 @@ export async function deployMarbleLsdProxy({
       walletAddress,
       // fees recipient address
       feesRecipientAddress,
-    ],
+    ]
   );
   const marbleLsdProxy = await contract.deploy(marbleLsdV1Address, encodedData);
   await marbleLsdProxy.waitForDeployment();
@@ -50,7 +50,7 @@ export async function deployMarbleLsdProxy({
   // verify receipt token
   const MarbleLsdUpgradeable = await ethers.getContractFactory("MarbleLsdV1");
   const proxyMarbleLsd = MarbleLsdUpgradeable.attach(
-    marbleLsdProxyAddress,
+    marbleLsdProxyAddress
   ) as MarbleLsdV1;
 
   const receiptToken = await proxyMarbleLsd.shareToken();
