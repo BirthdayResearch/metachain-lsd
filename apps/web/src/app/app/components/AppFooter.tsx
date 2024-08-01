@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { FaReddit } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Link from "next/link";
-import { useGetVersionMutation } from "@/store/marbleFiApi";
+import { useGetVersionQuery } from "@/store/marbleFiApi";
 import { useEffect, useState } from "react";
 
 const footerLinks = [
@@ -30,11 +30,10 @@ const footerLinks = [
 
 export default function AppFooter() {
   const [version, setVersion] = useState("0.0.0");
-  const [getVersion] = useGetVersionMutation();
+  const { data } = useGetVersionQuery();
 
   const fetchVersion = async () => {
-    const ver = await getVersion({}).unwrap();
-    setVersion(ver?.v);
+    setVersion(data?.v ?? "0.0.0");
   };
 
   useEffect(() => {

@@ -34,8 +34,5 @@ export const marbleFiApi = createApi({
   }),
 });
 
-export const {
-  useCreateUserMutation,
-  useGetStatsQuery,
-  useGetVersionMutation,
-} = marbleFiApi;
+export const { useCreateUserMutation, useGetStatsQuery, useGetVersionQuery } =
+  marbleFiApi;
