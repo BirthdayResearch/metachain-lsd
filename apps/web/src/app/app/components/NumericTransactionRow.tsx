@@ -23,8 +23,8 @@ export function NumericTransactionRow({
   return (
     <div
       className={clsx(
-        "flex flex-row justify-between py-[18px] flex-1 text-wrap",
-        customStyle,
+        "flex flex-row justify-between flex-1 text-wrap",
+        customStyle ?? "py-[18px]",
       )}
     >
       <div className="relative flex gap-x-2 items-center">
