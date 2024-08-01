@@ -3,6 +3,7 @@ import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import ConfirmScreen from "@/app/app/components/ConfirmScreen";
 import { StakeStep } from "@/types";
+import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function StakeConfirmedPage({
   stakeAmount,
@@ -25,7 +26,7 @@ export default function StakeConfirmedPage({
 }) {
   return (
     <ConfirmScreen
-      hasCompleted={true}
+      isComplete={true}
       title="Stake confirmed"
       description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
       dfiAmounts={[
@@ -33,7 +34,7 @@ export default function StakeConfirmedPage({
           label: "Amount staked",
           value: {
             value: stakeAmount,
-            suffix: "DFI",
+            suffix: " DFI",
             decimalScale: getDecimalPlace(stakeAmount),
           },
         },
@@ -41,7 +42,7 @@ export default function StakeConfirmedPage({
           label: "Amount to receive",
           value: {
             value: previewDeposit,
-            suffix: "mDFI",
+            suffix: " mDFI",
             decimalScale: getDecimalPlace(previewDeposit),
           },
         },
@@ -50,19 +51,19 @@ export default function StakeConfirmedPage({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: "address",
+          linkType: LinkType.ADDRESS,
         },
         {
           label: "Transaction ID",
           value: hash,
-          linkType: "tx",
+          linkType: LinkType.TX,
         },
       ]}
       buttons={
         <>
           <CTAButton
             label="Return to main page"
-            testID="stake-confirming-return-main"
+            testId="stake-confirming-return-main"
             customStyle="w-full"
             onClick={() => {
               resetFields();
@@ -71,7 +72,7 @@ export default function StakeConfirmedPage({
           />
           <CTAButtonOutline
             label="Add mDFI to wallet"
-            testID="stake-confirming-add-mdfi"
+            testId="stake-confirming-add-mdfi"
             customStyle="w-full"
             isDisabled={isAddTokenRequested}
             onClick={addTokenToWallet}

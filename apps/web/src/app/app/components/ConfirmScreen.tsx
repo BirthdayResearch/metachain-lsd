@@ -1,6 +1,6 @@
-import Panel from "@/app/app/stake/components/Panel";
+import Panel from "@/app/app/components/Panel";
 import SpinnerIcon from "@/app/app/components/icons/SpinnerIcon";
-import DetailsRow from "@/app/app/components/DetailsRow";
+import DetailsRow, { LinkType } from "@/app/app/components/DetailsRow";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import TxCompletedIcon from "@/app/app/components/icons/TxCompletedIcon";
 import { NumericFormatProps } from "@/components/NumericFormat";
@@ -15,7 +15,7 @@ export default function ConfirmScreen({
   dfiAmounts,
   details,
   isLoading,
-  hasCompleted,
+  isComplete,
 }: {
   title: string;
   description: string;
@@ -24,10 +24,10 @@ export default function ConfirmScreen({
   details: {
     label: string;
     value: string;
-    linkType: string;
+    linkType: LinkType;
   }[];
   isLoading?: boolean;
-  hasCompleted?: boolean;
+  isComplete?: boolean;
 }) {
   const { copy } = useCopyToClipboard();
 
@@ -47,7 +47,7 @@ export default function ConfirmScreen({
     <Panel customStyle="flex flex-col">
       <article className="flex flex-col gap-y-6 md:gap-y-10">
         {isLoading && <SpinnerIcon />}
-        {hasCompleted && <TxCompletedIcon />}
+        {isComplete && <TxCompletedIcon />}
         <section className="flex flex-col gap-y-6">
           <div className="flex flex-col gap-y-2">
             <h3 className="text-2xl leading-7 font-medium">{title}</h3>
@@ -60,7 +60,6 @@ export default function ConfirmScreen({
                 key={item.label}
                 label={item.label}
                 value={item.value}
-                customStyle="py-[18px]"
               />
             ))}
 

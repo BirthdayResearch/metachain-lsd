@@ -2,25 +2,29 @@ import clsx from "clsx";
 
 export function Tag({
   text,
-  testID,
+  Icon,
+  testId,
   customStyle,
   customTextStyle,
 }: {
   text: string;
+  Icon?: JSX.Element;
   customStyle?: string;
   customTextStyle?: string;
-  testID: string;
+  testId: string;
 }) {
   return (
     <div
-      data-testid={`tag-${testID}`}
+      data-testid={`tag-${testId}`}
       className={clsx(
-        "bg-light-00 rounded-[20px] py-2 px-4",
+        "flex gap-x-1 items-center bg-light-1000/[0.03]",
+        "bg-light-00 rounded-[20px] px-4",
         "text-[10px] leading-3 font-bold tracking-wider",
         customTextStyle,
-        customStyle ?? "w-fit",
+        customStyle ?? "w-fit py-2",
       )}
     >
+      {Icon}
       {text}
     </div>
   );

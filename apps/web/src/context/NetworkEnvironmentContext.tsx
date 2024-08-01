@@ -14,6 +14,7 @@ import { DFI_TESTNET_ID } from "@/constants";
 
 interface NetworkContextI {
   networkEnv: EnvironmentNetwork;
+  defaultNetwork: EnvironmentNetwork;
   updateNetworkEnv: (networkEnv: EnvironmentNetwork) => void;
   resetNetworkEnv: () => void;
 }
@@ -89,6 +90,7 @@ export function NetworkEnvironmentProvider({
   const context: NetworkContextI = useMemo(
     () => ({
       networkEnv,
+      defaultNetwork,
       updateNetworkEnv: handleNetworkEnvChange,
       resetNetworkEnv,
     }),
