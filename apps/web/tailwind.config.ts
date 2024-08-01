@@ -1,6 +1,63 @@
-import type { Config } from "tailwindcss";
+import plugin from "tailwindcss";
 
-const config: Config = {
+const config: {
+  plugins: (
+    | plugin
+    | ((
+        options?: Partial<{ className: string; target: "modern" | "legacy" }>,
+      ) => {
+        handler: () => void;
+      })
+  )[];
+  theme: {
+    extend: {
+      borderRadius: { xl: string; md: string; lg: string; DEFAULT: string };
+      colors: {
+        red: string;
+        valid: string;
+        green: string;
+        light: {
+          "00": string;
+          100: string;
+          200: string;
+          300: string;
+          500: string;
+          700: string;
+          800: string;
+          1000: string;
+          900: string;
+        };
+        dark: {
+          "00": string;
+          100: string;
+          200: string;
+          300: string;
+          500: string;
+          700: string;
+          800: string;
+          1000: string;
+          900: string;
+        };
+        warning: string;
+        error: string;
+        brand: { 100: string };
+        transparent: string;
+      };
+    };
+    fontFamily: { mono: string[]; sans: string[] };
+    screens: {
+      xl: string;
+      "2xl": string;
+      md: string;
+      "3xl": string;
+      sm: string;
+      xs: string;
+      lg: string;
+    };
+  };
+  darkMode: string;
+  content: string[];
+} = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
