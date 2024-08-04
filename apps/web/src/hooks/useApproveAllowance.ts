@@ -115,7 +115,7 @@ export default function useApproveAllowance({
         abi: mDFI.abi as Abi,
         address: mDFI.address,
         functionName: "approve",
-        args: [MarbleLsdProxy.address, parseEther(withdrawAmount.toString())],
+        args: [MarbleLsdProxy.address, parseEther(withdrawAmount.toFixed())],
       });
     },
   };
