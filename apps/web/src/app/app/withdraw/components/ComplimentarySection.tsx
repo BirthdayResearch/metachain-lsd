@@ -103,7 +103,7 @@ function WithdrawalDetails({
         : acc;
     }, new BigNumber(0)) ?? new BigNumber(0);
 
-  const formattedTotalAssets = formatEther(totalAssets.toString());
+  const formattedTotalAssets = formatEther(totalAssets.toFixed());
 
   return (
     <div className="flex flex-col gap-y-5 md:gap-y-4">
