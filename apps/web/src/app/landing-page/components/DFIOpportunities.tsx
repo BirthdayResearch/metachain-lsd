@@ -11,18 +11,13 @@ import { useMemo } from "react";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useNetworkEnvironmentContext } from "@/context/NetworkEnvironmentContext";
 
-interface StatDisplayValues {
-  tvl: string;
-  mdfiToDfiRatio: string;
-}
-
 export default function DFIOpportunities() {
   const { networkEnv } = useNetworkEnvironmentContext();
   const { data } = useGetStatsQuery({ network: networkEnv });
   const dfiPriceUsdValue = useDfiPrice();
 
   // Retrieve API data and calculate and format market cap and TVL
-  const statValues: StatDisplayValues = useMemo(() => {
+  const statValues = useMemo(() => {
     if (!data) {
       return {
         tvl: "0",
