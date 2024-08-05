@@ -11,31 +11,35 @@ import { useMemo } from "react";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useNetworkEnvironmentContext } from "@/context/NetworkEnvironmentContext";
 
+interface StatDisplayValues {
+  tvl: string;
+  mdfiToDfiRatio: string;
+}
+
 export default function DFIOpportunities() {
   const { networkEnv } = useNetworkEnvironmentContext();
   const { data } = useGetStatsQuery({ network: networkEnv });
   const dfiPriceUsdValue = useDfiPrice();
 
   // Retrieve API data and calculate and format market cap and TVL
-  const statValues = useMemo(() => {
+  const statValues: StatDisplayValues = useMemo(() => {
     if (!data) {
       return {
-        marketCap: "0",
         tvl: "0",
         mdfiToDfiRatio: "0",
       };
     }
-    const marketCap = new BigNumber(data.totalShares)
-      .multipliedBy(new BigNumber(data.mDfiDfiRatio))
-      .multipliedBy(dfiPriceUsdValue);
+    // TVL (price of DFI * mDFI ratio * number of mDFI circulating)
+    const tvl = new BigNumber(data.mDfiDfiRatio)
+      .multipliedBy(dfiPriceUsdValue)
+      .multipliedBy(new BigNumber(data.totalAssets));
     return {
-      marketCap: formatNumberWithSuffix(marketCap.toNumber()),
-      tvl: formatNumberWithSuffix(new BigNumber(data.totalAssets).toNumber()),
+      tvl: formatNumberWithSuffix(tvl.toNumber()),
       mdfiToDfiRatio: data.mDfiDfiRatio,
     };
   }, [data, dfiPriceUsdValue]);
 
-  const { marketCap, tvl, mdfiToDfiRatio } = statValues;
+  const { tvl, mdfiToDfiRatio } = statValues;
 
   return (
     <SectionContainer id="about-section">
@@ -66,11 +70,7 @@ export default function DFIOpportunities() {
             className={clsx("w-[168px] h-[168px] lg:w-[224px] lg:h-[224px]")}
             loading="lazy"
           />
-          <div className="flex flex-col justify-between gap-x-6 gap-y-2 w-full">
-            <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
-              <span className="body-2-regular-text flex-1">Market Cap</span>
-              <h4 className="h4-text flex-1 text-end">${marketCap}</h4>
-            </div>
+          <div className="flex flex-col justify-center gap-x-6 gap-y-2 w-full">
             <div className="details-container-ui px-6 py-4 flex flex-row justify-between items-center">
               <span className="body-2-regular-text flex-1">Price</span>
               <NumericFormat
