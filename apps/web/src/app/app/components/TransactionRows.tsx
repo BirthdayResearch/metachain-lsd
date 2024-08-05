@@ -58,7 +58,7 @@ export default function TransactionRows({
         value={{
           value: mDfiToDfiConversion,
           suffix: " DFI",
-          decimalScale: getDecimalPlace(mDfiToDfiConversion),
+          decimalScale: new BigNumber(mDfiToDfiConversion).eq(0) ? 2 : 5,
           prefix: `1 mDFI = `,
           trimTrailingZeros: false,
         }}

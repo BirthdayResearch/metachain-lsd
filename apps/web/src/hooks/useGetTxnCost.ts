@@ -34,7 +34,7 @@ export function useGetTxnCost(
   );
 
   const txnCost = useMemo(
-    () => dfiPrice.multipliedBy(formatEther(totalGas.toString()).toString()),
+    () => dfiPrice.multipliedBy(formatEther(totalGas.toFixed()).toString()),
     [totalGas, dfiPrice],
   );
 
