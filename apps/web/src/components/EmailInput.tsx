@@ -2,7 +2,6 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { HiOutlineMail } from "react-icons/hi";
 import clsx from "clsx";
 import { CTAButton } from "@/components/button/CTAButton";
-import { SubscriptionStatus } from "@/types";
 import { useCreateUserMutation } from "@/store/marbleFiApi";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
@@ -26,20 +25,15 @@ export default function EmailInput({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-    email: string,
-  ) => {
-    e.preventDefault();
+  const handleSubmit = async (email: string) => {
     try {
       const user = {
         email: email,
       };
       const data = await createUser(user);
-      // @ts-ignore
       if (data?.error) {
         // @ts-ignore
-        setErrorMsg(data.error.data.message);
+        setErrorMsg(data.error?.data?.message);
         setSuccess(false);
       } else {
         setErrorMsg("");
@@ -97,7 +91,7 @@ export default function EmailInput({
               <CTAButton
                 label="Submit"
                 testId="join-community-submit-btn"
-                onClick={(e) => handleSubmit(e, value)}
+                onClick={() => handleSubmit(value)}
                 isDisabled={!isValidEmail(value) || value == ""}
                 customStyle="!py-2 !px-5"
                 customTextStyle="text-[#B2B2B2] font-semibold text-xs"

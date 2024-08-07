@@ -15,6 +15,7 @@ import TransactionRows from "@/app/app/components/TransactionRows";
 import { useContractContext } from "@/context/ContractContext";
 import { useDfiPrice } from "@/hooks/useDfiPrice";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
+import { ActionType } from "@/lib/types";
 
 export default function WithdrawPage({
   walletBalanceAmount,
@@ -25,7 +26,9 @@ export default function WithdrawPage({
   setWalletBalanceAmount,
   isPending,
   submitWithdraw,
+  isClaimPending,
   previewRedeem,
+  submitClaim,
 }: {
   walletBalanceAmount: string;
   amountError: string | null;
@@ -35,13 +38,15 @@ export default function WithdrawPage({
   setWalletBalanceAmount: React.Dispatch<React.SetStateAction<string>>;
   isPending: boolean;
   submitWithdraw: () => void;
+  isClaimPending: boolean;
   previewRedeem: string;
+  submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
 }) {
   const { address, isConnected, status, chainId } = useAccount();
   const { MarbleLsdProxy, mDFI } = useContractContext();
   const dfiPrice = useDfiPrice();
 
-  const { minDepositAmount } = useGetReadContractConfigs();
+  const { minDepositAmount, mDfiToDfiConversion } = useGetReadContractConfigs();
 
   const { data: walletBalance } = useBalance({
     address,
@@ -101,6 +106,13 @@ export default function WithdrawPage({
                   error={amountError}
                   setError={setAmountError}
                   value={withdrawAmount}
+                  usdAmount={
+                    new BigNumber(withdrawAmount).isNaN()
+                      ? new BigNumber(0)
+                      : new BigNumber(withdrawAmount ?? 0)
+                          .multipliedBy(mDfiToDfiConversion ?? 0)
+                          .multipliedBy(dfiPrice ?? 0)
+                  }
                   setAmount={setWithdrawAmount}
                 >
                   <Image
@@ -121,7 +133,11 @@ export default function WithdrawPage({
               </div>
             </div>
             <div className="mb-10 md:mb-7 lg:mb-10">
-              <TransactionRows previewAmount={previewRedeem} />
+              <TransactionRows
+                previewAmount={previewRedeem}
+                type={ActionType.Withdraw}
+                inputAmount={withdrawAmount}
+              />
               {isConnected && (
                 <>
                   <span className="block my-2 w-full border-dark-00/10 border-t-[0.5px]" />
@@ -176,7 +192,10 @@ export default function WithdrawPage({
             </ConnectKitButton.Custom>
           )}
         </div>
-        <ComplimentarySection />
+        <ComplimentarySection
+          submitClaim={submitClaim}
+          isClaimPending={isClaimPending}
+        />
       </div>
     </Panel>
   );

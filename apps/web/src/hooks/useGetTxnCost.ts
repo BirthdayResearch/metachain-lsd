@@ -2,26 +2,29 @@ import { useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { useEstimateGas, useGasPrice } from "wagmi";
 import { useContractContext } from "@/context/ContractContext";
-import { formatEther, parseEther } from "ethers";
+import { formatEther } from "ethers";
 import { useDfiPrice } from "./useDfiPrice";
 
-export function useGetTxnCost(data: `0x${string}`): {
+export function useGetTxnCost(
+  data: `0x${string}`,
+  value: bigint,
+): {
   totalGas: BigNumber;
   txnCost: BigNumber;
 } {
   const { MarbleLsdProxy } = useContractContext();
   const dfiPrice = useDfiPrice();
+  const { data: gasPrice } = useGasPrice();
 
   const { data: estimateGas } = useEstimateGas({
     data,
+    value,
     to: MarbleLsdProxy.address,
-    value: parseEther("1"),
     query: {
       refetchIntervalInBackground: false,
     },
   });
 
-  const { data: gasPrice } = useGasPrice();
   const totalGas = useMemo(
     () =>
       new BigNumber(estimateGas?.toString() ?? 0).multipliedBy(

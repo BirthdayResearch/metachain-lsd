@@ -15,7 +15,7 @@ export default function ConfirmScreen({
   dfiAmounts,
   details,
   isLoading,
-  hasCompleted,
+  isComplete,
 }: {
   title: string;
   description: string;
@@ -27,7 +27,7 @@ export default function ConfirmScreen({
     linkType: LinkType;
   }[];
   isLoading?: boolean;
-  hasCompleted?: boolean;
+  isComplete?: boolean;
 }) {
   const { copy } = useCopyToClipboard();
 
@@ -47,7 +47,7 @@ export default function ConfirmScreen({
     <Panel customStyle="flex flex-col">
       <article className="flex flex-col gap-y-6 md:gap-y-10">
         {isLoading && <SpinnerIcon />}
-        {hasCompleted && <TxCompletedIcon />}
+        {isComplete && <TxCompletedIcon />}
         <section className="flex flex-col gap-y-6">
           <div className="flex flex-col gap-y-2">
             <h3 className="text-2xl leading-7 font-medium">{title}</h3>

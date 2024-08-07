@@ -18,7 +18,7 @@ export default function DetailsRow({
   handleOnCopy,
 }: {
   label: string;
-  linkType: LinkType;
+  linkType?: LinkType;
   value: string;
   handleOnCopy?: (text: string) => void;
 }) {
@@ -34,14 +34,14 @@ export default function DetailsRow({
         >
           {linkType === LinkType.STATUS && <StatusBadge status={value} />}
           <span className="break-words font-semibold text-sm text-right">
-            {[LinkType.ADDRESS, LinkType.TX].includes(linkType)
+            {linkType && [LinkType.ADDRESS, LinkType.TX].includes(linkType)
               ? truncateTextFromMiddle(value, 12)
               : value}
           </span>
         </div>
 
         {/* Copy and external link icon */}
-        {[LinkType.TX, LinkType.ADDRESS].includes(linkType) && (
+        {linkType && [LinkType.TX, LinkType.ADDRESS].includes(linkType) && (
           <div className="flex flex-row w-full md:w-fit justify-end">
             <button
               className="hover:bg-light-1000/[0.05] active:bg-light-100/[0.7] rounded-[20px] p-2 cursor-pointer flex flex-row"
