@@ -5,6 +5,7 @@ import {
   EnvironmentNetwork,
   getJellyfishNetwork,
 } from "@waveshq/walletkit-core";
+import { MarbleLsdV1__factory } from "smartcontracts";
 import { Injectable } from "@nestjs/common";
 import { WhaleWalletAccount } from "@defichain/whale-api-wallet";
 import { WhaleApiClient } from "@defichain/whale-api-client";
@@ -22,6 +23,7 @@ import {
   TransactionRequest,
   TransactionResponse,
   formatEther,
+  Contract,
 } from "ethers";
 import {
   CTransactionSegWit,
@@ -39,7 +41,6 @@ enum TRANSFER_DOMAIN_TYPE {
 
 @Injectable()
 export class WalletProvider {
-  private privateKey: string;
   private ethRPCUrl: string;
   private account: WhaleWalletAccount;
   private client: WhaleApiClient;
@@ -49,13 +50,11 @@ export class WalletProvider {
   private marbleFiContractAddress: string;
 
   constructor(
+    private readonly privateKey: string,
     private readonly network: EnvironmentNetwork,
     private readonly whaleClient: WhaleApiClientProvider,
     private readonly configService: ConfigService,
   ) {
-    this.privateKey = this.configService.getOrThrow<EnvironmentNetwork>(
-      `defichain.${this.network}.key`,
-    );
     this.ethRPCUrl = this.configService.getOrThrow<EnvironmentNetwork>(
       `defichain.${this.network}.ethRPCUrl`,
     );
@@ -63,7 +62,6 @@ export class WalletProvider {
       this.configService.getOrThrow<EnvironmentNetwork>(
         `defichain.${this.network}.marbleFiContractAddress`,
       );
-    this.initWallet();
   }
 
   getWallet(): WalletClassic {
@@ -75,7 +73,7 @@ export class WalletProvider {
     return new WalletClassic(curvePair);
   }
 
-  private async initWallet() {
+  public async initWallet() {
     const network = getJellyfishNetwork(this.network);
 
     this.wallet = this.getWallet();
@@ -275,6 +273,47 @@ export class WalletProvider {
       return txn;
     } catch (err) {
       console.error(`Error occurred while sending rewards: ${err.message}`);
+    }
+  }
+
+  // value in fi
+  async finalizeWithdrawalRequest(
+    lastRequestIdToBeFinalized: string,
+    value: bigint,
+  ): Promise<TransactionResponse> {
+    try {
+      console.log("Initializing send finalize withdrawal", value);
+      const marbleFiContract = new Contract(
+        this.marbleFiContractAddress,
+        MarbleLsdV1__factory.abi,
+        this.evmProvider,
+      );
+      const preData = await marbleFiContract.prefinalize([
+        lastRequestIdToBeFinalized,
+      ]);
+      const tdFace = new Interface(MarbleLsdV1__factory.abi);
+      const data = tdFace.encodeFunctionData("finalize", [1]);
+
+      // Creating and sending the transaction object
+      const from = this.account.getEvmAddress();
+      const nonce = await this.evmProvider.getTransactionCount(from);
+      const txn = await this.evmWallet.sendTransaction({
+        to: this.marbleFiContractAddress,
+        from,
+        value: preData[0],
+        data,
+        nonce,
+      });
+
+      console.log("Finalize withdrawal Txn hash ", txn.hash);
+
+      // Waiting 5 confirmations. You can put any number of confirmations here
+      const txReceipt = await txn.wait(5);
+      console.log("Finalize withdrawal receipt: ", txReceipt.hash);
+
+      return txn;
+    } catch (err) {
+      console.error(`Error occurred while finalize withdrawal: ${err.message}`);
     }
   }
 

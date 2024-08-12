@@ -16,9 +16,8 @@ describe("Proxy behavior", () => {
   let accounts: SignerWithAddress[] = [];
 
   before(async () => {
-    const fixture: MarbleLsdDeploymentResult = await loadFixture(
-      deployContracts
-    );
+    const fixture: MarbleLsdDeploymentResult =
+      await loadFixture(deployContracts);
     proxyMarbleLsd = fixture.proxyMarbleLsd;
     defaultAdminSigner = fixture.defaultAdminSigner;
     rewardDistributerAndFinalizeSigner =
@@ -28,9 +27,8 @@ describe("Proxy behavior", () => {
 
   it("Should not upgrade contract from non admin address", async () => {
     // Encoded MarbleLsdV2 data
-    const MarbleLsdV2Upgradeable = await ethers.getContractFactory(
-      "MarbleLsdV2"
-    );
+    const MarbleLsdV2Upgradeable =
+      await ethers.getContractFactory("MarbleLsdV2");
     const marbleLsdV2Upgradeable = await MarbleLsdV2Upgradeable.deploy();
     await marbleLsdV2Upgradeable.waitForDeployment();
     const encodedData =
@@ -48,9 +46,9 @@ describe("Proxy behavior", () => {
     await expect(
       proxyMarbleLsd
         .connect(accounts[6])
-        .upgradeToAndCall(marbleLsdV2UpgradeableAddress, encodedData)
+        .upgradeToAndCall(marbleLsdV2UpgradeableAddress, encodedData),
     ).to.be.revertedWith(
-      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${adminRoleHash}`
+      `AccessControl: account ${signer.address.toLowerCase()} is missing role ${adminRoleHash}`,
     );
   });
 
@@ -61,9 +59,8 @@ describe("Proxy behavior", () => {
     const tokenAddress = await proxyMarbleLsd.shareToken();
     const walletAddress = await proxyMarbleLsd.walletAddress();
     // Encoded MarbleLsdV2 data
-    const MarbleLsdV2Upgradeable = await ethers.getContractFactory(
-      "MarbleLsdV2"
-    );
+    const MarbleLsdV2Upgradeable =
+      await ethers.getContractFactory("MarbleLsdV2");
     const marbleLsdV2Upgradeable = await MarbleLsdV2Upgradeable.deploy();
     await marbleLsdV2Upgradeable.waitForDeployment();
     const encodedData =
@@ -77,10 +74,10 @@ describe("Proxy behavior", () => {
       await marbleLsdV2Upgradeable.getAddress();
     await proxyMarbleLsd.upgradeToAndCall(
       marbleLsdV2UpgradeableAddress,
-      encodedData
+      encodedData,
     );
     const marbleLsdV2 = MarbleLsdV2Upgradeable.attach(
-      await proxyMarbleLsd.getAddress()
+      await proxyMarbleLsd.getAddress(),
     ) as MarbleLsdV1;
 
     expect(await marbleLsdV2.version()).to.equal("2");
@@ -91,23 +88,23 @@ describe("Proxy behavior", () => {
     expect(
       await marbleLsdV2.hasRole(
         DEFAULT_ADMIN_ROLE,
-        await defaultAdminSigner.getAddress()
-      )
+        await defaultAdminSigner.getAddress(),
+      ),
     ).to.equal(true);
     const REWARDS_DISTRIBUTER_ROLE =
       await marbleLsdV2.REWARDS_DISTRIBUTER_ROLE();
     expect(
       await marbleLsdV2.hasRole(
         REWARDS_DISTRIBUTER_ROLE,
-        await rewardDistributerAndFinalizeSigner.getAddress()
-      )
+        await rewardDistributerAndFinalizeSigner.getAddress(),
+      ),
     ).to.equal(true);
     const FINALIZE_ROLE = await marbleLsdV2.FINALIZE_ROLE();
     expect(
       await marbleLsdV2.hasRole(
         FINALIZE_ROLE,
-        await rewardDistributerAndFinalizeSigner.getAddress()
-      )
+        await rewardDistributerAndFinalizeSigner.getAddress(),
+      ),
     ).to.equal(true);
     expect(await marbleLsdV2.shareToken()).to.equal(tokenAddress);
     expect(await marbleLsdV2.walletAddress()).to.equal(walletAddress);
