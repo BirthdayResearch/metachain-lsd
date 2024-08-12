@@ -1,14 +1,31 @@
 import { useContractContext } from "@/context/ContractContext";
-import { useAccount, useReadContracts } from "wagmi";
+import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { formatEther, parseEther } from "ethers";
+import { useMemo } from "react";
+import BigNumber from "bignumber.js";
+import { useDfiPrice } from "@/hooks/useDfiPrice";
 
 export function useGetReadContractConfigs(): {
   mDfiToDfiConversion: string;
   isDepositPaused: boolean;
   minDepositAmount: string;
+  totalAssets: string;
+  totalAssetsUsdAmount: BigNumber;
 } {
   const { isConnected } = useAccount();
   const { MarbleLsdProxy } = useContractContext();
+  const dfiPrice = useDfiPrice();
+
+  const { data: convertToAssetsData } = useReadContract({
+    address: MarbleLsdProxy.address,
+    abi: MarbleLsdProxy.abi,
+    functionName: "convertToAssets",
+    args: [parseEther("1")],
+    query: {
+      enabled: isConnected,
+      refetchInterval: 10_000,
+    },
+  });
 
   const { data: contractResponse } = useReadContracts({
     contracts: [
@@ -20,14 +37,13 @@ export function useGetReadContractConfigs(): {
       {
         address: MarbleLsdProxy.address,
         abi: MarbleLsdProxy.abi,
-        functionName: "convertToAssets",
-        args: [parseEther("1")],
+        functionName: "minDeposit",
+        args: [],
       },
       {
         address: MarbleLsdProxy.address,
         abi: MarbleLsdProxy.abi,
-        functionName: "minDeposit",
-        args: [],
+        functionName: "totalAssets",
       },
     ],
     query: {
@@ -35,18 +51,28 @@ export function useGetReadContractConfigs(): {
     },
   });
 
-  const [depositPausedData, convertToAssetsData, minDepositData] =
+  const [depositPausedData, minDepositData, totalAssetsData] =
     contractResponse ?? [];
   const mDfiToDfiConversion = formatEther(
-    (convertToAssetsData?.result as number) ?? 0,
+    (convertToAssetsData as number) ?? 0,
   ).toString();
   const isDepositPaused = !!depositPausedData?.result;
   const minDepositAmount = formatEther(
     (minDepositData?.result as number) ?? 0,
   ).toString();
+
+  const totalAssets = useMemo(() => {
+    return formatEther((totalAssetsData?.result as number) ?? 0).toString();
+  }, [totalAssetsData]);
+
+  const totalAssetsUsdAmount = new BigNumber(totalAssets).isNaN()
+    ? new BigNumber(0)
+    : new BigNumber(totalAssets ?? 0).multipliedBy(dfiPrice);
   return {
     mDfiToDfiConversion,
     isDepositPaused,
     minDepositAmount,
+    totalAssets,
+    totalAssetsUsdAmount,
   };
 }

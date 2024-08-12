@@ -3,6 +3,7 @@ import { getDecimalPlace } from "@/lib/textHelper";
 import { CTAButton } from "@/components/button/CTAButton";
 import { CTAButtonOutline } from "@/components/button/CTAButtonOutline";
 import { StakeStep } from "@/types";
+import { LinkType } from "@/app/app/components/DetailsRow";
 
 export default function StakeConfirmingPage({
   stakeAmount,
@@ -33,7 +34,7 @@ export default function StakeConfirmingPage({
           label: "You are staking",
           value: {
             value: stakeAmount,
-            suffix: "DFI",
+            suffix: " DFI",
             decimalScale: getDecimalPlace(stakeAmount),
           },
         },
@@ -41,7 +42,7 @@ export default function StakeConfirmingPage({
           label: "You will receive",
           value: {
             value: previewDeposit,
-            suffix: "mDFI",
+            suffix: " mDFI",
             decimalScale: getDecimalPlace(previewDeposit),
           },
         },
@@ -50,19 +51,19 @@ export default function StakeConfirmingPage({
         {
           label: "Receiving Address",
           value: receivingWalletAddress,
-          linkType: "address",
+          linkType: LinkType.ADDRESS,
         },
         {
           label: "Transaction ID",
           value: hash,
-          linkType: "tx",
+          linkType: LinkType.TX,
         },
       ]}
       buttons={
         <>
           <CTAButton
             label="Return to main page"
-            testID="stake-confirming-return-main"
+            testId="stake-confirming-return-main"
             customStyle="w-full"
             onClick={() => {
               resetFields();
@@ -72,7 +73,7 @@ export default function StakeConfirmingPage({
           <CTAButtonOutline
             isDisabled={isAddTokenRequested}
             label="Add mDFI to wallet"
-            testID="stake-confirming-add-mdfi"
+            testId="stake-confirming-add-mdfi"
             customStyle="w-full"
             onClick={addTokenToWallet}
           />

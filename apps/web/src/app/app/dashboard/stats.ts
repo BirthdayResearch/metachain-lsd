@@ -66,9 +66,7 @@ const stats = [
     functionName: "unfinalizedAssets",
     format: (values: string[]) => {
       const [amount, fees] = values;
-      return formatEther(
-        new BigNumber(amount ?? 0).plus(fees ?? 0).toString(),
-      ).toString();
+      return formatEther(new BigNumber(amount ?? 0).plus(fees ?? 0).toFixed());
     },
     decimal: 18,
     label: "DFI yet to be finalized",
@@ -89,7 +87,7 @@ const stats = [
     functionName: "mintingFees",
     decimal: 2,
     suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
+    format: (value: string) => new BigNumber(value).dividedBy(100).toFixed(),
     label: "Minting Fees",
     writeMethod: {
       name: "updateMintingFees",
@@ -102,7 +100,7 @@ const stats = [
     functionName: "performanceFees",
     decimal: 2,
     suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
+    format: (value: string) => new BigNumber(value).dividedBy(100).toFixed(),
     label: "Performance Fees",
     writeMethod: {
       name: "updatePerformanceFees",
@@ -115,7 +113,7 @@ const stats = [
     functionName: "redemptionFees",
     decimal: 2,
     suffix: "%",
-    format: (value: string) => new BigNumber(value).dividedBy(100).toString(),
+    format: (value: string) => new BigNumber(value).dividedBy(100).toFixed(),
     label: "Redemption Fees",
     writeMethod: {
       name: "updateRedemptionFees",

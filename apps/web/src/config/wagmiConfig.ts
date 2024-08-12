@@ -1,6 +1,6 @@
 import { CreateConfigParameters, createConfig, http } from "wagmi";
 import { getDefaultConfig } from "connectkit";
-import { sepolia, defichainEvm, defichainEvmTestnet } from "wagmi/chains";
+import { defichainEvm, defichainEvmTestnet } from "wagmi/chains";
 import { walletConnect } from "wagmi/connectors";
 
 const DefichainEvmMainnet = {
