@@ -43,3 +43,98 @@ model Rewards {
 
   @@unique([txnHash, network])
 }
+
+model ScDepositEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  owner     String
+  receiver  String
+  assets    String
+  shares    String
+  fees      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScWithdrawalRequestEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  requestId String
+  owner     String
+  receiver  String
+  assets    String
+  shares    String
+  fees      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScWithdrawalFinalizeEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  from      String
+  to        String
+  assets    String
+  shares    String
+  timestamp DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScWithdrawalClaimEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  requestId String
+  owner     String
+  receiver  String
+  assets    String
+  shares    String
+  fees      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScRewardEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  owner     String
+  assets    String
+  fees      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScUpdateEvents {
+  id        Int       @id @default(autoincrement())
+  txnHash   String
+  network   Network
+  name      String
+  oldValue  String
+  newValue  String
+  owner     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@unique([txnHash, network])
+}
+
+model ScEventLastSyncedBlock {
+  id          Int     @id @default(autoincrement())
+  network     Network @unique()
+  blockNumber String
+}

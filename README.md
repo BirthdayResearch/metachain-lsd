@@ -1,6 +1,5 @@
 # Liquid Staking Derivative for DeFi Metachain
 
-
 ## MainNet Addresses
 
 ### TimeLock
@@ -18,9 +17,6 @@ BridgeProxy Contract address: [0x7625924EFb4835E9459a4Ea6bA17ea99FBb7883B](https
 ### ShareToken
 
 BridgeQueue Contract address: [0xDB9d6fbF5b971Ae3C3a333cc31DB7105e1534998](https://meta.defiscan.live/address/0xDB9d6fbF5b971Ae3C3a333cc31DB7105e1534998)
-
-
-
 
 ## TestNet Addresses
 

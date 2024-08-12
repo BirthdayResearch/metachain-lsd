@@ -5,8 +5,8 @@ import { WalletProvider } from "./providers/WalletProvider";
 import { WhaleApiClientProvider } from "./providers/WhaleApiClientProvider";
 import BigNumber from "bignumber.js";
 import { PrismaService } from "../PrismaService";
-import { Network } from "@prisma/client";
 import { parseEther } from "ethers";
+import { SmartContractLogsProvider } from "./providers/SmartContractLogsProvider";
 
 @Controller("bot")
 export class BotService {
@@ -16,15 +16,18 @@ export class BotService {
     private prismaService: PrismaService,
   ) {}
 
-  async processTransfer(network: EnvironmentNetwork) {
+  async processRewards(network: EnvironmentNetwork) {
     console.log(`Initializing reward process: ${new Date().toISOString()}`);
-
+    const privateKey = this.configService.getOrThrow<EnvironmentNetwork>(
+      `defichain.${network}.rewardDistributerKey`,
+    );
     const walletProvider = new WalletProvider(
+      privateKey,
       network,
       this.whaleApiClient,
       this.configService,
     );
-
+    await walletProvider.initWallet();
     // Retrieve UTXO balance and keep 1 UTXO for txn cost
     const utxoBalance = await walletProvider.getUTXOBalance();
     const conversionAmount = new BigNumber(utxoBalance).minus(1);
@@ -61,7 +64,7 @@ export class BotService {
       if (rewardsTxn) {
         await this.prismaService.rewards.create({
           data: {
-            network: network as Network,
+            network: network,
             txnHash: rewardsTxn?.hash,
             amount: rewardsTxn?.value.toString(),
             fromAddress: rewardsTxn.from,
@@ -76,5 +79,48 @@ export class BotService {
     }
 
     console.log(`Reward process completed: ${new Date().toISOString()}`);
+  }
+
+  // TODO do not remove this set of code
+  // async processWithdrawals(network: EnvironmentNetwork) {
+  //   console.log(`Initializing reward process: ${new Date().toISOString()}`);
+  //   const privateKey = this.configService.getOrThrow<EnvironmentNetwork>(
+  //     `defichain.${network}.withdrawFinalizerKey`,
+  //   );
+  //   const walletProvider = new WalletProvider(
+  //     privateKey,
+  //     network,
+  //     this.whaleApiClient,
+  //     this.configService,
+  //   );
+  //   await walletProvider.initWallet();
+  //   walletProvider.finalizeWithdrawalRequest("1", parseEther("1"));
+  // }
+
+  async processSmartContractLogs(network: EnvironmentNetwork) {
+    const scLogsProvider = new SmartContractLogsProvider(
+      network,
+      this.configService,
+      this.prismaService,
+    );
+    let fromBlockNumber = await scLogsProvider.getLastSyncBlockNumber();
+    const latestBlock = await scLogsProvider.getLatestBlock();
+    do {
+      const fromBlock = new BigNumber(fromBlockNumber).minus(1);
+      const toBlock = Math.min(
+        new BigNumber(fromBlock).plus(2000).toNumber(),
+        latestBlock,
+      );
+      const logs = await scLogsProvider.getLogs(
+        new BigNumber(fromBlock).toNumber(),
+        new BigNumber(toBlock).toNumber(),
+      );
+      const saveLogsPromise = (logs ?? []).map((each) =>
+        scLogsProvider.saveLogs(each),
+      );
+      await Promise.all(saveLogsPromise);
+      await scLogsProvider.updateLastSyncBlockNumber(toBlock.toString());
+      fromBlockNumber = toBlock;
+    } while (new BigNumber(fromBlockNumber).lt(latestBlock));
   }
 }

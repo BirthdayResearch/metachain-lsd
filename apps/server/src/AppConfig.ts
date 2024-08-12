@@ -9,13 +9,17 @@ export function appConfig() {
     botNetworks: process.env.BOT_RUNNING_NETWORKS,
     defichain: {
       [EnvironmentNetwork.MainNet]: {
-        key: process.env.DEFICHAIN_MAINNET_PRIVATE_KEY,
+        rewardDistributerKey: process.env.DEFICHAIN_MAINNET_PRIVATE_KEY,
+        marbleFiContractDeploymentHash:
+          "0xfb6913340f29733a14917879dc1e2ed9572a28f6b69f8c80d7ec2b2472cc5342",
         marbleFiContractAddress: "0x7625924EFb4835E9459a4Ea6bA17ea99FBb7883B",
         ethRPCUrl: "https://eth.mainnet.ocean.jellyfishsdk.com",
       },
       [EnvironmentNetwork.TestNet]: {
-        key: process.env.DEFICHAIN_TESTNET_PRIVATE_KEY,
+        rewardDistributerKey: process.env.DEFICHAIN_TESTNET_PRIVATE_KEY,
         marbleFiContractAddress: "0x0B52a71A03a47246BD9d9C556B6Df9C42e73462A",
+        marbleFiContractDeploymentHash:
+          "0x85d8112666b6a18041a6beb3d71832807403ed7915f35c382317ee5024dfe575",
         ethRPCUrl: "https://eth.testnet.ocean.jellyfishsdk.com",
       },
       whaleURL: process.env.DEFICHAIN_WHALE_URL,
