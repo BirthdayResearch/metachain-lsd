@@ -21,6 +21,10 @@ export function useGetReadContractConfigs(): {
     abi: MarbleLsdProxy.abi,
     functionName: "convertToAssets",
     args: [parseEther("1")],
+    query: {
+      enabled: isConnected,
+      refetchInterval: 10_000,
+    },
   });
 
   const { data: contractResponse } = useReadContracts({

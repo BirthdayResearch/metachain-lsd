@@ -8,4 +8,5 @@ export enum WithdrawStep {
   WithdrawPage,
   PreviewWithdrawal,
   WithdrawConfirmationPage,
+  ClaimConfirmationPage,
 }

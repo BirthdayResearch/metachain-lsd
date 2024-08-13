@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatEther } from "ethers";
 import { toWei } from "@/lib/textHelper";
@@ -17,6 +17,9 @@ import BigNumber from "bignumber.js";
 import useWriteRequestRedeem from "@/hooks/useWriteRequestRedeem";
 import useApproveAllowance from "@/hooks/useApproveAllowance";
 import { MdCancel } from "react-icons/md";
+import { WithdrawalRequestedEventI } from "@/lib/types";
+import useProceedToClaim from "@/hooks/useProceedToClaim";
+import ClaimConfirmation from "@/app/app/withdraw/components/ClaimConfirmation";
 
 /*
  * Withdrawal flow
@@ -32,6 +35,9 @@ export default function Withdraw() {
   const [amountError, setAmountError] = useState<string | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [walletBalanceAmount, setWalletBalanceAmount] = useState<string>("");
+  const [withdrawRequestId, setWithdrawRequestId] = useState<string | null>(
+    null,
+  );
 
   // To display /withdraw pages based on the current step
   const [currentStep, setCurrentStep] = useState<WithdrawStep>(
@@ -55,6 +61,21 @@ export default function Withdraw() {
     args: [toWei(withdrawAmountString)],
     query: {
       enabled: isConnected,
+    },
+  });
+
+  useWatchContractEvent({
+    abi: MarbleLsdProxy.abi,
+    address: MarbleLsdProxy.address,
+    eventName: "WithdrawalRequested",
+    onLogs(logs: any) {
+      const data: { args: WithdrawalRequestedEventI } = logs.find(
+        (each: { args: WithdrawalRequestedEventI }) =>
+          each?.args?.owner === address && each?.args?.receiver === address,
+      );
+      if (data?.args) {
+        setWithdrawRequestId(data.args?.requestId?.toString());
+      }
     },
   });
 
@@ -85,6 +106,7 @@ export default function Withdraw() {
 
   const resetFields = () => {
     setWithdrawAmount("");
+    setWithdrawRequestId(null);
     setAmountError(null);
     setIsApprovalRequested(false);
   };
@@ -128,34 +150,51 @@ export default function Withdraw() {
     requestAllowance(withdrawAmtBigNum);
   };
 
+  const {
+    claimHash,
+    writeClaimWithdrawal,
+    isClaimRequestPending,
+    isClaimWithdrawalsTxnSuccess,
+  } = useProceedToClaim({
+    setErrorMessage,
+    setCurrentStepAndScroll,
+  });
+
+  const [totalClaimAmt, setTotalClaimAmt] = useState<string>("0");
+
+  const handleInitiateClaim = async (
+    selectedReqIds: string[],
+    totalClaimAmt: string,
+  ) => {
+    setErrorMessage(null);
+    if (selectedReqIds?.length) {
+      writeClaimWithdrawal(selectedReqIds);
+      setTotalClaimAmt(totalClaimAmt);
+    }
+  };
+
   useEffect(() => {
     if (isApproveTxnLoading) {
       toast("Approve transaction is loading", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: Infinity,
+        duration: 5000,
         className:
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "approve",
       });
     }
-
-    // cleanup
-    return () => toast.remove("approve");
   }, [isApproveTxnLoading]);
 
   useEffect(() => {
     if (writeApproveStatus === "pending" && errorMessage == null) {
       toast("Confirm transaction on your wallet.", {
         icon: <CgSpinner size={24} className="animate-spin text-green" />,
-        duration: Infinity,
+        duration: 5000,
         className:
           "bg-green px-2 py-1 !text-sm !text-light-00 !bg-dark-00 mt-10 !px-6 !py-4 !rounded-md",
         id: "withdraw",
       });
     }
-
-    // cleanup
-    return () => toast.remove("withdraw");
   }, [writeApproveStatus]);
 
   useEffect(() => {
@@ -164,11 +203,14 @@ export default function Withdraw() {
         icon: <MdCancel size={24} className="text-red" />,
         duration: 5000,
         className:
-          "!bg-light-900 px-2 py-1 !text-xs !text-light-00 mt-10 !rounded-md",
+          "!bg-light-900 px-2 py-1 text-xs !text-light-00 mt-10 rounded-md",
         id: "errorMessage",
       });
       setHasPendingTx(false);
     }
+
+    // cleanup
+    return () => toast.remove("errorMessage");
   }, [errorMessage, hasPendingTx]);
 
   useEffect(() => {
@@ -215,6 +257,8 @@ export default function Withdraw() {
                 hasPendingTx
               }
               submitWithdraw={handleInitiateTransfer}
+              isClaimPending={isClaimRequestPending}
+              submitClaim={handleInitiateClaim}
               previewRedeem={previewRedeem}
             />
           )}
@@ -238,8 +282,23 @@ export default function Withdraw() {
               <WithdrawalConfirmation
                 withdrawAmount={withdrawAmount}
                 amountToReceive={previewRedeem}
+                withdrawRequestId={withdrawRequestId}
                 setCurrentStep={setCurrentStepAndScroll}
                 hash={hash}
+                submitClaim={handleInitiateClaim}
+                receivingWalletAddress={address}
+                resetFields={resetFields}
+              />
+            )}
+
+          {currentStep === WithdrawStep.ClaimConfirmationPage &&
+            address &&
+            claimHash && (
+              <ClaimConfirmation
+                isClaimWithdrawalsTxnSuccess={isClaimWithdrawalsTxnSuccess}
+                claimAmount={totalClaimAmt}
+                setCurrentStep={setCurrentStepAndScroll}
+                claimHash={claimHash}
                 receivingWalletAddress={address}
                 resetFields={resetFields}
               />

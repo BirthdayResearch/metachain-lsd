@@ -10,6 +10,7 @@ export function appConfig() {
     defichain: {
       [EnvironmentNetwork.MainNet]: {
         key: process.env.DEFICHAIN_MAINNET_PRIVATE_KEY,
+        marbleFiContractAddress: "0x7625924EFb4835E9459a4Ea6bA17ea99FBb7883B",
         ethRPCUrl: "https://eth.mainnet.ocean.jellyfishsdk.com",
       },
       [EnvironmentNetwork.TestNet]: {

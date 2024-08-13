@@ -1,31 +1,46 @@
 import { useContractContext } from "@/context/ContractContext";
-import { Interface, InterfaceAbi } from "ethers";
+import { Interface, InterfaceAbi, parseEther } from "ethers";
 import { useGetTxnCost } from "@/hooks/useGetTxnCost";
 import { getDecimalPlace, toWei } from "@/lib/textHelper";
 import { useGetReadContractConfigs } from "@/hooks/useGetReadContractConfigs";
 import { NumericTransactionRow } from "@/app/app/components/NumericTransactionRow";
+import { ActionType } from "@/lib/types";
+import BigNumber from "bignumber.js";
 
 export default function TransactionRows({
+  inputAmount,
   previewAmount,
-  withdrawAmount,
+  type,
 }: {
+  inputAmount: string;
   previewAmount: string;
-  withdrawAmount?: string;
+  type: ActionType;
 }) {
   const { mDfiToDfiConversion } = useGetReadContractConfigs();
   const { MarbleLsdProxy } = useContractContext();
+  const estTxnAmount = new BigNumber(inputAmount).isNaN() ? "1" : inputAmount;
 
-  const data = withdrawAmount
-    ? (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
-        "requestRedeem",
-        [toWei(withdrawAmount), MarbleLsdProxy.address],
-      ) as `0x${string}`)
-    : (new Interface(MarbleLsdProxy.abi as InterfaceAbi).encodeFunctionData(
-        "deposit",
-        [MarbleLsdProxy.address],
-      ) as `0x${string}`);
+  const txnData =
+    type === ActionType.Withdraw
+      ? {
+          data: new Interface(
+            MarbleLsdProxy.abi as InterfaceAbi,
+          ).encodeFunctionData("requestRedeem", [
+            toWei(estTxnAmount),
+            MarbleLsdProxy.address,
+          ]) as `0x${string}`,
+          value: parseEther("0"),
+        }
+      : {
+          data: new Interface(
+            MarbleLsdProxy.abi as InterfaceAbi,
+          ).encodeFunctionData("deposit", [
+            MarbleLsdProxy.address,
+          ]) as `0x${string}`,
+          value: parseEther(estTxnAmount),
+        };
 
-  const { txnCost } = useGetTxnCost(data);
+  const { txnCost } = useGetTxnCost(txnData.data, txnData.value);
 
   return (
     <div>
@@ -52,7 +67,6 @@ export default function TransactionRows({
         label="Max transaction cost"
         value={{
           value: txnCost,
-          suffix: " DFI",
           decimalScale: getDecimalPlace(txnCost),
           prefix: "$",
         }}

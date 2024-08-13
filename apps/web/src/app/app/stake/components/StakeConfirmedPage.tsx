@@ -26,7 +26,7 @@ export default function StakeConfirmedPage({
 }) {
   return (
     <ConfirmScreen
-      hasCompleted={true}
+      isComplete={true}
       title="Stake confirmed"
       description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
       dfiAmounts={[

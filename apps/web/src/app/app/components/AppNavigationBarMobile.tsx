@@ -1,11 +1,15 @@
+import { useNetworkEnvironmentContext } from "@/context/NetworkEnvironmentContext";
 import { IoMdClose } from "react-icons/io";
+
 import MarbleFiLogo from "../../../components/MarbleFiLogo";
 
-import Link from "next/link";
 import ConnectButton from "@/components/button/WalletConnect";
 import { appNavigationTabs } from "@/app/app/components/AppNavigationBarWeb";
+import Link from "@/components/Link";
 
 export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
+  const { networkEnv } = useNetworkEnvironmentContext();
+
   return (
     <div
       className="w-full fixed top-0 right-0 bg-light-00 min-h-screen z-10"
@@ -35,7 +39,7 @@ export default function AppNavigationBarMobile({ onClose }: { onClose: any }) {
             <Link
               key={link.label}
               className="md:mx-12 mx-5 py-7 lg:py-3 border-b border-light-1000/10 font-bold text-light-1000 active:text-opacity-10 text-sm cursor-pointer"
-              href={link.href}
+              href={{ pathname: `/app${link.href}` }}
             >
               {link.label}
             </Link>
