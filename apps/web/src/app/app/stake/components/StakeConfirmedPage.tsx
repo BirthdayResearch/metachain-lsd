@@ -30,7 +30,7 @@ export default function StakeConfirmedPage({
 
   return (
     <ConfirmScreen
-      isLoading={currentStep === StakeStep.StakeConfirmingPage}
+      isLoading={isStakeConfirming}
       isComplete={currentStep === StakeStep.StakeConfirmationPage}
       title={isStakeConfirming ? "Confirming your stake…" : "Stake confirmed"}
       description={
