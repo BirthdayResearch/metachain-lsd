@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Dropdown from "./Dropdown";
-import Modal from "./Modal";
+import Dropdown from "@/app/app/components/Dropdown";
+import Modal from "@/app/app/components/Modal";
 import InputComponent from "./InputComponent";
 import { CTAButton } from "@/components/button/CTAButton";
 

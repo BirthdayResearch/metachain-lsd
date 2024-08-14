@@ -1,7 +1,7 @@
 import { MarbleLsdV1__factory } from "smartcontracts/src";
 import ContractMethodForm from "./ContractMethodForm";
 import { DashboardWriteMethodI, SmartContractMethod } from "@/lib/types";
-import Modal from "./Modal";
+import Modal from "@/app/app/components/Modal";
 
 interface WriteDialogI {
   isOpen: boolean;
