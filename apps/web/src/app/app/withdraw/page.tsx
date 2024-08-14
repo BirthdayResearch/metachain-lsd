@@ -8,7 +8,6 @@ import { useContractContext } from "@/context/ContractContext";
 import PausedWithdrawalsPage from "@/app/app/withdraw/components/PausedWithdrawalsPage";
 import { WithdrawStep } from "@/types";
 import WithdrawPage from "@/app/app/withdraw/components/WithdrawPage";
-import PreviewWithdrawal from "@/app/app/withdraw/components/PreviewWithdrawal";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import WithdrawalConfirmation from "@/app/app/withdraw/components/WithdrawalConfirmation";
@@ -262,34 +261,19 @@ export default function Withdraw() {
               previewRedeem={previewRedeem}
             />
           )}
-
-          {currentStep === WithdrawStep.PreviewWithdrawal &&
-            address &&
-            hash && (
-              <PreviewWithdrawal
-                withdrawAmount={withdrawAmount}
-                amountToReceive={previewRedeem}
-                setCurrentStep={setCurrentStepAndScroll}
-                hash={hash}
-                receivingWalletAddress={address}
-                resetFields={resetFields}
-              />
-            )}
-
-          {currentStep === WithdrawStep.WithdrawConfirmationPage &&
-            address &&
-            hash && (
-              <WithdrawalConfirmation
-                withdrawAmount={withdrawAmount}
-                amountToReceive={previewRedeem}
-                withdrawRequestId={withdrawRequestId}
-                setCurrentStep={setCurrentStepAndScroll}
-                hash={hash}
-                submitClaim={handleInitiateClaim}
-                receivingWalletAddress={address}
-                resetFields={resetFields}
-              />
-            )}
+          {address && hash && (
+            <WithdrawalConfirmation
+              withdrawAmount={withdrawAmount}
+              amountToReceive={previewRedeem}
+              withdrawRequestId={withdrawRequestId}
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStepAndScroll}
+              hash={hash}
+              submitClaim={handleInitiateClaim}
+              receivingWalletAddress={address}
+              resetFields={resetFields}
+            />
+          )}
 
           {currentStep === WithdrawStep.ClaimConfirmationPage &&
             address &&

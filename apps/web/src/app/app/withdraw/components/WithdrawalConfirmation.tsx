@@ -11,6 +11,7 @@ import BigNumber from "bignumber.js";
 export default function WithdrawalConfirmation({
   withdrawAmount,
   amountToReceive,
+  currentStep,
   setCurrentStep,
   withdrawRequestId,
   hash,
@@ -22,6 +23,7 @@ export default function WithdrawalConfirmation({
   amountToReceive: string;
   submitClaim: (selectedReqIds: string[], totalClaimAmt: string) => void;
   withdrawRequestId: string | null;
+  currentStep: WithdrawStep;
   setCurrentStep: (step: WithdrawStep) => void;
   hash: string;
   receivingWalletAddress: string;
@@ -44,9 +46,11 @@ export default function WithdrawalConfirmation({
       withdrawRequestId,
     );
 
+  const isWithdrawInPreview = currentStep === WithdrawStep.PreviewWithdrawal;
+
   return (
     <ConfirmScreen
-      isLoading={false}
+      isLoading={isWithdrawInPreview}
       title="Requested Withdrawal"
       description="Your request for withdrawal is now being processed. Your claim for withdrawal is automatically sent to your wallet once it is ready."
       dfiAmounts={[
@@ -80,13 +84,17 @@ export default function WithdrawalConfirmation({
         },
         {
           label: "Status",
-          value: isFinalized ? "Ready for claim" : "Withdrawal Requested",
+          value: isWithdrawInPreview
+            ? "Pending"
+            : isFinalized
+              ? "Ready for claim"
+              : "Withdrawal Requested",
           linkType: LinkType.STATUS,
         },
       ]}
       buttons={
         <>
-          {isFinalized && (
+          {isFinalized && !isWithdrawInPreview && (
             <CTAButton
               label="Proceed to claim"
               testId="proceed-to-claim-withdrawal"
