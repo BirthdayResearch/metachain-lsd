@@ -9,6 +9,7 @@ export default function StakeConfirmedPage({
   stakeAmount,
   hash,
   receivingWalletAddress,
+  currentStep,
   setCurrentStep,
   previewDeposit,
   resetFields,
@@ -19,19 +20,27 @@ export default function StakeConfirmedPage({
   hash: string;
   previewDeposit: string;
   receivingWalletAddress: string;
+  currentStep: StakeStep;
   setCurrentStep: (step: StakeStep) => void;
   resetFields: () => void;
   addTokenToWallet: () => void;
   isAddTokenRequested: boolean;
 }) {
+  const isStakeConfirming = currentStep === StakeStep.StakeConfirmingPage;
+
   return (
     <ConfirmScreen
-      isComplete={true}
-      title="Stake confirmed"
-      description="This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+      isLoading={currentStep === StakeStep.StakeConfirmingPage}
+      isComplete={currentStep === StakeStep.StakeConfirmationPage}
+      title={isStakeConfirming ? "Confirming your stake…" : "Stake confirmed"}
+      description={
+        isStakeConfirming
+          ? "Waiting confirmation from the blockchain. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+          : "This may take a moment. It is safe to close this window – your transaction will reflect automatically in your wallet once completed."
+      }
       dfiAmounts={[
         {
-          label: "Amount staked",
+          label: isStakeConfirming ? "You are staking" : "Amount staked",
           value: {
             value: stakeAmount,
             suffix: " DFI",
@@ -39,7 +48,7 @@ export default function StakeConfirmedPage({
           },
         },
         {
-          label: "Amount to receive",
+          label: isStakeConfirming ? "You will receive" : "Amount to receive",
           value: {
             value: previewDeposit,
             suffix: " mDFI",

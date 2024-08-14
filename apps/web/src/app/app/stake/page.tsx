@@ -14,7 +14,6 @@ import { formatEther } from "ethers";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { toWei } from "@/lib/textHelper";
-import StakeConfirmingPage from "@/app/app/stake/components/StakeConfirmingPage";
 import StakeConfirmedPage from "@/app/app/stake/components/StakeConfirmedPage";
 import StakePage from "@/app/app/stake/components/StakePage";
 import { StakeStep } from "@/types";
@@ -201,37 +200,20 @@ export default function Stake() {
             />
           )}
 
-          {/* Second step: Confirming Stake page */}
-          {currentStep === StakeStep.StakeConfirmingPage &&
-            receivingWalletAddress &&
-            hash && (
-              <StakeConfirmingPage
-                addTokenToWallet={addTokenToWallet}
-                isAddTokenRequested={isAddTokenRequested}
-                stakeAmount={stakeAmount}
-                previewDeposit={previewDeposit}
-                receivingWalletAddress={receivingWalletAddress}
-                hash={hash}
-                setCurrentStep={setCurrentStepAndScroll}
-                resetFields={resetFields}
-              />
-            )}
-
-          {/* Last step: Confirmed Stake page */}
-          {currentStep === StakeStep.StakeConfirmationPage &&
-            receivingWalletAddress &&
-            hash && (
-              <StakeConfirmedPage
-                addTokenToWallet={addTokenToWallet}
-                isAddTokenRequested={isAddTokenRequested}
-                stakeAmount={stakeAmount}
-                previewDeposit={previewDeposit}
-                receivingWalletAddress={receivingWalletAddress}
-                hash={hash}
-                setCurrentStep={setCurrentStepAndScroll}
-                resetFields={resetFields}
-              />
-            )}
+          {/* Last step: Confirming Stake Flow page */}
+          {receivingWalletAddress && hash && (
+            <StakeConfirmedPage
+              addTokenToWallet={addTokenToWallet}
+              isAddTokenRequested={isAddTokenRequested}
+              stakeAmount={stakeAmount}
+              previewDeposit={previewDeposit}
+              receivingWalletAddress={receivingWalletAddress}
+              hash={hash}
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStepAndScroll}
+              resetFields={resetFields}
+            />
+          )}
         </div>
       ) : (
         <PausedStakingPage />
